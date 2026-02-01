@@ -3,6 +3,123 @@ title: Graph
 description: Visualize node-and-edge graphs with automatic layout.
 ---
 
-Graph component documentation coming soon.
+The **Graph** component (`ui:graph`) renders node-and-edge diagrams with automatic layout powered by D3 and Dagre. It supports directed acyclic graphs, flowcharts, mind maps, and force-directed layouts. Nodes and edges can carry labels, semantic types, groups, and custom style overrides.
 
-This page will cover usage, data formats, layout options, and examples for the Graph component.
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `type` | `"dag" \| "flowchart" \| "mindmap" \| "force"` | Yes | -- | The graph variant that determines default layout and visual style. |
+| `nodes` | `Node[]` | Yes | -- | An array of node objects to render. |
+| `edges` | `Edge[]` | Yes | -- | An array of edge objects connecting nodes. |
+| `layout` | `"top-down" \| "left-right" \| "bottom-up" \| "radial" \| "force"` | No | Determined by `type` | Override the automatic layout direction. |
+
+### Node object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `id` | `string` | Yes | -- | Unique identifier for the node. Referenced by edges. |
+| `label` | `string` | Yes | -- | Display text rendered inside the node. |
+| `type` | `string` | No | -- | Semantic type (e.g. "service", "database"). Used for styling and grouping. |
+| `style` | `Record<string, string>` | No | -- | CSS-like style overrides applied to the node element. |
+| `group` | `string` | No | -- | Grouping key. Nodes with the same group are visually clustered. |
+
+### Edge object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `from` | `string` | Yes | -- | The `id` of the source node. |
+| `to` | `string` | Yes | -- | The `id` of the target node. |
+| `label` | `string` | No | -- | Text displayed on the edge. |
+| `type` | `string` | No | -- | Semantic type (e.g. "depends-on", "calls"). Used for styling. |
+| `style` | `Record<string, string>` | No | -- | CSS-like style overrides applied to the edge path. |
+
+## Graph types
+
+- **dag** -- Directed acyclic graph. Best for dependency trees, build pipelines, and data flow diagrams. Default layout: top-down.
+- **flowchart** -- Process flow with decision points. Default layout: top-down.
+- **mindmap** -- Radial tree emanating from a central node. Default layout: radial.
+- **force** -- Force-directed layout where nodes repel and edges attract. Best for loosely structured networks.
+
+## Layout options
+
+The `layout` property overrides the default layout direction for the chosen graph type:
+
+| Layout | Description |
+|---|---|
+| `top-down` | Root nodes at the top, children below. |
+| `left-right` | Root nodes on the left, children to the right. |
+| `bottom-up` | Root nodes at the bottom, children above. |
+| `radial` | Nodes arranged in concentric circles from the center. |
+| `force` | Physics-based simulation with no fixed direction. |
+
+## Example
+
+````markdown
+```ui:graph
+type: dag
+nodes:
+  - id: api
+    label: API Gateway
+    type: service
+  - id: auth
+    label: Auth Service
+    type: service
+  - id: db
+    label: PostgreSQL
+    type: database
+  - id: cache
+    label: Redis Cache
+    type: database
+edges:
+  - from: api
+    to: auth
+    label: authenticates
+  - from: api
+    to: cache
+    label: reads
+  - from: auth
+    to: db
+    label: queries
+layout: top-down
+```
+````
+
+### Mind map example
+
+````markdown
+```ui:graph
+type: mindmap
+nodes:
+  - id: root
+    label: Glyph JS
+  - id: parser
+    label: Parser
+  - id: compiler
+    label: Compiler
+  - id: runtime
+    label: Runtime
+  - id: schemas
+    label: Schemas
+edges:
+  - from: root
+    to: parser
+  - from: root
+    to: compiler
+  - from: root
+    to: runtime
+  - from: root
+    to: schemas
+```
+````
+
+## Shared abstraction with Relation
+
+The Graph and [Relation](/components/relation/) components share a unified relational abstraction. Both use nodes and edges, but `ui:relation` constrains the model by requiring `cardinality` on edges and treating nodes as entities with typed attributes.
+
+## Accessibility
+
+- The graph is rendered inside an SVG with `role="img"` and a descriptive `aria-label` summarizing the graph structure.
+- Each node is focusable via keyboard and exposes its label through `aria-label`.
+- Edge relationships are described in a visually hidden text summary for screen readers.
+- The `prefers-reduced-motion` media query disables layout animations when the user has requested reduced motion.

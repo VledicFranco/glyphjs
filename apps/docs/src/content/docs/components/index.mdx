@@ -1,8 +1,45 @@
 ---
 title: Components Overview
-description: An overview of all built-in Glyph JS components.
+description: An overview of all built-in Glyph JS UI components.
 ---
 
-Components overview coming soon.
+Glyph JS ships with **8 built-in UI components** that transform YAML payloads inside fenced code blocks into rich, interactive visualizations. Each component has a Zod schema that validates its YAML at compile time, producing clear diagnostics if anything is wrong.
 
-This page will provide a high-level summary of every component in the Glyph JS library, with links to individual component pages.
+## Authoring syntax
+
+All components use the same fenced-code-block pattern. Write a fenced code block whose info string is `ui:` followed by the component name, and place valid YAML inside:
+
+````markdown
+```ui:callout
+type: info
+content: This is an informational callout.
+```
+````
+
+The YAML inside the block is parsed and validated by `@glyphjs/compiler` against the component Zod schema defined in `@glyphjs/schemas`.
+
+## Component catalog
+
+| Component | Type | Description |
+|---|---|---|
+| [Callout](/components/callout/) | `ui:callout` | Highlighted info, warning, error, and tip blocks for narrative structuring. |
+| [Tabs](/components/tabs/) | `ui:tabs` | Tabbed content containers with switchable panels. |
+| [Steps](/components/steps/) | `ui:steps` | Sequential step-by-step guides with progress indication. |
+| [Table](/components/table/) | `ui:table` | Sortable, filterable, aggregatable data tables. |
+| [Graph](/components/graph/) | `ui:graph` | DAGs, flowcharts, mind maps, and force-directed graphs. |
+| [Relation](/components/relation/) | `ui:relation` | Entity-relationship diagrams with cardinality annotations. |
+| [Chart](/components/chart/) | `ui:chart` | Line, bar, area, and OHLC financial charts. |
+| [Timeline](/components/timeline/) | `ui:timeline` | Chronological event sequences on a visual timeline. |
+
+## Reserved YAML keys
+
+Two top-level YAML keys are reserved and processed by the compiler before schema validation:
+
+- **`glyph-id`** -- An explicit, user-assigned block ID that overrides the auto-generated ID. Enables stable cross-block references.
+- **`refs`** -- An array of reference objects (`{ target, type, label }`) that declare relationships between blocks.
+
+These keys are stripped from the component data before it reaches the component schema.
+
+## Container components
+
+`ui:tabs` and `ui:steps` are **container components** whose children are expressed as Markdown strings inside the YAML `content` fields. The compiler re-parses each `content` field recursively, producing child `Block[]` entries in the IR. This allows tabs and steps to contain rich Markdown (paragraphs, lists, code blocks) but not nested `ui:` components in v1.

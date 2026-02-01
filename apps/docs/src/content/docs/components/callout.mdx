@@ -3,6 +3,64 @@ title: Callout
 description: Highlight important information with styled callout boxes.
 ---
 
-Callout component documentation coming soon.
+The **Callout** component (`ui:callout`) renders a visually distinct block that highlights important information. Use callouts to draw the reader's attention to tips, warnings, errors, or general notes within your document.
 
-This page will cover usage, variants (info, warning, error, tip), and examples for the Callout component.
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `type` | `"info" \| "warning" \| "error" \| "tip"` | Yes | -- | The visual variant that controls color and icon. |
+| `title` | `string` | No | -- | An optional heading displayed at the top of the callout. |
+| `content` | `string` | Yes | -- | The body text of the callout. Supports inline Markdown. |
+
+## Variants
+
+- **info** -- A neutral blue callout for general notes and supplementary information.
+- **warning** -- An amber/yellow callout for cautionary messages the reader should be aware of.
+- **error** -- A red callout for critical issues, breaking changes, or error conditions.
+- **tip** -- A green callout for helpful suggestions, best practices, and pro tips.
+
+## Example
+
+````markdown
+```ui:callout
+type: warning
+title: Breaking change in v2
+content: The refs field now requires an explicit target type. Update your YAML blocks accordingly.
+```
+````
+
+### Info callout (no title)
+
+````markdown
+```ui:callout
+type: info
+content: Glyph JS validates all YAML payloads at compile time using Zod schemas.
+```
+````
+
+### Tip callout
+
+````markdown
+```ui:callout
+type: tip
+title: LLM authoring
+content: LLMs generate callouts reliably because the schema is minimal -- just type, optional title, and content.
+```
+````
+
+### Error callout
+
+````markdown
+```ui:callout
+type: error
+title: Validation failed
+content: Column key revenue in aggregation does not match any column definition.
+```
+````
+
+## Accessibility
+
+- Each callout renders with an appropriate `role` attribute (`role="note"` for info/tip, `role="alert"` for warning/error).
+- The `type` variant is conveyed through both color and an icon so that the meaning is not color-dependent (WCAG 2.1 AA).
+- When a `title` is provided, it is rendered as a heading inside the callout for screen-reader landmark navigation.

@@ -3,6 +3,119 @@ title: Relation
 description: Display entity relationships and connections.
 ---
 
-Relation component documentation coming soon.
+The **Relation** component (`ui:relation`) renders entity-relationship (ER) diagrams with entities, typed attributes, and cardinality-annotated relationships. It builds on the same graph abstraction as `ui:graph` but constrains the model for database and domain modeling use cases.
 
-This page will cover usage, data formats, and examples for the Relation component.
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `entities` | `Entity[]` | Yes | -- | An array of entity objects to render as ER diagram boxes. |
+| `relationships` | `Relationship[]` | Yes | -- | An array of relationship objects connecting entities. |
+| `layout` | `"top-down" \| "left-right"` | No | -- | Layout direction for the diagram. |
+
+### Entity object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `id` | `string` | Yes | -- | Unique identifier for the entity. Referenced by relationships. |
+| `label` | `string` | Yes | -- | Display name shown in the entity header. |
+| `attributes` | `Attribute[]` | No | -- | An array of typed attributes displayed inside the entity box. |
+
+### Attribute object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `name` | `string` | Yes | -- | The attribute name (e.g. column name). |
+| `type` | `string` | Yes | -- | The data type (e.g. "uuid", "varchar", "integer", "timestamp"). |
+| `primaryKey` | `boolean` | No | -- | Whether this attribute is part of the primary key. Shown with a key icon. |
+
+### Relationship object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `from` | `string` | Yes | -- | The `id` of the source entity. |
+| `to` | `string` | Yes | -- | The `id` of the target entity. |
+| `label` | `string` | No | -- | Text displayed on the relationship line. |
+| `cardinality` | `"1:1" \| "1:N" \| "N:1" \| "N:M"` | Yes | -- | The cardinality of the relationship, rendered with crow's foot notation. |
+
+## Cardinality notation
+
+Relationships are drawn with crow's foot notation:
+
+| Cardinality | Meaning | Notation |
+|---|---|---|
+| `1:1` | One-to-one | Single line on both ends |
+| `1:N` | One-to-many | Single line on source, crow's foot on target |
+| `N:1` | Many-to-one | Crow's foot on source, single line on target |
+| `N:M` | Many-to-many | Crow's foot on both ends |
+
+## Example
+
+````markdown
+```ui:relation
+entities:
+  - id: users
+    label: Users
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: email
+        type: varchar
+      - name: created_at
+        type: timestamp
+  - id: posts
+    label: Posts
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: title
+        type: varchar
+      - name: body
+        type: text
+      - name: author_id
+        type: uuid
+  - id: comments
+    label: Comments
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: body
+        type: text
+      - name: post_id
+        type: uuid
+      - name: user_id
+        type: uuid
+relationships:
+  - from: users
+    to: posts
+    label: authors
+    cardinality: "1:N"
+  - from: posts
+    to: comments
+    label: has
+    cardinality: "1:N"
+  - from: users
+    to: comments
+    label: writes
+    cardinality: "1:N"
+layout: left-right
+```
+````
+
+## Shared abstraction with Graph
+
+The Relation component shares a unified relational abstraction with [Graph](/components/graph/). While `ui:graph` is general-purpose, `ui:relation` constrains the model by:
+
+- Requiring `cardinality` on every relationship (edge).
+- Treating nodes as entities with typed `attributes`.
+- Rendering entities as ER-diagram boxes rather than simple graph nodes.
+
+## Accessibility
+
+- The ER diagram is rendered inside an SVG with `role="img"` and a descriptive `aria-label`.
+- Each entity box is focusable and exposes its label and attribute list through `aria-label`.
+- Relationship cardinalities are described in a visually hidden text summary for screen readers.
+- Primary key attributes are marked with both a visual key icon and a screen-reader-accessible label.

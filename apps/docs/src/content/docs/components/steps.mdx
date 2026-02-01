@@ -3,6 +3,68 @@ title: Steps
 description: Display sequential instructions as a numbered step list.
 ---
 
-Steps component documentation coming soon.
+The **Steps** component (`ui:steps`) renders a numbered, vertical step list with optional progress indication. Each step has a title, an optional status, and rich Markdown content. Steps are a **container component** -- the compiler re-parses each step's `content` field recursively.
 
-This page will cover usage, configuration, and examples for the Steps component.
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `steps` | `Step[]` | Yes | -- | An array of step objects. Must contain at least one step. |
+
+### Step object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | Yes | -- | The heading text for this step. |
+| `status` | `"pending" \| "active" \| "completed"` | No | -- | Visual indicator of the step's progress state. |
+| `content` | `string` | Yes | -- | Markdown content rendered inside the step body. Parsed recursively by the compiler. |
+
+## Status variants
+
+- **pending** -- The step is not yet started. Rendered with a muted style and an empty circle indicator.
+- **active** -- The step is currently in progress. Rendered with a highlighted style and a pulsing indicator.
+- **completed** -- The step is finished. Rendered with a success style and a checkmark indicator.
+
+When `status` is omitted, the step renders in a neutral style without a progress indicator.
+
+## Example
+
+````markdown
+```ui:steps
+steps:
+  - title: Install dependencies
+    status: completed
+    content: |
+      Run `pnpm install` to install all packages.
+  - title: Configure the project
+    status: active
+    content: |
+      Edit `glyph.config.ts` to set up your theme and register plugins.
+
+      You can also configure custom components in this file.
+  - title: Build and deploy
+    status: pending
+    content: |
+      Run `pnpm build` and deploy to your hosting provider.
+```
+````
+
+## Content nesting
+
+Like `ui:tabs`, each step's `content` field is a Markdown string that the compiler parses recursively into child `Block[]` entries in the IR.
+
+Supported content inside steps:
+
+- Paragraphs with inline formatting (bold, italic, code, links)
+- Bullet and numbered lists
+- Code blocks (indented by 4 spaces inside the YAML literal block scalar)
+- Images and links
+
+Nested `ui:` components inside step content are **not supported in v1** and are deferred to v2.
+
+## Accessibility
+
+- Steps render as an ordered list (`<ol>`) for semantic structure.
+- Each step's `status` is communicated via `aria-current="step"` for the active step.
+- Completed steps include a visually hidden "completed" label for screen readers.
+- The step title is rendered as a heading element for landmark navigation.

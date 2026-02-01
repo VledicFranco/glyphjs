@@ -3,6 +3,90 @@ title: Table
 description: Render structured data as accessible, styled tables.
 ---
 
-Table component documentation coming soon.
+The **Table** component (`ui:table`) renders structured data as an interactive, accessible HTML table with optional sorting, filtering, and aggregation. Define columns with types and features, then provide row data as key-value records.
 
-This page will cover usage, data formats, and examples for the Table component.
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `columns` | `Column[]` | Yes | -- | Column definitions that control headers, types, and interactive features. |
+| `rows` | `Record<string, unknown>[]` | Yes | -- | An array of data objects. Each object's keys correspond to column `key` values. |
+| `aggregation` | `Aggregation[]` | No | -- | Optional aggregation functions computed over column data. |
+
+### Column object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `key` | `string` | Yes | -- | The data key used to look up values from each row object. |
+| `label` | `string` | Yes | -- | The display text shown in the column header. |
+| `sortable` | `boolean` | No | -- | Whether the column supports click-to-sort. |
+| `filterable` | `boolean` | No | -- | Whether the column supports text-based filtering. |
+| `type` | `"string" \| "number" \| "date" \| "boolean"` | No | -- | The data type hint used for sorting and display formatting. |
+
+### Aggregation object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `column` | `string` | Yes | -- | The column `key` to aggregate. Must match a defined column. |
+| `function` | `"sum" \| "avg" \| "count" \| "min" \| "max"` | Yes | -- | The aggregation function to compute. |
+
+## Example
+
+````markdown
+```ui:table
+columns:
+  - key: name
+    label: Employee
+    sortable: true
+    filterable: true
+    type: string
+  - key: role
+    label: Role
+    filterable: true
+    type: string
+  - key: salary
+    label: Salary (USD)
+    sortable: true
+    type: number
+rows:
+  - name: Alice
+    role: Engineer
+    salary: 120000
+  - name: Bob
+    role: Designer
+    salary: 105000
+  - name: Carol
+    role: Engineer
+    salary: 130000
+  - name: Dave
+    role: PM
+    salary: 115000
+aggregation:
+  - column: salary
+    function: avg
+  - column: name
+    function: count
+```
+````
+
+## Sorting and filtering
+
+- **Sorting**: When `sortable: true` is set on a column, clicking the column header toggles between ascending and descending sort order. The `type` hint determines sort behavior (lexicographic for strings, numeric for numbers, chronological for dates).
+- **Filtering**: When `filterable: true` is set on a column, a text input appears below the header. Rows are filtered client-side as the user types.
+
+## Aggregation
+
+Aggregation functions are displayed in a summary row at the bottom of the table:
+
+- **sum** -- Total of all numeric values in the column.
+- **avg** -- Arithmetic mean of all numeric values.
+- **count** -- Number of rows (works with any column type).
+- **min** / **max** -- Minimum or maximum value.
+
+## Accessibility
+
+- The table renders as a semantic `<table>` element with `<thead>`, `<tbody>`, and `<tfoot>` sections.
+- Column headers use `<th scope="col">` for proper screen-reader association.
+- Sortable columns include `aria-sort` attributes (`"ascending"`, `"descending"`, or `"none"`).
+- Filter inputs are labelled with `aria-label` referencing the column name.
+- The aggregation summary row is marked with `aria-label="Summary"` for discoverability.

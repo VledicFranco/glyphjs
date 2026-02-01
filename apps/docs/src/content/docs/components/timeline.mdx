@@ -3,6 +3,95 @@ title: Timeline
 description: Present chronological events on a visual timeline.
 ---
 
-Timeline component documentation coming soon.
+The **Timeline** component (`ui:timeline`) renders a sequence of chronological events on a visual timeline. Each event has a date, title, and optional description and type. The timeline can be oriented vertically or horizontally.
 
-This page will cover usage, data formats, and examples for the Timeline component.
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `events` | `Event[]` | Yes | -- | An array of event objects to display on the timeline. |
+| `orientation` | `"vertical" \| "horizontal"` | No | -- | Layout direction of the timeline. |
+
+### Event object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `date` | `string` | Yes | -- | The date or datetime string for the event (e.g. "2026-01-15", "Q1 2026"). |
+| `title` | `string` | Yes | -- | The heading text for the event. |
+| `description` | `string` | No | -- | Additional detail text shown beneath the title. |
+| `type` | `string` | No | -- | A semantic type used for color-coding and grouping (e.g. "release", "milestone", "breaking-change"). |
+
+## Orientation
+
+- **vertical** -- Events are stacked top-to-bottom with dates on the left and content on the right. Best for long timelines and mobile layouts.
+- **horizontal** -- Events are arranged left-to-right along a horizontal axis. Best for short timelines and wide viewports.
+
+When `orientation` is omitted, the renderer chooses a default based on the viewport and number of events.
+
+## Example
+
+````markdown
+```ui:timeline
+events:
+  - date: "2026-01-15"
+    title: Project kickoff
+    description: Initial RFC published and repository created.
+    type: milestone
+  - date: "2026-01-22"
+    title: Parser v0.1
+    description: First working remark plugin for ui: fenced blocks.
+    type: release
+  - date: "2026-01-29"
+    title: Compiler v0.1
+    description: Schema validation and IR generation complete.
+    type: release
+  - date: "2026-02-05"
+    title: Runtime v0.1
+    description: React rendering of all 8 built-in components.
+    type: release
+  - date: "2026-02-12"
+    title: Public beta
+    description: First public release with documentation and playground.
+    type: milestone
+orientation: vertical
+```
+````
+
+### Horizontal timeline
+
+````markdown
+```ui:timeline
+events:
+  - date: Q1 2026
+    title: Alpha
+    type: release
+  - date: Q2 2026
+    title: Beta
+    type: release
+  - date: Q3 2026
+    title: GA
+    type: milestone
+orientation: horizontal
+```
+````
+
+## Event types
+
+The `type` field is a free-form string that controls the visual style of the event marker. While any string is accepted, the following conventions are recommended:
+
+| Type | Suggested use |
+|---|---|
+| `release` | Software releases and version launches. |
+| `milestone` | Major project milestones and deadlines. |
+| `breaking-change` | Backward-incompatible changes. |
+| `deprecation` | Feature deprecation notices. |
+| `event` | General events. |
+
+Custom type strings receive a default neutral style.
+
+## Accessibility
+
+- The timeline renders as a semantic ordered list (`<ol>`) with each event as a list item.
+- Dates are wrapped in `<time>` elements with machine-readable `datetime` attributes when the date string is ISO 8601 compatible.
+- Event markers are decorative and hidden from screen readers with `aria-hidden="true"`.
+- The timeline orientation does not affect the reading order -- events are always announced in chronological order.

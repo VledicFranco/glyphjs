@@ -3,6 +3,135 @@ title: Chart
 description: Render data visualizations including bar, line, and pie charts.
 ---
 
-Chart component documentation coming soon.
+The **Chart** component (`ui:chart`) renders data visualizations using D3. It supports line charts, bar charts, area charts, and OHLC (open-high-low-close) financial charts. Data is provided as named series of key-value records.
 
-This page will cover usage, chart types, data formats, and examples for the Chart component.
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `type` | `"line" \| "bar" \| "area" \| "ohlc"` | Yes | -- | The chart visualization type. |
+| `series` | `Series[]` | Yes | -- | An array of data series to plot. |
+| `xAxis` | `Axis` | No | -- | Configuration for the horizontal axis. |
+| `yAxis` | `Axis` | No | -- | Configuration for the vertical axis. |
+| `legend` | `boolean` | No | -- | Whether to display a legend identifying each series. |
+
+### Series object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `name` | `string` | Yes | -- | Display name for the series, shown in the legend and tooltips. |
+| `data` | `Record<string, number \| string>[]` | Yes | -- | An array of data point objects. Keys must match the axis `key` values. |
+
+### Axis object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `key` | `string` | Yes | -- | The data key in each record that maps to this axis. |
+| `label` | `string` | No | -- | Display label for the axis. |
+
+## Chart types
+
+- **line** -- Connects data points with lines. Best for trends over continuous intervals.
+- **bar** -- Renders vertical bars for each data point. Best for comparing discrete categories.
+- **area** -- Like a line chart but with a filled region beneath the line. Emphasizes volume.
+- **ohlc** -- Open-high-low-close candlestick chart for financial data. Each data point must include `open`, `high`, `low`, and `close` keys.
+
+## Example
+
+### Line chart
+
+````markdown
+```ui:chart
+type: line
+series:
+  - name: Revenue
+    data:
+      - month: Jan
+        value: 4200
+      - month: Feb
+        value: 5100
+      - month: Mar
+        value: 6800
+      - month: Apr
+        value: 5900
+  - name: Expenses
+    data:
+      - month: Jan
+        value: 3100
+      - month: Feb
+        value: 3400
+      - month: Mar
+        value: 3800
+      - month: Apr
+        value: 3600
+xAxis:
+  key: month
+  label: Month
+yAxis:
+  key: value
+  label: Amount (USD)
+legend: true
+```
+````
+
+### Bar chart
+
+````markdown
+```ui:chart
+type: bar
+series:
+  - name: Downloads
+    data:
+      - package: runtime
+        count: 12400
+      - package: schemas
+        count: 9800
+      - package: compiler
+        count: 7200
+      - package: parser
+        count: 6500
+xAxis:
+  key: package
+  label: Package
+yAxis:
+  key: count
+  label: Weekly Downloads
+```
+````
+
+### OHLC chart
+
+````markdown
+```ui:chart
+type: ohlc
+series:
+  - name: ACME Corp
+    data:
+      - date: "2026-01-27"
+        open: 142
+        high: 148
+        low: 140
+        close: 146
+      - date: "2026-01-28"
+        open: 146
+        high: 151
+        low: 144
+        close: 149
+      - date: "2026-01-29"
+        open: 149
+        high: 153
+        low: 147
+        close: 150
+xAxis:
+  key: date
+  label: Date
+```
+````
+
+## Accessibility
+
+- Charts render inside an SVG with `role="img"` and a descriptive `aria-label` summarizing the chart type and series names.
+- A visually hidden data table is provided as an alternative representation for screen readers.
+- Tooltips on hover/focus display exact data values.
+- Color palettes are chosen to meet WCAG 2.1 AA contrast ratios, and series are distinguishable by pattern (dashed, dotted) in addition to color.
+- The `prefers-reduced-motion` media query disables chart entry animations.
