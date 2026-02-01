@@ -14,6 +14,12 @@ import { parse as parseYaml } from 'yaml';
 import { translateNode } from './ast-to-ir.js';
 import type { TranslationContext } from './ast-to-ir.js';
 import { createDiagnostic } from './diagnostics.js';
+import {
+  extractAllInlineReferences,
+  resolveReferences,
+  validateGlyphIdUniqueness,
+} from './references.js';
+import { compileContainerBlocks, validateContainerBlocks } from './containers.js';
 
 // ─── Public Interface ────────────────────────────────────────
 
@@ -30,15 +36,20 @@ export interface CompileOptions {
  * Compile a Markdown string into Glyph IR.
  *
  * Steps:
- * 1. Parse the markdown via `parseGlyphMarkdown`
- * 2. Extract frontmatter metadata and layout hints
- * 3. Walk the AST and translate each node to IR blocks
- * 4. Validate ui: blocks against Zod schemas
- * 5. Generate content-addressed block IDs
- * 6. Generate the document ID
- * 7. Resolve block ID collisions
- * 8. Resolve references
- * 9. Return CompilationResult with IR, diagnostics, and hasErrors flag
+ * 1.  Parse the markdown via `parseGlyphMarkdown`
+ * 2.  Extract frontmatter metadata and layout hints
+ * 3.  Walk the AST and translate each node to IR blocks
+ * 4.  Validate ui: blocks against Zod schemas
+ * 5.  Compile container blocks (ui:tabs, ui:steps) — recursively parse content
+ * 6.  Validate container block data
+ * 7.  Generate content-addressed block IDs
+ * 8.  Generate the document ID
+ * 9.  Resolve block ID collisions
+ * 10. Validate glyph-id uniqueness
+ * 11. Extract inline references from `[text](#glyph:block-id)` links
+ * 12. Resolve all references (from refs arrays and inline links)
+ * 13. Infer metadata from content if not in frontmatter
+ * 14. Return CompilationResult with IR, diagnostics, and hasErrors flag
  *
  * Uses a collect-all-errors strategy: IR is always produced, even when errors exist.
  */
@@ -83,10 +94,16 @@ export function compile(markdown: string, options?: CompileOptions): Compilation
     }
   }
 
-  // 6. Infer metadata from content if not in frontmatter
+  // 6. Compile container blocks (ui:tabs, ui:steps) — recursively parse content fields
+  compileContainerBlocks(blocks, ctx);
+
+  // 7. Validate container block data
+  validateContainerBlocks(blocks, diagnostics);
+
+  // 8. Infer metadata from content if not in frontmatter
   inferMetadata(metadata, blocks);
 
-  // 7. Resolve block ID collisions
+  // 9. Resolve block ID collisions
   const blockIds = blocks.map((b) => b.id);
   const resolvedIds = resolveBlockIdCollisions(blockIds);
   for (let i = 0; i < blocks.length; i++) {
@@ -97,10 +114,17 @@ export function compile(markdown: string, options?: CompileOptions): Compilation
     }
   }
 
-  // 8. Resolve references
+  // 10. Validate glyph-id uniqueness
+  validateGlyphIdUniqueness(ctx.blockIdMap, blocks, diagnostics);
+
+  // 11. Extract inline references from [text](#glyph:block-id) links
+  const inlineRefs = extractAllInlineReferences(blocks, documentId);
+  references.push(...inlineRefs);
+
+  // 12. Resolve all references (from refs arrays and inline links)
   resolveReferences(references, blocks, diagnostics);
 
-  // 9. Build the IR
+  // 13. Build the IR
   const ir: GlyphIR = {
     version: '1.0.0',
     id: documentId,
@@ -250,34 +274,3 @@ function inferMetadata(metadata: DocumentMetadata, blocks: Block[]): void {
   }
 }
 
-// ─── Reference Resolution ────────────────────────────────────
-
-/**
- * Resolve references by checking if target block IDs exist in the document.
- * Marks unresolved references and adds warning diagnostics.
- */
-function resolveReferences(
-  references: Reference[],
-  blocks: Block[],
-  diagnostics: Diagnostic[],
-): void {
-  const blockIdSet = new Set(blocks.map((b) => b.id));
-
-  for (const ref of references) {
-    // Check if the target is a known block ID
-    if (blockIdSet.has(ref.targetBlockId)) {
-      ref.unresolved = false;
-    } else {
-      // Target was not found — leave as unresolved and add a warning
-      ref.unresolved = true;
-      diagnostics.push(
-        createDiagnostic(
-          'compiler',
-          'warning',
-          'UNRESOLVED_REFERENCE',
-          `Reference target "${ref.targetBlockId}" was not found in the document.`,
-        ),
-      );
-    }
-  }
-}

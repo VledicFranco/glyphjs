@@ -18,3 +18,18 @@ export { convertPhrasingContent } from './inline.js';
 // ─── AST-to-IR Translation ──────────────────────────────────
 export { translateNode } from './ast-to-ir.js';
 export type { TranslationContext } from './ast-to-ir.js';
+
+// ─── Reference Resolution ────────────────────────────────────
+export {
+  extractInlineReferences,
+  extractAllInlineReferences,
+  resolveReferences,
+  validateGlyphIdUniqueness,
+} from './references.js';
+
+// ─── Container Block Compilation ─────────────────────────────
+export {
+  compileContainerBlocks,
+  hasNestedUiBlocks,
+  validateContainerBlocks,
+} from './containers.js';
