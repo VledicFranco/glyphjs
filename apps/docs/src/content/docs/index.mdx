@@ -1,0 +1,52 @@
+---
+title: Glyph JS
+description: A Markdown-driven UI component framework for rich, interactive documents.
+template: splash
+hero:
+  tagline: Write Markdown. Render rich, interactive UI components.
+  actions:
+    - text: Get Started
+      link: /getting-started/
+      icon: right-arrow
+    - text: View on GitHub
+      link: https://github.com/VledicFranco/glyphjs
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid } from '@astrojs/starlight/components';
+
+## What is Glyph JS?
+
+Glyph JS is a Markdown-driven UI component framework that transforms plain Markdown into rich, interactive documents. Authors write familiar Markdown syntax and Glyph JS compiles it into a structured Intermediate Representation (IR) that renders as polished UI components.
+
+## Key Features
+
+<CardGrid>
+  <Card title="Markdown-First Authoring" icon="pencil">
+    Write content in standard Markdown with lightweight extensions for advanced components like tabs, callouts, and charts.
+  </Card>
+  <Card title="Rich Component Library" icon="puzzle">
+    Built-in components for callouts, tabs, steps, tables, graphs, relations, charts, and timelines.
+  </Card>
+  <Card title="Structured IR" icon="document">
+    A well-defined Intermediate Representation makes it easy to build custom renderers, plugins, and tooling.
+  </Card>
+  <Card title="Pluggable Architecture" icon="setting">
+    Extend the pipeline with custom plugins for parsing, transforming, and rendering content.
+  </Card>
+  <Card title="Themeable" icon="sun">
+    Full theming support lets you match your brand and design system out of the box.
+  </Card>
+  <Card title="Framework Agnostic" icon="rocket">
+    Core parsing and IR are framework-agnostic, with a first-class React renderer included.
+  </Card>
+</CardGrid>
+
+## Quick Links
+
+- [Getting Started](/getting-started/) -- Install Glyph JS and render your first document.
+- [Components](/components/) -- Browse the full component library.
+- [IR Spec](/reference/ir-spec/) -- Understand the Intermediate Representation.
+- [Plugin API](/reference/plugin-api/) -- Build custom plugins.
+- [Playground](/playground/) -- Try Glyph JS in your browser.
