@@ -1,0 +1,29 @@
+{
+  "type": "root",
+  "children": [
+    {
+      "type": "glyphUIBlock",
+      "componentType": "graph",
+      "rawYaml": "title: My Graph\nnodes:\n  - id: a\n    label: Node A\n  - id: b\n    label: Node B\nedges:\n  - from: a\n    to: b",
+      "parsedData": {
+        "title": "My Graph",
+        "nodes": [
+          {
+            "id": "a",
+            "label": "Node A"
+          },
+          {
+            "id": "b",
+            "label": "Node B"
+          }
+        ],
+        "edges": [
+          {
+            "from": "a",
+            "to": "b"
+          }
+        ]
+      }
+    }
+  ]
+}

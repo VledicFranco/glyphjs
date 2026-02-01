@@ -1,0 +1,17 @@
+{
+  "type": "root",
+  "children": [
+    {
+      "type": "glyphUIBlock",
+      "componentType": "table",
+      "rawYaml": "glyph-id: my-table-001\ncolumns:\n  - Name\n  - Value",
+      "parsedData": {
+        "columns": [
+          "Name",
+          "Value"
+        ]
+      },
+      "glyphId": "my-table-001"
+    }
+  ]
+}

@@ -1,0 +1,12 @@
+{
+  "type": "root",
+  "children": [
+    {
+      "type": "glyphUIBlock",
+      "componentType": "chart",
+      "rawYaml": ": invalid: yaml: {{{\n  bad indentation\n    also broken",
+      "parsedData": null,
+      "yamlError": "Nested mappings are not allowed in compact mappings at line 1, column 3:\n\n: invalid: yaml: {{{\n  ^\n"
+    }
+  ]
+}

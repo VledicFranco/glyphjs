@@ -1,0 +1,40 @@
+{
+  "type": "root",
+  "children": [
+    {
+      "type": "heading",
+      "depth": 1,
+      "children": [
+        {
+          "type": "text",
+          "value": "Dashboard"
+        }
+      ]
+    },
+    {
+      "type": "glyphUIBlock",
+      "componentType": "graph",
+      "rawYaml": "title: Network",
+      "parsedData": {
+        "title": "Network"
+      }
+    },
+    {
+      "type": "paragraph",
+      "children": [
+        {
+          "type": "text",
+          "value": "Some text between blocks."
+        }
+      ]
+    },
+    {
+      "type": "glyphUIBlock",
+      "componentType": "table",
+      "rawYaml": "title: Data Table",
+      "parsedData": {
+        "title": "Data Table"
+      }
+    }
+  ]
+}

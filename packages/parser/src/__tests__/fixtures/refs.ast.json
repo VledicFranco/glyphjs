@@ -1,0 +1,23 @@
+{
+  "type": "root",
+  "children": [
+    {
+      "type": "glyphUIBlock",
+      "componentType": "graph",
+      "rawYaml": "glyph-id: network-graph\nrefs:\n  - target: data-table\n    type: depends-on\n  - target: summary-block\n    label: summarizes\n    bidirectional: true",
+      "parsedData": {},
+      "glyphId": "network-graph",
+      "refs": [
+        {
+          "target": "data-table",
+          "type": "depends-on"
+        },
+        {
+          "target": "summary-block",
+          "label": "summarizes",
+          "bidirectional": true
+        }
+      ]
+    }
+  ]
+}
