@@ -1,49 +1,18 @@
-import type {
-  GlyphComponentDefinition,
-  BlockProps,
-  ComponentType,
-} from '@glyphjs/types';
+import { PluginRegistry } from './plugins/registry.js';
 
 /**
  * Component registry for managing block type renderers.
  *
- * Holds `ui:*` component definitions (registered via plugins)
- * and override renderers for standard block types.
+ * Re-exported from the plugin system for backward compatibility.
+ * The `PluginRegistry` adds validation on registration, theme
+ * defaults merging, and change notification.
  */
-export class ComponentRegistry {
-  private components = new Map<string, GlyphComponentDefinition>();
-  private overrides = new Map<string, ComponentType<BlockProps>>();
+export { PluginRegistry as ComponentRegistry } from './plugins/registry.js';
 
-  /** Register a `ui:*` component plugin definition. */
-  registerComponent(definition: GlyphComponentDefinition): void {
-    this.components.set(definition.type, definition);
-  }
-
-  /** Bulk-register an array of component definitions. */
-  registerAll(definitions: GlyphComponentDefinition[]): void {
-    for (const def of definitions) {
-      this.registerComponent(def);
-    }
-  }
-
-  /** Set override renderers (keyed by block type). */
-  setOverrides(
-    overrides: Partial<Record<string, ComponentType<BlockProps>>>,
-  ): void {
-    for (const [type, renderer] of Object.entries(overrides)) {
-      if (renderer) {
-        this.overrides.set(type, renderer);
-      }
-    }
-  }
-
-  /** Get a registered `ui:*` component definition. */
-  getRenderer(blockType: string): GlyphComponentDefinition | undefined {
-    return this.components.get(blockType);
-  }
-
-  /** Get an override renderer for any block type. */
-  getOverride(blockType: string): ComponentType<BlockProps> | undefined {
-    return this.overrides.get(blockType);
-  }
+/**
+ * Create a new ComponentRegistry (PluginRegistry) instance.
+ * Convenience helper for consumers that prefer a factory over `new`.
+ */
+export function createRegistry(): PluginRegistry {
+  return new PluginRegistry();
 }

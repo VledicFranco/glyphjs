@@ -25,3 +25,50 @@ export type { RuntimeContextValue, RuntimeProviderProps } from './context.js';
 
 // Registry
 export { ComponentRegistry } from './registry.js';
+
+// Plugin system
+export {
+  validateComponentDefinition,
+  resolveComponentProps,
+  PluginRegistry,
+} from './plugins/index.js';
+export type {
+  ValidationResult,
+  RegistryChangeListener,
+} from './plugins/index.js';
+
+// Layout engine
+export {
+  LayoutProvider,
+  useLayout,
+  DocumentLayout,
+  DashboardLayout,
+  PresentationLayout,
+} from './layout/index.js';
+
+// Built-in renderers
+export {
+  InlineRenderer,
+  GlyphHeading,
+  GlyphParagraph,
+  GlyphList,
+  GlyphCodeBlock,
+  GlyphBlockquote,
+  GlyphImage,
+  GlyphThematicBreak,
+  GlyphRawHtml,
+  builtInRenderers,
+} from './renderers/index.js';
+
+// Theme system
+export {
+  lightTheme,
+  darkTheme,
+  ThemeProvider,
+  useGlyphTheme,
+  resolveTheme,
+  mergeThemeDefaults,
+  createResolveVar,
+  isDarkTheme,
+} from './theme/index.js';
+export type { ThemeProviderProps } from './theme/index.js';

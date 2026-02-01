@@ -9,6 +9,8 @@ import type {
 import { useRuntime, useReferences } from './context.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
 import { FallbackRenderer } from './FallbackRenderer.js';
+import { builtInRenderers } from './renderers/index.js';
+import { resolveComponentProps } from './plugins/resolve-props.js';
 
 // ─── Props ────────────────────────────────────────────────────
 
@@ -23,8 +25,9 @@ function BlockDispatch({
   block,
   layout,
 }: BlockRendererProps): ReactNode {
-  const { registry, theme, onNavigate } = useRuntime();
-  const { incomingRefs, outgoingRefs } = useReferences(block.id);
+  const { registry, references, theme, onNavigate } = useRuntime();
+  // Keep the hook call for consistent hook ordering
+  useReferences(block.id);
 
   // 1. Check for an override renderer
   const overrideDef = registry.getOverride(block.type);
@@ -37,32 +40,31 @@ function BlockDispatch({
   // 2. Check for a registered ui:* component definition
   const definition = registry.getRenderer(block.type);
   if (definition) {
-    // Validate data through the component's schema
-    const parseResult = definition.schema.safeParse(block.data);
-    const data = parseResult.success ? parseResult.data : block.data;
-
     const handleNavigate = (ref: Reference) => {
       // Find the target block — caller receives the ref and target
       onNavigate(ref, block);
     };
 
+    // Use resolveComponentProps to assemble the full typed props
+    const props = resolveComponentProps(
+      block,
+      definition,
+      references,
+      handleNavigate,
+      theme,
+      layout,
+    );
+
     // Cast from the generic ComponentType (returns unknown) to React's ComponentType
     const Renderer = definition.render as ReactComponentType<GlyphComponentProps>;
-    return (
-      <Renderer
-        data={data}
-        block={block}
-        outgoingRefs={outgoingRefs}
-        incomingRefs={incomingRefs}
-        onNavigate={handleNavigate}
-        theme={theme}
-        layout={layout}
-      />
-    );
+    return <Renderer {...props} />;
   }
 
-  // 3. Built-in standard renderers will be added in issue #19.
-  //    For now, all standard block types also hit the fallback.
+  // 3. Built-in standard renderers for standard Markdown block types
+  const BuiltIn = builtInRenderers[block.type];
+  if (BuiltIn) {
+    return <BuiltIn block={block} layout={layout} />;
+  }
 
   // 4. Fallback for unknown/unregistered block types
   return <FallbackRenderer block={block} />;
