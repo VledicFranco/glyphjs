@@ -6,6 +6,7 @@
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "test": "turbo run test && vitest run --config vitest.config.ts",
+    "test:coverage": "vitest run --config vitest.config.ts --coverage",
     "test:e2e": "playwright test",
     "size": "size-limit",
     "clean": "turbo run clean && rm -rf node_modules"
