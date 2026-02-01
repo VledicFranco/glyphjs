@@ -520,6 +520,8 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
       />
       <div
         ref={tooltipRef}
+        role="tooltip"
+        aria-live="polite"
         style={{
           display: 'none',
           position: 'absolute',

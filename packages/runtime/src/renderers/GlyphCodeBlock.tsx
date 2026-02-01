@@ -13,7 +13,7 @@ export function GlyphCodeBlock({ block }: BlockProps): ReactNode {
   const language = data.language ?? undefined;
 
   return (
-    <pre data-language={language}>
+    <pre data-language={language} aria-label={language ? `Code block (${language})` : 'Code block'}>
       <code className={language ? `language-${language}` : undefined}>
         {data.value}
       </code>

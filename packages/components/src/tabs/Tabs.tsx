@@ -127,7 +127,8 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
                 fontSize: '0.9rem',
                 fontWeight: isActive ? 600 : 400,
                 transition: 'color 0.15s, border-color 0.15s, background 0.15s',
-                outline: 'none',
+                outline: 'revert',
+                outlineOffset: '2px',
               }}
             >
               {tab.label}

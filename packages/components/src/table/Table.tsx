@@ -194,7 +194,7 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
         {hasFilters && (
           <tr>
             {columns.map((col) => (
-              <th key={`filter-${col.key}`} style={{ padding: '4px 8px' }}>
+              <th key={`filter-${col.key}`} scope="col" style={{ padding: '4px 8px', fontWeight: 'normal' }}>
                 {col.filterable ? (
                   <input
                     type="text"
@@ -211,7 +211,13 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                       boxSizing: 'border-box',
                     }}
                   />
-                ) : null}
+                ) : (
+                  <span
+                    style={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}
+                  >
+                    {`No filter for ${col.label}`}
+                  </span>
+                )}
               </th>
             ))}
           </tr>

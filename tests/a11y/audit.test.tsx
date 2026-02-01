@@ -1,0 +1,1028 @@
+// @vitest-environment jsdom
+/**
+ * Accessibility audit tests — axe-core integration
+ *
+ * Verifies that every Glyph component meets WCAG 2.1 AA standards by running
+ * automated axe-core checks and validating expected ARIA roles, keyboard
+ * focusability, and screen-reader fallbacks for D3-rendered components.
+ */
+import { describe, it, expect } from 'vitest';
+import { render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { axe, toHaveNoViolations } from 'jest-axe';
+import '@testing-library/jest-dom';
+
+// ─── Components ────────────────────────────────────────────────
+import { Callout } from '../../packages/components/src/callout/Callout';
+import type { CalloutData } from '../../packages/components/src/callout/Callout';
+import { Steps } from '../../packages/components/src/steps/Steps';
+import type { StepsData } from '../../packages/components/src/steps/Steps';
+import { Table } from '../../packages/components/src/table/Table';
+import type { TableData } from '../../packages/components/src/table/Table';
+import { Tabs } from '../../packages/components/src/tabs/Tabs';
+import type { TabsData } from '../../packages/components/src/tabs/Tabs';
+import { Timeline } from '../../packages/components/src/timeline/Timeline';
+import type { TimelineData } from '../../packages/components/src/timeline/Timeline';
+import { Graph } from '../../packages/components/src/graph/Graph';
+import type { GraphData } from '../../packages/components/src/graph/Graph';
+import { Chart } from '../../packages/components/src/chart/Chart';
+import type { ChartData } from '../../packages/components/src/chart/Chart';
+import { Relation } from '../../packages/components/src/relation/Relation';
+import type { RelationData } from '../../packages/components/src/relation/Relation';
+
+// ─── Renderers ─────────────────────────────────────────────────
+import { GlyphHeading } from '../../packages/runtime/src/renderers/GlyphHeading';
+import { GlyphParagraph } from '../../packages/runtime/src/renderers/GlyphParagraph';
+import { GlyphList } from '../../packages/runtime/src/renderers/GlyphList';
+import { GlyphCodeBlock } from '../../packages/runtime/src/renderers/GlyphCodeBlock';
+import { GlyphBlockquote } from '../../packages/runtime/src/renderers/GlyphBlockquote';
+import { GlyphImage } from '../../packages/runtime/src/renderers/GlyphImage';
+import { GlyphThematicBreak } from '../../packages/runtime/src/renderers/GlyphThematicBreak';
+
+// ─── Test Helpers ──────────────────────────────────────────────
+import type { GlyphComponentProps, BlockProps, Block, LayoutHints, GlyphThemeContext } from '../../packages/types/src/index';
+
+// ─── jsdom Polyfills ───────────────────────────────────────────
+// ResizeObserver is not available in jsdom; provide a minimal stub.
+if (typeof globalThis.ResizeObserver === 'undefined') {
+  globalThis.ResizeObserver = class ResizeObserver {
+    observe() {}
+    unobserve() {}
+    disconnect() {}
+  } as unknown as typeof globalThis.ResizeObserver;
+}
+
+expect.extend(toHaveNoViolations);
+
+// ─── Mock Factories ────────────────────────────────────────────
+
+function mockTheme(isDark = false): GlyphThemeContext {
+  return { name: isDark ? 'dark' : 'light', resolveVar: () => '', isDark };
+}
+
+function mockLayout(): LayoutHints {
+  return { mode: 'document' };
+}
+
+function mockComponentProps<T>(data: T, type = 'ui:test'): GlyphComponentProps<T> {
+  return {
+    data,
+    block: {
+      id: 'test-block',
+      type: type as GlyphComponentProps<T>['block']['type'],
+      data,
+      position: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+    },
+    outgoingRefs: [],
+    incomingRefs: [],
+    onNavigate: () => {},
+    theme: mockTheme(),
+    layout: mockLayout(),
+  };
+}
+
+function mockBlockProps(data: unknown, type = 'paragraph'): BlockProps {
+  return {
+    block: {
+      id: `block-${type}`,
+      type,
+      data,
+      position: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+    } as Block,
+    layout: mockLayout(),
+  };
+}
+
+// ────────────────────────────────────────────────────────────────
+// SECTION 1: axe-core violation tests
+// ────────────────────────────────────────────────────────────────
+
+describe('Accessibility: axe-core automated checks', () => {
+  it('Callout has no axe-core violations', async () => {
+    const props = mockComponentProps<CalloutData>(
+      { type: 'info', title: 'Note', content: 'Important information' },
+      'ui:callout',
+    );
+    const { container } = render(<Callout {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Callout (warning variant) has no axe-core violations', async () => {
+    const props = mockComponentProps<CalloutData>(
+      { type: 'warning', content: 'Be careful' },
+      'ui:callout',
+    );
+    const { container } = render(<Callout {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Steps has no axe-core violations', async () => {
+    const props = mockComponentProps<StepsData>(
+      {
+        steps: [
+          { title: 'Step 1', content: 'First step', status: 'completed' },
+          { title: 'Step 2', content: 'Second step', status: 'active' },
+          { title: 'Step 3', content: 'Third step', status: 'pending' },
+        ],
+      },
+      'ui:steps',
+    );
+    const { container } = render(<Steps {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Table has no axe-core violations', async () => {
+    const props = mockComponentProps<TableData>(
+      {
+        columns: [
+          { key: 'name', label: 'Name', sortable: true },
+          { key: 'age', label: 'Age', sortable: true, type: 'number' },
+        ],
+        rows: [
+          { name: 'Alice', age: 30 },
+          { name: 'Bob', age: 25 },
+        ],
+      },
+      'ui:table',
+    );
+    const { container } = render(<Table {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Table with filters has no axe-core violations', async () => {
+    const props = mockComponentProps<TableData>(
+      {
+        columns: [
+          { key: 'name', label: 'Name', sortable: true, filterable: true },
+          { key: 'age', label: 'Age', type: 'number' },
+        ],
+        rows: [
+          { name: 'Alice', age: 30 },
+          { name: 'Bob', age: 25 },
+        ],
+      },
+      'ui:table',
+    );
+    const { container } = render(<Table {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Tabs has no axe-core violations', async () => {
+    const props = mockComponentProps<TabsData>(
+      {
+        tabs: [
+          { label: 'Tab One', content: 'Content for tab one' },
+          { label: 'Tab Two', content: 'Content for tab two' },
+        ],
+      },
+      'ui:tabs',
+    );
+    const { container } = render(<Tabs {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Timeline has no axe-core violations', async () => {
+    const props = mockComponentProps<TimelineData>(
+      {
+        events: [
+          { date: '2024-01-01', title: 'New Year', description: 'Celebration' },
+          { date: '2024-06-15', title: 'Mid Year', description: 'Review' },
+        ],
+      },
+      'ui:timeline',
+    );
+    const { container } = render(<Timeline {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Chart has no axe-core violations', async () => {
+    const props = mockComponentProps<ChartData>(
+      {
+        type: 'bar',
+        series: [
+          {
+            name: 'Revenue',
+            data: [
+              { x: 'Q1', y: 100 },
+              { x: 'Q2', y: 200 },
+            ],
+          },
+        ],
+        xAxis: { key: 'x', label: 'Quarter' },
+        yAxis: { key: 'y', label: 'Revenue ($)' },
+      },
+      'ui:chart',
+    );
+    const { container } = render(<Chart {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Graph has no axe-core violations', async () => {
+    const props = mockComponentProps<GraphData>(
+      {
+        type: 'dag',
+        nodes: [
+          { id: 'a', label: 'Node A' },
+          { id: 'b', label: 'Node B' },
+        ],
+        edges: [{ from: 'a', to: 'b' }],
+      },
+      'ui:graph',
+    );
+    const { container } = render(<Graph {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Relation has no axe-core violations', async () => {
+    const props = mockComponentProps<RelationData>(
+      {
+        entities: [
+          { id: 'users', label: 'Users', attributes: [{ name: 'id', type: 'int', primaryKey: true }] },
+          { id: 'posts', label: 'Posts', attributes: [{ name: 'id', type: 'int', primaryKey: true }] },
+        ],
+        relationships: [
+          { from: 'users', to: 'posts', label: 'writes', cardinality: '1:N' },
+        ],
+      },
+      'ui:relation',
+    );
+    const { container } = render(<Relation {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  // ─── Standard renderers ─────────────────────────────────────
+
+  it('GlyphHeading has no axe-core violations', async () => {
+    const props = mockBlockProps(
+      { depth: 2, children: [{ type: 'text', value: 'Hello World' }] },
+      'heading',
+    );
+    const { container } = render(<GlyphHeading {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('GlyphParagraph has no axe-core violations', async () => {
+    const props = mockBlockProps(
+      { children: [{ type: 'text', value: 'Some paragraph text.' }] },
+      'paragraph',
+    );
+    const { container } = render(<GlyphParagraph {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('GlyphList has no axe-core violations', async () => {
+    const props = mockBlockProps(
+      {
+        ordered: true,
+        items: [
+          { children: [{ type: 'text', value: 'Item one' }] },
+          { children: [{ type: 'text', value: 'Item two' }] },
+        ],
+      },
+      'list',
+    );
+    const { container } = render(<GlyphList {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('GlyphCodeBlock has no axe-core violations', async () => {
+    const props = mockBlockProps(
+      { language: 'javascript', value: 'const x = 1;' },
+      'code',
+    );
+    const { container } = render(<GlyphCodeBlock {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('GlyphBlockquote has no axe-core violations', async () => {
+    const props = mockBlockProps(
+      { children: [{ type: 'text', value: 'A wise quote.' }] },
+      'blockquote',
+    );
+    const { container } = render(<GlyphBlockquote {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('GlyphImage has no axe-core violations', async () => {
+    const props = mockBlockProps(
+      { src: 'https://example.com/image.png', alt: 'Example image', title: 'Example' },
+      'image',
+    );
+    const { container } = render(<GlyphImage {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('GlyphThematicBreak has no axe-core violations', async () => {
+    const props = mockBlockProps({}, 'thematic-break');
+    const { container } = render(<GlyphThematicBreak {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+});
+
+// ────────────────────────────────────────────────────────────────
+// SECTION 2: ARIA roles and attributes
+// ────────────────────────────────────────────────────────────────
+
+describe('Accessibility: ARIA roles and attributes', () => {
+  it('Callout uses role="note" with correct aria-label per variant', () => {
+    const variants: { type: CalloutData['type']; label: string }[] = [
+      { type: 'info', label: 'Information' },
+      { type: 'warning', label: 'Warning' },
+      { type: 'error', label: 'Error' },
+      { type: 'tip', label: 'Tip' },
+    ];
+
+    for (const variant of variants) {
+      const { unmount } = render(
+        <Callout {...mockComponentProps<CalloutData>({ type: variant.type, content: 'test' }, 'ui:callout')} />,
+      );
+      const note = screen.getByRole('note');
+      expect(note).toHaveAttribute('aria-label', variant.label);
+      unmount();
+    }
+  });
+
+  it('Callout icon is aria-hidden', () => {
+    const { container } = render(
+      <Callout {...mockComponentProps<CalloutData>({ type: 'info', content: 'test' }, 'ui:callout')} />,
+    );
+    const icon = container.querySelector('[aria-hidden="true"]');
+    expect(icon).toBeInTheDocument();
+  });
+
+  it('Tabs has correct WAI-ARIA roles', () => {
+    render(
+      <Tabs
+        {...mockComponentProps<TabsData>(
+          { tabs: [{ label: 'A', content: 'Content A' }, { label: 'B', content: 'Content B' }] },
+          'ui:tabs',
+        )}
+      />,
+    );
+
+    // Tablist
+    const tablist = screen.getByRole('tablist');
+    expect(tablist).toHaveAttribute('aria-label', 'Tabs');
+
+    // Tabs
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs).toHaveLength(2);
+    expect(tabs[0]).toHaveAttribute('aria-selected', 'true');
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'false');
+
+    // Tab panels
+    const tabpanels = screen.getAllByRole('tabpanel');
+    expect(tabpanels.length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('Tabs associate tab with tabpanel via aria-controls and aria-labelledby', () => {
+    render(
+      <Tabs
+        {...mockComponentProps<TabsData>(
+          { tabs: [{ label: 'A', content: 'Content A' }] },
+          'ui:tabs',
+        )}
+      />,
+    );
+    const tab = screen.getByRole('tab');
+    const panelId = tab.getAttribute('aria-controls');
+    expect(panelId).toBeTruthy();
+
+    const panel = document.getElementById(panelId!);
+    expect(panel).toBeInTheDocument();
+    expect(panel).toHaveAttribute('aria-labelledby', tab.id);
+  });
+
+  it('Table has role="grid" and scope="col" on header cells', () => {
+    const { container } = render(
+      <Table
+        {...mockComponentProps<TableData>(
+          {
+            columns: [{ key: 'name', label: 'Name' }],
+            rows: [{ name: 'Alice' }],
+          },
+          'ui:table',
+        )}
+      />,
+    );
+
+    const grid = screen.getByRole('grid');
+    expect(grid).toBeInTheDocument();
+
+    const th = container.querySelector('th[scope="col"]');
+    expect(th).toBeInTheDocument();
+  });
+
+  it('Table sortable headers have aria-sort and tabindex', () => {
+    render(
+      <Table
+        {...mockComponentProps<TableData>(
+          {
+            columns: [{ key: 'name', label: 'Name', sortable: true }],
+            rows: [{ name: 'Alice' }],
+          },
+          'ui:table',
+        )}
+      />,
+    );
+
+    const headers = screen.getAllByRole('columnheader');
+    expect(headers).toHaveLength(1);
+    expect(headers[0]).toHaveAttribute('aria-sort', 'none');
+    expect(headers[0]).toHaveAttribute('tabindex', '0');
+  });
+
+  it('Table filter inputs have aria-label', () => {
+    render(
+      <Table
+        {...mockComponentProps<TableData>(
+          {
+            columns: [{ key: 'name', label: 'Name', filterable: true }],
+            rows: [{ name: 'Alice' }],
+          },
+          'ui:table',
+        )}
+      />,
+    );
+
+    const input = screen.getByLabelText('Filter Name');
+    expect(input).toBeInTheDocument();
+  });
+
+  it('Steps uses ordered list with aria-label per step', () => {
+    const { container } = render(
+      <Steps
+        {...mockComponentProps<StepsData>(
+          {
+            steps: [
+              { title: 'Install', content: 'Run npm install', status: 'completed' },
+              { title: 'Build', content: 'Run npm build', status: 'active' },
+            ],
+          },
+          'ui:steps',
+        )}
+      />,
+    );
+
+    const list = screen.getByRole('list');
+    expect(list.tagName.toLowerCase()).toBe('ol');
+
+    const items = container.querySelectorAll('li');
+    expect(items[0]).toHaveAttribute('aria-label', expect.stringContaining('Install'));
+    expect(items[0]).toHaveAttribute('aria-label', expect.stringContaining('Completed'));
+  });
+
+  it('Steps marks active step with aria-current="step"', () => {
+    const { container } = render(
+      <Steps
+        {...mockComponentProps<StepsData>(
+          {
+            steps: [
+              { title: 'Step 1', content: 'Done', status: 'completed' },
+              { title: 'Step 2', content: 'In progress', status: 'active' },
+            ],
+          },
+          'ui:steps',
+        )}
+      />,
+    );
+
+    const activeItem = container.querySelector('[aria-current="step"]');
+    expect(activeItem).toBeInTheDocument();
+    expect(activeItem).toHaveAttribute('aria-label', expect.stringContaining('Step 2'));
+  });
+
+  it('Timeline has role="img" with descriptive aria-label', () => {
+    render(
+      <Timeline
+        {...mockComponentProps<TimelineData>(
+          {
+            events: [
+              { date: '2024-01-01', title: 'Event 1' },
+              { date: '2024-06-15', title: 'Event 2' },
+            ],
+          },
+          'ui:timeline',
+        )}
+      />,
+    );
+
+    const img = screen.getByRole('img');
+    expect(img).toHaveAttribute('aria-label', 'Timeline with 2 events');
+  });
+
+  it('Timeline has screen-reader accessible ordered list fallback', () => {
+    const { container } = render(
+      <Timeline
+        {...mockComponentProps<TimelineData>(
+          {
+            events: [
+              { date: '2024-01-01', title: 'New Year' },
+            ],
+          },
+          'ui:timeline',
+        )}
+      />,
+    );
+
+    // The sr-only list is visually hidden but present in the DOM
+    const srList = container.querySelector('ol');
+    expect(srList).toBeInTheDocument();
+    const timeElements = container.querySelectorAll('time');
+    expect(timeElements).toHaveLength(1);
+    expect(timeElements[0]).toHaveAttribute('dateTime');
+  });
+
+  it('Graph SVG has role="img" and descriptive aria-label', () => {
+    const { container } = render(
+      <Graph
+        {...mockComponentProps<GraphData>(
+          {
+            type: 'dag',
+            nodes: [
+              { id: 'a', label: 'A' },
+              { id: 'b', label: 'B' },
+            ],
+            edges: [{ from: 'a', to: 'b' }],
+          },
+          'ui:graph',
+        )}
+      />,
+    );
+
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('aria-label', expect.stringContaining('2 nodes'));
+  });
+
+  it('Graph has hidden data table for screen readers', () => {
+    const { container } = render(
+      <Graph
+        {...mockComponentProps<GraphData>(
+          {
+            type: 'dag',
+            nodes: [{ id: 'a', label: 'Node A' }],
+            edges: [],
+          },
+          'ui:graph',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table.sr-only');
+    expect(srTable).toBeInTheDocument();
+    expect(srTable).toHaveAttribute('aria-label', 'Graph data');
+
+    const caption = srTable?.querySelector('caption');
+    expect(caption).toHaveTextContent('Graph nodes and connections');
+  });
+
+  it('Chart SVG has role="img" and descriptive aria-label', () => {
+    const { container } = render(
+      <Chart
+        {...mockComponentProps<ChartData>(
+          {
+            type: 'line',
+            series: [{ name: 'Sales', data: [{ x: 1, y: 10 }] }],
+          },
+          'ui:chart',
+        )}
+      />,
+    );
+
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('aria-label', expect.stringContaining('Sales'));
+  });
+
+  it('Chart has hidden accessible data table', () => {
+    const { container } = render(
+      <Chart
+        {...mockComponentProps<ChartData>(
+          {
+            type: 'bar',
+            series: [{ name: 'Revenue', data: [{ x: 'Q1', y: 100 }] }],
+          },
+          'ui:chart',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table');
+    expect(srTable).toBeInTheDocument();
+    const caption = srTable?.querySelector('caption');
+    expect(caption).toHaveTextContent('bar chart data');
+  });
+
+  it('Chart tooltip has role="tooltip" and aria-live', () => {
+    const { container } = render(
+      <Chart
+        {...mockComponentProps<ChartData>(
+          {
+            type: 'line',
+            series: [{ name: 'Data', data: [{ x: 1, y: 2 }] }],
+          },
+          'ui:chart',
+        )}
+      />,
+    );
+
+    const tooltip = container.querySelector('[role="tooltip"]');
+    expect(tooltip).toBeInTheDocument();
+    expect(tooltip).toHaveAttribute('aria-live', 'polite');
+  });
+
+  it('Relation SVG has role="img" and descriptive aria-label', () => {
+    const { container } = render(
+      <Relation
+        {...mockComponentProps<RelationData>(
+          {
+            entities: [{ id: 'e1', label: 'Entity1' }],
+            relationships: [],
+          },
+          'ui:relation',
+        )}
+      />,
+    );
+
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('aria-label', expect.stringContaining('1 entities'));
+  });
+
+  it('Relation has hidden data table for screen readers', () => {
+    const { container } = render(
+      <Relation
+        {...mockComponentProps<RelationData>(
+          {
+            entities: [
+              { id: 'users', label: 'Users', attributes: [{ name: 'id', type: 'int', primaryKey: true }] },
+            ],
+            relationships: [],
+          },
+          'ui:relation',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table.sr-only');
+    expect(srTable).toBeInTheDocument();
+    expect(srTable).toHaveAttribute('aria-label', 'Entity-relationship data');
+  });
+
+  it('GlyphImage uses semantic figure/figcaption and alt text', () => {
+    const props = mockBlockProps(
+      { src: 'https://example.com/img.png', alt: 'Descriptive alt text', title: 'Figure title' },
+      'image',
+    );
+    const { container } = render(<GlyphImage {...props} />);
+
+    const figure = container.querySelector('figure');
+    expect(figure).toBeInTheDocument();
+
+    const img = container.querySelector('img');
+    expect(img).toHaveAttribute('alt', 'Descriptive alt text');
+
+    const caption = container.querySelector('figcaption');
+    expect(caption).toHaveTextContent('Figure title');
+  });
+
+  it('GlyphCodeBlock has aria-label describing the language', () => {
+    const props = mockBlockProps({ language: 'typescript', value: 'const x: number = 1;' }, 'code');
+    const { container } = render(<GlyphCodeBlock {...props} />);
+
+    const pre = container.querySelector('pre');
+    expect(pre).toHaveAttribute('aria-label', 'Code block (typescript)');
+  });
+
+  it('GlyphHeading generates id for anchor linking', () => {
+    const props = mockBlockProps(
+      { depth: 1, children: [{ type: 'text', value: 'Getting Started' }] },
+      'heading',
+    );
+    render(<GlyphHeading {...props} />);
+
+    const heading = screen.getByRole('heading');
+    expect(heading).toHaveAttribute('id', 'getting-started');
+  });
+});
+
+// ────────────────────────────────────────────────────────────────
+// SECTION 3: Keyboard navigation
+// ────────────────────────────────────────────────────────────────
+
+describe('Accessibility: Keyboard navigation', () => {
+  it('Tabs support ArrowRight / ArrowLeft keyboard navigation', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Tabs
+        {...mockComponentProps<TabsData>(
+          {
+            tabs: [
+              { label: 'First', content: 'Content 1' },
+              { label: 'Second', content: 'Content 2' },
+              { label: 'Third', content: 'Content 3' },
+            ],
+          },
+          'ui:tabs',
+        )}
+      />,
+    );
+
+    const tabs = screen.getAllByRole('tab');
+
+    // Focus first tab
+    tabs[0]!.focus();
+    expect(document.activeElement).toBe(tabs[0]);
+
+    // ArrowRight moves to second tab
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tabs[1]);
+    expect(tabs[1]).toHaveAttribute('aria-selected', 'true');
+
+    // ArrowRight again moves to third tab
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tabs[2]);
+    expect(tabs[2]).toHaveAttribute('aria-selected', 'true');
+
+    // ArrowRight wraps to first tab
+    await user.keyboard('{ArrowRight}');
+    expect(document.activeElement).toBe(tabs[0]);
+
+    // ArrowLeft wraps to last tab
+    await user.keyboard('{ArrowLeft}');
+    expect(document.activeElement).toBe(tabs[2]);
+  });
+
+  it('Tabs support Home / End keyboard navigation', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Tabs
+        {...mockComponentProps<TabsData>(
+          {
+            tabs: [
+              { label: 'First', content: 'Content 1' },
+              { label: 'Second', content: 'Content 2' },
+              { label: 'Third', content: 'Content 3' },
+            ],
+          },
+          'ui:tabs',
+        )}
+      />,
+    );
+
+    const tabs = screen.getAllByRole('tab');
+    tabs[0]!.focus();
+
+    // End goes to last tab
+    await user.keyboard('{End}');
+    expect(document.activeElement).toBe(tabs[2]);
+
+    // Home goes to first tab
+    await user.keyboard('{Home}');
+    expect(document.activeElement).toBe(tabs[0]);
+  });
+
+  it('Tabs inactive tabs have tabindex=-1 (roving tabindex)', () => {
+    render(
+      <Tabs
+        {...mockComponentProps<TabsData>(
+          {
+            tabs: [
+              { label: 'A', content: 'Content A' },
+              { label: 'B', content: 'Content B' },
+            ],
+          },
+          'ui:tabs',
+        )}
+      />,
+    );
+
+    const tabs = screen.getAllByRole('tab');
+    expect(tabs[0]).toHaveAttribute('tabindex', '0');  // active
+    expect(tabs[1]).toHaveAttribute('tabindex', '-1'); // inactive
+  });
+
+  it('Tab panels are focusable with tabindex=0', () => {
+    render(
+      <Tabs
+        {...mockComponentProps<TabsData>(
+          {
+            tabs: [{ label: 'A', content: 'Content A' }],
+          },
+          'ui:tabs',
+        )}
+      />,
+    );
+
+    const panel = screen.getByRole('tabpanel');
+    expect(panel).toHaveAttribute('tabindex', '0');
+  });
+
+  it('Table sortable headers respond to Enter key', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Table
+        {...mockComponentProps<TableData>(
+          {
+            columns: [{ key: 'name', label: 'Name', sortable: true }],
+            rows: [
+              { name: 'Charlie' },
+              { name: 'Alice' },
+              { name: 'Bob' },
+            ],
+          },
+          'ui:table',
+        )}
+      />,
+    );
+
+    const header = screen.getByRole('columnheader');
+    header.focus();
+    await user.keyboard('{Enter}');
+
+    // After pressing Enter, sort should change to ascending
+    expect(header).toHaveAttribute('aria-sort', 'ascending');
+  });
+
+  it('Table sortable headers respond to Space key', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Table
+        {...mockComponentProps<TableData>(
+          {
+            columns: [{ key: 'name', label: 'Name', sortable: true }],
+            rows: [{ name: 'Alice' }],
+          },
+          'ui:table',
+        )}
+      />,
+    );
+
+    const header = screen.getByRole('columnheader');
+    header.focus();
+    await user.keyboard(' ');
+
+    expect(header).toHaveAttribute('aria-sort', 'ascending');
+  });
+});
+
+// ────────────────────────────────────────────────────────────────
+// SECTION 4: Screen reader fallbacks for D3 components
+// ────────────────────────────────────────────────────────────────
+
+describe('Accessibility: Screen reader fallbacks for D3/SVG components', () => {
+  it('Graph sr-only table lists all nodes with their connections', () => {
+    const { container } = render(
+      <Graph
+        {...mockComponentProps<GraphData>(
+          {
+            type: 'flowchart',
+            nodes: [
+              { id: 'a', label: 'Start', group: 'process' },
+              { id: 'b', label: 'End', group: 'process' },
+            ],
+            edges: [{ from: 'a', to: 'b', label: 'flow' }],
+          },
+          'ui:graph',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table.sr-only');
+    const rows = srTable?.querySelectorAll('tbody tr');
+    expect(rows).toHaveLength(2);
+
+    // First row should mention Start node
+    expect(rows![0]!.textContent).toContain('Start');
+    // Connection info should be present
+    expect(rows![0]!.textContent).toContain('-> b');
+  });
+
+  it('Relation sr-only table includes entity attributes and relationships', () => {
+    const { container } = render(
+      <Relation
+        {...mockComponentProps<RelationData>(
+          {
+            entities: [
+              {
+                id: 'users',
+                label: 'Users',
+                attributes: [
+                  { name: 'id', type: 'int', primaryKey: true },
+                  { name: 'email', type: 'varchar' },
+                ],
+              },
+              {
+                id: 'posts',
+                label: 'Posts',
+                attributes: [{ name: 'id', type: 'int', primaryKey: true }],
+              },
+            ],
+            relationships: [
+              { from: 'users', to: 'posts', label: 'authors', cardinality: '1:N' },
+            ],
+          },
+          'ui:relation',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table.sr-only');
+    const rows = srTable?.querySelectorAll('tbody tr');
+    expect(rows).toHaveLength(2);
+
+    // Users row should mention attributes and relationships
+    const usersRow = rows![0]!.textContent;
+    expect(usersRow).toContain('Users');
+    expect(usersRow).toContain('id: int');
+    expect(usersRow).toContain('(PK)');
+    expect(usersRow).toContain('-> posts');
+    expect(usersRow).toContain('[1:N]');
+  });
+
+  it('Chart sr-only table includes series data', () => {
+    const { container } = render(
+      <Chart
+        {...mockComponentProps<ChartData>(
+          {
+            type: 'bar',
+            series: [
+              {
+                name: 'Sales',
+                data: [
+                  { quarter: 'Q1', revenue: 100 },
+                  { quarter: 'Q2', revenue: 200 },
+                ],
+              },
+            ],
+            xAxis: { key: 'quarter', label: 'Quarter' },
+            yAxis: { key: 'revenue', label: 'Revenue' },
+          },
+          'ui:chart',
+        )}
+      />,
+    );
+
+    const table = container.querySelector('table');
+    expect(table).toBeInTheDocument();
+
+    const caption = table?.querySelector('caption');
+    expect(caption?.textContent).toContain('chart data');
+
+    // Should contain series name
+    const content = table?.textContent;
+    expect(content).toContain('Sales');
+  });
+
+  it('Timeline sr-only list contains semantic time elements', () => {
+    const { container } = render(
+      <Timeline
+        {...mockComponentProps<TimelineData>(
+          {
+            events: [
+              { date: '2024-03-15', title: 'Launch' },
+              { date: '2024-07-01', title: 'Update' },
+            ],
+          },
+          'ui:timeline',
+        )}
+      />,
+    );
+
+    const srList = container.querySelector('ol');
+    expect(srList).toBeInTheDocument();
+
+    const items = srList?.querySelectorAll('li');
+    expect(items).toHaveLength(2);
+
+    const times = srList?.querySelectorAll('time[dateTime]');
+    expect(times).toHaveLength(2);
+    expect(times![0]).toHaveAttribute('dateTime', '2024-03-15');
+
+    // Content contains event titles
+    expect(items![0]!.textContent).toContain('Launch');
+    expect(items![1]!.textContent).toContain('Update');
+  });
+});
