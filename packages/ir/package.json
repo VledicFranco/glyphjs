@@ -28,6 +28,9 @@
   "dependencies": {
     "@glyphjs/types": "workspace:*"
   },
+  "devDependencies": {
+    "@types/node": ">=18.0.0"
+  },
   "sideEffects": false,
   "license": "MIT"
 }
