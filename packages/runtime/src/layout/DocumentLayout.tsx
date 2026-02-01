@@ -14,7 +14,7 @@ const spacingMap: Record<NonNullable<LayoutHints['spacing']>, string> = {
 interface DocumentLayoutProps {
   blocks: Block[];
   layout: LayoutHints;
-  renderBlock: (block: Block) => ReactNode;
+  renderBlock: (block: Block, index: number) => ReactNode;
 }
 
 // ─── Component ───────────────────────────────────────────────
@@ -41,8 +41,8 @@ export function DocumentLayout({
 
   return (
     <div style={containerStyle} data-glyph-layout="document">
-      {blocks.map((block) => (
-        <div key={block.id}>{renderBlock(block)}</div>
+      {blocks.map((block, index) => (
+        <div key={block.id}>{renderBlock(block, index)}</div>
       ))}
     </div>
   );

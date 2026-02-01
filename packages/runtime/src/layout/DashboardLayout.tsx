@@ -6,7 +6,7 @@ import type { Block, LayoutHints } from '@glyphjs/types';
 interface DashboardLayoutProps {
   blocks: Block[];
   layout: LayoutHints;
-  renderBlock: (block: Block) => ReactNode;
+  renderBlock: (block: Block, index: number) => ReactNode;
 }
 
 // ─── Component ───────────────────────────────────────────────
@@ -32,7 +32,7 @@ export function DashboardLayout({
 
   return (
     <div style={containerStyle} data-glyph-layout="dashboard">
-      {blocks.map((block) => {
+      {blocks.map((block, index) => {
         const override = layout.blockLayout?.[block.id];
         const cellStyle: CSSProperties = {};
 
@@ -50,7 +50,7 @@ export function DashboardLayout({
 
         return (
           <div key={block.id} style={cellStyle}>
-            {renderBlock(block)}
+            {renderBlock(block, index)}
           </div>
         );
       })}

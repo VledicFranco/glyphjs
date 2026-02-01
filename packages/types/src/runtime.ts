@@ -22,12 +22,26 @@ export interface BlockProps {
   layout: LayoutHints;
 }
 
+// ─── Animation Config ─────────────────────────────────────────
+
+export interface AnimationConfig {
+  /** Whether animations are enabled. Defaults to `true`. */
+  enabled?: boolean;
+  /** Base duration in milliseconds. Defaults to `300`. */
+  duration?: number;
+  /** CSS easing function. Defaults to `'ease-out'`. */
+  easing?: string;
+  /** Stagger delay between consecutive blocks in milliseconds. Defaults to `50`. */
+  staggerDelay?: number;
+}
+
 // ─── Runtime Config ───────────────────────────────────────────
 
 export interface GlyphRuntimeConfig {
   components?: GlyphComponentDefinition[];
   overrides?: Partial<Record<string, ComponentType<BlockProps>>>;
   theme?: 'light' | 'dark' | GlyphTheme;
+  animation?: AnimationConfig;
   onDiagnostic?: (diagnostic: Diagnostic) => void;
   onNavigate?: (ref: Reference, targetBlock: Block) => void;
 }

@@ -6,7 +6,7 @@ import type { Block } from '@glyphjs/types';
 
 interface PresentationLayoutProps {
   blocks: Block[];
-  renderBlock: (block: Block) => ReactNode;
+  renderBlock: (block: Block, index: number) => ReactNode;
 }
 
 // ─── Component ───────────────────────────────────────────────
@@ -92,7 +92,7 @@ export function PresentationLayout({
   return (
     <div style={containerStyle} data-glyph-layout="presentation">
       <div style={slideStyle}>
-        {currentBlock ? renderBlock(currentBlock) : null}
+        {currentBlock ? renderBlock(currentBlock, currentIndex) : null}
       </div>
       <div style={indicatorStyle}>
         {String(currentIndex + 1)} / {String(total)}

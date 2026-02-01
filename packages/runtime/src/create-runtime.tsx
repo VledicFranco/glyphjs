@@ -79,7 +79,7 @@ export function createGlyphRuntime(config: GlyphRuntimeConfig): GlyphRuntime {
         onDiagnostic={config.onDiagnostic}
         onNavigate={config.onNavigate}
       >
-        <GlyphDocument ir={ir} className={className} />
+        <GlyphDocument ir={ir} className={className} animation={config.animation} />
       </RuntimeProvider>
     );
   }
