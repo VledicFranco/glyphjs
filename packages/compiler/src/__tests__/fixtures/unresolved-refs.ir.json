@@ -1,0 +1,109 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-d324f3bb91d3b153",
+    "metadata": {
+      "title": "Unresolved References",
+      "description": "See also ."
+    },
+    "blocks": [
+      {
+        "id": "b-fff5801af665",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Unresolved References"
+            }
+          ]
+        }
+      },
+      {
+        "id": "my-callout",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "content": "This callout references a non-existent block."
+        }
+      },
+      {
+        "id": "b-c211699e298c",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "See also "
+            },
+            {
+              "type": "link",
+              "url": "#glyph:no-such-graph",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "the graph"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": "."
+            }
+          ]
+        }
+      }
+    ],
+    "references": [
+      {
+        "id": "b-5df968164154",
+        "type": "navigates-to",
+        "sourceBlockId": "my-callout",
+        "targetBlockId": "does-not-exist",
+        "unresolved": true
+      },
+      {
+        "id": "b-1e1d8f604ec6",
+        "type": "depends-on",
+        "sourceBlockId": "my-callout",
+        "targetBlockId": "also-missing",
+        "label": "missing dependency",
+        "unresolved": true
+      },
+      {
+        "id": "b-5663673b8e11",
+        "type": "navigates-to",
+        "sourceBlockId": "b-c211699e298c",
+        "targetBlockId": "no-such-graph",
+        "unresolved": true,
+        "label": "the graph"
+      }
+    ],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "UNRESOLVED_REFERENCE",
+      "message": "Reference target \"does-not-exist\" was not found in the document.",
+      "source": "compiler"
+    },
+    {
+      "severity": "warning",
+      "code": "UNRESOLVED_REFERENCE",
+      "message": "Reference target \"also-missing\" was not found in the document.",
+      "source": "compiler"
+    },
+    {
+      "severity": "warning",
+      "code": "UNRESOLVED_REFERENCE",
+      "message": "Reference target \"no-such-graph\" was not found in the document.",
+      "source": "compiler"
+    }
+  ],
+  "hasErrors": false
+}

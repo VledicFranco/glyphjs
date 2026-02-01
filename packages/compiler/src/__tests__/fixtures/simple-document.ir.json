@@ -1,0 +1,95 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-1e55088f08cf7704",
+    "metadata": {
+      "title": "Hello World",
+      "description": "This is a simple paragraph."
+    },
+    "blocks": [
+      {
+        "id": "b-66ea23ca1431",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Hello World"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-eec98043dba8",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "This is a simple paragraph."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-1d2095467af1",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Second Heading"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-bb3e3a9fa7e4",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Another paragraph with "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "bold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " and "
+            },
+            {
+              "type": "emphasis",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "italic"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " text."
+            }
+          ]
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

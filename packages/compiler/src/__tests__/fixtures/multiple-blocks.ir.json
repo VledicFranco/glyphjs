@@ -1,0 +1,84 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-a9712aba3871b272",
+    "metadata": {
+      "title": "Dashboard",
+      "description": "Some text between blocks."
+    },
+    "blocks": [
+      {
+        "id": "b-694ff6dd1f59",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Dashboard"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-51eb38586e36",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "content": "This is an informational callout."
+        }
+      },
+      {
+        "id": "b-a9fae796a573",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Some text between blocks."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-f0e5be33b410",
+        "type": "ui:graph",
+        "data": {
+          "type": "flowchart",
+          "nodes": [
+            {
+              "id": "start",
+              "label": "Start"
+            },
+            {
+              "id": "end",
+              "label": "End"
+            }
+          ],
+          "edges": [
+            {
+              "from": "start",
+              "to": "end"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-16d3b95cf66f",
+        "type": "ui:callout",
+        "data": {
+          "type": "warning",
+          "title": "Watch Out",
+          "content": "This is a warning callout."
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

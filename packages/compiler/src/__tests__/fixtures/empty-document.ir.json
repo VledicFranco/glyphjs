@@ -1,0 +1,15 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-e3b0c44298fc1c14",
+    "metadata": {},
+    "blocks": [],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

@@ -1,0 +1,67 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-266360aecf1d71b1",
+    "metadata": {
+      "title": "Unknown Block Type",
+      "description": "Some text after the unknown block."
+    },
+    "blocks": [
+      {
+        "id": "b-f8d3aa04639d",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Unknown Block Type"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-82d2019ef207",
+        "type": "ui:foo",
+        "data": {
+          "bar": "baz",
+          "custom": "data"
+        },
+        "diagnostics": [
+          {
+            "severity": "info",
+            "code": "UNKNOWN_COMPONENT_TYPE",
+            "message": "Unknown component type \"ui:foo\". Block preserved as-is.",
+            "source": "compiler"
+          }
+        ]
+      },
+      {
+        "id": "b-9e4d6062ddcb",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Some text after the unknown block."
+            }
+          ]
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [
+    {
+      "severity": "info",
+      "code": "UNKNOWN_COMPONENT_TYPE",
+      "message": "Unknown component type \"ui:foo\". Block preserved as-is.",
+      "source": "compiler"
+    }
+  ],
+  "hasErrors": false
+}

@@ -1,0 +1,332 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-89908a42ed97011c",
+    "metadata": {
+      "title": "Complex Document",
+      "description": "A document exercising all features.",
+      "authors": [
+        "Alice"
+      ],
+      "tags": [
+        "complex",
+        "test"
+      ]
+    },
+    "blocks": [
+      {
+        "id": "b-ce8fff78f61d",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Complex Document"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-fa372d262226",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "An introductory paragraph with "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "bold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": ", "
+            },
+            {
+              "type": "emphasis",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "italic"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": ", and "
+            },
+            {
+              "type": "inlineCode",
+              "value": "inline code"
+            },
+            {
+              "type": "text",
+              "value": "."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-988925b297b7",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Data Visualization"
+            }
+          ]
+        }
+      },
+      {
+        "id": "main-graph",
+        "type": "ui:graph",
+        "data": {
+          "type": "flowchart",
+          "nodes": [
+            {
+              "id": "input",
+              "label": "Input Data"
+            },
+            {
+              "id": "process",
+              "label": "Processing"
+            },
+            {
+              "id": "output",
+              "label": "Output"
+            }
+          ],
+          "edges": [
+            {
+              "from": "input",
+              "to": "process"
+            },
+            {
+              "from": "process",
+              "to": "output"
+            }
+          ],
+          "layout": "left-right"
+        }
+      },
+      {
+        "id": "summary-callout",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "title": "Summary",
+          "content": "This summarizes the graph above."
+        }
+      },
+      {
+        "id": "b-2736e66c67fc",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Interactive Sections"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-f5d25c9e01e5",
+        "type": "ui:tabs",
+        "data": {
+          "tabs": [
+            {
+              "label": "Tab A",
+              "content": "Content for tab A with a [link](https://example.com).\n"
+            },
+            {
+              "label": "Tab B",
+              "content": "Content for tab B.\n"
+            }
+          ]
+        },
+        "children": [
+          {
+            "id": "b-b9a1a9fc96e0",
+            "type": "paragraph",
+            "data": {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Content for tab A with a "
+                },
+                {
+                  "type": "link",
+                  "url": "https://example.com",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "link"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": "."
+                }
+              ]
+            }
+          },
+          {
+            "id": "b-49eaf61efec1",
+            "type": "paragraph",
+            "data": {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Content for tab B."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "b-929dece15933",
+        "type": "ui:steps",
+        "data": {
+          "steps": [
+            {
+              "title": "Initialize",
+              "status": "completed",
+              "content": "Set up the environment.\n"
+            },
+            {
+              "title": "Execute",
+              "status": "active",
+              "content": "Run the process.\n"
+            }
+          ]
+        },
+        "children": [
+          {
+            "id": "b-9c2f5762dfba",
+            "type": "paragraph",
+            "data": {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Set up the environment."
+                }
+              ]
+            }
+          },
+          {
+            "id": "b-3abe671a889a",
+            "type": "paragraph",
+            "data": {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Run the process."
+                }
+              ]
+            }
+          }
+        ]
+      },
+      {
+        "id": "b-44758dfbca99",
+        "type": "list",
+        "data": {
+          "ordered": false,
+          "items": [
+            {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "First item"
+                }
+              ]
+            },
+            {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Second item"
+                }
+              ]
+            },
+            {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Third item"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-94d97517a1b2",
+        "type": "blockquote",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "A blockquote for emphasis."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-a15b24bec528",
+        "type": "code",
+        "data": {
+          "value": "console.log(\"Hello, Glyph!\");",
+          "language": "javascript"
+        }
+      },
+      {
+        "id": "b-151d6466fb0f",
+        "type": "thematic-break",
+        "data": {}
+      },
+      {
+        "id": "b-8fa22f538922",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Final paragraph."
+            }
+          ]
+        }
+      }
+    ],
+    "references": [
+      {
+        "id": "b-695d21ded466",
+        "type": "details",
+        "sourceBlockId": "main-graph",
+        "targetBlockId": "summary-callout",
+        "label": "see summary",
+        "unresolved": false
+      }
+    ],
+    "layout": {
+      "mode": "dashboard",
+      "spacing": "relaxed",
+      "columns": 2
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

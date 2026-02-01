@@ -1,0 +1,64 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-f5fa567742dc1345",
+    "metadata": {
+      "title": "Graph Example"
+    },
+    "blocks": [
+      {
+        "id": "b-5a7d8c3c10c9",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Graph Example"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-fb535435c222",
+        "type": "ui:graph",
+        "data": {
+          "type": "dag",
+          "nodes": [
+            {
+              "id": "a",
+              "label": "Node A"
+            },
+            {
+              "id": "b",
+              "label": "Node B"
+            },
+            {
+              "id": "c",
+              "label": "Node C"
+            }
+          ],
+          "edges": [
+            {
+              "from": "a",
+              "to": "b",
+              "label": "connects"
+            },
+            {
+              "from": "b",
+              "to": "c"
+            }
+          ],
+          "layout": "top-down"
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

@@ -1,0 +1,55 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-31b788e8e5b9acd0",
+    "metadata": {
+      "title": "My Document Title",
+      "description": "A description of this document.",
+      "authors": [
+        "Alice",
+        "Bob"
+      ],
+      "createdAt": "2025-01-15",
+      "tags": [
+        "test",
+        "example"
+      ]
+    },
+    "blocks": [
+      {
+        "id": "b-df5f1550e558",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Content After Frontmatter"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-275a24c17c5d",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "A paragraph following the frontmatter section."
+            }
+          ]
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "dashboard",
+      "spacing": "compact",
+      "columns": 3,
+      "maxWidth": "1200px"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

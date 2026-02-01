@@ -1,0 +1,69 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-a9c8c24b129f3885",
+    "metadata": {
+      "title": "References Example"
+    },
+    "blocks": [
+      {
+        "id": "b-87da3bad0c8e",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "References Example"
+            }
+          ]
+        }
+      },
+      {
+        "id": "network-graph",
+        "type": "ui:graph",
+        "data": {
+          "type": "dag",
+          "nodes": [
+            {
+              "id": "x",
+              "label": "X"
+            }
+          ],
+          "edges": []
+        }
+      },
+      {
+        "id": "data-table",
+        "type": "ui:callout",
+        "data": {
+          "type": "tip",
+          "content": "This is the data table callout."
+        }
+      }
+    ],
+    "references": [
+      {
+        "id": "b-8feba0c568ce",
+        "type": "depends-on",
+        "sourceBlockId": "network-graph",
+        "targetBlockId": "data-table",
+        "unresolved": false
+      },
+      {
+        "id": "b-0ba3e70080fc",
+        "type": "navigates-to",
+        "sourceBlockId": "data-table",
+        "targetBlockId": "network-graph",
+        "label": "Back to graph",
+        "unresolved": false
+      }
+    ],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

@@ -1,0 +1,112 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-fbc1eb7cfca02d1f",
+    "metadata": {
+      "title": "Tabs Example"
+    },
+    "blocks": [
+      {
+        "id": "b-9e26dbe7105e",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Tabs Example"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-a76c9fab2338",
+        "type": "ui:tabs",
+        "data": {
+          "tabs": [
+            {
+              "label": "Overview",
+              "content": "## Overview Tab\n\nThis is the overview content.\n"
+            },
+            {
+              "label": "Details",
+              "content": "## Details Tab\n\nHere are the details with **bold** text.\n"
+            }
+          ]
+        },
+        "children": [
+          {
+            "id": "b-15d5c7d202c0",
+            "type": "heading",
+            "data": {
+              "depth": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Overview Tab"
+                }
+              ]
+            }
+          },
+          {
+            "id": "b-52c9c4536544",
+            "type": "paragraph",
+            "data": {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "This is the overview content."
+                }
+              ]
+            }
+          },
+          {
+            "id": "b-5d52cc10b7a8",
+            "type": "heading",
+            "data": {
+              "depth": 2,
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Details Tab"
+                }
+              ]
+            }
+          },
+          {
+            "id": "b-f196b7f7f9d0",
+            "type": "paragraph",
+            "data": {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Here are the details with "
+                },
+                {
+                  "type": "strong",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "bold"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " text."
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

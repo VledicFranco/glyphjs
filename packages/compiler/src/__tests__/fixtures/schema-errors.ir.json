@@ -1,0 +1,131 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-bed2aa72a5d860be",
+    "metadata": {
+      "title": "Schema Error Example"
+    },
+    "blocks": [
+      {
+        "id": "b-d4935a8f7986",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Schema Error Example"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-eea9ded3e148",
+        "type": "ui:callout",
+        "data": {
+          "type": "invalid-type",
+          "content": "This callout has an invalid type value."
+        },
+        "diagnostics": [
+          {
+            "severity": "error",
+            "code": "SCHEMA_VALIDATION_FAILED",
+            "message": "Schema validation failed for ui:callout: type: Invalid enum value. Expected 'info' | 'warning' | 'error' | 'tip', received 'invalid-type'",
+            "source": "schema",
+            "details": [
+              {
+                "received": "invalid-type",
+                "code": "invalid_enum_value",
+                "options": [
+                  "info",
+                  "warning",
+                  "error",
+                  "tip"
+                ],
+                "path": [
+                  "type"
+                ],
+                "message": "Invalid enum value. Expected 'info' | 'warning' | 'error' | 'tip', received 'invalid-type'"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "id": "b-1358d9100716",
+        "type": "ui:graph",
+        "data": {
+          "type": "dag",
+          "nodes": "not-an-array",
+          "edges": []
+        },
+        "diagnostics": [
+          {
+            "severity": "error",
+            "code": "SCHEMA_VALIDATION_FAILED",
+            "message": "Schema validation failed for ui:graph: nodes: Expected array, received string",
+            "source": "schema",
+            "details": [
+              {
+                "code": "invalid_type",
+                "expected": "array",
+                "received": "string",
+                "path": [
+                  "nodes"
+                ],
+                "message": "Expected array, received string"
+              }
+            ]
+          }
+        ]
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [
+    {
+      "severity": "error",
+      "code": "SCHEMA_VALIDATION_FAILED",
+      "message": "Schema validation failed for ui:callout: type: Invalid enum value. Expected 'info' | 'warning' | 'error' | 'tip', received 'invalid-type'",
+      "source": "schema",
+      "details": [
+        {
+          "received": "invalid-type",
+          "code": "invalid_enum_value",
+          "options": [
+            "info",
+            "warning",
+            "error",
+            "tip"
+          ],
+          "path": [
+            "type"
+          ],
+          "message": "Invalid enum value. Expected 'info' | 'warning' | 'error' | 'tip', received 'invalid-type'"
+        }
+      ]
+    },
+    {
+      "severity": "error",
+      "code": "SCHEMA_VALIDATION_FAILED",
+      "message": "Schema validation failed for ui:graph: nodes: Expected array, received string",
+      "source": "schema",
+      "details": [
+        {
+          "code": "invalid_type",
+          "expected": "array",
+          "received": "string",
+          "path": [
+            "nodes"
+          ],
+          "message": "Expected array, received string"
+        }
+      ]
+    }
+  ],
+  "hasErrors": true
+}
