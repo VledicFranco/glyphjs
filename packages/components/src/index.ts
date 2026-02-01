@@ -10,5 +10,6 @@ export type { TableData } from './table/index.js';
 export { tabsDefinition, Tabs } from './tabs/index.js';
 export type { TabsData } from './tabs/index.js';
 export { timelineDefinition, Timeline } from './timeline/index.js';
+export type { TimelineData } from './timeline/index.js';
 export { graphDefinition, Graph, computeDagreLayout, computeForceLayout } from './graph/index.js';
 export type { PositionedNode, PositionedEdge, LayoutResult } from './graph/index.js';
