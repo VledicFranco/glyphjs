@@ -72,3 +72,33 @@ export {
   isDarkTheme,
 } from './theme/index.js';
 export type { ThemeProviderProps } from './theme/index.js';
+
+// Animation system
+export {
+  AnimationProvider,
+  useAnimation,
+  AnimationContext,
+  useBlockAnimation,
+} from './animation/index.js';
+export type {
+  AnimationConfig,
+  AnimationState,
+  BlockAnimationResult,
+} from './animation/index.js';
+
+// Diagnostics
+export {
+  DiagnosticsOverlay,
+  BlockDiagnosticIndicator,
+} from './diagnostics/index.js';
+
+// Navigation
+export {
+  ReferenceIndicator,
+  useNavigation,
+} from './navigation/index.js';
+export type { NavigationResult } from './navigation/index.js';
+
+// SSR utilities
+export { useIsClient, SSRPlaceholder } from './ssr/index.js';
+export type { SSRPlaceholderProps } from './ssr/index.js';
