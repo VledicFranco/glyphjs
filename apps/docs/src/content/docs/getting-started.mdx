@@ -3,6 +3,171 @@ title: Getting Started
 description: Install Glyph JS and render your first Markdown-driven document.
 ---
 
-Getting started guide coming soon.
+## What is Glyph JS?
 
-This page will cover installation, basic usage, and rendering your first Glyph JS document.
+Glyph JS is a framework for compiling **Markdown** into an **Intermediate Representation (IR)** that renders into interactive, visually rich user interfaces with React. It bridges the gap between text-native authoring (ideal for humans and LLMs) and visual information display.
+
+The pipeline has three stages:
+
+1. **Authoring** — Write standard Markdown annotated with `ui:` fenced blocks for rich components (graphs, tables, callouts, and more).
+2. **Compilation** — The compiler parses the Markdown and produces a deterministic, versioned JSON IR.
+3. **Rendering** — A React runtime renders the IR into interactive, themed UI.
+
+## Installation
+
+Install the core packages with your package manager of choice:
+
+```bash
+pnpm add @glyphjs/parser @glyphjs/compiler @glyphjs/runtime @glyphjs/components
+```
+
+**Peer dependencies:** Glyph JS requires **React 18+** and **ReactDOM 18+**.
+
+## Quick Start
+
+Here is a minimal end-to-end example that takes a Markdown string, compiles it to IR, and renders it in a React app.
+
+### 1. Write Glyph Markdown
+
+Create a Markdown string (or load one from a file). Standard Markdown works out of the box, and you can add `ui:` fenced blocks for interactive components:
+
+```markdown
+---
+title: Hello Glyph
+---
+
+# Welcome to Glyph JS
+
+Glyph makes it easy to turn Markdown into rich, interactive documents.
+
+- Write in **standard Markdown**
+- Add `ui:` blocks for interactive components
+- Render with React
+```
+
+### 2. Compile to IR
+
+Use the `compile` function from `@glyphjs/compiler` to turn the Markdown string into a Glyph IR document. The compiler handles parsing, validation, and ID generation in a single call:
+
+```typescript
+import { compile } from "@glyphjs/compiler";
+
+const markdown = `
+---
+title: Hello Glyph
+---
+
+# Welcome to Glyph JS
+
+Glyph makes it easy to turn Markdown into rich, interactive documents.
+
+- Write in **standard Markdown**
+- Add ui: blocks for interactive components
+- Render with React
+`;
+
+const { ir, diagnostics, hasErrors } = compile(markdown);
+
+// ir          — the GlyphIR JSON document ready for rendering
+// diagnostics — any warnings or errors from compilation
+// hasErrors   — true if any diagnostic has severity error
+```
+
+The `compile` function accepts an optional second argument for configuration:
+
+```typescript
+const result = compile(markdown, {
+  filePath: "docs/hello.md",   // used for document ID generation
+  documentId: "my-custom-id",  // explicit ID override
+});
+```
+
+### 3. Create a Runtime and Render
+
+Use `createGlyphRuntime` from `@glyphjs/runtime` to create a configured runtime, then render its `GlyphDocument` component with the compiled IR:
+
+```tsx
+import React from "react";
+import { createRoot } from "react-dom/client";
+import { compile } from "@glyphjs/compiler";
+import { createGlyphRuntime } from "@glyphjs/runtime";
+import { defaultComponents } from "@glyphjs/components";
+
+// 1. Compile the Markdown
+const { ir } = compile(markdown);
+
+// 2. Create the runtime with default components and a theme
+const runtime = createGlyphRuntime({
+  components: defaultComponents,
+  theme: "light",
+});
+
+// 3. Render the document
+const root = createRoot(document.getElementById("root"));
+root.render(<runtime.GlyphDocument ir={ir} />);
+```
+
+That is it — three lines of setup and your Markdown is rendered as a fully interactive document.
+
+## Using `ui:` Blocks
+
+Glyph extends Markdown with **`ui:` fenced code blocks**. These blocks use YAML payloads and are validated against component schemas at compile time.
+
+### Callout Example
+
+Callouts highlight important information with styled boxes. Add one by using a `ui:callout` fenced block:
+
+````markdown
+# Project Status
+
+Everything is on track for the release.
+
+```ui:callout
+type: tip
+title: Pro Tip
+content: You can use any standard Markdown alongside ui: blocks.
+```
+
+```ui:callout
+type: warning
+title: Heads Up
+content: Make sure to install all peer dependencies before running the app.
+```
+````
+
+The `type` field accepts `info`, `warning`, `error`, or `tip` — each renders with a distinct icon and color scheme. The `title` field is optional.
+
+### How It Works
+
+When the compiler encounters a `ui:callout` block, it:
+
+1. Parses the YAML payload
+2. Validates the data against the Callout component schema
+3. Produces a `ui:callout` block in the IR with the validated data
+4. The runtime renders it using the registered Callout component
+
+Any validation errors appear in the `diagnostics` array returned by `compile()`, so you always get clear feedback on malformed blocks.
+
+## Changing the Theme
+
+The runtime supports theming out of the box. You can pass `"light"` or `"dark"` as a string, or provide a full custom theme object:
+
+```typescript
+const runtime = createGlyphRuntime({
+  components: defaultComponents,
+  theme: "dark",
+});
+
+// You can also update the theme dynamically:
+runtime.setTheme("light");
+```
+
+## Next Steps
+
+Now that you have a working Glyph JS setup, explore the rest of the documentation:
+
+- [**Markdown Syntax**](/authoring-guide) — Learn about all supported Markdown features and the `ui:` block authoring syntax.
+- [**Components**](/components) — Browse the full library of built-in components: Callout, Tabs, Steps, Table, Graph, Chart, Relation, and Timeline.
+- [**IR Spec**](/reference/ir-spec) — Understand the structure of the compiled Intermediate Representation.
+- [**Plugin API**](/reference/plugin-api) — Register custom components and extend the runtime.
+- [**Theming**](/reference/theming) — Customize colors, typography, and spacing across your documents.
