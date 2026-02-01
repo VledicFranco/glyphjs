@@ -20,7 +20,7 @@
   },
   "files": ["dist"],
   "scripts": {
-    "build": "tsc --noEmit",
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src/",
     "clean": "rm -rf dist .turbo"
