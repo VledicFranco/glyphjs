@@ -1,2 +1,2 @@
-// @glyphjs/parser — barrel file
-export {};
+export { remarkGlyph } from './plugin.js';
+export { parseGlyphMarkdown } from './parse.js';

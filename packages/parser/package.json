@@ -26,7 +26,15 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@glyphjs/types": "workspace:*"
+    "@glyphjs/types": "workspace:*",
+    "unified": "^11.0.5",
+    "remark-parse": "^11.0.0",
+    "remark-frontmatter": "^5.0.0",
+    "yaml": "^2.7.0"
+  },
+  "devDependencies": {
+    "@types/mdast": "^4.0.4",
+    "@types/unist": "^3.0.3"
   },
   "sideEffects": false,
   "license": "MIT"
