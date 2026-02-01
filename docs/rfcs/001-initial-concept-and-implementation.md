@@ -59,6 +59,7 @@ Glyph JS is organized as a multi-package monorepo with independently versioned a
 | `@glyphjs/runtime` | React-based rendering runtime. Consumes IR and renders interactive UI. Provides layout, theming, animation orchestration, and plugin registration. |
 | `@glyphjs/components` | Built-in component library (graph, table, chart, relation, timeline, callout, tabs, steps). |
 | `@glyphjs/schemas` | Zod schemas for all built-in components with JSON Schema generation. Shared validation layer. |
+| `apps/docs` | Astro Starlight documentation site with interactive playground. Deployed to GitHub Pages. |
 
 ### 4.2 Data Flow
 
@@ -300,7 +301,272 @@ The MCP (Model Context Protocol) integration defines how LLMs interact with Glyp
 - During live/whiteboard sessions, IR state is transient. A `glyph_commit` operation serializes it back to canonical Markdown.
 - `.glyph/` directory (gitignored) stores compiled IR cache and session state locally.
 
-## 12. Build Tooling and Infrastructure
+## 12. Documentation Site and Demo Playground
+
+### 12.1 Overview
+
+Glyph JS ships a documentation site and interactive playground hosted on **GitHub Pages**. The site serves as the primary entry point for developers, providing guides, API references, live component demos, and a full Markdown-to-UI playground.
+
+### 12.2 Technology
+
+| Concern | Choice |
+|---|---|
+| Framework | **Astro Starlight** — static-first docs framework with MDX support and built-in search, sidebar, and navigation. |
+| React embedding | Astro Islands — Glyph JS components render as interactive React islands inside static doc pages. |
+| Playground editor | **CodeMirror 6** — lightweight, extensible, with custom syntax highlighting for `ui:` fenced blocks. |
+| Hosting | **GitHub Pages** — deployed from a `gh-pages` branch via GitHub Actions on every push to `main`. |
+| Package location | `apps/docs` in the monorepo. |
+
+### 12.3 Site Structure
+
+```
+glyphjs.github.io/
+├── /                        # Landing page — project overview, hero demo, install snippet
+├── /getting-started/        # Installation, first document, quick tutorial
+├── /authoring-guide/        # Markdown syntax, YAML payloads, fenced block reference
+├── /components/             # Component reference (one page per component)
+│   ├── /graph/              # ui:graph — variants, props, live examples
+│   ├── /table/              # ui:table — sorting, filtering, aggregation
+│   ├── /chart/              # ui:chart — line, bar, area, OHLC
+│   ├── /relation/           # ui:relation — ER diagrams, cardinality
+│   ├── /timeline/           # ui:timeline — event sequences
+│   ├── /callout/            # ui:callout — info, warning, error
+│   ├── /tabs/               # ui:tabs — tabbed containers
+│   └── /steps/              # ui:steps — step-by-step guides
+├── /ir-spec/                # IR JSON specification, versioning, patch format
+├── /plugin-api/             # Plugin system, custom component registration, schema authoring
+├── /theming/                # Theme customization, CSS variables, light/dark mode
+├── /gallery/                # Real-world examples — architecture docs, ML pipelines, financial models
+└── /playground/             # Interactive Markdown → UI playground
+```
+
+### 12.4 Live Component Examples
+
+Every component reference page includes **live, editable examples** embedded directly in the docs:
+
+- Each example shows a Glyph Markdown snippet in a CodeMirror editor.
+- The output renders below (or beside) the editor as a live Glyph UI via an Astro React island.
+- Users can edit the Markdown and see the rendered output update in real-time.
+- Examples are sourced from `.md` fixture files in `apps/docs/examples/`, keeping content separate from page layout.
+
+```
+apps/docs/examples/
+  ├── graph-dag.md
+  ├── graph-mindmap.md
+  ├── table-sortable.md
+  ├── chart-ohlc.md
+  ├── relation-er.md
+  └── ...
+```
+
+### 12.5 Playground
+
+The `/playground` page is a standalone, full-screen split-pane environment:
+
+- **Left pane**: CodeMirror 6 editor with:
+  - Syntax highlighting for standard Markdown.
+  - Custom highlighting for `ui:` fenced blocks and YAML payloads.
+  - Autocomplete suggestions for component types and common YAML keys.
+  - Real-time validation diagnostics (red underlines for schema errors).
+- **Right pane**: Live Glyph rendering — the full `@glyphjs/parser` → `@glyphjs/compiler` → `@glyphjs/runtime` pipeline runs in the browser on every keystroke (debounced).
+- **Toolbar**: Theme toggle (light/dark), share via URL (Markdown encoded in URL hash), export IR JSON, and a preset dropdown with example documents.
+- The playground imports the Glyph JS packages directly — it is a real consumer of the library, not a mock.
+
+### 12.6 Gallery
+
+The `/gallery` section showcases real-world usage patterns:
+
+- **System architecture documentation** — microservices, data pipelines, cloud infrastructure.
+- **LLM-assisted design reviews** — annotated architecture diagrams with callouts.
+- **ML pipeline visualization** — DAGs with training/inference steps, metrics tables.
+- **Financial models** — OHLC charts, aggregated tables, timeline events.
+- **Interactive onboarding docs** — tabbed walkthroughs with step-by-step guides.
+
+Each gallery entry is a full Glyph Markdown document rendered as an interactive page, with a "View Source" toggle to show the underlying Markdown.
+
+### 12.7 Deployment
+
+- **Build**: `pnpm --filter docs build` produces a static site in `apps/docs/dist/`.
+- **CI/CD**: A GitHub Actions workflow builds the docs on every push to `main` and deploys to the `gh-pages` branch.
+- **Preview**: PR preview deployments via GitHub Actions artifacts or a deploy preview service (optional).
+- **Versioning**: The docs site tracks the latest release. Versioned docs (v1, v2) can be added later via Starlight's built-in versioning support.
+
+```yaml
+# .github/workflows/docs.yml (simplified)
+name: Deploy Docs
+on:
+  push:
+    branches: [main]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter docs build
+      - uses: actions/deploy-pages@v4
+        with:
+          artifact_path: apps/docs/dist
+```
+
+## 13. Testing Strategy
+
+Each package has a distinct testing approach matched to its nature. The goal is deterministic, fast tests at each layer boundary, with Playwright covering the visual/interactive surface.
+
+### 12.1 Test Tooling
+
+| Tool | Purpose |
+|---|---|
+| **Vitest** | Unit and integration tests across all packages. Fast, native ESM, Turborepo-compatible. |
+| **fast-check** | Property-based testing for IR patch/diff operations. Generates random valid IRs to find edge cases. |
+| **Playwright** | Visual regression and interaction testing for rendered components. Runs against Storybook. |
+| **Storybook** | Component development harness. Each component has stories for every variant. Doubles as docs and Playwright target. |
+| **React Testing Library** | Lightweight DOM assertions for runtime logic (registry, theming, layout) without a full browser. |
+
+### 12.2 Per-Package Testing
+
+#### `@glyphjs/schemas`
+
+- **Unit tests (Vitest)**: Validate that each schema accepts valid payloads and rejects invalid ones.
+- **Dual validation conformance**: Every test fixture is validated against both the Zod schema and the auto-generated JSON Schema. Both must produce identical accept/reject results. This catches drift between the two representations.
+
+```typescript
+// Example: dual validation test
+import { graphSchema } from '@glyphjs/schemas';
+import { zodToJsonSchema } from 'zod-to-json-schema';
+import Ajv from 'ajv';
+
+const ajv = new Ajv();
+const jsonSchema = zodToJsonSchema(graphSchema);
+const validate = ajv.compile(jsonSchema);
+
+for (const fixture of validFixtures) {
+  expect(graphSchema.safeParse(fixture).success).toBe(true);
+  expect(validate(fixture)).toBe(true);
+}
+
+for (const fixture of invalidFixtures) {
+  expect(graphSchema.safeParse(fixture).success).toBe(false);
+  expect(validate(fixture)).toBe(false);
+}
+```
+
+#### `@glyphjs/parser`
+
+- **Golden file tests**: Markdown fixture files (`.md`) paired with expected AST output (`.ast.json`). Each fixture exercises a specific syntax feature (plain Markdown, `ui:graph`, `ui:table`, nested blocks, etc.).
+- Test runner diffs actual AST output against the golden file. Failures show exactly what changed.
+- Golden files are checked into the repository and reviewed in PRs like code.
+
+```
+packages/parser/test/fixtures/
+  ├── basic-text.md
+  ├── basic-text.ast.json
+  ├── graph-dag.md
+  ├── graph-dag.ast.json
+  ├── mixed-content.md
+  ├── mixed-content.ast.json
+  └── ...
+```
+
+#### `@glyphjs/ir`
+
+- **Unit tests (Vitest)**: Validation, serialization, and type utilities.
+- **Property-based tests (fast-check)**: Generate random valid IR documents and patches, then assert invariants:
+  - `apply(diff(a, b), a) === b` (diff+apply roundtrip)
+  - `apply(patch, doc)` always produces a valid IR document
+  - Patch composition is associative
+  - Empty patch is identity
+
+```typescript
+import fc from 'fast-check';
+import { arbitraryIR, arbitraryPatch, applyPatch, diffIR } from './test-utils';
+
+test('diff/apply roundtrip', () => {
+  fc.assert(fc.property(arbitraryIR(), arbitraryIR(), (a, b) => {
+    const patch = diffIR(a, b);
+    const result = applyPatch(a, patch);
+    expect(result).toEqual(b);
+  }));
+});
+```
+
+#### `@glyphjs/compiler`
+
+- **Golden file tests**: Markdown input (`.md`) paired with expected IR output (`.ir.json`). Tests the full parse+compile pipeline.
+- Covers all 8 component types, edge cases (empty documents, invalid YAML, unknown block types), and reference resolution.
+- Determinism test: compile the same input twice and assert identical output.
+
+```
+packages/compiler/test/fixtures/
+  ├── full-document.md
+  ├── full-document.ir.json
+  ├── graph-all-layouts.md
+  ├── graph-all-layouts.ir.json
+  ├── error-invalid-yaml.md
+  ├── error-invalid-yaml.diagnostics.json
+  └── ...
+```
+
+#### `@glyphjs/runtime`
+
+- **React Testing Library**: Test component registry, plugin registration, theming context, layout engine, and error boundaries without a browser.
+- Asserts that the correct React component is resolved for each block type, that theme CSS variables propagate, and that unknown block types render gracefully.
+
+#### `@glyphjs/components`
+
+- **Storybook**: Every component has stories covering all variants and edge cases (empty data, large datasets, various layouts). Storybook serves as both development harness and documentation.
+- **Playwright visual regression**: Screenshot tests run against Storybook stories. Captures pixel-level rendering of graphs, charts, tables, etc. Baseline images checked into the repo. Failures produce diff images for review.
+- **Playwright interaction tests**: Test user interactions — click graph nodes, sort table columns, switch tabs, hover for tooltips, drag timelines. Asserts on DOM state after interaction.
+
+```typescript
+// Example: Playwright interaction test
+test('table sorts by column on header click', async ({ page }) => {
+  await page.goto('/storybook/iframe.html?id=table--default');
+  await page.click('th:has-text("Name")');
+  const firstCell = await page.textContent('tbody tr:first-child td:first-child');
+  expect(firstCell).toBe('Alice'); // alphabetically first
+});
+```
+
+### 12.3 End-to-End Pipeline Tests
+
+Full integration tests that exercise the entire Markdown → UI pipeline:
+
+1. Feed a Markdown string containing `ui:` blocks into `@glyphjs/parser`.
+2. Compile the AST to IR via `@glyphjs/compiler`.
+3. Render the IR in a browser using `@glyphjs/runtime` + `@glyphjs/components`.
+4. Assert on the resulting DOM via Playwright — block structure, rendered SVG elements, interactive behavior.
+
+These tests run in CI against a minimal Vite app that mounts the Glyph runtime. They validate that the contracts between all layers hold in practice, not just in isolation.
+
+```
+packages/e2e/
+  ├── fixtures/
+  │   ├── architecture-doc.md      # Full document with multiple component types
+  │   ├── graph-interaction.md     # Graph with clickable nodes
+  │   └── ...
+  └── tests/
+      ├── full-pipeline.spec.ts
+      ├── graph-rendering.spec.ts
+      └── ...
+```
+
+### 12.4 CI Integration
+
+- **Vitest** (unit + golden file + property-based): Runs on every PR. Fast — targets < 30s.
+- **Playwright** (visual + interaction + E2E): Runs on every PR. Storybook is built, then Playwright runs against the static build.
+- **Visual regression baselines**: Stored in the repo. Updated via `npx playwright test --update-snapshots` and reviewed in PRs.
+- **Turborepo caching**: Test tasks are cached per-package. Only re-run when source or fixtures change.
+
+## 14. Build Tooling and Infrastructure
 
 | Concern | Choice |
 |---|---|
@@ -308,11 +574,18 @@ The MCP (Model Context Protocol) integration defines how LLMs interact with Glyp
 | Package manager | pnpm (workspaces) |
 | Build orchestration | Turborepo |
 | Bundler | tsup (esbuild-based) |
-| Testing | Vitest |
+| Unit / integration tests | Vitest |
+| Property-based tests | fast-check |
+| Visual / interaction tests | Playwright |
+| Component harness | Storybook |
+| Component unit tests | React Testing Library |
 | Linting | ESLint + Prettier |
+| Documentation | Astro Starlight |
+| Playground editor | CodeMirror 6 |
+| Docs hosting | GitHub Pages |
 | CI | GitHub Actions |
 
-## 13. Implementation Milestones
+## 15. Implementation Milestones
 
 ### Phase 1: Foundation (Alpha)
 
@@ -321,7 +594,10 @@ The MCP (Model Context Protocol) integration defines how LLMs interact with Glyp
 - Define Zod schemas for all 8 components (`@glyphjs/schemas`).
 - Implement remark plugin for `ui:` fenced block parsing (`@glyphjs/parser`).
 - Implement AST-to-IR compiler (`@glyphjs/compiler`).
-- End-to-end test: Markdown string → IR JSON for all component types.
+- Set up Vitest with golden file test infrastructure.
+- Golden file tests for parser (Markdown → AST) and compiler (Markdown → IR) for all component types.
+- Dual validation conformance tests for all schemas (Zod + JSON Schema).
+- Property-based tests for IR patch/diff operations with fast-check.
 
 ### Phase 2: Rendering (Beta)
 
@@ -330,6 +606,10 @@ The MCP (Model Context Protocol) integration defines how LLMs interact with Glyp
 - Build all 8 components with D3 + Dagre (`@glyphjs/components`).
 - Theming system (light/dark, CSS variables).
 - Layout engine for block positioning and responsive behavior.
+- Set up Storybook with stories for all component variants.
+- React Testing Library tests for runtime logic (registry, theming, layout).
+- Set up Playwright with visual regression against Storybook.
+- Playwright interaction tests for all interactive components.
 - Demo app: load a Markdown file and render it as interactive UI.
 
 ### Phase 3: Polish (v1.0)
@@ -337,7 +617,14 @@ The MCP (Model Context Protocol) integration defines how LLMs interact with Glyp
 - Animation orchestration for state transitions.
 - Cross-block references and navigation.
 - Error diagnostics with source-mapped Markdown locations.
-- Documentation site and component gallery.
+- End-to-end pipeline tests (Markdown → browser DOM via Playwright).
+- CI pipeline: Vitest + Playwright on every PR, Turborepo caching.
+- **Docs site**: Astro Starlight setup, Getting Started, Authoring Guide, Component Reference (all 8 components with live examples).
+- **Playground**: CodeMirror 6 editor with split-pane live rendering, URL sharing, preset examples.
+- **Gallery**: Real-world example documents (architecture, ML pipelines, financial models).
+- **Deployment**: GitHub Actions workflow deploying to GitHub Pages on every push to `main`.
+- IR Spec and Plugin API reference pages.
+- Theming documentation.
 - npm publish pipeline for all packages.
 - MCP tool interface specification finalized (no server implementation).
 
@@ -350,7 +637,7 @@ The MCP (Model Context Protocol) integration defines how LLMs interact with Glyp
 - Export to PDF/Slides.
 - Domain-specific component packs.
 
-## 14. Open Questions
+## 16. Open Questions
 
 - **Streaming compilation**: Should the compiler support streaming Markdown input (for rendering as an LLM generates tokens)?
 - **Markdown round-tripping**: How strict should IR-to-Markdown serialization be? Exact reproduction vs. semantic equivalence?
