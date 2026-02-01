@@ -1,4 +1,4 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 
 const DEFAULT_MARKDOWN = `# Hello Glyph JS
 
@@ -19,31 +19,53 @@ content: |
 - Real-time preview
 `;
 
+function escapeHtml(str: string): string {
+  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+function renderSimplePreview(source: string): string {
+  const lines = source.split('\n');
+  const htmlParts: string[] = [];
+
+  for (const line of lines) {
+    if (line.startsWith('# ')) {
+      htmlParts.push(`<h1>${escapeHtml(line.slice(2))}</h1>`);
+    } else if (line.startsWith('## ')) {
+      htmlParts.push(`<h2>${escapeHtml(line.slice(3))}</h2>`);
+    } else if (line.startsWith('### ')) {
+      htmlParts.push(`<h3>${escapeHtml(line.slice(4))}</h3>`);
+    } else if (line.startsWith('- ')) {
+      htmlParts.push(`<li>${escapeHtml(line.slice(2))}</li>`);
+    } else if (line.startsWith('```ui:')) {
+      const comp = line.slice(3);
+      htmlParts.push(`<div style="background:#e0f2fe;border-left:3px solid #0284c7;padding:0.5rem 0.75rem;margin:0.5rem 0;border-radius:4px;font-size:0.85rem;color:#0369a1;"><strong>${escapeHtml(comp)}</strong></div>`);
+    } else if (line.startsWith('```')) {
+      // skip code fences
+    } else if (line.trim() === '') {
+      htmlParts.push('<br/>');
+    } else if (line.startsWith('  ') || line.startsWith('\t')) {
+      // indented content inside code block
+      htmlParts.push(`<div style="font-family:monospace;font-size:0.8rem;padding-left:1rem;color:#555;">${escapeHtml(line)}</div>`);
+    } else {
+      htmlParts.push(`<p>${escapeHtml(line)}</p>`);
+    }
+  }
+
+  return htmlParts.join('\n');
+}
+
 export default function Playground() {
   const [markdown, setMarkdown] = useState(DEFAULT_MARKDOWN);
   const [html, setHtml] = useState('');
-  const [error, setError] = useState<string | null>(null);
   const timerRef = useRef<ReturnType<typeof setTimeout>>();
-
-  const compile = useCallback(async (source: string) => {
-    try {
-      const { parseGlyphMarkdown } = await import('@glyphjs/compiler');
-      // For now, render a simple preview since full pipeline requires React rendering
-      setHtml(`<div style="padding: 1rem; font-family: system-ui;">
-        <p style="color: #666;">Compiled successfully. ${source.split('\n').length} lines parsed.</p>
-        <pre style="background: #f5f5f5; padding: 1rem; border-radius: 4px; overflow: auto; font-size: 13px;">${source.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
-      </div>`);
-      setError(null);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    }
-  }, []);
 
   useEffect(() => {
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => compile(markdown), 300);
+    timerRef.current = setTimeout(() => {
+      setHtml(renderSimplePreview(markdown));
+    }, 300);
     return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [markdown, compile]);
+  }, [markdown]);
 
   return (
     <div style={{ display: 'flex', gap: '1rem', minHeight: '500px', flexWrap: 'wrap' }}>
@@ -74,16 +96,11 @@ export default function Playground() {
             border: '1px solid #ddd',
             borderRadius: '4px',
             overflow: 'auto',
+            padding: '1rem',
+            fontFamily: 'system-ui, sans-serif',
           }}
-        >
-          {error ? (
-            <div style={{ padding: '1rem', color: '#dc2626' }}>
-              <strong>Error:</strong> {error}
-            </div>
-          ) : (
-            <div dangerouslySetInnerHTML={{ __html: html }} />
-          )}
-        </div>
+          dangerouslySetInnerHTML={{ __html: html }}
+        />
       </div>
     </div>
   );
