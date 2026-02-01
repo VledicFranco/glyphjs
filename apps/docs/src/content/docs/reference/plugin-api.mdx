@@ -3,6 +3,160 @@ title: Plugin API
 description: Build custom plugins to extend the Glyph JS pipeline.
 ---
 
-Plugin API documentation coming soon.
+The Glyph JS plugin system lets you register custom `ui:*` component types that integrate with the compiler, renderer, and theming layers. Plugins are defined as `GlyphComponentDefinition` objects and registered via the `PluginRegistry`. All plugin types live in `@glyphjs/types`; the registry implementation lives in `@glyphjs/runtime`.
 
-This page will cover the plugin interface, lifecycle hooks, and how to create custom parser, transformer, and renderer plugins.
+## GlyphComponentDefinition
+
+Every plugin provides a `GlyphComponentDefinition` that declares its block type, validation schema, render function, and optional theme defaults:
+
+```typescript
+interface GlyphComponentDefinition<T = unknown> {
+  type: `ui:${string}`;
+  schema: {
+    parse: (data: unknown) => T;
+    safeParse: (data: unknown) => { success: boolean; data?: T; error?: unknown };
+  };
+  render: ComponentType<GlyphComponentProps<T>>;
+  themeDefaults?: Record<string, string>;
+  dependencies?: string[];
+}
+```
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `type` | backtick ui:... backtick | Yes | Block type identifier. Must start with `ui:`. |
+| `schema` | Zod-compatible | Yes | Validates the block `data` payload. Must expose `parse` and `safeParse`. |
+| `render` | `ComponentType` | Yes | React component that renders the block. |
+| `themeDefaults` | `Record<string, string>` | No | Default CSS variable values for this component. |
+| `dependencies` | `string[]` | No | Other `ui:*` types this component depends on. |
+---
+
+## Schema requirements (Zod)
+
+The `schema` field must be a Zod-compatible object that exposes `parse` and `safeParse` methods. This is typed loosely in `@glyphjs/types` to avoid a hard dependency on Zod, but in practice you should use Zod schemas:
+
+```typescript
+import { z } from 'zod';
+
+const mySchema = z.object({
+  title: z.string(),
+  items: z.array(z.object({
+    label: z.string(),
+    value: z.number(),
+  })),
+});
+```
+
+The schema serves two purposes:
+
+1. **Runtime validation** -- When the runtime encounters a block with your `ui:*` type, it calls `schema.safeParse(block.data)` to validate the data. If validation fails, the block renders with diagnostic errors.
+2. **JSON Schema generation** -- Zod schemas can be converted to JSON Schema for external consumers, LLM prompts, and documentation via `zod-to-json-schema`.
+
+### Validation behavior
+
+- `schema.safeParse` is called during rendering, not during compilation.
+- If validation fails, the block is preserved with the original data and diagnostic errors are attached.
+- Successful validation returns the parsed (and potentially transformed) data to the render function.
+
+---
+
+## Render function props (GlyphComponentProps)
+
+The `render` component receives `GlyphComponentProps<T>` where `T` is the validated data type from the schema:
+
+```typescript
+interface GlyphComponentProps<T = unknown> {
+  data: T;
+  block: Block;
+  outgoingRefs: Reference[];
+  incomingRefs: Reference[];
+  onNavigate: (ref: Reference) => void;
+  theme: GlyphThemeContext;
+  layout: LayoutHints;
+}
+```
+
+| Prop | Type | Description |
+|---|---|---|
+| `data` | `T` | The validated block data (output of `schema.parse`). |
+| `block` | `Block` | The full block object, including `id`, `type`, `position`, `children`, and `metadata`. |
+| `outgoingRefs` | `Reference[]` | References originating from this block. |
+| `incomingRefs` | `Reference[]` | References targeting this block. |
+| `onNavigate` | `(ref: Reference) => void` | Callback to trigger navigation along a reference. |
+| `theme` | `GlyphThemeContext` | Current theme context with `resolveVar`, `isDark`, and `name`. |
+| `layout` | `LayoutHints` | Global layout configuration (mode, columns, spacing). |
+---
+
+## Registration via PluginRegistry
+
+The `PluginRegistry` class in `@glyphjs/runtime` manages component registration, validation, theme defaults merging, and change notification.
+
+### Registering components
+
+```typescript
+import { PluginRegistry } from '@glyphjs/runtime';
+
+const registry = new PluginRegistry();
+
+// Register a single component
+registry.registerComponent(myComponentDefinition);
+
+// Bulk-register multiple components
+registry.registerAll([graphComponent, tableComponent, chartComponent]);
+```
+
+Registration validates the definition before accepting it. If validation fails, an error is thrown with details about what is wrong.
+
+### Validation rules
+
+When you call `registerComponent`, the registry validates:
+
+1. `type` must match the `ui:*` format (e.g. `ui:chart`, `ui:graph`).
+2. `schema` must be present with `parse` and `safeParse` methods (Zod-compatible).
+3. `render` must be a function (functional component) or class (class component).
+
+### Lookups
+
+```typescript
+// Get a registered component definition
+const def = registry.getRenderer('ui:graph');
+
+// Check if a type is registered
+const exists = registry.has('ui:graph');
+
+// Get all registered type names
+const types: string[] = registry.getRegisteredTypes();
+```
+
+### Overrides
+
+You can override the renderer for any block type (including standard Markdown types) without replacing the full component definition:
+
+```typescript
+registry.setOverrides({
+  'heading': MyCustomHeadingRenderer,
+  'ui:graph': MyCustomGraphRenderer,
+});
+
+// Get an override renderer
+const override = registry.getOverride('heading');
+```
+
+Overrides take priority over registered component renderers during rendering.
+---
+
+## Theme defaults
+
+`themeDefaults` on the definition ships default CSS variable values for the component. Lower priority than existing theme variables.
+
+## Change notification
+
+`registry.subscribe(fn)` returns an unsubscribe function. Fires on registration and override changes.
+
+## Dependencies
+
+Optional `dependencies` field declares other `ui:*` types this component needs.
+
+## Runtime integration
+
+`createGlyphRuntime({ components })` auto-registers plugins. `runtime.registerComponent(def)` adds after creation. Unknown types render a fallback.

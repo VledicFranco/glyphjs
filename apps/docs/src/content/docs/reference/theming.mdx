@@ -3,6 +3,168 @@ title: Theming
 description: Customize the look and feel of Glyph JS components with themes.
 ---
 
-Theming documentation coming soon.
+The Glyph JS theming system uses CSS custom properties (variables) prefixed with `--glyph-` to style all components. Two built-in themes (light and dark) ship with `@glyphjs/runtime`, and you can create custom themes by providing your own variable map.
 
-This page will cover the theming API, CSS custom properties, built-in presets, and how to create custom themes.
+## GlyphTheme interface
+
+```typescript
+interface GlyphTheme {
+  name: string;
+  variables: Record<string, string>;  // CSS variable name to value
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `name` | `string` | Identifier for the theme (e.g. `light`, `dark`, `corporate`). |
+| `variables` | `Record<string, string>` | Map of CSS variable names to values. All keys should start with `--glyph-`. |
+---
+
+## CSS variables
+
+All theme variables are prefixed with `--glyph-` to avoid collisions with host application styles. The built-in themes define these categories:
+
+### Colors
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-bg` | `#ffffff` | `#111827` | Background color |
+| `--glyph-text` | `#1a1a1a` | `#f3f4f6` | Primary text color |
+| `--glyph-text-muted` | `#6b7280` | `#9ca3af` | Secondary/muted text |
+| `--glyph-heading` | `#111827` | `#f9fafb` | Heading text color |
+| `--glyph-link` | `#2563eb` | `#60a5fa` | Link color |
+| `--glyph-link-hover` | `#1d4ed8` | `#93bbfd` | Link hover color |
+| `--glyph-border` | `#e5e7eb` | `#374151` | Border color |
+| `--glyph-border-strong` | `#d1d5db` | `#4b5563` | Strong border |
+| `--glyph-surface` | `#f9fafb` | `#1f2937` | Surface background |
+| `--glyph-surface-raised` | `#ffffff` | `#374151` | Raised surface |
+
+### Code
+
+| Variable | Light | Dark |
+|---|---|---|
+| `--glyph-code-bg` | `#f3f4f6` | `#1f2937` |
+| `--glyph-code-text` | `#1f2937` | `#e5e7eb` |
+
+### Blockquote
+
+| Variable | Light | Dark |
+|---|---|---|
+| `--glyph-blockquote-border` | `#d1d5db` | `#4b5563` |
+| `--glyph-blockquote-bg` | `#f9fafb` | `#1f2937` |
+### Callouts
+
+| Variable | Light | Dark |
+|---|---|---|
+| `--glyph-callout-info-bg` | `#eff6ff` | `#1e293b` |
+| `--glyph-callout-info-border` | `#3b82f6` | `#3b82f6` |
+| `--glyph-callout-warning-bg` | `#fffbeb` | `#292524` |
+| `--glyph-callout-warning-border` | `#f59e0b` | `#f59e0b` |
+| `--glyph-callout-error-bg` | `#fef2f2` | `#2d1b1b` |
+| `--glyph-callout-error-border` | `#ef4444` | `#ef4444` |
+| `--glyph-callout-tip-bg` | `#f0fdf4` | `#1a2e1a` |
+| `--glyph-callout-tip-border` | `#22c55e` | `#22c55e` |
+
+### Spacing
+
+| Variable | Value |
+|---|---|
+| `--glyph-spacing-xs` | `0.25rem` |
+| `--glyph-spacing-sm` | `0.5rem` |
+| `--glyph-spacing-md` | `1rem` |
+| `--glyph-spacing-lg` | `1.5rem` |
+| `--glyph-spacing-xl` | `2rem` |
+
+### Typography
+
+| Variable | Value |
+|---|---|
+| `--glyph-font-body` | `system-ui, -apple-system, sans-serif` |
+| `--glyph-font-heading` | `system-ui, -apple-system, sans-serif` |
+| `--glyph-font-mono` | `ui-monospace, "Cascadia Code", "Fira Code", monospace` |
+
+### Border radius
+
+| Variable | Value |
+|---|---|
+| `--glyph-radius-sm` | `0.25rem` |
+| `--glyph-radius-md` | `0.375rem` |
+| `--glyph-radius-lg` | `0.5rem` |
+
+Spacing, typography, and border radius values are mode-independent (same in light and dark).
+---
+
+## Light and dark themes
+
+`lightTheme` and `darkTheme` are exported from `@glyphjs/runtime`.
+Pass by name (`"light"` or `"dark"`) or as a `GlyphTheme` object.
+
+---
+
+## Custom themes
+
+Create a `GlyphTheme` with `name` and `variables` containing `--glyph-*` CSS variables.
+---
+
+## useGlyphTheme hook
+
+The `useGlyphTheme()` React hook returns a `GlyphThemeContext`:
+
+```typescript
+interface GlyphThemeContext {
+  name: string;
+  resolveVar: (varName: string) => string;
+  isDark: boolean;
+}
+```
+
+Use inside a `ThemeProvider` or `RuntimeProvider`:
+
+```typescript
+import { useGlyphTheme } from '@glyphjs/runtime';
+
+ function MyComponent() {
+  const theme = useGlyphTheme();
+  const bg = theme.resolveVar("--glyph-bg");
+  return <div style={{ background: bg }} />;
+}
+```
+
+Throws if called outside a theme context.
+---
+
+## Theme resolution
+
+The `resolveTheme` function normalizes theme input:
+
+```typescript
+import { resolveTheme } from '@glyphjs/runtime';
+
+ const theme = resolveTheme("light");    // returns lightTheme
+ const theme = resolveTheme("dark");     // returns darkTheme
+ const theme = resolveTheme(undefined);  // defaults to lightTheme
+ const theme = resolveTheme(customTheme); // returns as-is
+```
+
+The `ThemeProvider` component applies resolved theme variables as inline styles on a wrapper `<div>` and provides the `GlyphThemeContext` via React context.
+
+### Dark theme detection
+
+`isDarkTheme(theme)` heuristically determines if a theme is dark by inspecting the `--glyph-bg` variable luminance, falling back to checking if `name` contains "dark".
+---
+
+## Component-level overrides
+
+Plugins ship `themeDefaults` on their definition. These merge with lower priority than theme values.
+`mergeThemeDefaults(theme, defaults)` combines them: theme values win over plugin defaults.
+
+---
+
+## Runtime theme switching
+
+Change the theme at runtime via `runtime.setTheme()`:
+
+```typescript
+runtime.setTheme("dark");
+runtime.setTheme(myCustomTheme);
+```

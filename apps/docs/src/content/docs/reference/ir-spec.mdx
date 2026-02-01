@@ -3,6 +3,417 @@ title: IR Spec
 description: Technical specification for the Glyph JS Intermediate Representation.
 ---
 
-IR Spec documentation coming soon.
+The **Glyph IR** (Intermediate Representation) is the deterministic JSON document that sits between Markdown authoring and React rendering. The compiler transforms annotated Markdown into a `GlyphIR` document; the runtime renders it. All types live in `@glyphjs/types`; diffing, patching, and validation utilities live in `@glyphjs/ir`.
 
-This page will define the Intermediate Representation (IR) schema, node types, and how Markdown is compiled into the IR tree.
+## GlyphIR structure
+
+Every compiled document is a `GlyphIR` object:
+
+```typescript
+interface GlyphIR {
+  version: string;
+  id: string;
+  metadata: DocumentMetadata;
+  blocks: Block[];
+  references: Reference[];
+  layout: LayoutHints;
+}
+```
+
+### Properties
+
+| Field | Type | Description |
+|---|---|---|
+| `version` | `string` | Semver string identifying the IR spec version (e.g. `"1.0.0"`). Required for migration. |
+| `id` | `string` | Unique document identifier. Derived deterministically (see below). |
+| `metadata` | `DocumentMetadata` | Optional document-level metadata (title, authors, tags, etc.). |
+| `blocks` | `Block[]` | Ordered array of content blocks. May be empty for blank documents. |
+| `references` | `Reference[]` | Cross-block links expressing semantic relationships. |
+| `layout` | `LayoutHints` | Global layout mode and configuration. |
+
+An empty Markdown file produces a valid `GlyphIR` with `blocks: []`, `references: []`, `metadata: {}`, and default layout hints with mode `document` and spacing `normal`.
+
+---
+
+## Block
+
+A **Block** is the atomic renderable unit. Every piece of content -- a paragraph, heading, graph, table, chart -- is a Block.
+
+```typescript
+interface Block {
+  id: string;
+  type: BlockType;
+  data: BlockData;
+  position: SourcePosition;
+  children?: Block[];
+  diagnostics?: Diagnostic[];
+  metadata?: Record<string, unknown>;
+}
+```
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `id` | `string` | Yes | Unique within the document. Content-addressed or user-assigned. |
+| `type` | `BlockType` | Yes | Determines which renderer handles the block. |
+| `data` | `BlockData` | Yes | Type-specific payload (see BlockData variants below). |
+| `position` | `SourcePosition` | Yes | Location in the original Markdown source. |
+| `children` | `Block[]` | No | Nested blocks for container components like `ui:tabs` and `ui:steps`. |
+| `diagnostics` | `Diagnostic[]` | No | Errors or warnings attached to this block during compilation. |
+| `metadata` | `Record<string, unknown>` | No | Arbitrary extensible metadata. |
+---
+
+## Block types
+
+The `BlockType` is a string union covering standard Markdown blocks, built-in Glyph UI components, and a catch-all template literal for extensibility:
+
+```typescript
+type BlockType =
+  // Standard Markdown blocks
+  | 'heading' | 'paragraph' | 'list' | 'code'
+  | 'blockquote' | 'thematic-break' | 'image' | 'html'
+  // Glyph UI component blocks
+  | 'ui:graph' | 'ui:table' | 'ui:chart' | 'ui:relation'
+  | 'ui:timeline' | 'ui:callout' | 'ui:tabs' | 'ui:steps'
+  // Extensible
+  | `ui:${string}`;
+```
+
+Standard Markdown types are rendered by built-in base renderers. The `ui:*` namespace is reserved for component plugins. Unknown block types are preserved in the IR (never dropped) and render a fallback placeholder at runtime.
+
+---
+
+## BlockData variants
+
+Each block type has a corresponding data shape. Standard Markdown blocks use the typed variants below; `ui:*` component blocks use `Record<string, unknown>` validated at runtime by the component Zod schema.
+
+### HeadingData
+
+```typescript
+interface HeadingData {
+  depth: 1 | 2 | 3 | 4 | 5 | 6;
+  children: InlineNode[];
+}
+```
+
+### ParagraphData
+
+```typescript
+interface ParagraphData {
+  children: InlineNode[];
+}
+```
+
+### ListData
+
+```typescript
+interface ListData {
+  ordered: boolean;
+  start?: number;
+  items: ListItemData[];
+}
+
+interface ListItemData {
+  children: InlineNode[];
+  subList?: ListData;
+}
+```
+
+### CodeData
+
+```typescript
+interface CodeData {
+  language?: string;
+  value: string;
+  meta?: string;
+}
+```
+
+### BlockquoteData
+
+```typescript
+interface BlockquoteData {
+  children: InlineNode[];
+}
+```
+
+### ImageData
+
+```typescript
+interface ImageData {
+  src: string;
+  alt?: string;
+  title?: string;
+}
+```
+
+### ThematicBreakData
+
+```typescript
+interface ThematicBreakData {
+  // No data -- represents a horizontal rule
+}
+```
+
+### HtmlData
+
+```typescript
+interface HtmlData {
+  value: string;   // Raw HTML (sanitized at render time, not compile time)
+}
+```
+### InlineNode
+
+Inline content within paragraphs, headings, blockquotes, and list items is represented as a recursive tree of `InlineNode` values:
+
+```typescript
+type InlineNode =
+  | { type: 'text'; value: string }
+  | { type: 'strong'; children: InlineNode[] }
+  | { type: 'emphasis'; children: InlineNode[] }
+  | { type: 'delete'; children: InlineNode[] }
+  | { type: 'inlineCode'; value: string }
+  | { type: 'link'; url: string; title?: string; children: InlineNode[] }
+  | { type: 'image'; src: string; alt?: string; title?: string }
+  | { type: 'break' };
+```
+
+### UI component data
+
+For `ui:*` blocks, `data` is `Record<string, unknown>` -- the parsed YAML payload from the Markdown source after `glyph-id` and `refs` keys have been stripped. The shape is validated at runtime by the component Zod schema. See the [Plugin API](/reference/plugin-api/) for how schemas are defined.
+
+---
+
+## Reference types
+
+**References** express semantic relationships between blocks:
+
+```typescript
+interface Reference {
+  id: string;
+  type: ReferenceType;
+  sourceBlockId: string;
+  targetBlockId: string;
+  sourceAnchor?: string;
+  targetAnchor?: string;
+  label?: string;
+  bidirectional?: boolean;
+  unresolved?: boolean;
+}
+
+type ReferenceType =
+  | 'navigates-to'
+  | 'details'
+  | 'depends-on'
+  | 'data-source'
+  | `custom:${string}`;
+```
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `id` | `string` | Yes | Unique reference identifier. |
+| `type` | `ReferenceType` | Yes | Semantic relationship type. |
+| `sourceBlockId` | `string` | Yes | ID of the block where the reference originates. |
+| `targetBlockId` | `string` | Yes | ID of the block being referenced. |
+| `sourceAnchor` | `string` | No | Sub-element anchor within the source block (e.g. a node ID or row key). |
+| `targetAnchor` | `string` | No | Sub-element anchor within the target block. |
+| `label` | `string` | No | Human-readable label for the reference. |
+| `bidirectional` | `boolean` | No | Whether the relationship goes both directions. Defaults to `false`. |
+| `unresolved` | `boolean` | No | Set to `true` during compilation if `targetBlockId` could not be resolved. |
+
+References with unresolvable targets produce a warning diagnostic but are preserved in the IR with `unresolved: true`.
+---
+
+## SourcePosition
+
+Tracks where a block originates in the Markdown source. Compatible with the [unist Position](https://github.com/syntax-tree/unist#position) format.
+
+```typescript
+interface SourcePosition {
+  start: { line: number; column: number; offset?: number };
+  end: { line: number; column: number; offset?: number };
+}
+```
+
+Both `line` and `column` are 1-based. The optional `offset` is a 0-based character offset from the start of the source string.
+
+---
+
+## DocumentMetadata
+
+Optional metadata extracted from Markdown frontmatter or inferred by the compiler:
+
+```typescript
+interface DocumentMetadata {
+  title?: string;
+  description?: string;
+  authors?: string[];
+  createdAt?: string;    // ISO 8601
+  sourceFile?: string;
+  tags?: string[];
+}
+```
+
+---
+
+## Content-addressed IDs
+
+Glyph JS uses deterministic ID generation for both documents and blocks, ensuring that the same input always produces the same IR output.
+
+### Document IDs
+
+Document IDs are resolved in priority order:
+
+1. **Explicit ID** -- If the frontmatter contains `glyph-id: <value>`, that value is used directly.
+2. **File path** -- If the compiler receives a file path, the document ID is the relative file path normalized to forward slashes (e.g. `docs/architecture.md`).
+3. **Content hash** -- Otherwise, the ID is `doc-` followed by the first 16 hex characters of the SHA-256 hash of the full Markdown content.
+
+### Block IDs
+
+Block IDs are resolved in priority order:
+
+1. **User-assigned** -- If the block has a `glyph-id` annotation in the Markdown source, that value is used. The compiler validates uniqueness within the document.
+2. **Content-addressed** -- Otherwise, the ID is computed as:
+
+```
+block_id = "b-" + truncatedSHA256(document_id + block_type + content_fingerprint)
+```
+
+The `content_fingerprint` is the SHA-256 of the block raw source content. The hash is truncated to 12 hex characters, producing IDs like `"b-a3f8c2e10b4d"`.
+
+The block index is **not** included in the hash. This ensures IDs remain stable when blocks are inserted or reordered, which is critical for patch and reference stability.
+
+**Collision handling:** If two blocks produce the same content-addressed ID (identical type and content), a numeric suffix is appended: `b-a3f8c2e10b4d-1`, `b-a3f8c2e10b4d-2`.
+---
+
+## Validation rules
+
+The `validateIR` function in `@glyphjs/ir` checks structural integrity and returns an array of `Diagnostic` objects:
+
+| Code | Severity | Rule |
+|---|---|---|
+| `IR_MISSING_VERSION` | error | `version` must be a non-empty string. |
+| `IR_MISSING_ID` | error | `id` must be a non-empty string. |
+| `BLOCK_MISSING_ID` | error | Every block must have a non-empty `id`. |
+| `BLOCK_MISSING_TYPE` | error | Every block must have a non-empty `type`. |
+| `BLOCK_MISSING_DATA` | error | Every block must have a `data` field (not `null` or `undefined`). |
+| `BLOCK_MISSING_POSITION` | error | Every block must have a `position` field. |
+| `BLOCK_DUPLICATE_ID` | error | All block IDs within the document must be unique. |
+| `REF_MISSING_SOURCE` | error | Every reference `sourceBlockId` must exist in the blocks. |
+| `REF_MISSING_TARGET` | error | Every reference `targetBlockId` must exist in the blocks. |
+| `LAYOUT_INVALID_MODE` | error | `layout.mode` must be one of `document`, `dashboard`, or `presentation`. |
+
+### Usage
+
+```typescript
+import { validateIR } from '@glyphjs/ir';
+
+const diagnostics = validateIR(myDocument);
+
+if (diagnostics.length > 0) {
+  for (const d of diagnostics) {
+    console.warn(`[${d.severity}] ${d.code}: ${d.message}`);
+  }
+}
+```
+
+The `Diagnostic` type used throughout the system:
+
+```typescript
+interface Diagnostic {
+  severity: 'error' | 'warning' | 'info';
+  code: string;
+  message: string;
+  position?: SourcePosition;
+  source: DiagnosticSource;
+  details?: unknown;
+}
+
+type DiagnosticSource = 'parser' | 'compiler' | 'schema' | 'runtime' | 'plugin';
+```
+---
+
+## Diffing and patching
+
+The `@glyphjs/ir` package provides a block-level patch system that operates at a higher abstraction than raw JSON Patch (RFC 6902). This maps directly to how LLMs and MCP tools think about document modifications.
+
+### Patch operations
+
+```typescript
+type GlyphPatch = GlyphPatchOperation[];
+
+type GlyphPatchOperation =
+  | { op: 'addBlock'; block: Block; afterBlockId?: string }
+  | { op: 'removeBlock'; blockId: string }
+  | { op: 'updateBlock'; blockId: string; data: Partial<Block> }
+  | { op: 'moveBlock'; blockId: string; afterBlockId?: string }
+  | { op: 'addReference'; reference: Reference }
+  | { op: 'removeReference'; referenceId: string }
+  | { op: 'updateMetadata'; metadata: Partial<DocumentMetadata> }
+  | { op: 'updateLayout'; layout: Partial<LayoutHints> };
+```
+
+| Operation | Description |
+|---|---|
+| `addBlock` | Insert a new block. If `afterBlockId` is provided, insert after that block; otherwise insert at the beginning. |
+| `removeBlock` | Remove the block with the given `blockId`. |
+| `updateBlock` | Partially update block fields. Only changed fields are included in `data`. |
+| `moveBlock` | Reorder a block. If `afterBlockId` is provided, move after that block; otherwise move to the beginning. |
+| `addReference` | Append a new reference to the document. |
+| `removeReference` | Remove the reference with the given `referenceId`. |
+| `updateMetadata` | Replace the document metadata entirely. |
+| `updateLayout` | Merge new layout hints into the existing layout. The `mode` falls back to the current value if not specified. |
+
+### Functions
+
+```typescript
+import { diffIR, applyPatch, composePatch } from '@glyphjs/ir';
+
+// Compute a patch that transforms before into after
+const patch: GlyphPatch = diffIR(before, after);
+
+// Apply a patch immutably (original is not modified)
+const updated: GlyphIR = applyPatch(original, patch);
+
+// Compose two patches into one
+const combined: GlyphPatch = composePatch(patchA, patchB);
+```
+
+### Invariants
+
+- **Round-trip**: `applyPatch(a, diffIR(a, b))` deep-equals `b`.
+- **Identity**: `applyPatch(ir, [])` returns `ir` unchanged.
+- **Associativity**: `composePatch(composePatch(a, b), c)` equals `composePatch(a, composePatch(b, c))`.
+
+### Diff details
+
+The `diffIR` function compares two IR documents and emits the minimal set of operations:
+
+- **Blocks** -- Detects added, removed, updated (partial field diff), and moved blocks by comparing block IDs across the before/after arrays.
+- **References** -- Detects added and removed references. Updated references are expressed as a remove followed by an add.
+- **Metadata** -- Full replacement if any metadata field changed.
+- **Layout** -- Full replacement if any layout field changed.
+
+---
+
+## Migration
+
+When the runtime encounters an IR document with an older `version`, it applies a migration pipeline:
+
+```typescript
+interface IRMigration {
+  from: string;
+  to: string;
+  migrate: (ir: GlyphIR) => GlyphIR;
+}
+```
+
+Migrations are pure functions registered in `@glyphjs/ir`. They chain automatically: if the runtime targets version `1.2.0` and the document is at `1.0.0`, migrations `1.0.0 -> 1.1.0` and `1.1.0 -> 1.2.0` run in sequence.
+
+If the document version is higher than the runtime known version (a future version), a clear error is produced rather than silently dropping data.
+
+### Key guarantees
+
+- **Deterministic** -- The same Markdown input always produces the same IR output.
+- **Versioned** -- Every IR document carries a spec version for forward compatibility.
+- **Forward-compatible** -- Unknown block types are preserved, never dropped.
+- **Patch-friendly** -- The block-level patch format enables efficient incremental updates.
