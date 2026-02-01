@@ -3,6 +3,8 @@ import starlight from '@astrojs/starlight';
 import react from '@astrojs/react';
 
 export default defineConfig({
+  site: 'https://vledicfranco.github.io',
+  base: '/glyphjs',
   integrations: [
     starlight({
       title: 'Glyph JS',
