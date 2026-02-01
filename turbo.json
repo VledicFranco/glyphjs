@@ -10,7 +10,9 @@
     },
     "lint": {},
     "test": {
-      "dependsOn": ["^build"]
+      "dependsOn": ["build"],
+      "inputs": ["src/**", "tests/**", "vitest.config.ts"],
+      "outputs": []
     },
     "size": {
       "dependsOn": ["build"]

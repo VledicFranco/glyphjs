@@ -22,6 +22,7 @@
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "lint": "eslint src/",
     "clean": "rm -rf dist .turbo"
   },
@@ -29,7 +30,8 @@
     "@glyphjs/types": "workspace:*",
     "@glyphjs/schemas": "workspace:*",
     "@glyphjs/parser": "workspace:*",
-    "@glyphjs/ir": "workspace:*"
+    "@glyphjs/ir": "workspace:*",
+    "yaml": "^2.7.0"
   },
   "sideEffects": false,
   "license": "MIT"

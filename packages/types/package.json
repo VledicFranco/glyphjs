@@ -13,6 +13,7 @@
   "scripts": {
     "build": "tsc --emitDeclarationOnly --outDir dist",
     "typecheck": "tsc --noEmit",
+    "test": "vitest run",
     "lint": "eslint src/",
     "clean": "rm -rf dist .turbo"
   },
