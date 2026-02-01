@@ -1,0 +1,26 @@
+[
+  {
+    "name": "@glyphjs/parser (own code)",
+    "path": "packages/parser/dist/index.js",
+    "limit": "15 KB",
+    "gzip": true
+  },
+  {
+    "name": "@glyphjs/compiler (own code)",
+    "path": "packages/compiler/dist/index.js",
+    "limit": "15 KB",
+    "gzip": true
+  },
+  {
+    "name": "@glyphjs/ir",
+    "path": "packages/ir/dist/index.js",
+    "limit": "15 KB",
+    "gzip": true
+  },
+  {
+    "name": "@glyphjs/schemas",
+    "path": "packages/schemas/dist/index.js",
+    "limit": "15 KB",
+    "gzip": true
+  }
+]

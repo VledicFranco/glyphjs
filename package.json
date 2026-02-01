@@ -6,14 +6,16 @@
     "typecheck": "turbo run typecheck",
     "lint": "turbo run lint",
     "test": "turbo run test && vitest run --config vitest.config.ts",
-    "size": "turbo run size",
+    "size": "size-limit",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
+    "@size-limit/file": "^12.0.0",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.0",
     "prettier": "^3.4.0",
+    "size-limit": "^12.0.0",
     "tsup": "^8.5.1",
     "turbo": "^2.3.0",
     "typescript": "^5.7.0",

@@ -14,8 +14,10 @@
       "inputs": ["src/**", "tests/**", "vitest.config.ts"],
       "outputs": []
     },
-    "size": {
-      "dependsOn": ["build"]
+    "//#size": {
+      "dependsOn": ["build"],
+      "inputs": ["dist/**"],
+      "outputs": []
     }
   }
 }
