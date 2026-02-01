@@ -19,6 +19,9 @@ function usePrefersReducedMotion(): boolean {
   const [prefersReduced, setPrefersReduced] = useState(false);
 
   useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') {
+      return;
+    }
     const mql = window.matchMedia('(prefers-reduced-motion: reduce)');
     setPrefersReduced(mql.matches);
 
@@ -65,6 +68,11 @@ export function useBlockAnimation(index: number): BlockAnimationResult {
 
     const element = ref.current;
     if (!element) {
+      return;
+    }
+
+    if (typeof IntersectionObserver === 'undefined') {
+      setIsVisible(true);
       return;
     }
 

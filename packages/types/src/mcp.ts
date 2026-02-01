@@ -1,4 +1,4 @@
-import type { DocumentMetadata, GlyphIR, LayoutHints, ReferenceType } from './ir.js';
+import type { DocumentMetadata, GlyphIR, LayoutHints } from './ir.js';
 import type { GlyphPatch } from './patch.js';
 
 // ─── MCP Session Types ────────────────────────────────────────
