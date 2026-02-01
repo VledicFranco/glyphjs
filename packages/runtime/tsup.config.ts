@@ -7,4 +7,7 @@ export default defineConfig({
   clean: true,
   target: 'es2022',
   external: ['react', 'react-dom', 'zod'],
+  esbuildOptions(options) {
+    options.jsx = 'automatic';
+  },
 });

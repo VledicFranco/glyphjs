@@ -18,7 +18,9 @@
       }
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "scripts": {
     "build": "tsup",
     "typecheck": "tsc --noEmit",
@@ -27,13 +29,17 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@glyphjs/types": "workspace:*",
-    "@glyphjs/schemas": "workspace:*"
+    "@glyphjs/schemas": "workspace:*",
+    "@glyphjs/types": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
     "react-dom": "^18.0.0 || ^19.0.0"
   },
   "sideEffects": false,
-  "license": "MIT"
+  "license": "MIT",
+  "devDependencies": {
+    "@types/react": "^19.2.10",
+    "@types/react-dom": "^19.2.3"
+  }
 }
