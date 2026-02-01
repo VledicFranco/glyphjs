@@ -1,0 +1,8 @@
+{
+  "type": "dag",
+  "nodes": [
+    { "id": "a", "label": "A" }
+  ],
+  "edges": [],
+  "layout": "circular"
+}

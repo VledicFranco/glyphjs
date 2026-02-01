@@ -1,0 +1,7 @@
+{
+  "tabs": [
+    { "label": "HTML", "content": "<p>HTML content</p>" },
+    { "label": "CSS", "content": "body { margin: 0; }" },
+    { "label": "JS", "content": "console.log('hello');" }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "events": [
+    { "date": "1969-07-20", "title": "Moon Landing", "description": "Apollo 11 lands on the moon." }
+  ],
+  "orientation": "vertical"
+}

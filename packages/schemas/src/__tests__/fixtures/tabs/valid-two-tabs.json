@@ -1,0 +1,6 @@
+{
+  "tabs": [
+    { "label": "Overview", "content": "This is the overview tab." },
+    { "label": "Details", "content": "Here are the details." }
+  ]
+}

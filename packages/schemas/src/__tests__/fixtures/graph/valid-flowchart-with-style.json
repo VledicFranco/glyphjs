@@ -1,0 +1,10 @@
+{
+  "type": "flowchart",
+  "nodes": [
+    { "id": "n1", "label": "Login", "type": "process", "style": { "fill": "#ff0" }, "group": "auth" },
+    { "id": "n2", "label": "Dashboard", "type": "page" }
+  ],
+  "edges": [
+    { "from": "n1", "to": "n2", "type": "solid", "style": { "stroke": "#000" } }
+  ]
+}

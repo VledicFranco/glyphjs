@@ -1,0 +1,10 @@
+{
+  "entities": [
+    { "id": "a", "label": "Entity A" },
+    { "id": "b", "label": "Entity B" }
+  ],
+  "relationships": [
+    { "from": "a", "to": "b", "cardinality": "N:M" }
+  ],
+  "layout": "left-right"
+}

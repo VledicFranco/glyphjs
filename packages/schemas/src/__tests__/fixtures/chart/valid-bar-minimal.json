@@ -1,0 +1,12 @@
+{
+  "type": "bar",
+  "series": [
+    {
+      "name": "Sales",
+      "data": [
+        { "category": "A", "count": 10 },
+        { "category": "B", "count": 20 }
+      ]
+    }
+  ]
+}

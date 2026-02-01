@@ -1,0 +1,5 @@
+{
+  "relationships": [
+    { "from": "a", "to": "b", "cardinality": "1:1" }
+  ]
+}

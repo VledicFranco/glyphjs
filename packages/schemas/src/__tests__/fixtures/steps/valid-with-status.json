@@ -1,0 +1,7 @@
+{
+  "steps": [
+    { "title": "Download", "status": "completed", "content": "Downloaded the package." },
+    { "title": "Install", "status": "active", "content": "Installing dependencies." },
+    { "title": "Run", "status": "pending", "content": "Start the application." }
+  ]
+}

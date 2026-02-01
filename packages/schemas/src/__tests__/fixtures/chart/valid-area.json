@@ -1,0 +1,15 @@
+{
+  "type": "area",
+  "series": [
+    {
+      "name": "Temperature",
+      "data": [
+        { "time": "08:00", "temp": 18 },
+        { "time": "12:00", "temp": 25 },
+        { "time": "18:00", "temp": 22 }
+      ]
+    }
+  ],
+  "xAxis": { "key": "time" },
+  "legend": false
+}

@@ -1,0 +1,5 @@
+{
+  "tabs": [
+    { "label": "Only Tab", "content": "Single tab content." }
+  ]
+}

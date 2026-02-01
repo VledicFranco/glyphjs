@@ -1,0 +1,11 @@
+{
+  "type": "dag",
+  "nodes": [
+    { "id": "a", "label": "Start" },
+    { "id": "b", "label": "End" }
+  ],
+  "edges": [
+    { "from": "a", "to": "b", "label": "goes to" }
+  ],
+  "layout": "top-down"
+}

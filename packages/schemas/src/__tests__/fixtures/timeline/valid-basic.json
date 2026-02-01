@@ -1,0 +1,6 @@
+{
+  "events": [
+    { "date": "2024-01-01", "title": "Project Kickoff", "description": "The project officially started." },
+    { "date": "2024-06-15", "title": "Beta Release" }
+  ]
+}

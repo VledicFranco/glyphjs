@@ -1,0 +1,15 @@
+{
+  "entities": [
+    { "id": "user", "label": "User", "attributes": [
+      { "name": "id", "type": "int", "primaryKey": true },
+      { "name": "email", "type": "varchar" }
+    ]},
+    { "id": "order", "label": "Order", "attributes": [
+      { "name": "id", "type": "int", "primaryKey": true },
+      { "name": "total", "type": "decimal" }
+    ]}
+  ],
+  "relationships": [
+    { "from": "user", "to": "order", "label": "places", "cardinality": "1:N" }
+  ]
+}

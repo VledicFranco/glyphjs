@@ -1,0 +1,7 @@
+{
+  "steps": [
+    { "title": "Install", "content": "Run npm install." },
+    { "title": "Configure", "content": "Edit the config file." },
+    { "title": "Deploy", "content": "Push to production." }
+  ]
+}

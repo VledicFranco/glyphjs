@@ -1,0 +1,8 @@
+{
+  "events": [
+    { "date": "2023-Q1", "title": "Planning", "type": "milestone" },
+    { "date": "2023-Q2", "title": "Development", "type": "phase" },
+    { "date": "2023-Q3", "title": "Testing", "type": "phase" }
+  ],
+  "orientation": "horizontal"
+}

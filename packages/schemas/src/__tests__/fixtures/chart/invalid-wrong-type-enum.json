@@ -1,0 +1,6 @@
+{
+  "type": "pie",
+  "series": [
+    { "name": "Data", "data": [{ "a": 1 }] }
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "type": "tree",
+  "nodes": [
+    { "id": "a", "label": "A" }
+  ],
+  "edges": []
+}

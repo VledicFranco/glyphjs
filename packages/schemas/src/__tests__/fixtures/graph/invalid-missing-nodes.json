@@ -1,0 +1,6 @@
+{
+  "type": "dag",
+  "edges": [
+    { "from": "a", "to": "b" }
+  ]
+}

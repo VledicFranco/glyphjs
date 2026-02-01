@@ -1,0 +1,15 @@
+{
+  "type": "line",
+  "series": [
+    {
+      "name": "Revenue",
+      "data": [
+        { "month": "Jan", "value": 100 },
+        { "month": "Feb", "value": 150 }
+      ]
+    }
+  ],
+  "xAxis": { "key": "month", "label": "Month" },
+  "yAxis": { "key": "value", "label": "USD" },
+  "legend": true
+}

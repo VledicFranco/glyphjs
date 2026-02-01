@@ -1,0 +1,13 @@
+{
+  "type": "mindmap",
+  "nodes": [
+    { "id": "root", "label": "Central Idea" },
+    { "id": "branch1", "label": "Branch 1" },
+    { "id": "branch2", "label": "Branch 2" }
+  ],
+  "edges": [
+    { "from": "root", "to": "branch1" },
+    { "from": "root", "to": "branch2" }
+  ],
+  "layout": "radial"
+}

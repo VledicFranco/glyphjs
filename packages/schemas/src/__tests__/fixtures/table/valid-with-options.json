@@ -1,0 +1,14 @@
+{
+  "columns": [
+    { "key": "id", "label": "ID", "sortable": true, "type": "number" },
+    { "key": "product", "label": "Product", "filterable": true, "type": "string" },
+    { "key": "price", "label": "Price", "sortable": true, "type": "number" }
+  ],
+  "rows": [
+    { "id": 1, "product": "Widget", "price": 9.99 },
+    { "id": 2, "product": "Gadget", "price": 19.99 }
+  ],
+  "aggregation": [
+    { "column": "price", "function": "sum" }
+  ]
+}

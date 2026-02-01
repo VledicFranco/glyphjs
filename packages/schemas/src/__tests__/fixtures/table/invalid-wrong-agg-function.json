@@ -1,0 +1,9 @@
+{
+  "columns": [
+    { "key": "price", "label": "Price" }
+  ],
+  "rows": [],
+  "aggregation": [
+    { "column": "price", "function": "median" }
+  ]
+}

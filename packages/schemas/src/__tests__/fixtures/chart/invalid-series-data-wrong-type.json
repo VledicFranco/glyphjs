@@ -1,0 +1,6 @@
+{
+  "type": "bar",
+  "series": [
+    { "name": "Bad", "data": [{ "key": true }] }
+  ]
+}

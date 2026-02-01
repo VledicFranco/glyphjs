@@ -1,0 +1,10 @@
+{
+  "entities": [
+    { "id": "person", "label": "Person" },
+    { "id": "passport", "label": "Passport" }
+  ],
+  "relationships": [
+    { "from": "person", "to": "passport", "label": "holds", "cardinality": "1:1" }
+  ],
+  "layout": "top-down"
+}
