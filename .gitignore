@@ -34,3 +34,13 @@ storybook-static/
 # Playwright
 test-results/
 playwright-report/
+
+# Astro
+.astro/
+
+# Claude Code
+.claude/
+
+# Misc
+nul
+_gen.js
