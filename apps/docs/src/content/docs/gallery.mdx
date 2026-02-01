@@ -3,6 +3,246 @@ title: Gallery
 description: Browse example documents built with Glyph JS.
 ---
 
-Gallery coming soon.
+The gallery showcases practical Glyph Markdown examples organized by use case.
+Each example includes the raw source so you can copy it into your own documents or paste it
+into the [Playground](/playground/) to see it render live.
 
-This page will showcase real-world examples and templates demonstrating the full range of Glyph JS components.
+---
+
+## Technical Documentation
+
+Use callouts and steps to build migration guides and tutorials.
+
+````markdown
+# Migrating to v2
+
+```ui:callout
+type: warning
+title: Breaking Changes Ahead
+content: |
+  The v2 release includes several breaking changes to the compiler API.
+  Please read this guide carefully before upgrading.
+```
+
+```ui:steps
+steps:
+  - title: Update Dependencies
+    status: completed
+    content: Bump all `@glyphjs/*` packages to `^2.0.0` and run `pnpm install`.
+  - title: Replace Deprecated Imports
+    status: active
+    content: Replace `renderSync` with the async `compile` function.
+  - title: Run Tests
+    status: pending
+    content: Execute your test suite to verify nothing is broken.
+```
+
+```ui:callout
+type: tip
+title: Need Help?
+content: Open an issue on GitHub or visit the discussion board.
+```
+````
+
+---
+
+## Data Visualization
+
+Charts and tables bring data to life directly inside your documents.
+
+````markdown
+## Quarterly Revenue
+
+```ui:chart
+type: bar
+series:
+  - label: Revenue
+    data:
+      - { x: "Q1", y: 120 }
+      - { x: "Q2", y: 185 }
+      - { x: "Q3", y: 210 }
+      - { x: "Q4", y: 290 }
+xAxis: { label: Quarter }
+yAxis: { label: "Revenue ($k)" }
+```
+
+```ui:table
+columns:
+  - key: quarter
+    label: Quarter
+  - key: revenue
+    label: Revenue
+    sortable: true
+  - key: growth
+    label: Growth
+    sortable: true
+rows:
+  - { quarter: Q1, revenue: "$120k", growth: "—" }
+  - { quarter: Q2, revenue: "$185k", growth: "+54%" }
+  - { quarter: Q3, revenue: "$210k", growth: "+14%" }
+  - { quarter: Q4, revenue: "$290k", growth: "+38%" }
+```
+````
+
+---
+
+## Architecture Diagrams
+
+Graph and relation components visualize system architecture and data models.
+
+````markdown
+## System Architecture
+
+```ui:graph
+type: flowchart
+nodes:
+  - id: client
+    label: Browser Client
+  - id: api
+    label: API Gateway
+  - id: auth
+    label: Auth Service
+  - id: db
+    label: PostgreSQL
+  - id: cache
+    label: Redis Cache
+edges:
+  - source: client
+    target: api
+    label: HTTPS
+  - source: api
+    target: auth
+    label: JWT
+  - source: api
+    target: db
+    label: SQL
+  - source: api
+    target: cache
+    label: Cache
+```
+
+## Data Model
+
+```ui:relation
+entities:
+  - name: User
+    attributes:
+      - { name: id, type: uuid, pk: true }
+      - { name: email, type: string }
+      - { name: name, type: string }
+  - name: Post
+    attributes:
+      - { name: id, type: uuid, pk: true }
+      - { name: title, type: string }
+      - { name: authorId, type: uuid, fk: true }
+relationships:
+  - from: User
+    to: Post
+    cardinality: "1:N"
+    label: writes
+```
+````
+
+---
+
+## Project Timelines
+
+Track milestones and project progress with timelines and steps.
+
+````markdown
+## Product Roadmap 2026
+
+```ui:timeline
+orientation: horizontal
+events:
+  - date: "2026-01"
+    title: Alpha Release
+    description: Core pipeline working end-to-end.
+  - date: "2026-03"
+    title: Beta Release
+    description: All 8 components, theming, and layout modes.
+  - date: "2026-06"
+    title: v1.0 GA
+    description: Production-ready with docs, playground, and npm packages.
+  - date: "2026-09"
+    title: MCP Integration
+    description: LLM agents can create and edit documents via MCP tools.
+```
+````
+
+---
+
+## Kitchen Sink
+
+A comprehensive example combining multiple components in a single document.
+
+````markdown
+---
+title: Sprint Retrospective
+layout: document
+theme: light
+---
+
+# Sprint 12 Retrospective
+
+```ui:callout
+type: info
+title: Sprint Summary
+content: |
+  Sprint 12 focused on performance optimization and bug fixes.
+  We closed 23 issues and shipped 2 new features.
+```
+
+## Velocity
+
+```ui:chart
+type: line
+series:
+  - label: Story Points
+    data:
+      - { x: "Sprint 8", y: 34 }
+      - { x: "Sprint 9", y: 41 }
+      - { x: "Sprint 10", y: 38 }
+      - { x: "Sprint 11", y: 45 }
+      - { x: "Sprint 12", y: 52 }
+xAxis: { label: Sprint }
+yAxis: { label: Points }
+```
+
+## Issue Breakdown
+
+```ui:table
+columns:
+  - key: type
+    label: Type
+  - key: count
+    label: Count
+    sortable: true
+  - key: closed
+    label: Closed
+    sortable: true
+rows:
+  - { type: Bug, count: 12, closed: 11 }
+  - { type: Feature, count: 5, closed: 4 }
+  - { type: Chore, count: 8, closed: 8 }
+```
+
+## Next Steps
+
+```ui:steps
+steps:
+  - title: Review open bugs
+    status: active
+    content: Triage remaining 1 bug from Sprint 12.
+  - title: Plan Sprint 13
+    status: pending
+    content: Prioritize backlog items for next sprint.
+  - title: Ship release
+    status: pending
+    content: Deploy v1.3.0 to production.
+```
+````
+
+---
+
+Want to try these examples yourself? Head to the [Playground](/playground/) and paste any of the Markdown snippets above.
