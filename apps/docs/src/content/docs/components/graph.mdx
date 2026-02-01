@@ -3,6 +3,8 @@ title: Graph
 description: Visualize node-and-edge graphs with automatic layout.
 ---
 
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
 The **Graph** component (`ui:graph`) renders node-and-edge diagrams with automatic layout powered by D3 and Dagre. It supports directed acyclic graphs, flowcharts, mind maps, and force-directed layouts. Nodes and edges can carry labels, semantic types, groups, and custom style overrides.
 
 ## Properties
@@ -85,6 +87,36 @@ layout: top-down
 ```
 ````
 
+export const dagExample = `\`\`\`ui:graph
+type: dag
+nodes:
+  - id: api
+    label: API Gateway
+    type: service
+  - id: auth
+    label: Auth Service
+    type: service
+  - id: db
+    label: PostgreSQL
+    type: database
+  - id: cache
+    label: Redis Cache
+    type: database
+edges:
+  - from: api
+    to: auth
+    label: authenticates
+  - from: api
+    to: cache
+    label: reads
+  - from: auth
+    to: db
+    label: queries
+layout: top-down
+\`\`\``;
+
+<GlyphPreview client:only="react" source={dagExample} />
+
 ### Mind map example
 
 ````markdown
@@ -112,6 +144,32 @@ edges:
     to: schemas
 ```
 ````
+
+export const mindmapExample = `\`\`\`ui:graph
+type: mindmap
+nodes:
+  - id: root
+    label: Glyph JS
+  - id: parser
+    label: Parser
+  - id: compiler
+    label: Compiler
+  - id: runtime
+    label: Runtime
+  - id: schemas
+    label: Schemas
+edges:
+  - from: root
+    to: parser
+  - from: root
+    to: compiler
+  - from: root
+    to: runtime
+  - from: root
+    to: schemas
+\`\`\``;
+
+<GlyphPreview client:only="react" source={mindmapExample} />
 
 ## Shared abstraction with Relation
 

@@ -3,6 +3,8 @@ title: Gallery
 description: Browse example documents built with Glyph JS.
 ---
 
+import GlyphPreview from '../../components/GlyphPreview.tsx';
+
 The gallery showcases practical Glyph Markdown examples organized by use case.
 Each example includes the raw source so you can copy it into your own documents or paste it
 into the [Playground](/glyphjs/playground/) to see it render live.
@@ -28,10 +30,10 @@ content: |
 steps:
   - title: Update Dependencies
     status: completed
-    content: Bump all `@glyphjs/*` packages to `^2.0.0` and run `pnpm install`.
+    content: Bump all @glyphjs packages to ^2.0.0 and run pnpm install.
   - title: Replace Deprecated Imports
     status: active
-    content: Replace `renderSync` with the async `compile` function.
+    content: Replace renderSync with the async compile function.
   - title: Run Tests
     status: pending
     content: Execute your test suite to verify nothing is broken.
@@ -43,6 +45,37 @@ title: Need Help?
 content: Open an issue on GitHub or visit the discussion board.
 ```
 ````
+
+export const techDocExample = `# Migrating to v2
+
+\`\`\`ui:callout
+type: warning
+title: Breaking Changes Ahead
+content: |
+  The v2 release includes several breaking changes to the compiler API.
+  Please read this guide carefully before upgrading.
+\`\`\`
+
+\`\`\`ui:steps
+steps:
+  - title: Update Dependencies
+    status: completed
+    content: Bump all @glyphjs packages to ^2.0.0 and run pnpm install.
+  - title: Replace Deprecated Imports
+    status: active
+    content: Replace renderSync with the async compile function.
+  - title: Run Tests
+    status: pending
+    content: Execute your test suite to verify nothing is broken.
+\`\`\`
+
+\`\`\`ui:callout
+type: tip
+title: Need Help?
+content: Open an issue on GitHub or visit the discussion board.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={techDocExample} />
 
 ---
 
@@ -56,7 +89,7 @@ Charts and tables bring data to life directly inside your documents.
 ```ui:chart
 type: bar
 series:
-  - label: Revenue
+  - name: Revenue
     data:
       - { x: "Q1", y: 120 }
       - { x: "Q2", y: 185 }
@@ -84,6 +117,56 @@ rows:
 ```
 ````
 
+export const dataVizExample = `## Quarterly Revenue
+
+\`\`\`ui:chart
+type: bar
+series:
+  - name: Revenue
+    data:
+      - x: Q1
+        y: 120
+      - x: Q2
+        y: 185
+      - x: Q3
+        y: 210
+      - x: Q4
+        y: 290
+xAxis:
+  key: x
+  label: Quarter
+yAxis:
+  key: y
+  label: Revenue
+\`\`\`
+
+\`\`\`ui:table
+columns:
+  - key: quarter
+    label: Quarter
+  - key: revenue
+    label: Revenue
+    sortable: true
+  - key: growth
+    label: Growth
+    sortable: true
+rows:
+  - quarter: Q1
+    revenue: "$120k"
+    growth: "—"
+  - quarter: Q2
+    revenue: "$185k"
+    growth: "+54%"
+  - quarter: Q3
+    revenue: "$210k"
+    growth: "+14%"
+  - quarter: Q4
+    revenue: "$290k"
+    growth: "+38%"
+\`\`\``;
+
+<GlyphPreview client:only="react" source={dataVizExample} />
+
 ---
 
 ## Architecture Diagrams
@@ -107,41 +190,116 @@ nodes:
   - id: cache
     label: Redis Cache
 edges:
-  - source: client
-    target: api
+  - from: client
+    to: api
     label: HTTPS
-  - source: api
-    target: auth
+  - from: api
+    to: auth
     label: JWT
-  - source: api
-    target: db
+  - from: api
+    to: db
     label: SQL
-  - source: api
-    target: cache
+  - from: api
+    to: cache
     label: Cache
 ```
+````
 
-## Data Model
+export const archExample = `## System Architecture
 
+\`\`\`ui:graph
+type: flowchart
+nodes:
+  - id: client
+    label: Browser Client
+  - id: api
+    label: API Gateway
+  - id: auth
+    label: Auth Service
+  - id: db
+    label: PostgreSQL
+  - id: cache
+    label: Redis Cache
+edges:
+  - from: client
+    to: api
+    label: HTTPS
+  - from: api
+    to: auth
+    label: JWT
+  - from: api
+    to: db
+    label: SQL
+  - from: api
+    to: cache
+    label: Cache
+\`\`\``;
+
+<GlyphPreview client:only="react" source={archExample} />
+
+### Data Model
+
+````markdown
 ```ui:relation
 entities:
-  - name: User
+  - id: users
+    label: User
     attributes:
-      - { name: id, type: uuid, pk: true }
-      - { name: email, type: string }
-      - { name: name, type: string }
-  - name: Post
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: email
+        type: string
+      - name: name
+        type: string
+  - id: posts
+    label: Post
     attributes:
-      - { name: id, type: uuid, pk: true }
-      - { name: title, type: string }
-      - { name: authorId, type: uuid, fk: true }
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: title
+        type: string
+      - name: authorId
+        type: uuid
 relationships:
-  - from: User
-    to: Post
+  - from: users
+    to: posts
     cardinality: "1:N"
     label: writes
 ```
 ````
+
+export const dataModelExample = `\`\`\`ui:relation
+entities:
+  - id: users
+    label: User
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: email
+        type: string
+      - name: name
+        type: string
+  - id: posts
+    label: Post
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: title
+        type: string
+      - name: authorId
+        type: uuid
+relationships:
+  - from: users
+    to: posts
+    cardinality: "1:N"
+    label: writes
+\`\`\``;
+
+<GlyphPreview client:only="react" source={dataModelExample} />
 
 ---
 
@@ -170,6 +328,27 @@ events:
 ```
 ````
 
+export const timelineExample = `## Product Roadmap 2026
+
+\`\`\`ui:timeline
+orientation: horizontal
+events:
+  - date: "2026-01"
+    title: Alpha Release
+    description: Core pipeline working end-to-end.
+  - date: "2026-03"
+    title: Beta Release
+    description: All 8 components, theming, and layout modes.
+  - date: "2026-06"
+    title: v1.0 GA
+    description: Production-ready with docs, playground, and npm packages.
+  - date: "2026-09"
+    title: MCP Integration
+    description: LLM agents can create and edit documents via MCP tools.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={timelineExample} />
+
 ---
 
 ## Kitchen Sink
@@ -177,12 +356,6 @@ events:
 A comprehensive example combining multiple components in a single document.
 
 ````markdown
----
-title: Sprint Retrospective
-layout: document
-theme: light
----
-
 # Sprint 12 Retrospective
 
 ```ui:callout
@@ -191,22 +364,6 @@ title: Sprint Summary
 content: |
   Sprint 12 focused on performance optimization and bug fixes.
   We closed 23 issues and shipped 2 new features.
-```
-
-## Velocity
-
-```ui:chart
-type: line
-series:
-  - label: Story Points
-    data:
-      - { x: "Sprint 8", y: 34 }
-      - { x: "Sprint 9", y: 41 }
-      - { x: "Sprint 10", y: 38 }
-      - { x: "Sprint 11", y: 45 }
-      - { x: "Sprint 12", y: 52 }
-xAxis: { label: Sprint }
-yAxis: { label: Points }
 ```
 
 ## Issue Breakdown
@@ -242,6 +399,57 @@ steps:
     content: Deploy v1.3.0 to production.
 ```
 ````
+
+export const kitchenSinkExample = `# Sprint 12 Retrospective
+
+\`\`\`ui:callout
+type: info
+title: Sprint Summary
+content: |
+  Sprint 12 focused on performance optimization and bug fixes.
+  We closed 23 issues and shipped 2 new features.
+\`\`\`
+
+## Issue Breakdown
+
+\`\`\`ui:table
+columns:
+  - key: type
+    label: Type
+  - key: count
+    label: Count
+    sortable: true
+  - key: closed
+    label: Closed
+    sortable: true
+rows:
+  - type: Bug
+    count: 12
+    closed: 11
+  - type: Feature
+    count: 5
+    closed: 4
+  - type: Chore
+    count: 8
+    closed: 8
+\`\`\`
+
+## Next Steps
+
+\`\`\`ui:steps
+steps:
+  - title: Review open bugs
+    status: active
+    content: Triage remaining 1 bug from Sprint 12.
+  - title: Plan Sprint 13
+    status: pending
+    content: Prioritize backlog items for next sprint.
+  - title: Ship release
+    status: pending
+    content: Deploy v1.3.0 to production.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={kitchenSinkExample} />
 
 ---
 

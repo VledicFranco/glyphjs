@@ -3,6 +3,8 @@ title: Steps
 description: Display sequential instructions as a numbered step list.
 ---
 
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
 The **Steps** component (`ui:steps`) renders a numbered, vertical step list with optional progress indication. Each step has a title, an optional status, and rich Markdown content. Steps are a **container component** -- the compiler re-parses each step's `content` field recursively.
 
 ## Properties
@@ -48,6 +50,26 @@ steps:
       Run `pnpm build` and deploy to your hosting provider.
 ```
 ````
+
+export const stepsExample = `\`\`\`ui:steps
+steps:
+  - title: Install dependencies
+    status: completed
+    content: |
+      Run pnpm install to install all packages.
+  - title: Configure the project
+    status: active
+    content: |
+      Edit glyph.config.ts to set up your theme and register plugins.
+
+      You can also configure custom components in this file.
+  - title: Build and deploy
+    status: pending
+    content: |
+      Run pnpm build and deploy to your hosting provider.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={stepsExample} />
 
 ## Content nesting
 

@@ -3,6 +3,8 @@ title: Table
 description: Render structured data as accessible, styled tables.
 ---
 
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
 The **Table** component (`ui:table`) renders structured data as an interactive, accessible HTML table with optional sorting, filtering, and aggregation. Define columns with types and features, then provide row data as key-value records.
 
 ## Properties
@@ -68,6 +70,43 @@ aggregation:
     function: count
 ```
 ````
+
+export const tableExample = `\`\`\`ui:table
+columns:
+  - key: name
+    label: Employee
+    sortable: true
+    filterable: true
+    type: string
+  - key: role
+    label: Role
+    filterable: true
+    type: string
+  - key: salary
+    label: Salary (USD)
+    sortable: true
+    type: number
+rows:
+  - name: Alice
+    role: Engineer
+    salary: 120000
+  - name: Bob
+    role: Designer
+    salary: 105000
+  - name: Carol
+    role: Engineer
+    salary: 130000
+  - name: Dave
+    role: PM
+    salary: 115000
+aggregation:
+  - column: salary
+    function: avg
+  - column: name
+    function: count
+\`\`\``;
+
+<GlyphPreview client:only="react" source={tableExample} />
 
 ## Sorting and filtering
 

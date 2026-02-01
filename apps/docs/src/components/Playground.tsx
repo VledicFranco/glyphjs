@@ -1,4 +1,17 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
+import { compile } from '@glyphjs/compiler';
+import { createGlyphRuntime } from '@glyphjs/runtime';
+import {
+  calloutDefinition,
+  chartDefinition,
+  graphDefinition,
+  relationDefinition,
+  stepsDefinition,
+  tableDefinition,
+  tabsDefinition,
+  timelineDefinition,
+} from '@glyphjs/components';
+import type { GlyphIR } from '@glyphjs/types';
 
 const DEFAULT_MARKDOWN = `# Hello Glyph JS
 
@@ -17,68 +30,88 @@ content: |
 - Standard **Markdown** rendering
 - Embedded \`ui:\` components
 - Real-time preview
+
+\`\`\`ui:steps
+steps:
+  - title: Write Markdown
+    status: completed
+    content: Start with standard Markdown syntax.
+  - title: Add Components
+    status: active
+    content: Use ui: fenced code blocks for interactive components.
+  - title: See Results
+    status: pending
+    content: The rendered output appears in real time.
+\`\`\`
 `;
 
-function escapeHtml(str: string): string {
-  return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-}
-
-function renderSimplePreview(source: string): string {
-  const lines = source.split('\n');
-  const htmlParts: string[] = [];
-
-  for (const line of lines) {
-    if (line.startsWith('# ')) {
-      htmlParts.push(`<h1>${escapeHtml(line.slice(2))}</h1>`);
-    } else if (line.startsWith('## ')) {
-      htmlParts.push(`<h2>${escapeHtml(line.slice(3))}</h2>`);
-    } else if (line.startsWith('### ')) {
-      htmlParts.push(`<h3>${escapeHtml(line.slice(4))}</h3>`);
-    } else if (line.startsWith('- ')) {
-      htmlParts.push(`<li>${escapeHtml(line.slice(2))}</li>`);
-    } else if (line.startsWith('```ui:')) {
-      const comp = line.slice(3);
-      htmlParts.push(`<div style="background:#e0f2fe;border-left:3px solid #0284c7;padding:0.5rem 0.75rem;margin:0.5rem 0;border-radius:4px;font-size:0.85rem;color:#0369a1;"><strong>${escapeHtml(comp)}</strong></div>`);
-    } else if (line.startsWith('```')) {
-      // skip code fences
-    } else if (line.trim() === '') {
-      htmlParts.push('<br/>');
-    } else if (line.startsWith('  ') || line.startsWith('\t')) {
-      // indented content inside code block
-      htmlParts.push(`<div style="font-family:monospace;font-size:0.8rem;padding-left:1rem;color:#555;">${escapeHtml(line)}</div>`);
-    } else {
-      htmlParts.push(`<p>${escapeHtml(line)}</p>`);
-    }
-  }
-
-  return htmlParts.join('\n');
-}
+const allComponents = [
+  calloutDefinition,
+  chartDefinition,
+  graphDefinition,
+  relationDefinition,
+  stepsDefinition,
+  tableDefinition,
+  tabsDefinition,
+  timelineDefinition,
+];
 
 export default function Playground() {
   const [markdown, setMarkdown] = useState(DEFAULT_MARKDOWN);
-  const [html, setHtml] = useState('');
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const [ir, setIr] = useState<GlyphIR | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+
+  const runtime = useMemo(
+    () =>
+      createGlyphRuntime({
+        theme: 'light',
+        components: allComponents,
+      }),
+    [],
+  );
+
+  const GlyphDocument = runtime.GlyphDocument;
+
+  const compileSource = useCallback((src: string) => {
+    try {
+      const result = compile(src);
+      setIr(result.ir);
+      setError(null);
+    } catch (e) {
+      setError(e instanceof Error ? e.message : String(e));
+      setIr(null);
+    }
+  }, []);
 
   useEffect(() => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => {
-      setHtml(renderSimplePreview(markdown));
-    }, 300);
-    return () => { if (timerRef.current) clearTimeout(timerRef.current); };
-  }, [markdown]);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => compileSource(markdown), 300);
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [markdown, compileSource]);
+
+  useEffect(() => {
+    compileSource(markdown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div style={{ display: 'flex', gap: '1rem', minHeight: '500px', flexWrap: 'wrap' }}>
       <div style={{ flex: 1, minWidth: '300px' }}>
-        <div style={{ marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.875rem' }}>Editor</div>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.875rem' }}>
+          Editor
+        </div>
         <textarea
           value={markdown}
           onChange={(e) => setMarkdown(e.target.value)}
           style={{
             width: '100%',
             height: '460px',
-            fontFamily: 'monospace',
+            fontFamily: '"Fira Code", "Cascadia Code", Consolas, monospace',
             fontSize: '13px',
+            lineHeight: '1.6',
             padding: '0.75rem',
             border: '1px solid #ddd',
             borderRadius: '4px',
@@ -89,7 +122,9 @@ export default function Playground() {
         />
       </div>
       <div style={{ flex: 1, minWidth: '300px' }}>
-        <div style={{ marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.875rem' }}>Preview</div>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.875rem' }}>
+          Preview
+        </div>
         <div
           style={{
             height: '460px',
@@ -97,10 +132,20 @@ export default function Playground() {
             borderRadius: '4px',
             overflow: 'auto',
             padding: '1rem',
-            fontFamily: 'system-ui, sans-serif',
           }}
-          dangerouslySetInnerHTML={{ __html: html }}
-        />
+        >
+          {error ? (
+            <div style={{ color: '#e74c3c', fontFamily: 'monospace', fontSize: '13px' }}>
+              {error}
+            </div>
+          ) : ir ? (
+            <GlyphDocument ir={ir} />
+          ) : (
+            <p style={{ color: '#999', fontStyle: 'italic' }}>
+              Type some markdown to see the preview...
+            </p>
+          )}
+        </div>
       </div>
     </div>
   );

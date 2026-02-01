@@ -3,6 +3,8 @@ title: Tabs
 description: Organize content into switchable tabbed panels.
 ---
 
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
 The **Tabs** component (`ui:tabs`) organizes content into multiple switchable panels, each identified by a label. Only one tab panel is visible at a time. Tabs are a **container component** -- each tab's `content` field contains Markdown that the compiler re-parses recursively into child blocks.
 
 ## Properties
@@ -39,6 +41,26 @@ tabs:
       Edit `glyph.config.ts` to set up your theme and plugins.
 ```
 ````
+
+export const tabsExample = `\`\`\`ui:tabs
+tabs:
+  - label: Overview
+    content: |
+      This is the **overview** tab with standard Markdown.
+
+      It can contain multiple paragraphs and inline formatting.
+  - label: Installation
+    content: |
+      Run the following command to install:
+
+      - \\\`pnpm add @glyphjs/runtime\\\`
+      - \\\`pnpm add @glyphjs/schemas\\\`
+  - label: Configuration
+    content: |
+      Edit \\\`glyph.config.ts\\\` to set up your theme and plugins.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={tabsExample} />
 
 ## Content nesting
 

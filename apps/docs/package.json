@@ -10,6 +10,9 @@
   "dependencies": {
     "@astrojs/react": "^4.0.0",
     "@astrojs/starlight": "^0.32.0",
+    "@glyphjs/compiler": "workspace:*",
+    "@glyphjs/components": "workspace:*",
+    "@glyphjs/runtime": "workspace:*",
     "astro": "^5.0.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"

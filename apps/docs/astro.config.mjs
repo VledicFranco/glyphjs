@@ -1,6 +1,10 @@
 import { defineConfig } from 'astro/config';
 import starlight from '@astrojs/starlight';
 import react from '@astrojs/react';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export default defineConfig({
   site: 'https://vledicfranco.github.io',
@@ -38,4 +42,12 @@ export default defineConfig({
     }),
     react(),
   ],
+  vite: {
+    resolve: {
+      alias: {
+        'node:crypto': path.resolve(__dirname, 'src/crypto-shim.ts'),
+        crypto: path.resolve(__dirname, 'src/crypto-shim.ts'),
+      },
+    },
+  },
 });

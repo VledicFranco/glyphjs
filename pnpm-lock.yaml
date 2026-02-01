@@ -132,6 +132,15 @@ importers:
       '@astrojs/starlight':
         specifier: ^0.32.0
         version: 0.32.6(astro@5.17.1(@types/node@25.1.0)(rollup@4.57.1)(typescript@5.9.3)(yaml@2.8.2))
+      '@glyphjs/compiler':
+        specifier: workspace:*
+        version: link:../../packages/compiler
+      '@glyphjs/components':
+        specifier: workspace:*
+        version: link:../../packages/components
+      '@glyphjs/runtime':
+        specifier: workspace:*
+        version: link:../../packages/runtime
       astro:
         specifier: ^5.0.0
         version: 5.17.1(@types/node@25.1.0)(rollup@4.57.1)(typescript@5.9.3)(yaml@2.8.2)

@@ -3,6 +3,8 @@ title: Chart
 description: Render data visualizations including bar, line, and pie charts.
 ---
 
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
 The **Chart** component (`ui:chart`) renders data visualizations using D3. It supports line charts, bar charts, area charts, and OHLC (open-high-low-close) financial charts. Data is provided as named series of key-value records.
 
 ## Properties
@@ -74,6 +76,40 @@ legend: true
 ```
 ````
 
+export const lineChartExample = `\`\`\`ui:chart
+type: line
+series:
+  - name: Revenue
+    data:
+      - month: Jan
+        value: 4200
+      - month: Feb
+        value: 5100
+      - month: Mar
+        value: 6800
+      - month: Apr
+        value: 5900
+  - name: Expenses
+    data:
+      - month: Jan
+        value: 3100
+      - month: Feb
+        value: 3400
+      - month: Mar
+        value: 3800
+      - month: Apr
+        value: 3600
+xAxis:
+  key: month
+  label: Month
+yAxis:
+  key: value
+  label: Amount (USD)
+legend: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={lineChartExample} />
+
 ### Bar chart
 
 ````markdown
@@ -99,34 +135,28 @@ yAxis:
 ```
 ````
 
-### OHLC chart
-
-````markdown
-```ui:chart
-type: ohlc
+export const barChartExample = `\`\`\`ui:chart
+type: bar
 series:
-  - name: ACME Corp
+  - name: Downloads
     data:
-      - date: "2026-01-27"
-        open: 142
-        high: 148
-        low: 140
-        close: 146
-      - date: "2026-01-28"
-        open: 146
-        high: 151
-        low: 144
-        close: 149
-      - date: "2026-01-29"
-        open: 149
-        high: 153
-        low: 147
-        close: 150
+      - package: runtime
+        count: 12400
+      - package: schemas
+        count: 9800
+      - package: compiler
+        count: 7200
+      - package: parser
+        count: 6500
 xAxis:
-  key: date
-  label: Date
-```
-````
+  key: package
+  label: Package
+yAxis:
+  key: count
+  label: Weekly Downloads
+\`\`\``;
+
+<GlyphPreview client:only="react" source={barChartExample} />
 
 ## Accessibility
 

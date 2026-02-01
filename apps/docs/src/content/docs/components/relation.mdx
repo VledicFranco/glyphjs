@@ -3,6 +3,8 @@ title: Relation
 description: Display entity relationships and connections.
 ---
 
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
 The **Relation** component (`ui:relation`) renders entity-relationship (ER) diagrams with entities, typed attributes, and cardinality-annotated relationships. It builds on the same graph abstraction as `ui:graph` but constrains the model for database and domain modeling use cases.
 
 ## Properties
@@ -104,6 +106,60 @@ relationships:
 layout: left-right
 ```
 ````
+
+export const relationExample = `\`\`\`ui:relation
+entities:
+  - id: users
+    label: Users
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: email
+        type: varchar
+      - name: created_at
+        type: timestamp
+  - id: posts
+    label: Posts
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: title
+        type: varchar
+      - name: body
+        type: text
+      - name: author_id
+        type: uuid
+  - id: comments
+    label: Comments
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: body
+        type: text
+      - name: post_id
+        type: uuid
+      - name: user_id
+        type: uuid
+relationships:
+  - from: users
+    to: posts
+    label: authors
+    cardinality: "1:N"
+  - from: posts
+    to: comments
+    label: has
+    cardinality: "1:N"
+  - from: users
+    to: comments
+    label: writes
+    cardinality: "1:N"
+layout: left-right
+\`\`\``;
+
+<GlyphPreview client:only="react" source={relationExample} />
 
 ## Shared abstraction with Graph
 
