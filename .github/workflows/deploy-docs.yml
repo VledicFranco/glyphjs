@@ -35,11 +35,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build packages
-        run: pnpm build
+      - name: Build library packages
+        run: pnpm --filter './packages/*' build
 
       - name: Build docs site
-        run: pnpm --filter docs build
+        run: pnpm --filter @glyphjs/docs build
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

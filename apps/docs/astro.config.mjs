@@ -5,6 +5,18 @@ import react from '@astrojs/react';
 export default defineConfig({
   site: 'https://vledicfranco.github.io',
   base: '/glyphjs',
+  vite: {
+    resolve: {
+      alias: {
+        crypto: 'crypto-browserify',
+        stream: 'stream-browserify',
+      },
+    },
+    define: {
+      'process.env': {},
+      global: 'globalThis',
+    },
+  },
   integrations: [
     starlight({
       title: 'Glyph JS',

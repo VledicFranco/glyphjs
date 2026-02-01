@@ -19,9 +19,12 @@
     "@glyphjs/runtime": "workspace:^",
     "@glyphjs/types": "workspace:^",
     "astro": "^5.0.0",
+    "buffer": "^6.0.3",
     "codemirror": "^6.0.2",
+    "crypto-browserify": "^3.12.1",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "stream-browserify": "^3.0.0"
   },
   "devDependencies": {
     "@types/react": "^19.0.0",
