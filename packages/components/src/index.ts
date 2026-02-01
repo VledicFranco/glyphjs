@@ -13,3 +13,5 @@ export { timelineDefinition, Timeline } from './timeline/index.js';
 export type { TimelineData } from './timeline/index.js';
 export { graphDefinition, Graph, computeDagreLayout, computeForceLayout } from './graph/index.js';
 export type { GraphData, PositionedNode, PositionedEdge, LayoutResult } from './graph/index.js';
+export { relationDefinition, Relation } from './relation/index.js';
+export type { RelationData } from './relation/index.js';
