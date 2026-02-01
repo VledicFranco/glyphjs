@@ -1,8 +1,1019 @@
 ---
-title: Markdown Syntax
-description: Learn the Markdown syntax and extensions used by Glyph JS.
+title: Authoring Guide
+description: Learn how to write Glyph Markdown — standard Markdown plus interactive UI components, cross-block references, and layout modes.
 ---
 
-Authoring guide coming soon.
+Glyph JS extends standard Markdown with a component system that turns plain text
+into interactive, visually rich documents. This guide covers everything you need
+to know to author Glyph Markdown files, from basic syntax to advanced features
+like cross-block references and layout modes.
 
-This page will document the Markdown syntax supported by Glyph JS, including standard Markdown features and Glyph-specific extensions for components.
+## Standard Markdown
+
+Glyph Markdown is a superset of [CommonMark](https://commonmark.org/). All
+standard Markdown features work exactly as you would expect.
+
+### Headings
+
+```markdown
+# Heading 1
+## Heading 2
+### Heading 3
+#### Heading 4
+##### Heading 5
+###### Heading 6
+```
+
+### Inline formatting
+
+```markdown
+**Bold text** and *italic text* and ~~strikethrough~~.
+
+Inline `code` uses backticks. [Links](https://example.com) and
+![images](https://example.com/image.png) use the standard syntax.
+```
+
+### Lists
+
+```markdown
+- Unordered item A
+- Unordered item B
+  - Nested item
+
+1. Ordered item one
+2. Ordered item two
+   1. Nested ordered item
+```
+
+### Blockquotes
+
+```markdown
+> This is a blockquote.
+>
+> It can span multiple paragraphs.
+```
+
+### Code blocks
+
+Standard fenced code blocks with optional language highlighting are fully
+supported:
+
+````markdown
+```typescript
+const greeting: string = "Hello, Glyph!";
+console.log(greeting);
+```
+````
+
+### Images
+
+```markdown
+![Alt text describing the image](https://example.com/photo.png "Optional title")
+```
+
+Images render inside a `<figure>` element with lazy loading enabled by default.
+
+### Thematic breaks
+
+```markdown
+---
+```
+
+A horizontal rule separates sections visually.
+
+---
+
+## YAML Frontmatter
+
+Every Glyph Markdown file can begin with a YAML frontmatter block enclosed in
+`---` fences. Frontmatter controls document-level metadata and layout behavior.
+
+```markdown
+---
+glyph-id: my-document
+title: System Architecture
+layout:
+  mode: document
+  spacing: relaxed
+---
+```
+
+### Supported frontmatter fields
+
+| Field | Type | Description |
+|---|---|---|
+| `glyph-id` | `string` | Stable document identifier. Used for cross-document references and deterministic IR output. If omitted, an ID is derived from the file path or content hash. |
+| `title` | `string` | Document title. If omitted, the compiler infers it from the first `h1` heading. |
+| `description` | `string` | Short description. If omitted, inferred from the first paragraph. |
+| `authors` | `string[]` | List of author names. |
+| `tags` | `string[]` | Tags for categorization. |
+| `layout` | `object` | Layout configuration (see [Layout Modes](#layout-modes) below). |
+
+---
+
+## UI Components — the `ui:` Fenced Block Syntax
+
+Glyph JS introduces interactive components via a special fenced code block
+syntax. Any fenced code block whose language identifier starts with `ui:` is
+treated as a **Glyph UI block** rather than a regular code block.
+
+### How it works
+
+````markdown
+```ui:component-name
+# YAML payload goes here
+key: value
+```
+````
+
+The parser:
+
+1. Detects any fenced code block whose language starts with `ui:`.
+2. Strips the `ui:` prefix to determine the **component type** (e.g., `graph`,
+   `table`, `callout`).
+3. Parses the body of the block as **YAML**.
+4. Extracts the reserved keys `glyph-id` and `refs` (if present) before passing
+   the remaining data to the component.
+5. Replaces the code node in the AST with a `GlyphUIBlock` node.
+
+The YAML payload is validated against the component’s Zod schema at **compile
+time** by `@glyphjs/compiler`. The parser itself does not validate schemas — it
+handles only syntax.
+
+### Reserved YAML keys
+
+Two top-level YAML keys have special meaning and are stripped from the component
+data before schema validation:
+
+| Key | Purpose |
+|---|---|
+| `glyph-id` | Assigns a stable, user-defined block ID for cross-block references. |
+| `refs` | Declares outgoing references to other blocks (see [Cross-block References](#cross-block-references)). |
+
+All other keys are passed through as the component’s data payload.
+
+---
+
+## Component Catalog
+
+Glyph JS ships eight built-in components. Each is described below with its full
+YAML schema and an example.
+
+### Callout — `ui:callout`
+
+Highlighted blocks for tips, warnings, errors, and informational notes. Useful
+for drawing the reader’s attention to important content.
+
+**Schema fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"info"` \| `"warning"` \| `"error"` \| `"tip"` | Yes | Visual style of the callout. |
+| `title` | `string` | No | Optional heading displayed above the content. |
+| `content` | `string` | Yes | The callout body. Supports Markdown formatting (re-parsed by the compiler). |
+
+**Example:**
+
+````markdown
+```ui:callout
+type: tip
+title: Use glyph-id for stable references
+content: |
+  Assigning a `glyph-id` to your blocks ensures that references
+  remain valid even when you reorder content.
+```
+````
+
+---
+
+### Graph — `ui:graph`
+
+Interactive node-and-edge diagrams. Supports DAGs, flowcharts, mind maps, and
+force-directed layouts. Rendered with D3 and Dagre.
+
+**Schema fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"dag"` \| `"flowchart"` \| `"mindmap"` \| `"force"` | Yes | Graph variant. |
+| `nodes` | `array` | Yes | List of node objects (see below). |
+| `edges` | `array` | Yes | List of edge objects (see below). |
+| `layout` | `"top-down"` \| `"left-right"` \| `"bottom-up"` \| `"radial"` \| `"force"` | No | Layout direction. Defaults vary by graph type. |
+
+**Node object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `id` | `string` | Yes | Unique node identifier within this graph. |
+| `label` | `string` | Yes | Display text for the node. |
+| `type` | `string` | No | Semantic type (e.g., `"service"`, `"database"`). Used for styling. |
+| `style` | `Record<string, string>` | No | CSS-like style overrides. |
+| `group` | `string` | No | Grouping key for clustering nodes visually. |
+
+**Edge object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `from` | `string` | Yes | Source node ID. |
+| `to` | `string` | Yes | Target node ID. |
+| `label` | `string` | No | Text displayed on the edge. |
+| `type` | `string` | No | Semantic type (e.g., `"depends-on"`). |
+| `style` | `Record<string, string>` | No | CSS-like style overrides. |
+
+**Example:**
+
+````markdown
+```ui:graph
+glyph-id: architecture-graph
+type: dag
+nodes:
+  - id: api
+    label: API Gateway
+    type: service
+  - id: auth
+    label: Auth Service
+    type: service
+  - id: db
+    label: PostgreSQL
+    type: database
+edges:
+  - from: api
+    to: auth
+    label: authenticates
+  - from: auth
+    to: db
+    label: queries
+layout: top-down
+```
+````
+
+---
+
+### Table — `ui:table`
+
+Sortable, filterable data tables with optional aggregation. Column types enable
+type-aware sorting and filtering.
+
+**Schema fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `columns` | `array` | Yes | Column definitions (see below). |
+| `rows` | `array` | Yes | Array of row objects. Each row is a key-value record matching column keys. |
+| `aggregation` | `array` | No | Aggregation functions applied to columns (see below). |
+
+**Column object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `key` | `string` | Yes | Property name used to look up the value in each row. |
+| `label` | `string` | Yes | Display header for the column. |
+| `sortable` | `boolean` | No | Whether the column supports click-to-sort. |
+| `filterable` | `boolean` | No | Whether the column shows a filter control. |
+| `type` | `"string"` \| `"number"` \| `"date"` \| `"boolean"` | No | Data type hint for sorting and filtering behavior. |
+
+**Aggregation object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `column` | `string` | Yes | Column key to aggregate. |
+| `function` | `"sum"` \| `"avg"` \| `"count"` \| `"min"` \| `"max"` | Yes | Aggregation function. |
+
+**Example:**
+
+````markdown
+```ui:table
+columns:
+  - key: name
+    label: Name
+    sortable: true
+    filterable: true
+    type: string
+  - key: role
+    label: Role
+    type: string
+  - key: experience
+    label: Years of Experience
+    sortable: true
+    type: number
+rows:
+  - name: Alice
+    role: Engineer
+    experience: 8
+  - name: Bob
+    role: Designer
+    experience: 5
+  - name: Carol
+    role: Manager
+    experience: 12
+aggregation:
+  - column: experience
+    function: avg
+```
+````
+
+---
+
+### Chart — `ui:chart`
+
+Line, bar, area, and OHLC (financial) charts. Rendered with D3.
+
+**Schema fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"line"` \| `"bar"` \| `"area"` \| `"ohlc"` | Yes | Chart variant. |
+| `series` | `array` | Yes | Data series (see below). |
+| `xAxis` | `object` | No | X-axis configuration: `key` (data field) and optional `label`. |
+| `yAxis` | `object` | No | Y-axis configuration: `key` (data field) and optional `label`. |
+| `legend` | `boolean` | No | Whether to show the legend. |
+
+**Series object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `name` | `string` | Yes | Series display name. |
+| `data` | `array` | Yes | Array of data-point records. Each record maps string keys to number or string values. |
+
+**Example:**
+
+````markdown
+```ui:chart
+type: line
+series:
+  - name: Revenue
+    data:
+      - { month: Jan, value: 4200 }
+      - { month: Feb, value: 5100 }
+      - { month: Mar, value: 4800 }
+  - name: Expenses
+    data:
+      - { month: Jan, value: 3100 }
+      - { month: Feb, value: 3400 }
+      - { month: Mar, value: 3200 }
+xAxis:
+  key: month
+  label: Month
+yAxis:
+  key: value
+  label: USD
+legend: true
+```
+````
+
+---
+
+### Relation — `ui:relation`
+
+Entity-relationship diagrams for modeling data structures and their connections.
+Similar to `ui:graph` but requires cardinality on relationships and treats nodes
+as entities with typed attributes.
+
+**Schema fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `entities` | `array` | Yes | Entity definitions (see below). |
+| `relationships` | `array` | Yes | Relationship definitions (see below). |
+| `layout` | `"top-down"` \| `"left-right"` | No | Layout direction. |
+
+**Entity object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `id` | `string` | Yes | Unique entity identifier. |
+| `label` | `string` | Yes | Display name. |
+| `attributes` | `array` | No | List of attribute objects with `name` (string), `type` (string), and optional `primaryKey` (boolean). |
+
+**Relationship object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `from` | `string` | Yes | Source entity ID. |
+| `to` | `string` | Yes | Target entity ID. |
+| `label` | `string` | No | Relationship label. |
+| `cardinality` | `"1:1"` \| `"1:N"` \| `"N:1"` \| `"N:M"` | Yes | Cardinality constraint. |
+
+**Example:**
+
+````markdown
+```ui:relation
+entities:
+  - id: user
+    label: User
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: email
+        type: string
+      - name: name
+        type: string
+  - id: post
+    label: Post
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: title
+        type: string
+      - name: body
+        type: text
+  - id: comment
+    label: Comment
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: text
+        type: text
+relationships:
+  - from: user
+    to: post
+    label: authors
+    cardinality: "1:N"
+  - from: post
+    to: comment
+    label: has
+    cardinality: "1:N"
+  - from: user
+    to: comment
+    label: writes
+    cardinality: "1:N"
+layout: top-down
+```
+````
+
+---
+
+### Timeline — `ui:timeline`
+
+Chronological event sequences rendered as a visual timeline. Useful for project
+milestones, incident reports, or system evolution histories.
+
+**Schema fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `events` | `array` | Yes | Event objects (see below). |
+| `orientation` | `"vertical"` \| `"horizontal"` | No | Timeline orientation. Defaults to vertical. |
+
+**Event object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `date` | `string` | Yes | Date or datetime string (e.g., `"2026-01-15"` or `"2026-01-15T09:00:00Z"`). |
+| `title` | `string` | Yes | Event heading. |
+| `description` | `string` | No | Detailed description of the event. |
+| `type` | `string` | No | Semantic type for styling (e.g., `"milestone"`, `"incident"`, `"release"`). |
+
+**Example:**
+
+````markdown
+```ui:timeline
+events:
+  - date: "2026-01-15"
+    title: Project kickoff
+    description: Initial planning and team formation.
+    type: milestone
+  - date: "2026-02-01"
+    title: Alpha release
+    description: Core parser and compiler shipped.
+    type: release
+  - date: "2026-03-01"
+    title: Beta release
+    description: Runtime and all built-in components ready.
+    type: release
+  - date: "2026-04-01"
+    title: v1.0 stable
+    description: Full test suite, documentation, and playground.
+    type: milestone
+orientation: vertical
+```
+````
+
+---
+
+### Tabs — `ui:tabs`
+
+Tabbed content containers. Each tab holds Markdown content that the compiler
+re-parses, so you can use full Markdown formatting inside tabs.
+
+**Schema fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `tabs` | `array` | Yes | Tab objects (see below). |
+
+**Tab object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `label` | `string` | Yes | Tab heading displayed in the tab bar. |
+| `content` | `string` | Yes | Markdown string. Parsed recursively by the compiler to produce child blocks. |
+
+**Example:**
+
+````markdown
+```ui:tabs
+tabs:
+  - label: Overview
+    content: |
+      This is the **overview** tab with standard Markdown.
+
+      It can contain multiple paragraphs, lists, and inline formatting.
+  - label: Installation
+    content: |
+      Install via your package manager:
+
+      ```bash
+      pnpm add @glyphjs/runtime @glyphjs/components
+      ```
+  - label: Configuration
+    content: |
+      Edit `glyph.config.ts` to set up your theme and register
+      components.
+
+      - Choose a layout mode
+      - Configure your color scheme
+```
+````
+
+:::note
+In v1, nested `ui:` components inside tab content are not supported. Tabs can
+contain standard Markdown only. Nested components are planned for v2.
+:::
+
+---
+
+### Steps — `ui:steps`
+
+Sequential step-by-step guides with progress indication. Each step has a title,
+an optional status, and Markdown content.
+
+**Schema fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `steps` | `array` | Yes | Step objects (see below). |
+
+**Step object:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `title` | `string` | Yes | Step heading. |
+| `status` | `"pending"` \| `"active"` \| `"completed"` | No | Visual progress indicator. |
+| `content` | `string` | Yes | Markdown string. Parsed recursively by the compiler. |
+
+**Example:**
+
+````markdown
+```ui:steps
+steps:
+  - title: Install dependencies
+    status: completed
+    content: |
+      Run `pnpm install` to install all packages.
+  - title: Configure the project
+    status: active
+    content: |
+      Edit `glyph.config.ts` to set up your theme and register
+      the built-in components.
+  - title: Build and deploy
+    status: pending
+    content: |
+      Run `pnpm build` and deploy the output to your hosting
+      provider.
+```
+````
+
+---
+
+## Cross-block References
+
+References create navigable links between blocks, enabling explorable,
+interconnected documents. For example, a table can link to a graph, allowing
+users to click through from a data row to the relevant node in a diagram.
+
+### Assigning a block ID with `glyph-id`
+
+To reference a block, it needs a stable identifier. Add the `glyph-id` key to
+any `ui:` block’s YAML payload:
+
+````markdown
+```ui:graph
+glyph-id: architecture-graph
+type: dag
+nodes:
+  - id: api
+    label: API Gateway
+  - id: db
+    label: Database
+edges:
+  - from: api
+    to: db
+```
+````
+
+The compiler strips `glyph-id` from the component data before schema validation.
+If no `glyph-id` is provided, the compiler generates a deterministic,
+content-addressed ID automatically.
+
+**Rules for `glyph-id`:**
+- Must be unique within the document.
+- Use lowercase kebab-case by convention (e.g., `team-table`, `deploy-steps`).
+- The compiler validates uniqueness and reports a diagnostic if duplicates are
+  found.
+
+### Declaring references with `refs`
+
+The `refs` array declares outgoing references from one block to another. Each
+ref must specify a `target` — the `glyph-id` of the destination block.
+
+````markdown
+```ui:table
+glyph-id: team-table
+columns:
+  - key: name
+    label: Name
+  - key: role
+    label: Role
+rows:
+  - name: Alice
+    role: Engineer
+  - name: Bob
+    role: Designer
+refs:
+  - target: architecture-graph
+    type: data-source
+    label: "See architecture diagram"
+```
+````
+
+**Reference fields:**
+
+| Field | Type | Required | Description |
+|---|---|---|---|
+| `target` | `string` | Yes | The `glyph-id` of the target block. |
+| `type` | `string` | No | Semantic type: `"navigates-to"`, `"details"`, `"depends-on"`, `"data-source"`, or a custom type prefixed with `custom:`. |
+| `label` | `string` | No | Human-readable label displayed on the reference link. |
+| `sourceAnchor` | `string` | No | Sub-element within the source block (e.g., a specific node ID or row key). |
+| `targetAnchor` | `string` | No | Sub-element within the target block. |
+| `bidirectional` | `boolean` | No | If `true`, the reference is navigable in both directions. Defaults to `false`. |
+
+### Inline Markdown references (future)
+
+The syntax `[text](#glyph:block-id)` is reserved for inline cross-block
+navigation within standard Markdown paragraphs. The compiler will resolve these
+into `Reference` objects. This feature is planned for a future release.
+
+### Unresolved references
+
+If a `refs` entry points to a `glyph-id` that does not exist in the document,
+the compiler emits a warning diagnostic and marks the reference as `unresolved`.
+The IR is still produced — unresolved references do not block compilation.
+
+---
+
+## Layout Modes
+
+Layout modes control how the document’s blocks are arranged on screen. Set the
+mode in your YAML frontmatter under the `layout` key.
+
+### Document mode (default)
+
+Single-column, reading-optimized layout with a configurable maximum width.
+Blocks flow top-to-bottom in source order. This is the default when no layout is
+specified.
+
+```yaml
+---
+layout:
+  mode: document
+  maxWidth: "960px"
+  spacing: normal
+---
+```
+
+### Dashboard mode
+
+A CSS grid layout with configurable columns. Blocks are placed into a grid, and
+you can control per-block placement using `blockLayout` overrides keyed by
+`glyph-id`.
+
+```yaml
+---
+layout:
+  mode: dashboard
+  columns: 3
+  spacing: compact
+  blockLayout:
+    architecture-graph:
+      gridColumn: "1 / 3"
+      span: 2
+    team-table:
+      gridColumn: "3"
+---
+```
+
+This places the `architecture-graph` block across the first two columns and the
+`team-table` in the third column.
+
+### Presentation mode
+
+Full-viewport, one-block-at-a-time display — similar to a slide deck. Each
+top-level block occupies the full screen, and the user navigates between them.
+
+```yaml
+---
+layout:
+  mode: presentation
+  spacing: relaxed
+---
+```
+
+### Layout properties reference
+
+| Property | Type | Description |
+|---|---|---|
+| `mode` | `"document"` \| `"dashboard"` \| `"presentation"` | Layout strategy. |
+| `columns` | `number` | Number of grid columns (dashboard mode). |
+| `maxWidth` | `string` | CSS max-width value (document mode). |
+| `spacing` | `"compact"` \| `"normal"` \| `"relaxed"` | Vertical spacing between blocks. |
+| `blockLayout` | `Record<string, BlockLayoutOverride>` | Per-block layout overrides keyed by block `glyph-id`. |
+
+**BlockLayoutOverride fields:**
+
+| Field | Type | Description |
+|---|---|---|
+| `gridColumn` | `string` | CSS `grid-column` value. |
+| `gridRow` | `string` | CSS `grid-row` value. |
+| `span` | `number` | Number of columns the block should span. |
+
+---
+
+## Best Practices
+
+### Write for both humans and machines
+
+Glyph Markdown is designed to be authored by LLMs and read by humans. Keep your
+YAML payloads clean and well-structured so that both audiences can understand the
+document at a glance.
+
+### Use `glyph-id` on any block you might reference
+
+Even if you do not need cross-block references today, assigning a `glyph-id`
+makes your block IDs stable and human-readable. Content-addressed IDs change
+when you edit the block’s content.
+
+### Keep YAML payloads focused
+
+Each `ui:` block should represent a single, self-contained visualization. If you
+find yourself putting too much data into a single block, consider splitting it
+into multiple blocks and linking them with `refs`.
+
+### Leverage standard Markdown for narrative
+
+Use headings, paragraphs, lists, and blockquotes around your `ui:` blocks to
+provide narrative context. A graph without an explanation is hard to interpret; a
+paragraph without a visualization can be hard to grasp. Combine both for maximum
+clarity.
+
+### Use frontmatter for document metadata
+
+Always include at least a `title` in your frontmatter. This ensures the compiler
+produces clean metadata even when the document structure changes.
+
+```yaml
+---
+title: Quarterly Review
+layout:
+  mode: document
+  spacing: normal
+---
+```
+
+### Validate early with the compiler
+
+Run `@glyphjs/compiler` during development. It validates every `ui:` block’s
+YAML payload against its Zod schema and reports errors with precise line and
+column numbers. Fix validation errors before sharing your document.
+
+### Use dashboard mode for data-dense documents
+
+When your document contains multiple tables, charts, and graphs, switch to
+`dashboard` mode with a multi-column grid. Assign `glyph-id` values and use
+`blockLayout` to control placement.
+
+---
+
+## Common Patterns
+
+### Narrative with embedded visualization
+
+The most common pattern: prose before and after a `ui:` block providing context.
+
+````markdown
+# System Architecture
+
+The platform follows a three-tier architecture with an API gateway,
+authentication service, and database layer.
+
+```ui:graph
+type: dag
+nodes:
+  - id: api
+    label: API Gateway
+  - id: auth
+    label: Auth Service
+  - id: db
+    label: PostgreSQL
+edges:
+  - from: api
+    to: auth
+  - from: auth
+    to: db
+layout: top-down
+```
+
+All incoming requests pass through the API Gateway, which delegates
+authentication before any data access occurs.
+````
+
+### Linked table and graph
+
+A table and a graph that reference each other, allowing navigation between the
+two views of the same data.
+
+````markdown
+```ui:graph
+glyph-id: service-map
+type: flowchart
+nodes:
+  - id: web
+    label: Web App
+  - id: api
+    label: API
+  - id: worker
+    label: Worker
+edges:
+  - from: web
+    to: api
+  - from: api
+    to: worker
+layout: left-right
+```
+
+```ui:table
+glyph-id: service-details
+columns:
+  - key: service
+    label: Service
+  - key: status
+    label: Status
+  - key: uptime
+    label: Uptime
+    type: number
+rows:
+  - service: Web App
+    status: healthy
+    uptime: 99.9
+  - service: API
+    status: healthy
+    uptime: 99.7
+  - service: Worker
+    status: degraded
+    uptime: 97.2
+refs:
+  - target: service-map
+    type: navigates-to
+    label: "View service map"
+```
+````
+
+### Step-by-step tutorial
+
+Use `ui:steps` combined with `ui:callout` blocks for structured tutorials.
+
+````markdown
+# Getting Started
+
+```ui:steps
+steps:
+  - title: Install the packages
+    status: completed
+    content: |
+      Run the following command:
+
+      ```bash
+      pnpm add @glyphjs/runtime @glyphjs/components
+      ```
+  - title: Create your first document
+    status: active
+    content: |
+      Create a file called `hello.md` and add a heading and a
+      `ui:callout` block.
+  - title: Compile and render
+    status: pending
+    content: |
+      Use the compiler to produce IR, then pass it to the runtime.
+```
+
+```ui:callout
+type: info
+title: What is next?
+content: |
+  Once you have the basics working, explore the
+  Component Catalog to see all available visualizations.
+```
+````
+
+### Dashboard layout with multiple visualizations
+
+Combine frontmatter layout configuration with `glyph-id` and `blockLayout` to
+create a data dashboard.
+
+````markdown
+---
+title: Q1 Metrics Dashboard
+layout:
+  mode: dashboard
+  columns: 2
+  spacing: compact
+  blockLayout:
+    revenue-chart:
+      gridColumn: "1 / 3"
+    team-stats:
+      gridColumn: "1"
+    milestone-timeline:
+      gridColumn: "2"
+---
+
+# Q1 Metrics
+
+```ui:chart
+glyph-id: revenue-chart
+type: bar
+series:
+  - name: Revenue
+    data:
+      - { month: Jan, value: 42000 }
+      - { month: Feb, value: 51000 }
+      - { month: Mar, value: 48000 }
+xAxis:
+  key: month
+yAxis:
+  key: value
+  label: USD
+```
+
+```ui:table
+glyph-id: team-stats
+columns:
+  - key: team
+    label: Team
+  - key: headcount
+    label: Headcount
+    type: number
+rows:
+  - team: Engineering
+    headcount: 12
+  - team: Design
+    headcount: 4
+  - team: Product
+    headcount: 3
+```
+
+```ui:timeline
+glyph-id: milestone-timeline
+events:
+  - date: "2026-01-15"
+    title: Planning complete
+    type: milestone
+  - date: "2026-02-01"
+    title: Alpha shipped
+    type: release
+  - date: "2026-03-15"
+    title: Beta shipped
+    type: release
+orientation: vertical
+```
+````
+
+---
+
+## Error Handling
+
+The Glyph compiler uses a **collect-all-errors** strategy. Your document always
+produces valid IR output, even when errors are present.
+
+| Error type | Behavior |
+|---|---|
+| YAML parse error | The block is preserved with its raw source text. A diagnostic is attached to the block. |
+| Schema validation error | The block is preserved with the original data. Zod error paths are included in the diagnostic. |
+| Unresolved reference | A warning diagnostic is emitted. The reference is kept with `unresolved: true`. |
+| Unknown component type | An info diagnostic is emitted. The block is preserved as-is and renders a fallback placeholder. |
+
+Check the `diagnostics` array on the `CompilationResult` to find and fix issues.
+Each diagnostic includes severity (`error`, `warning`, or `info`), a message,
+and the source position in your Markdown file.
