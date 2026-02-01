@@ -5,17 +5,34 @@ export default defineConfig({
   timeout: 30000,
   retries: 1,
   use: {
-    baseURL: 'http://localhost:6006',
     headless: true,
     screenshot: 'only-on-failure',
   },
   projects: [
-    { name: 'chromium', use: { browserName: 'chromium' } },
+    {
+      name: 'storybook',
+      testDir: './tests/e2e/visual',
+      use: { browserName: 'chromium', baseURL: 'http://localhost:6006' },
+    },
+    {
+      name: 'demo',
+      testDir: './tests/e2e',
+      testMatch: ['pipeline.spec.ts', 'components.spec.ts', 'theming.spec.ts', 'errors.spec.ts', 'determinism.spec.ts'],
+      use: { browserName: 'chromium', baseURL: 'http://localhost:5173' },
+    },
   ],
-  webServer: {
-    command: 'pnpm --filter @glyphjs/components storybook --ci --port 6006',
-    port: 6006,
-    reuseExistingServer: !process.env.CI,
-    timeout: 120_000,
-  },
+  webServer: [
+    {
+      command: 'pnpm --filter @glyphjs/components storybook --ci --port 6006',
+      port: 6006,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      command: 'cd apps/demo && pnpm dev --port 5173',
+      port: 5173,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+  ],
 });
