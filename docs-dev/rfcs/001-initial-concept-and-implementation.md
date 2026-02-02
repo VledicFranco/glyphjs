@@ -51,16 +51,16 @@ An incremental IR update expressed as a sequence of block-level operations (add,
 
 Glyph JS is organized as a multi-package monorepo with independently versioned and publishable packages:
 
-| Package | Description |
-|---|---|
-| `@glyphjs/types` | Shared TypeScript type definitions used across all packages. Defines the Glyph AST (extended MDAST), IR interfaces, diagnostic types, patch format, and plugin contracts. Zero-dependency, type-only package. |
-| `@glyphjs/schemas` | Zod schemas for all built-in components with JSON Schema generation. Shared validation layer. Depends on `types` + `zod`. |
-| `@glyphjs/parser` | Markdown parser built on unified/remark. Extends remark with plugins for `ui:` fenced block syntax. Outputs a Glyph AST. Depends on `types` + `unified/remark`. Does **not** validate schemas — that is the compiler's job. |
-| `@glyphjs/ir` | IR utilities: validation, diffing, patching, migration, block ID generation. Depends on `types`. |
-| `@glyphjs/compiler` | Compiles Glyph AST into IR. Resolves references, validates component schemas, produces deterministic output. Emits structured diagnostics on errors. Depends on `types`, `schemas`, `parser`, `ir`. |
-| `@glyphjs/runtime` | React-based rendering runtime. Consumes IR and renders interactive UI. Provides layout, theming, animation orchestration, and plugin registration. Depends on `types`, `schemas`, `react`. |
-| `@glyphjs/components` | Built-in component library (graph, table, chart, relation, timeline, callout, tabs, steps). Lazy-loaded per component type. Depends on `types`, `schemas`, `runtime`, `d3`, `dagre`. |
-| `apps/docs` | Astro Starlight documentation site with interactive playground. Deployed to GitHub Pages. |
+| Package               | Description                                                                                                                                                                                                                 |
+| --------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `@glyphjs/types`      | Shared TypeScript type definitions used across all packages. Defines the Glyph AST (extended MDAST), IR interfaces, diagnostic types, patch format, and plugin contracts. Zero-dependency, type-only package.               |
+| `@glyphjs/schemas`    | Zod schemas for all built-in components with JSON Schema generation. Shared validation layer. Depends on `types` + `zod`.                                                                                                   |
+| `@glyphjs/parser`     | Markdown parser built on unified/remark. Extends remark with plugins for `ui:` fenced block syntax. Outputs a Glyph AST. Depends on `types` + `unified/remark`. Does **not** validate schemas — that is the compiler's job. |
+| `@glyphjs/ir`         | IR utilities: validation, diffing, patching, migration, block ID generation. Depends on `types`.                                                                                                                            |
+| `@glyphjs/compiler`   | Compiles Glyph AST into IR. Resolves references, validates component schemas, produces deterministic output. Emits structured diagnostics on errors. Depends on `types`, `schemas`, `parser`, `ir`.                         |
+| `@glyphjs/runtime`    | React-based rendering runtime. Consumes IR and renders interactive UI. Provides layout, theming, animation orchestration, and plugin registration. Depends on `types`, `schemas`, `react`.                                  |
+| `@glyphjs/components` | Built-in component library (graph, table, chart, relation, timeline, callout, tabs, steps). Lazy-loaded per component type. Depends on `types`, `schemas`, `runtime`, `d3`, `dagre`.                                        |
+| `apps/docs`           | Astro Starlight documentation site with interactive playground. Deployed to GitHub Pages.                                                                                                                                   |
 
 ### 4.2 Package Dependency Graph
 
@@ -241,19 +241,19 @@ interface GlyphRoot extends MdastRoot {
 /** A ui: fenced block parsed from Markdown */
 interface GlyphUIBlock {
   type: 'glyphUIBlock';
-  componentType: string;            // e.g. "graph", "table" (without "ui:" prefix)
-  rawYaml: string;                  // Original YAML source text
+  componentType: string; // e.g. "graph", "table" (without "ui:" prefix)
+  rawYaml: string; // Original YAML source text
   parsedData: Record<string, unknown> | null; // Parsed YAML (null if YAML parsing failed)
-  yamlError?: string;               // YAML parse error message (if any)
-  glyphId?: string;                 // User-assigned ID (from glyph-id field)
-  refs?: RawRef[];                  // Raw ref declarations (from refs field)
-  position: UnistPosition;          // Source location (unist-compatible)
+  yamlError?: string; // YAML parse error message (if any)
+  glyphId?: string; // User-assigned ID (from glyph-id field)
+  refs?: RawRef[]; // Raw ref declarations (from refs field)
+  position: UnistPosition; // Source location (unist-compatible)
 }
 
 interface RawRef {
-  target: string;                   // Target block glyph-id
-  type?: string;                    // Reference type
-  label?: string;                   // Human-readable label
+  target: string; // Target block glyph-id
+  type?: string; // Reference type
+  label?: string; // Human-readable label
   sourceAnchor?: string;
   targetAnchor?: string;
   bidirectional?: boolean;
@@ -276,6 +276,7 @@ layout:
 ---
 
 # System Architecture
+
 ...
 ```
 
@@ -291,64 +292,74 @@ The IR is a JSON document. All types are defined in `@glyphjs/types`.
 // ─── Document Root ───────────────────────────────────────────
 
 interface GlyphIR {
-  version: string;             // IR spec version (semver, e.g. "1.0.0")
-  id: string;                  // Document ID (see 6.2)
+  version: string; // IR spec version (semver, e.g. "1.0.0")
+  id: string; // Document ID (see 6.2)
   metadata: DocumentMetadata;
-  blocks: Block[];             // Ordered list of content blocks
-  references: Reference[];     // Cross-block links
-  layout: LayoutHints;         // Global layout configuration
+  blocks: Block[]; // Ordered list of content blocks
+  references: Reference[]; // Cross-block links
+  layout: LayoutHints; // Global layout configuration
 }
 
 // ─── Document Metadata ───────────────────────────────────────
 
 interface DocumentMetadata {
-  title?: string;              // From frontmatter, or first h1 heading
-  description?: string;        // From frontmatter, or first paragraph
+  title?: string; // From frontmatter, or first h1 heading
+  description?: string; // From frontmatter, or first paragraph
   authors?: string[];
-  createdAt?: string;          // ISO 8601
-  sourceFile?: string;         // Relative path to source .md file (if applicable)
+  createdAt?: string; // ISO 8601
+  sourceFile?: string; // Relative path to source .md file (if applicable)
   tags?: string[];
 }
 
 // ─── Block ───────────────────────────────────────────────────
 
 interface Block {
-  id: string;                  // Deterministic or user-assigned block ID (see 6.2)
-  type: BlockType;             // Discriminated union tag
-  data: BlockData;             // Type-specific payload (see 6.3)
-  position: SourcePosition;    // Source Markdown location
-  children?: Block[];          // Nested blocks (for tabs, steps)
-  diagnostics?: Diagnostic[];  // Errors/warnings specific to this block
+  id: string; // Deterministic or user-assigned block ID (see 6.2)
+  type: BlockType; // Discriminated union tag
+  data: BlockData; // Type-specific payload (see 6.3)
+  position: SourcePosition; // Source Markdown location
+  children?: Block[]; // Nested blocks (for tabs, steps)
+  diagnostics?: Diagnostic[]; // Errors/warnings specific to this block
   metadata?: Record<string, unknown>; // Extensible metadata
 }
 
 type BlockType =
   // Standard Markdown blocks
-  | 'heading' | 'paragraph' | 'list' | 'code'
-  | 'blockquote' | 'thematic-break' | 'image' | 'html'
+  | 'heading'
+  | 'paragraph'
+  | 'list'
+  | 'code'
+  | 'blockquote'
+  | 'thematic-break'
+  | 'image'
+  | 'html'
   // Glyph UI component blocks
-  | 'ui:graph' | 'ui:table' | 'ui:chart' | 'ui:relation'
-  | 'ui:timeline' | 'ui:callout' | 'ui:tabs' | 'ui:steps'
+  | 'ui:graph'
+  | 'ui:table'
+  | 'ui:chart'
+  | 'ui:relation'
+  | 'ui:timeline'
+  | 'ui:callout'
+  | 'ui:tabs'
+  | 'ui:steps'
   // Extensible
   | `ui:${string}`;
 
 // ─── Reference ───────────────────────────────────────────────
 
 interface Reference {
-  id: string;                  // Auto-generated reference ID
+  id: string; // Auto-generated reference ID
   type: ReferenceType;
   sourceBlockId: string;
   targetBlockId: string;
-  sourceAnchor?: string;       // Sub-element within source (e.g. node ID, row key)
+  sourceAnchor?: string; // Sub-element within source (e.g. node ID, row key)
   targetAnchor?: string;
   label?: string;
-  bidirectional?: boolean;     // Default: false
-  unresolved?: boolean;        // True if targetBlockId was not found during compilation
+  bidirectional?: boolean; // Default: false
+  unresolved?: boolean; // True if targetBlockId was not found during compilation
 }
 
-type ReferenceType =
-  | 'navigates-to' | 'details' | 'depends-on' | 'data-source'
-  | `custom:${string}`;
+type ReferenceType = 'navigates-to' | 'details' | 'depends-on' | 'data-source' | `custom:${string}`;
 
 // ─── Source Position ─────────────────────────────────────────
 
@@ -369,9 +380,9 @@ interface LayoutHints {
 }
 
 interface BlockLayoutOverride {
-  gridColumn?: string;         // CSS grid-column value
-  gridRow?: string;            // CSS grid-row value
-  span?: number;               // Column span in dashboard mode
+  gridColumn?: string; // CSS grid-column value
+  gridRow?: string; // CSS grid-row value
+  span?: number; // Column span in dashboard mode
 }
 
 type LayoutSemantic = 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'force';
@@ -409,7 +420,7 @@ Each standard Markdown block type has a defined `data` shape. These types are de
 
 interface HeadingData {
   depth: 1 | 2 | 3 | 4 | 5 | 6;
-  children: InlineNode[];       // Inline content (text, bold, italic, code, links)
+  children: InlineNode[]; // Inline content (text, bold, italic, code, links)
 }
 
 interface ParagraphData {
@@ -418,19 +429,19 @@ interface ParagraphData {
 
 interface ListData {
   ordered: boolean;
-  start?: number;               // Start number for ordered lists
+  start?: number; // Start number for ordered lists
   items: ListItemData[];
 }
 
 interface ListItemData {
   children: InlineNode[];
-  subList?: ListData;           // Nested list
+  subList?: ListData; // Nested list
 }
 
 interface CodeData {
   language?: string;
-  value: string;                // Raw code text
-  meta?: string;                // Code fence meta string
+  value: string; // Raw code text
+  meta?: string; // Code fence meta string
 }
 
 interface BlockquoteData {
@@ -443,10 +454,10 @@ interface ImageData {
   title?: string;
 }
 
-interface ThematicBreakData {}   // No data — just a horizontal rule
+interface ThematicBreakData {} // No data — just a horizontal rule
 
 interface HtmlData {
-  value: string;                // Raw HTML string (sanitized at render time)
+  value: string; // Raw HTML string (sanitized at render time)
 }
 
 // ─── Inline Nodes (PhrasingContent) ──────────────────────────
@@ -455,18 +466,24 @@ type InlineNode =
   | { type: 'text'; value: string }
   | { type: 'strong'; children: InlineNode[] }
   | { type: 'emphasis'; children: InlineNode[] }
-  | { type: 'delete'; children: InlineNode[] }          // Strikethrough
+  | { type: 'delete'; children: InlineNode[] } // Strikethrough
   | { type: 'inlineCode'; value: string }
   | { type: 'link'; url: string; title?: string; children: InlineNode[] }
   | { type: 'image'; src: string; alt?: string; title?: string }
-  | { type: 'break' };                                  // Hard line break
+  | { type: 'break' }; // Hard line break
 
 // ─── Type-safe BlockData union ───────────────────────────────
 
 type BlockData =
-  | HeadingData | ParagraphData | ListData | CodeData
-  | BlockquoteData | ImageData | ThematicBreakData | HtmlData
-  | Record<string, unknown>;    // ui: component data (validated by Zod schema)
+  | HeadingData
+  | ParagraphData
+  | ListData
+  | CodeData
+  | BlockquoteData
+  | ImageData
+  | ThematicBreakData
+  | HtmlData
+  | Record<string, unknown>; // ui: component data (validated by Zod schema)
 ```
 
 For `ui:` component blocks, the `data` field contains the parsed YAML payload after the `glyph-id` and `refs` keys have been stripped. The shape is validated by the component's Zod schema.
@@ -509,6 +526,7 @@ function composePatch(a: GlyphPatch, b: GlyphPatch): GlyphPatch;
 ```
 
 Invariants:
+
 - `applyPatch(a, diffIR(a, b))` deep-equals `b`.
 - `applyPatch(ir, [])` returns `ir` unchanged (identity).
 - `composePatch` is associative: `compose(compose(a, b), c)` equals `compose(a, compose(b, c))`.
@@ -596,16 +614,16 @@ function App() {
 
 Standard Markdown blocks are rendered by built-in base renderers that ship with the runtime (not plugins):
 
-| Block Type | Renderer | Notes |
-|---|---|---|
-| `heading` | `GlyphHeading` | `<h1>`–`<h6>` with id-based anchor links |
-| `paragraph` | `GlyphParagraph` | `<p>` with recursive inline formatting |
-| `list` | `GlyphList` | `<ul>`/`<ol>` with nested list support |
-| `code` | `GlyphCodeBlock` | Syntax-highlighted via shiki |
-| `blockquote` | `GlyphBlockquote` | Styled `<blockquote>` |
-| `image` | `GlyphImage` | `<figure>` with `<img>`, caption, lazy loading |
-| `thematic-break` | `GlyphThematicBreak` | `<hr>` |
-| `html` | `GlyphRawHtml` | Sanitized via DOMPurify at render time |
+| Block Type       | Renderer             | Notes                                          |
+| ---------------- | -------------------- | ---------------------------------------------- |
+| `heading`        | `GlyphHeading`       | `<h1>`–`<h6>` with id-based anchor links       |
+| `paragraph`      | `GlyphParagraph`     | `<p>` with recursive inline formatting         |
+| `list`           | `GlyphList`          | `<ul>`/`<ol>` with nested list support         |
+| `code`           | `GlyphCodeBlock`     | Syntax-highlighted via shiki                   |
+| `blockquote`     | `GlyphBlockquote`    | Styled `<blockquote>`                          |
+| `image`          | `GlyphImage`         | `<figure>` with `<img>`, caption, lazy loading |
+| `thematic-break` | `GlyphThematicBreak` | `<hr>`                                         |
+| `html`           | `GlyphRawHtml`       | Sanitized via DOMPurify at render time         |
 
 Base renderers can be **overridden** (but not removed) via `config.overrides`. HTML sanitization uses DOMPurify with a strict allowlist (no `<script>`, `<iframe>`, event handlers, or `javascript:` URLs). Sanitization occurs at **render time** in the runtime, not at compile time — the IR stores the raw HTML.
 
@@ -616,7 +634,7 @@ Base renderers can be **overridden** (but not removed) via `config.overrides`. H
 
 interface GlyphTheme {
   name: string;
-  variables: Record<string, string>;  // CSS variable key → value
+  variables: Record<string, string>; // CSS variable key → value
 }
 
 interface GlyphThemeContext {
@@ -634,6 +652,7 @@ function useGlyphTheme(): GlyphThemeContext;
 All CSS variables are prefixed with `--glyph-` to avoid collisions. Light and dark themes are built-in. Custom themes extend or override specific variables. Components access theme via `useGlyphTheme()`.
 
 The layout engine interprets `LayoutHints`:
+
 - **`document` mode**: Single-column, max-width, vertical flow.
 - **`dashboard` mode**: CSS grid with configurable columns. Per-block placement via `LayoutHints.blockLayout`.
 - **`presentation` mode**: Full-viewport blocks, one at a time.
@@ -668,16 +687,16 @@ Unknown block types render a fallback placeholder showing the block type and raw
 
 All 8 components from the concept document are in scope for v1:
 
-| Component | Type | Description |
-|---|---|---|
-| **Graph** | `ui:graph` | DAGs, flowcharts, mind maps, relational diagrams. D3 + Dagre. |
-| **Table** | `ui:table` | Sortable, filterable, aggregatable data tables. |
-| **Chart** | `ui:chart` | Line, bar, area, and financial OHLC charts. D3-based. |
-| **Relation** | `ui:relation` | Entity-relationship diagrams via declarative YAML. |
-| **Timeline** | `ui:timeline` | Event sequences and system evolution visualizations. |
-| **Callout** | `ui:callout` | Highlighted info/warning/error blocks for narrative structuring. |
-| **Tabs** | `ui:tabs` | Tabbed content containers (children via content fields). |
-| **Steps** | `ui:steps` | Sequential step-by-step guides with progress indication. |
+| Component    | Type          | Description                                                      |
+| ------------ | ------------- | ---------------------------------------------------------------- |
+| **Graph**    | `ui:graph`    | DAGs, flowcharts, mind maps, relational diagrams. D3 + Dagre.    |
+| **Table**    | `ui:table`    | Sortable, filterable, aggregatable data tables.                  |
+| **Chart**    | `ui:chart`    | Line, bar, area, and financial OHLC charts. D3-based.            |
+| **Relation** | `ui:relation` | Entity-relationship diagrams via declarative YAML.               |
+| **Timeline** | `ui:timeline` | Event sequences and system evolution visualizations.             |
+| **Callout**  | `ui:callout`  | Highlighted info/warning/error blocks for narrative structuring. |
+| **Tabs**     | `ui:tabs`     | Tabbed content containers (children via content fields).         |
+| **Steps**    | `ui:steps`    | Sequential step-by-step guides with progress indication.         |
 
 ### 8.1 Graph and Relation Abstraction
 
@@ -689,17 +708,17 @@ A unified relational abstraction underpins `ui:graph` and `ui:relation`:
 interface GraphNode {
   id: string;
   label: string;
-  type?: string;                     // Semantic type (e.g. "service", "database", "entity")
-  style?: Record<string, string>;    // CSS-like style overrides
-  group?: string;                    // Grouping/clustering key
+  type?: string; // Semantic type (e.g. "service", "database", "entity")
+  style?: Record<string, string>; // CSS-like style overrides
+  group?: string; // Grouping/clustering key
 }
 
 interface GraphEdge {
-  from: string;                      // Source node ID
-  to: string;                       // Target node ID
+  from: string; // Source node ID
+  to: string; // Target node ID
   label?: string;
-  type?: string;                     // Semantic type (e.g. "depends-on", "has-many")
-  cardinality?: '1:1' | '1:N' | 'N:1' | 'N:M';  // For ER diagrams
+  type?: string; // Semantic type (e.g. "depends-on", "has-many")
+  cardinality?: '1:1' | '1:N' | 'N:1' | 'N:M'; // For ER diagrams
   style?: Record<string, string>;
 }
 ```
@@ -721,48 +740,60 @@ All 8 component schemas are defined in `@glyphjs/schemas`. Key schemas:
 
 export const graphSchema = z.object({
   type: z.enum(['dag', 'flowchart', 'mindmap', 'force']),
-  nodes: z.array(z.object({
-    id: z.string(),
-    label: z.string(),
-    type: z.string().optional(),
-    style: z.record(z.string()).optional(),
-    group: z.string().optional(),
-  })),
-  edges: z.array(z.object({
-    from: z.string(),
-    to: z.string(),
-    label: z.string().optional(),
-    type: z.string().optional(),
-    style: z.record(z.string()).optional(),
-  })),
+  nodes: z.array(
+    z.object({
+      id: z.string(),
+      label: z.string(),
+      type: z.string().optional(),
+      style: z.record(z.string()).optional(),
+      group: z.string().optional(),
+    }),
+  ),
+  edges: z.array(
+    z.object({
+      from: z.string(),
+      to: z.string(),
+      label: z.string().optional(),
+      type: z.string().optional(),
+      style: z.record(z.string()).optional(),
+    }),
+  ),
   layout: z.enum(['top-down', 'left-right', 'bottom-up', 'radial', 'force']).optional(),
 });
 
 // ─── Table ───────────────────────────────────────────────────
 
 export const tableSchema = z.object({
-  columns: z.array(z.object({
-    key: z.string(),
-    label: z.string(),
-    sortable: z.boolean().optional(),
-    filterable: z.boolean().optional(),
-    type: z.enum(['string', 'number', 'date', 'boolean']).optional(),
-  })),
+  columns: z.array(
+    z.object({
+      key: z.string(),
+      label: z.string(),
+      sortable: z.boolean().optional(),
+      filterable: z.boolean().optional(),
+      type: z.enum(['string', 'number', 'date', 'boolean']).optional(),
+    }),
+  ),
   rows: z.array(z.record(z.unknown())),
-  aggregation: z.array(z.object({
-    column: z.string(),
-    function: z.enum(['sum', 'avg', 'count', 'min', 'max']),
-  })).optional(),
+  aggregation: z
+    .array(
+      z.object({
+        column: z.string(),
+        function: z.enum(['sum', 'avg', 'count', 'min', 'max']),
+      }),
+    )
+    .optional(),
 });
 
 // ─── Chart ───────────────────────────────────────────────────
 
 export const chartSchema = z.object({
   type: z.enum(['line', 'bar', 'area', 'ohlc']),
-  series: z.array(z.object({
-    name: z.string(),
-    data: z.array(z.record(z.union([z.number(), z.string()]))),
-  })),
+  series: z.array(
+    z.object({
+      name: z.string(),
+      data: z.array(z.record(z.union([z.number(), z.string()]))),
+    }),
+  ),
   xAxis: z.object({ key: z.string(), label: z.string().optional() }).optional(),
   yAxis: z.object({ key: z.string(), label: z.string().optional() }).optional(),
   legend: z.boolean().optional(),
@@ -771,33 +802,43 @@ export const chartSchema = z.object({
 // ─── Relation (ER Diagram) ───────────────────────────────────
 
 export const relationSchema = z.object({
-  entities: z.array(z.object({
-    id: z.string(),
-    label: z.string(),
-    attributes: z.array(z.object({
-      name: z.string(),
-      type: z.string(),
-      primaryKey: z.boolean().optional(),
-    })).optional(),
-  })),
-  relationships: z.array(z.object({
-    from: z.string(),
-    to: z.string(),
-    label: z.string().optional(),
-    cardinality: z.enum(['1:1', '1:N', 'N:1', 'N:M']),
-  })),
+  entities: z.array(
+    z.object({
+      id: z.string(),
+      label: z.string(),
+      attributes: z
+        .array(
+          z.object({
+            name: z.string(),
+            type: z.string(),
+            primaryKey: z.boolean().optional(),
+          }),
+        )
+        .optional(),
+    }),
+  ),
+  relationships: z.array(
+    z.object({
+      from: z.string(),
+      to: z.string(),
+      label: z.string().optional(),
+      cardinality: z.enum(['1:1', '1:N', 'N:1', 'N:M']),
+    }),
+  ),
   layout: z.enum(['top-down', 'left-right']).optional(),
 });
 
 // ─── Timeline ────────────────────────────────────────────────
 
 export const timelineSchema = z.object({
-  events: z.array(z.object({
-    date: z.string(),
-    title: z.string(),
-    description: z.string().optional(),
-    type: z.string().optional(),
-  })),
+  events: z.array(
+    z.object({
+      date: z.string(),
+      title: z.string(),
+      description: z.string().optional(),
+      type: z.string().optional(),
+    }),
+  ),
   orientation: z.enum(['vertical', 'horizontal']).optional(),
 });
 
@@ -806,26 +847,30 @@ export const timelineSchema = z.object({
 export const calloutSchema = z.object({
   type: z.enum(['info', 'warning', 'error', 'tip']),
   title: z.string().optional(),
-  content: z.string(),            // Markdown content (re-parsed by compiler)
+  content: z.string(), // Markdown content (re-parsed by compiler)
 });
 
 // ─── Tabs ────────────────────────────────────────────────────
 
 export const tabsSchema = z.object({
-  tabs: z.array(z.object({
-    label: z.string(),
-    content: z.string(),          // Markdown content (re-parsed by compiler)
-  })),
+  tabs: z.array(
+    z.object({
+      label: z.string(),
+      content: z.string(), // Markdown content (re-parsed by compiler)
+    }),
+  ),
 });
 
 // ─── Steps ───────────────────────────────────────────────────
 
 export const stepsSchema = z.object({
-  steps: z.array(z.object({
-    title: z.string(),
-    status: z.enum(['pending', 'active', 'completed']).optional(),
-    content: z.string(),          // Markdown content (re-parsed by compiler)
-  })),
+  steps: z.array(
+    z.object({
+      title: z.string(),
+      status: z.enum(['pending', 'active', 'completed']).optional(),
+      content: z.string(), // Markdown content (re-parsed by compiler)
+    }),
+  ),
 });
 ```
 
@@ -850,7 +895,7 @@ type DiagnosticSource = 'parser' | 'compiler' | 'schema' | 'runtime' | 'plugin';
 interface CompilationResult {
   ir: GlyphIR;
   diagnostics: Diagnostic[];
-  hasErrors: boolean;    // Shorthand: diagnostics.some(d => d.severity === 'error')
+  hasErrors: boolean; // Shorthand: diagnostics.some(d => d.severity === 'error')
 }
 ```
 
@@ -878,17 +923,17 @@ The MCP integration defines how LLMs interact with Glyph JS documents. **v1 spec
 
 ### 11.2 Proposed MCP Tools
 
-| Tool | Description |
-|---|---|
-| `glyph_create_document` | Create a new IR document with metadata. |
-| `glyph_add_block` | Add a block to a document. |
-| `glyph_update_block` | Modify an existing block's data. |
-| `glyph_remove_block` | Remove a block. |
-| `glyph_add_node` | Add a node to a graph/relation block. |
-| `glyph_add_edge` | Add an edge between nodes. |
-| `glyph_link_entities` | Create a reference between blocks. |
-| `glyph_patch` | Apply a `GlyphPatch` (Section 6.5). |
-| `glyph_commit` | Serialize IR back to canonical Markdown. |
+| Tool                    | Description                              |
+| ----------------------- | ---------------------------------------- |
+| `glyph_create_document` | Create a new IR document with metadata.  |
+| `glyph_add_block`       | Add a block to a document.               |
+| `glyph_update_block`    | Modify an existing block's data.         |
+| `glyph_remove_block`    | Remove a block.                          |
+| `glyph_add_node`        | Add a node to a graph/relation block.    |
+| `glyph_add_edge`        | Add an edge between nodes.               |
+| `glyph_link_entities`   | Create a reference between blocks.       |
+| `glyph_patch`           | Apply a `GlyphPatch` (Section 6.5).      |
+| `glyph_commit`          | Serialize IR back to canonical Markdown. |
 
 ### 11.3 Session Model
 
@@ -910,13 +955,13 @@ Glyph JS ships a documentation site and interactive playground hosted on **GitHu
 
 ### 13.2 Technology
 
-| Concern | Choice |
-|---|---|
-| Framework | **Astro Starlight** — static-first docs framework with MDX and built-in search. |
-| React embedding | Astro Islands — Glyph components render as interactive React islands. |
+| Concern           | Choice                                                                                   |
+| ----------------- | ---------------------------------------------------------------------------------------- |
+| Framework         | **Astro Starlight** — static-first docs framework with MDX and built-in search.          |
+| React embedding   | Astro Islands — Glyph components render as interactive React islands.                    |
 | Playground editor | **CodeMirror 6** — lightweight, extensible, custom syntax highlighting for `ui:` blocks. |
-| Hosting | **GitHub Pages** — deployed via GitHub Actions on push to `main`. |
-| Package location | `apps/docs` in the monorepo. |
+| Hosting           | **GitHub Pages** — deployed via GitHub Actions on push to `main`.                        |
+| Package location  | `apps/docs` in the monorepo.                                                             |
 
 ### 13.3 Site Structure
 
@@ -945,13 +990,13 @@ GitHub Actions workflow builds `apps/docs` on push to `main` and deploys to `gh-
 
 ### 14.1 Test Tooling
 
-| Tool | Purpose |
-|---|---|
-| **Vitest** | Unit and integration tests. Fast, native ESM, Turborepo-compatible. |
-| **fast-check** | Property-based testing for IR patch/diff operations. |
-| **Playwright** | Visual regression and interaction testing against Storybook. |
-| **Storybook** | Component development harness. Doubles as docs and Playwright target. |
-| **React Testing Library** | DOM assertions for runtime logic without a full browser. |
+| Tool                      | Purpose                                                               |
+| ------------------------- | --------------------------------------------------------------------- |
+| **Vitest**                | Unit and integration tests. Fast, native ESM, Turborepo-compatible.   |
+| **fast-check**            | Property-based testing for IR patch/diff operations.                  |
+| **Playwright**            | Visual regression and interaction testing against Storybook.          |
+| **Storybook**             | Component development harness. Doubles as docs and Playwright target. |
+| **React Testing Library** | DOM assertions for runtime logic without a full browser.              |
 
 ### 14.2 Per-Package Testing
 
@@ -976,35 +1021,35 @@ Full Markdown → rendered DOM tests via Playwright against a minimal Vite app.
 
 ## 15. Build Tooling and Infrastructure
 
-| Concern | Choice |
-|---|---|
-| Language | TypeScript (strict mode) |
-| Package manager | pnpm (workspaces) |
-| Build orchestration | Turborepo |
-| Bundler | tsup (esbuild-based) |
-| Unit / integration tests | Vitest |
-| Property-based tests | fast-check |
-| Visual / interaction tests | Playwright |
-| Component harness | Storybook |
-| Component unit tests | React Testing Library |
-| Bundle size tracking | size-limit |
-| Linting | ESLint + Prettier |
-| Documentation | Astro Starlight |
-| Playground editor | CodeMirror 6 |
-| Docs hosting | GitHub Pages |
-| CI | GitHub Actions |
+| Concern                    | Choice                   |
+| -------------------------- | ------------------------ |
+| Language                   | TypeScript (strict mode) |
+| Package manager            | pnpm (workspaces)        |
+| Build orchestration        | Turborepo                |
+| Bundler                    | tsup (esbuild-based)     |
+| Unit / integration tests   | Vitest                   |
+| Property-based tests       | fast-check               |
+| Visual / interaction tests | Playwright               |
+| Component harness          | Storybook                |
+| Component unit tests       | React Testing Library    |
+| Bundle size tracking       | size-limit               |
+| Linting                    | ESLint + Prettier        |
+| Documentation              | Astro Starlight          |
+| Playground editor          | CodeMirror 6             |
+| Docs hosting               | GitHub Pages             |
+| CI                         | GitHub Actions           |
 
 ### 15.1 Target Environments
 
-| Package | Node.js | Browser | SSR |
-|---|---|---|---|
-| `@glyphjs/types` | Yes | Yes | N/A (type-only) |
-| `@glyphjs/schemas` | Yes | Yes | N/A (validation) |
-| `@glyphjs/parser` | Yes | Yes | N/A (pure transform) |
-| `@glyphjs/compiler` | Yes | Yes | N/A (pure transform) |
-| `@glyphjs/ir` | Yes | Yes | N/A (pure transform) |
-| `@glyphjs/runtime` | No | Yes | Yes (React SSR) |
-| `@glyphjs/components` | No | Yes | Partial (SSR placeholder, client hydration) |
+| Package               | Node.js | Browser | SSR                                         |
+| --------------------- | ------- | ------- | ------------------------------------------- |
+| `@glyphjs/types`      | Yes     | Yes     | N/A (type-only)                             |
+| `@glyphjs/schemas`    | Yes     | Yes     | N/A (validation)                            |
+| `@glyphjs/parser`     | Yes     | Yes     | N/A (pure transform)                        |
+| `@glyphjs/compiler`   | Yes     | Yes     | N/A (pure transform)                        |
+| `@glyphjs/ir`         | Yes     | Yes     | N/A (pure transform)                        |
+| `@glyphjs/runtime`    | No      | Yes     | Yes (React SSR)                             |
+| `@glyphjs/components` | No      | Yes     | Partial (SSR placeholder, client hydration) |
 
 All packages target ES2022 and ship as ESM with CJS fallback via tsup.
 
@@ -1012,16 +1057,16 @@ All packages target ES2022 and ship as ESM with CJS fallback via tsup.
 
 Per-component dynamic imports via `React.lazy` + `Suspense`. Bundle budgets (gzipped):
 
-| Package | Budget |
-|---|---|
-| `@glyphjs/parser` + `@glyphjs/compiler` (excluding unified/remark) | < 15KB own code |
-| unified/remark (peer dependency) | ~50KB (external, not bundled) |
-| `@glyphjs/runtime` (core, no components) | < 15KB |
-| `@glyphjs/components` — callout, tabs, steps | < 5KB each |
-| `@glyphjs/components` — table | < 20KB |
-| `@glyphjs/components` — graph, relation | < 80KB each (D3 + Dagre) |
-| `@glyphjs/components` — chart | < 60KB (D3) |
-| `@glyphjs/components` — timeline | < 40KB (D3) |
+| Package                                                            | Budget                        |
+| ------------------------------------------------------------------ | ----------------------------- |
+| `@glyphjs/parser` + `@glyphjs/compiler` (excluding unified/remark) | < 15KB own code               |
+| unified/remark (peer dependency)                                   | ~50KB (external, not bundled) |
+| `@glyphjs/runtime` (core, no components)                           | < 15KB                        |
+| `@glyphjs/components` — callout, tabs, steps                       | < 5KB each                    |
+| `@glyphjs/components` — table                                      | < 20KB                        |
+| `@glyphjs/components` — graph, relation                            | < 80KB each (D3 + Dagre)      |
+| `@glyphjs/components` — chart                                      | < 60KB (D3)                   |
+| `@glyphjs/components` — timeline                                   | < 40KB (D3)                   |
 
 Note: unified/remark is a **peer dependency** of `@glyphjs/parser`, not bundled. The 15KB budget covers Glyph's own parser plugin code. In browser environments (e.g., the playground), unified/remark is loaded as a separate chunk.
 
@@ -1060,15 +1105,15 @@ Note: unified/remark is a **peer dependency** of `@glyphjs/parser`, not bundled.
 
 WCAG 2.1 Level AA compliance for all built-in components.
 
-| Requirement | Description |
-|---|---|
-| **Semantic HTML** | Appropriate elements (`<table>`, `<nav>`, `<figure>`, `<h1>`–`<h6>`). |
-| **ARIA attributes** | `role`, `aria-label`, `aria-describedby`, `aria-live`, `aria-expanded`, `aria-selected`. |
-| **Keyboard navigation** | All interactive elements focusable and operable. Graphs: arrow-key traversal. Tables: cell navigation. |
-| **Color contrast** | 4.5:1 ratio (AA). Theming system validates contrast at build time. |
-| **Screen reader support** | Graphs/charts provide hidden data table fallbacks. |
-| **Focus management** | Reference navigation moves focus with `aria-live` announcement. |
-| **Reduced motion** | Animations respect `prefers-reduced-motion`. |
+| Requirement               | Description                                                                                            |
+| ------------------------- | ------------------------------------------------------------------------------------------------------ |
+| **Semantic HTML**         | Appropriate elements (`<table>`, `<nav>`, `<figure>`, `<h1>`–`<h6>`).                                  |
+| **ARIA attributes**       | `role`, `aria-label`, `aria-describedby`, `aria-live`, `aria-expanded`, `aria-selected`.               |
+| **Keyboard navigation**   | All interactive elements focusable and operable. Graphs: arrow-key traversal. Tables: cell navigation. |
+| **Color contrast**        | 4.5:1 ratio (AA). Theming system validates contrast at build time.                                     |
+| **Screen reader support** | Graphs/charts provide hidden data table fallbacks.                                                     |
+| **Focus management**      | Reference navigation moves focus with `aria-live` announcement.                                        |
+| **Reduced motion**        | Animations respect `prefers-reduced-motion`.                                                           |
 
 Testing: `@storybook/addon-a11y` (axe-core per story), Playwright keyboard assertions, CI axe-core scan.
 
@@ -1081,4 +1126,4 @@ Testing: `@storybook/addon-a11y` (axe-core per story), Playwright keyboard asser
 
 ---
 
-*This RFC is based on the initial concept document (`markdown_ui_rfc.pdf`) and captures all architectural decisions for the Glyph JS v1 implementation.*
+_This RFC is based on the initial concept document (`markdown_ui_rfc.pdf`) and captures all architectural decisions for the Glyph JS v1 implementation._
