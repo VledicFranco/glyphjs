@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { compile } from '@glyphjs/compiler';
 import { createGlyphRuntime } from '@glyphjs/runtime';
 import {
@@ -23,18 +23,45 @@ const allComponents = [
   timelineDefinition,
 ];
 
+function useStarlightTheme(): 'light' | 'dark' {
+  const getTheme = useCallback(
+    () =>
+      (typeof document !== 'undefined' &&
+      document.documentElement.getAttribute('data-theme') === 'dark'
+        ? 'dark'
+        : 'light') as 'light' | 'dark',
+    [],
+  );
+
+  const [theme, setTheme] = useState<'light' | 'dark'>(getTheme);
+
+  useEffect(() => {
+    setTheme(getTheme());
+    const observer = new MutationObserver(() => setTheme(getTheme()));
+    observer.observe(document.documentElement, {
+      attributes: true,
+      attributeFilter: ['data-theme'],
+    });
+    return () => observer.disconnect();
+  }, [getTheme]);
+
+  return theme;
+}
+
 interface GlyphPreviewProps {
   source: string;
 }
 
 export default function GlyphPreview({ source }: GlyphPreviewProps) {
+  const theme = useStarlightTheme();
+
   const runtime = useMemo(
     () =>
       createGlyphRuntime({
-        theme: 'light',
+        theme,
         components: allComponents,
       }),
-    [],
+    [theme],
   );
 
   const { ir, error } = useMemo(() => {
@@ -53,11 +80,9 @@ export default function GlyphPreview({ source }: GlyphPreviewProps) {
       data-glyph-preview
       data-glyph-status={error ? 'error' : ir ? 'ready' : 'empty'}
       style={{
-        border: '1px solid #dce1e8',
         borderRadius: '3px',
         padding: '1.5rem',
         margin: '1rem 0',
-        background: '#f8f9fb',
       }}
     >
       {error ? (

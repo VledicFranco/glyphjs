@@ -68,6 +68,14 @@
 }
 
 /* ----------------------------------------------------------------
+   GlyphPreview container — adapts to light / dark mode
+   ---------------------------------------------------------------- */
+[data-glyph-preview] {
+  border: 1px solid var(--sl-color-hairline-light);
+  background: var(--sl-color-bg);
+}
+
+/* ----------------------------------------------------------------
    Tighter border-radius for code blocks, cards, etc.
    ---------------------------------------------------------------- */
 :root {
