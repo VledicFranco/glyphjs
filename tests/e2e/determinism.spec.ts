@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 
 /**
@@ -12,7 +13,7 @@ test.describe('Determinism', () => {
   });
 
   /** Extract the innerHTML of the preview pane for comparison. */
-  async function getPreviewHTML(page: import('@playwright/test').Page): Promise<string> {
+  async function getPreviewHTML(page: Page): Promise<string> {
     // Wait for debounce + render to settle
     await page.waitForTimeout(800);
 

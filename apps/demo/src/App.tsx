@@ -98,12 +98,7 @@ const styles = {
   }),
   diagItem: (severity: string): React.CSSProperties => ({
     padding: '2px 0',
-    color:
-      severity === 'error'
-        ? '#e74c3c'
-        : severity === 'warning'
-          ? '#f39c12'
-          : '#3498db',
+    color: severity === 'error' ? '#e74c3c' : severity === 'warning' ? '#f39c12' : '#3498db',
   }),
   paneLabel: (dark: boolean): React.CSSProperties => ({
     padding: '4px 16px',
@@ -174,7 +169,6 @@ export function App() {
   // Compile immediately on mount
   useEffect(() => {
     compileMarkdown(markdown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handlePresetChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -215,11 +209,7 @@ export function App() {
             </option>
           ))}
         </select>
-        <button
-          style={styles.button(dark)}
-          onClick={handleThemeToggle}
-          type="button"
-        >
+        <button style={styles.button(dark)} onClick={handleThemeToggle} type="button">
           {dark ? 'Light' : 'Dark'} Theme
         </button>
         {diagCount > 0 && (
@@ -256,7 +246,7 @@ export function App() {
           <div style={{ ...styles.paneLabel(dark), margin: '-16px -16px 16px -16px' }}>
             Rendered Output
           </div>
-          {result?.ir ? (
+          {result?.ir && result.ir.blocks.length > 0 ? (
             <GlyphDocument ir={result.ir} />
           ) : (
             <p style={{ color: '#999', fontStyle: 'italic' }}>
@@ -269,9 +259,7 @@ export function App() {
       {/* Diagnostics panel */}
       {diagCount > 0 && (
         <div style={styles.diagnostics(dark)}>
-          <div style={{ fontWeight: 600, marginBottom: '4px' }}>
-            Diagnostics ({diagCount})
-          </div>
+          <div style={{ fontWeight: 600, marginBottom: '4px' }}>Diagnostics ({diagCount})</div>
           {diagnostics.map((d, i) => (
             <div key={i} style={styles.diagItem(d.severity)}>
               [{d.severity.toUpperCase()}] {d.code}: {d.message}

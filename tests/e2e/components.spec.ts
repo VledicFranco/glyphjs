@@ -1,3 +1,4 @@
+import type { Page } from '@playwright/test';
 import { test, expect } from '@playwright/test';
 
 /**
@@ -8,11 +9,11 @@ import { test, expect } from '@playwright/test';
 const DEMO_URL = '/';
 
 /** Helper: select a preset from the dropdown and wait for render. */
-async function selectPreset(page: import('@playwright/test').Page, presetKey: string) {
+async function selectPreset(page: Page, presetKey: string) {
   const select = page.locator('#preset-select');
   await select.selectOption(presetKey);
   // Wait for the debounced compilation to complete
-  await page.waitForTimeout(500);
+  await page.waitForTimeout(800);
 }
 
 test.describe('Component Presets', () => {
@@ -66,10 +67,11 @@ test.describe('Component Presets', () => {
     const table = preview.locator('[role="grid"], table');
     await expect(table.first()).toBeVisible({ timeout: 5000 });
 
-    // Verify column headers are present
-    await expect(preview.locator('th').filter({ hasText: 'Package' })).toBeVisible();
-    await expect(preview.locator('th').filter({ hasText: 'Version' })).toBeVisible();
-    await expect(preview.locator('th').filter({ hasText: 'Size' })).toBeVisible();
+    // Verify column headers are present (use first thead row to avoid filter row)
+    const headerRow = preview.locator('thead tr').first();
+    await expect(headerRow.locator('th').filter({ hasText: 'Package' })).toBeVisible();
+    await expect(headerRow.locator('th').filter({ hasText: 'Version' })).toBeVisible();
+    await expect(headerRow.locator('th').filter({ hasText: 'Size' })).toBeVisible();
   });
 
   test('graph preset renders an SVG graph', async ({ page }) => {

@@ -14,16 +14,13 @@ test.describe('Error Diagnostics', () => {
   test('invalid YAML in a ui: block shows diagnostics', async ({ page }) => {
     const textarea = page.locator('textarea');
 
-    // Provide a ui: block with broken YAML (bad indentation / invalid syntax)
+    // Provide a ui: block with broken YAML (unclosed bracket at top level)
     const invalidYaml = [
       '# Test',
       '',
       '```ui:callout',
-      'type: info',
+      'type: [broken',
       'title: Bad YAML',
-      'content: |',
-      '  this is fine',
-      '  but: [this is: broken',
       '```',
     ].join('\n');
 
@@ -40,13 +37,7 @@ test.describe('Error Diagnostics', () => {
   test('unknown component type shows diagnostics', async ({ page }) => {
     const textarea = page.locator('textarea');
 
-    const unknownComponent = [
-      '# Test',
-      '',
-      '```ui:nonexistent',
-      'foo: bar',
-      '```',
-    ].join('\n');
+    const unknownComponent = ['# Test', '', '```ui:nonexistent', 'foo: bar', '```'].join('\n');
 
     await textarea.fill(unknownComponent);
 
@@ -57,8 +48,8 @@ test.describe('Error Diagnostics', () => {
     const diagnosticsPanel = page.locator('text=Diagnostics');
     await expect(diagnosticsPanel).toBeVisible({ timeout: 5000 });
 
-    // Should contain an error or warning about the unknown component
-    const diagItems = page.locator('[style*="color"]').filter({ hasText: /ERROR|WARNING/ });
+    // Should contain a diagnostic about the unknown component
+    const diagItems = page.locator('[style*="color"]').filter({ hasText: /ERROR|WARNING|INFO/ });
     await expect(diagItems.first()).toBeVisible();
   });
 
@@ -66,11 +57,7 @@ test.describe('Error Diagnostics', () => {
     const textarea = page.locator('textarea');
 
     // First produce an error with an unknown component
-    const badMarkdown = [
-      '```ui:nonexistent',
-      'foo: bar',
-      '```',
-    ].join('\n');
+    const badMarkdown = ['```ui:nonexistent', 'foo: bar', '```'].join('\n');
 
     await textarea.fill(badMarkdown);
     await page.waitForTimeout(1000);

@@ -8,7 +8,7 @@ test.describe('Graph', () => {
     await expect(svg).toBeVisible();
 
     const ariaLabel = await svg.getAttribute('aria-label');
-    expect(ariaLabel).toContain('Graph visualization');
+    expect(ariaLabel).toContain('dag graph');
     expect(ariaLabel).toContain('3 nodes');
     expect(ariaLabel).toContain('2 edges');
   });

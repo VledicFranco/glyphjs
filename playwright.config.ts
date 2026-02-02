@@ -17,12 +17,20 @@ export default defineConfig({
     {
       name: 'demo',
       testDir: './tests/e2e',
-      testMatch: ['pipeline.spec.ts', 'components.spec.ts', 'theming.spec.ts', 'errors.spec.ts', 'determinism.spec.ts'],
+      testMatch: [
+        'pipeline.spec.ts',
+        'components.spec.ts',
+        'theming.spec.ts',
+        'errors.spec.ts',
+        'determinism.spec.ts',
+      ],
       use: { browserName: 'chromium', baseURL: 'http://localhost:5173' },
     },
     {
       name: 'docs',
       testDir: './tests/e2e/docs',
+      // Skip screenshot comparison tests in CI — baselines are platform-specific
+      grepInvert: process.env.CI ? /screenshot/ : undefined,
       use: {
         browserName: 'chromium',
         baseURL: 'http://localhost:4321',

@@ -17,7 +17,7 @@ test.describe('Table', () => {
 
   test('renders all data rows', async ({ page }) => {
     await page.goto(storyUrl('components-table--basic'));
-    const rows = page.locator('tbody tr');
+    const rows = page.locator('[role="grid"] tbody tr');
     await expect(rows).toHaveCount(3);
     await expect(rows.first()).toContainText('Alice');
   });
@@ -31,14 +31,14 @@ test.describe('Table', () => {
     await expect(nameHeader).toHaveAttribute('aria-sort', 'ascending');
 
     // Verify rows are sorted alphabetically
-    const firstCell = page.locator('tbody tr:first-child td:first-child');
+    const firstCell = page.locator('[role="grid"] tbody tr:first-child td:first-child');
     await expect(firstCell).toContainText('Alice');
   });
 
   test('double-clicking a sortable header toggles to descending', async ({ page }) => {
     await page.goto(storyUrl('components-table--sortable'));
 
-    const nameHeader = page.locator('th[scope="col"]').filter({ hasText: 'Name' });
+    const nameHeader = page.locator('th[aria-sort]').filter({ hasText: 'Name' });
 
     // First click: ascending
     await nameHeader.click();
@@ -49,7 +49,7 @@ test.describe('Table', () => {
     await expect(nameHeader).toHaveAttribute('aria-sort', 'descending');
 
     // Verify rows are reversed
-    const firstCell = page.locator('tbody tr:first-child td:first-child');
+    const firstCell = page.locator('[role="grid"] tbody tr:first-child td:first-child');
     await expect(firstCell).toContainText('Dave');
   });
 
@@ -67,14 +67,14 @@ test.describe('Table', () => {
     await page.goto(storyUrl('components-table--filterable'));
 
     // All 5 rows should be visible initially
-    await expect(page.locator('tbody tr')).toHaveCount(5);
+    await expect(page.locator('[role="grid"] tbody tr')).toHaveCount(5);
 
     // Type into the Product filter
     const productFilter = page.locator('input[aria-label="Filter Product"]');
     await productFilter.fill('Widget');
 
     // Only 2 rows should remain (Widget A and Widget B)
-    await expect(page.locator('tbody tr')).toHaveCount(2);
+    await expect(page.locator('[role="grid"] tbody tr')).toHaveCount(2);
   });
 
   test('filter by category narrows results', async ({ page }) => {
@@ -84,9 +84,9 @@ test.describe('Table', () => {
     await categoryFilter.fill('Tools');
 
     // Only Tools rows should remain (Gadget C and Gadget D)
-    await expect(page.locator('tbody tr')).toHaveCount(2);
-    await expect(page.locator('tbody')).toContainText('Gadget C');
-    await expect(page.locator('tbody')).toContainText('Gadget D');
+    await expect(page.locator('[role="grid"] tbody tr')).toHaveCount(2);
+    await expect(page.locator('[role="grid"] tbody')).toContainText('Gadget C');
+    await expect(page.locator('[role="grid"] tbody')).toContainText('Gadget D');
   });
 
   test('sortable header responds to keyboard Enter', async ({ page }) => {

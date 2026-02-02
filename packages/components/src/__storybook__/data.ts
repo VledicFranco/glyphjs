@@ -41,7 +41,9 @@ export function mockTheme(isDark = false): GlyphThemeContext {
 
 // ─── Mock onNavigate ───────────────────────────────────────────
 
-export const mockOnNavigate = (): void => {};
+export const mockOnNavigate = (): void => {
+  // noop — stub for storybook/tests
+};
 
 // ─── Mock References ───────────────────────────────────────────
 
