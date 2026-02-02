@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Timeline } from './Timeline.js';
-import { mockProps, mockBlock } from '../__mocks__/data.js';
+import { mockProps, mockBlock } from '../__storybook__/data.js';
 import type { TimelineData } from './Timeline.js';
 
 const meta: Meta<typeof Timeline> = {

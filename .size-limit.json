@@ -22,5 +22,17 @@
     "path": "packages/schemas/dist/index.js",
     "limit": "15 KB",
     "gzip": true
+  },
+  {
+    "name": "@glyphjs/runtime",
+    "path": "packages/runtime/dist/index.js",
+    "limit": "50 KB",
+    "gzip": true
+  },
+  {
+    "name": "@glyphjs/components",
+    "path": "packages/components/dist/index.js",
+    "limit": "65 KB",
+    "gzip": true
   }
 ]

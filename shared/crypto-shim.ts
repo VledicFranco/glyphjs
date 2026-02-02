@@ -21,11 +21,12 @@ class BrowserHash {
       h1 ^= Math.imul(h2 ^ (h2 >>> 13), 3266489909);
       h2 = Math.imul(h2 ^ (h2 >>> 16), 2246822507);
       h2 ^= Math.imul(h1 ^ (h1 >>> 13), 3266489909);
+      const combined = 4294967296 * (2097151 & h2) + (h1 >>> 0);
       const hex32 =
         (h1 >>> 0).toString(16).padStart(8, '0') +
         (h2 >>> 0).toString(16).padStart(8, '0') +
         ((h1 ^ h2) >>> 0).toString(16).padStart(8, '0') +
-        ((4294967296 * (2097151 & h2) + (h1 >>> 0)) >>> 0).toString(16).padStart(8, '0');
+        (combined >>> 0).toString(16).padStart(8, '0');
       return (hex32 + hex32).slice(0, 64);
     }
     return this.data;

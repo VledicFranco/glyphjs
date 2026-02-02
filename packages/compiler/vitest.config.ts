@@ -1,8 +1,1 @@
-import { defineConfig } from 'vitest/config';
-
-export default defineConfig({
-  test: {
-    globals: true,
-    passWithNoTests: true,
-  },
-});
+export { sharedConfig as default } from '../../vitest.shared.js';

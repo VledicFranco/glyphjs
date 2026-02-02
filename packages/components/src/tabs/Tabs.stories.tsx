@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs.js';
-import { mockProps, mockBlock, mockTheme } from '../__mocks__/data.js';
+import { mockProps, mockBlock, mockTheme } from '../__storybook__/data.js';
 import type { TabsData } from './Tabs.js';
 
 const meta: Meta<typeof Tabs> = {

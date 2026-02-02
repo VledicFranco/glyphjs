@@ -65,26 +65,3 @@ export type {
 // ─── Graph Shared Types ──────────────────────────────────────
 export type { GraphNode, GraphEdge } from './graph.js';
 
-// ─── MCP Tool Interface Types ────────────────────────────────
-export type {
-  MCPSession,
-  MCPCreateDocumentInput,
-  MCPCreateDocumentOutput,
-  MCPAddBlockInput,
-  MCPAddBlockOutput,
-  MCPUpdateBlockInput,
-  MCPUpdateBlockOutput,
-  MCPRemoveBlockInput,
-  MCPRemoveBlockOutput,
-  MCPAddNodeInput,
-  MCPAddNodeOutput,
-  MCPAddEdgeInput,
-  MCPAddEdgeOutput,
-  MCPLinkEntitiesInput,
-  MCPLinkEntitiesOutput,
-  MCPPatchInput,
-  MCPPatchOutput,
-  MCPCommitInput,
-  MCPCommitOutput,
-  MCPToolDefinition,
-} from './mcp.js';

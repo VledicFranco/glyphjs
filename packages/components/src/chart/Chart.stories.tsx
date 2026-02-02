@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chart } from './Chart.js';
-import { mockProps, mockBlock } from '../__mocks__/data.js';
+import { mockProps, mockBlock } from '../__storybook__/data.js';
 import type { ChartData } from './Chart.js';
 
 const meta: Meta<typeof Chart> = {

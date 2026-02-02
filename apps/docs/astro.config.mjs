@@ -45,8 +45,8 @@ export default defineConfig({
   vite: {
     resolve: {
       alias: {
-        'node:crypto': path.resolve(__dirname, 'src/crypto-shim.ts'),
-        crypto: path.resolve(__dirname, 'src/crypto-shim.ts'),
+        'node:crypto': path.resolve(__dirname, '../../shared/crypto-shim.ts'),
+        crypto: path.resolve(__dirname, '../../shared/crypto-shim.ts'),
       },
     },
   },

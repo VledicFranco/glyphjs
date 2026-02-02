@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Steps } from './Steps.js';
-import { mockProps, mockBlock } from '../__mocks__/data.js';
+import { mockProps, mockBlock } from '../__storybook__/data.js';
 import type { StepsData } from './Steps.js';
 
 const meta: Meta<typeof Steps> = {
