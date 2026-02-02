@@ -144,22 +144,15 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
 
   // ─── Nodes ────────────────────────────────────────────────
 
-  // Build a zone-based color index for cycling
-  const zoneColorIndex = new Map<string | undefined, number>();
-  let colorCounter = 0;
-
   const nodeGroup = root.append('g').attr('class', 'glyph-architecture-nodes');
 
-  for (const node of layout.nodes) {
+  for (let nodeIdx = 0; nodeIdx < layout.nodes.length; nodeIdx++) {
+    const node = layout.nodes[nodeIdx];
+    if (!node) continue;
     const nodeG = nodeGroup.append('g').attr('class', 'glyph-architecture-node');
 
-    // Pick color by zone
-    let colorIdx = zoneColorIndex.get(node.zoneId);
-    if (colorIdx === undefined) {
-      colorIdx = colorCounter++;
-      zoneColorIndex.set(node.zoneId, colorIdx);
-    }
-    const color = NODE_PALETTE[colorIdx % NODE_PALETTE.length] ?? '#d4a843';
+    // Pick color by node index for visual variety
+    const color = NODE_PALETTE[nodeIdx % NODE_PALETTE.length] ?? '#d4a843';
 
     // Node rect
     nodeG

@@ -72,7 +72,7 @@ const NODE_HEIGHT_NO_ICON = 40;
 const ZONE_PADDING_TOP = 40;
 const ZONE_PADDING_SIDES = 20;
 const ZONE_PADDING_BOTTOM = 20;
-const LAYOUT_PADDING = 40;
+const LAYOUT_PADDING = 20;
 
 // ─── Direction Mapping ──────────────────────────────────────
 
@@ -170,10 +170,10 @@ function buildElkGraph(data: ArchitectureData): ElkRoot {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.edgeRouting': 'ORTHOGONAL',
       'elk.direction': direction,
-      'elk.spacing.nodeNode': '40',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '60',
-      'elk.spacing.edgeNode': '20',
-      'elk.spacing.edgeEdge': '15',
+      'elk.spacing.nodeNode': '30',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '40',
+      'elk.spacing.edgeNode': '15',
+      'elk.spacing.edgeEdge': '10',
     },
   };
 }
@@ -231,29 +231,74 @@ function flattenNodeMap(children: ArchitectureNode[], map: Map<string, Architect
   }
 }
 
+// ─── Ancestor Path Utilities ────────────────────────────────
+
+/** Build a map from each node ID to its chain of ancestor zone IDs (root-first). */
+function buildAncestorMap(
+  children: ArchitectureNode[],
+  ancestors: string[],
+  map: Map<string, string[]>,
+): void {
+  for (const node of children) {
+    map.set(node.id, [...ancestors]);
+    if (node.type === 'zone' && node.children) {
+      buildAncestorMap(node.children, [...ancestors, node.id], map);
+    }
+  }
+}
+
+/** Find the lowest common ancestor zone ID of two nodes. Returns undefined for root. */
+function findLCA(ancestorsA: string[], ancestorsB: string[]): string | undefined {
+  let lca: string | undefined;
+  const len = Math.min(ancestorsA.length, ancestorsB.length);
+  for (let i = 0; i < len; i++) {
+    if (ancestorsA[i] === ancestorsB[i]) {
+      lca = ancestorsA[i];
+    } else {
+      break;
+    }
+  }
+  return lca;
+}
+
 function extractEdges(
   elkEdges: ElkPositionedEdge[] | undefined,
   dataEdges: ArchitectureEdge[],
+  ancestorMap: Map<string, string[]>,
+  zoneAbsOffsets: Map<string, { x: number; y: number }>,
 ): PositionedArchEdge[] {
   if (!elkEdges) return [];
   return elkEdges.map((elkEdge, i) => {
     const dataEdge = dataEdges[i];
+    if (!dataEdge) {
+      return { from: '', to: '', points: [] };
+    }
+
+    // Determine the coordinate offset for this edge.
+    // ELK computes edge section coordinates relative to the LCA of source/target.
+    const srcAncestors = ancestorMap.get(dataEdge.from) ?? [];
+    const tgtAncestors = ancestorMap.get(dataEdge.to) ?? [];
+    const lca = findLCA(srcAncestors, tgtAncestors);
+    const offset = lca ? (zoneAbsOffsets.get(lca) ?? { x: 0, y: 0 }) : { x: 0, y: 0 };
+
     const points: { x: number; y: number }[] = [];
     if (elkEdge.sections) {
       for (const section of elkEdge.sections) {
-        points.push(section.startPoint);
+        points.push({ x: section.startPoint.x + offset.x, y: section.startPoint.y + offset.y });
         if (section.bendPoints) {
-          points.push(...section.bendPoints);
+          for (const bp of section.bendPoints) {
+            points.push({ x: bp.x + offset.x, y: bp.y + offset.y });
+          }
         }
-        points.push(section.endPoint);
+        points.push({ x: section.endPoint.x + offset.x, y: section.endPoint.y + offset.y });
       }
     }
     return {
-      from: dataEdge?.from ?? '',
-      to: dataEdge?.to ?? '',
-      label: dataEdge?.label,
-      type: dataEdge?.type,
-      style: dataEdge?.style,
+      from: dataEdge.from,
+      to: dataEdge.to,
+      label: dataEdge.label,
+      type: dataEdge.type,
+      style: dataEdge.style,
       points,
     };
   });
@@ -284,7 +329,17 @@ export async function computeArchitectureLayout(
     }
   }
 
-  const edges = extractEdges(result.edges, data.edges);
+  // Build zone absolute offset map (needed for edge coordinate correction)
+  const zoneAbsOffsets = new Map<string, { x: number; y: number }>();
+  for (const z of zones) {
+    zoneAbsOffsets.set(z.id, { x: z.x, y: z.y });
+  }
+
+  // Build ancestor map for LCA computation
+  const ancestorMap = new Map<string, string[]>();
+  buildAncestorMap(data.children, [], ancestorMap);
+
+  const edges = extractEdges(result.edges, data.edges, ancestorMap, zoneAbsOffsets);
 
   // Compute bounding box
   let maxX = 0;
@@ -300,6 +355,12 @@ export async function computeArchitectureLayout(
     const bottom = z.y + z.height;
     if (right > maxX) maxX = right;
     if (bottom > maxY) maxY = bottom;
+  }
+  for (const e of edges) {
+    for (const p of e.points) {
+      if (p.x > maxX) maxX = p.x;
+      if (p.y > maxY) maxY = p.y;
+    }
   }
 
   return {
