@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="5 4 68 68" fill="none">
+  <style>
+    .g-body { fill: #1b1f27; }
+    .g-accent { fill: #3a9bc8; }
+    @media (prefers-color-scheme: dark) {
+      .g-body { fill: #e2e8f0; }
+      .g-accent { fill: #5bb8db; }
+    }
+  </style>
+  <path class="g-body" fill-rule="evenodd" d="M12,8 H56 V68 H12 Z M20,16 H56 V32 H20 Z M20,40 H48 V60 H20 Z"/>
+  <rect class="g-accent" x="56" y="32" width="10" height="8"/>
+</svg>
