@@ -49,4 +49,4 @@ function App() {
 
 ## Docs
 
-https://github.com/nicholasgriffintn/glyphjs
+https://github.com/VledicFranco/glyphjs

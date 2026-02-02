@@ -25,17 +25,17 @@ const jsonSchema = getJsonSchema('graph');
 
 ## Available schemas
 
-| Schema | Component |
-|--------|-----------|
-| `graphSchema` | Directed graphs / flowcharts |
-| `tableSchema` | Data tables |
-| `chartSchema` | Bar, line, and area charts |
+| Schema           | Component                    |
+| ---------------- | ---------------------------- |
+| `graphSchema`    | Directed graphs / flowcharts |
+| `tableSchema`    | Data tables                  |
+| `chartSchema`    | Bar, line, and area charts   |
 | `relationSchema` | Entity-relationship diagrams |
-| `timelineSchema` | Chronological timelines |
-| `calloutSchema` | Callout / admonition blocks |
-| `tabsSchema` | Tabbed content panels |
-| `stepsSchema` | Step-by-step sequences |
+| `timelineSchema` | Chronological timelines      |
+| `calloutSchema`  | Callout / admonition blocks  |
+| `tabsSchema`     | Tabbed content panels        |
+| `stepsSchema`    | Step-by-step sequences       |
 
 ## Docs
 
-https://github.com/nicholasgriffintn/glyphjs
+https://github.com/VledicFranco/glyphjs

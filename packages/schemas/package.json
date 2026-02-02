@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/schemas",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Zod schemas for Glyph JS components with JSON Schema generation",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -19,7 +19,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -35,6 +37,26 @@
   },
   "sideEffects": false,
   "license": "MIT",
+  "author": "Vledic Franco",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VledicFranco/glyphjs.git",
+    "directory": "packages/schemas"
+  },
+  "homepage": "https://github.com/VledicFranco/glyphjs#readme",
+  "bugs": "https://github.com/VledicFranco/glyphjs/issues",
+  "keywords": [
+    "glyph",
+    "glyphjs",
+    "markdown",
+    "react",
+    "ui-components",
+    "interactive-documents",
+    "zod",
+    "schemas",
+    "validation",
+    "json-schema"
+  ],
   "devDependencies": {
     "ajv": "^8.17.1"
   }

@@ -42,4 +42,4 @@ const tree = processor.parse(markdown);
 
 ## Docs
 
-https://github.com/nicholasgriffintn/glyphjs
+https://github.com/VledicFranco/glyphjs

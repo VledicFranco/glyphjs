@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/brand",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Brand assets for Glyph JS — SVG logos and palette constants",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -19,7 +19,8 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE"
   ],
   "scripts": {
     "build": "tsup",
@@ -32,6 +33,22 @@
   },
   "sideEffects": false,
   "license": "MIT",
+  "author": "Vledic Franco",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VledicFranco/glyphjs.git",
+    "directory": "packages/brand"
+  },
+  "homepage": "https://github.com/VledicFranco/glyphjs#readme",
+  "bugs": "https://github.com/VledicFranco/glyphjs/issues",
+  "keywords": [
+    "glyph",
+    "glyphjs",
+    "brand",
+    "logo",
+    "svg",
+    "design"
+  ],
   "devDependencies": {
     "@types/react": "^19.2.10"
   }

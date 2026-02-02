@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/ir",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "IR utilities: validation, diffing, patching, migration",
   "type": "module",
   "main": "./dist/index.cjs",
@@ -19,7 +19,9 @@
     }
   },
   "files": [
-    "dist"
+    "dist",
+    "LICENSE",
+    "README.md"
   ],
   "scripts": {
     "build": "tsup",
@@ -36,5 +38,25 @@
     "fast-check": "^4.5.3"
   },
   "sideEffects": false,
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Vledic Franco",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VledicFranco/glyphjs.git",
+    "directory": "packages/ir"
+  },
+  "homepage": "https://github.com/VledicFranco/glyphjs#readme",
+  "bugs": "https://github.com/VledicFranco/glyphjs/issues",
+  "keywords": [
+    "glyph",
+    "glyphjs",
+    "markdown",
+    "react",
+    "ui-components",
+    "interactive-documents",
+    "intermediate-representation",
+    "diffing",
+    "patching",
+    "migration"
+  ]
 }

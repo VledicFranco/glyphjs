@@ -41,4 +41,4 @@ const result = compile(markdown);
 
 ## Docs
 
-https://github.com/nicholasgriffintn/glyphjs
+https://github.com/VledicFranco/glyphjs

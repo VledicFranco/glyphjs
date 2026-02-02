@@ -33,4 +33,4 @@ const doc: GlyphIR = {
 
 ## Docs
 
-https://github.com/nicholasgriffintn/glyphjs
+https://github.com/VledicFranco/glyphjs

@@ -31,22 +31,22 @@ import { Graph, Table, Chart } from '@glyphjs/components';
     nodes: [{ id: 'a', label: 'Node A' }],
     edges: [{ from: 'a', to: 'b' }],
   }}
-/>
+/>;
 ```
 
 ## Available components
 
-| Component | Description |
-|-----------|-------------|
-| `Graph` | Directed graph with dagre and force layouts |
-| `Table` | Data table with headers and rows |
-| `Chart` | Bar, line, and area charts via D3 |
-| `Relation` | Entity-relationship diagrams |
-| `Timeline` | Chronological event timelines |
-| `Callout` | Callout / admonition blocks (info, warning, etc.) |
-| `Tabs` | Tabbed content panels |
-| `Steps` | Step-by-step instructional sequences |
+| Component  | Description                                       |
+| ---------- | ------------------------------------------------- |
+| `Graph`    | Directed graph with dagre and force layouts       |
+| `Table`    | Data table with headers and rows                  |
+| `Chart`    | Bar, line, and area charts via D3                 |
+| `Relation` | Entity-relationship diagrams                      |
+| `Timeline` | Chronological event timelines                     |
+| `Callout`  | Callout / admonition blocks (info, warning, etc.) |
+| `Tabs`     | Tabbed content panels                             |
+| `Steps`    | Step-by-step instructional sequences              |
 
 ## Docs
 
-https://github.com/nicholasgriffintn/glyphjs
+https://github.com/VledicFranco/glyphjs

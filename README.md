@@ -14,6 +14,8 @@
 <p align="center">
   <a href="https://github.com/VledicFranco/glyphjs/actions/workflows/ci.yml"><img src="https://github.com/VledicFranco/glyphjs/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
   <a href="https://github.com/VledicFranco/glyphjs/actions/workflows/deploy-docs.yml"><img src="https://github.com/VledicFranco/glyphjs/actions/workflows/deploy-docs.yml/badge.svg" alt="Deploy Docs"></a>
+  <a href="https://www.npmjs.com/package/@glyphjs/compiler"><img src="https://img.shields.io/npm/v/@glyphjs/compiler" alt="npm"></a>
+  <a href="https://www.npmjs.com/package/@glyphjs/compiler"><img src="https://img.shields.io/npm/dm/@glyphjs/compiler" alt="downloads"></a>
 </p>
 
 ## Packages

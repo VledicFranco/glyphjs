@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/types",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "description": "Shared TypeScript type definitions for Glyph JS",
   "type": "module",
   "types": "./dist/index.d.ts",
@@ -9,7 +9,11 @@
       "types": "./dist/index.d.ts"
     }
   },
-  "files": ["dist"],
+  "files": [
+    "dist",
+    "LICENSE",
+    "README.md"
+  ],
   "scripts": {
     "build": "tsc --emitDeclarationOnly --outDir dist",
     "typecheck": "tsc --noEmit",
@@ -18,5 +22,23 @@
     "clean": "rm -rf dist .turbo"
   },
   "sideEffects": false,
-  "license": "MIT"
+  "license": "MIT",
+  "author": "Vledic Franco",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VledicFranco/glyphjs.git",
+    "directory": "packages/types"
+  },
+  "homepage": "https://github.com/VledicFranco/glyphjs#readme",
+  "bugs": "https://github.com/VledicFranco/glyphjs/issues",
+  "keywords": [
+    "glyph",
+    "glyphjs",
+    "markdown",
+    "react",
+    "ui-components",
+    "interactive-documents",
+    "typescript",
+    "types"
+  ]
 }
