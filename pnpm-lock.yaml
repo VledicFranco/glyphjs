@@ -286,6 +286,9 @@ importers:
       '@glyphjs/types':
         specifier: workspace:*
         version: link:../types
+      dompurify:
+        specifier: ^3.3.1
+        version: 3.3.1
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.2.4
@@ -299,6 +302,9 @@ importers:
       '@testing-library/react':
         specifier: ^16.3.2
         version: 16.3.2(@testing-library/dom@10.4.0)(@types/react-dom@19.2.3(@types/react@19.2.10))(@types/react@19.2.10)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      '@types/dompurify':
+        specifier: ^3.2.0
+        version: 3.2.0
       '@types/react':
         specifier: ^19.2.10
         version: 19.2.10
@@ -1683,6 +1689,10 @@ packages:
   '@types/doctrine@0.0.9':
     resolution: {integrity: sha512-eOIHzCUSH7SMfonMG1LsC2f8vxBFtho6NGBznK41R84YzPuvSBzrhEps33IsQiOW9+VL6NQ9DbjQJznk/S4uRA==, tarball: https://registry.npmjs.org/@types/doctrine/-/doctrine-0.0.9.tgz}
 
+  '@types/dompurify@3.2.0':
+    resolution: {integrity: sha512-Fgg31wv9QbLDA0SpTOXO3MaxySc4DKGLi8sna4/Utjo4r3ZRPdCt4UQee8BWr+Q5z21yifghREPJGYaEOEIACg==, tarball: https://registry.npmjs.org/@types/dompurify/-/dompurify-3.2.0.tgz}
+    deprecated: This is a stub types definition. dompurify provides its own type definitions, so you do not need this installed.
+
   '@types/estree-jsx@1.0.5':
     resolution: {integrity: sha512-52CcUVNFyfb1A2ALocQw/Dd1BQFNmSdkuC3BkZ6iqhdMfQz7JWOFRuJFloOzjk+6WijU56m9oKXFAXc7o3Towg==, tarball: https://registry.npmjs.org/@types/estree-jsx/-/estree-jsx-1.0.5.tgz}
 
@@ -1750,6 +1760,9 @@ packages:
 
   '@types/stack-utils@2.0.3':
     resolution: {integrity: sha512-9aEbYZ3TbYMznPdcdr3SmIrLXwC/AKZXQeCf9Pgao5CKb8CyHuEX5jzWPTkvregvhRJHcpRO6BFoGW9ycaOkYw==, tarball: https://registry.npmjs.org/@types/stack-utils/-/stack-utils-2.0.3.tgz}
+
+  '@types/trusted-types@2.0.7':
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==, tarball: https://registry.npmjs.org/@types/trusted-types/-/trusted-types-2.0.7.tgz}
 
   '@types/unist@2.0.11':
     resolution: {integrity: sha512-CmBKiL6NNo/OqgmMn95Fk9Whlp2mtvIv+KNpQKN2F4SjvrEesubTRWGYSg+BnWZOnlCaSTU1sMpsBOzgbYhnsA==, tarball: https://registry.npmjs.org/@types/unist/-/unist-2.0.11.tgz}
@@ -2465,6 +2478,9 @@ packages:
   domhandler@5.0.3:
     resolution: {integrity: sha512-cgwlv/1iFQiFnU96XXgROh8xTeetsnJiDsTc7TYCLFd9+/WNkIqPTxiM/8pSd8VIrhXGTf1Ny1q1hquVqDJB5w==, tarball: https://registry.npmjs.org/domhandler/-/domhandler-5.0.3.tgz}
     engines: {node: '>= 4'}
+
+  dompurify@3.3.1:
+    resolution: {integrity: sha512-qkdCKzLNtrgPFP1Vo+98FRzJnBRGe4ffyCea9IwHB1fyxPOeNTHpLKYGd4Uk9xvNoH0ZoOjwZxNptyMwqrId1Q==, tarball: https://registry.npmjs.org/dompurify/-/dompurify-3.3.1.tgz}
 
   domutils@3.2.2:
     resolution: {integrity: sha512-6kZKyUajlDuqlHKVX1w7gyslj9MPIXzIFiz/rGu35uC1wMi+kMhQwGhl4lt9unC9Vb9INnY9Z3/ZA3+FhASLaw==, tarball: https://registry.npmjs.org/domutils/-/domutils-3.2.2.tgz}
@@ -5936,6 +5952,10 @@ snapshots:
 
   '@types/doctrine@0.0.9': {}
 
+  '@types/dompurify@3.2.0':
+    dependencies:
+      dompurify: 3.3.1
+
   '@types/estree-jsx@1.0.5':
     dependencies:
       '@types/estree': 1.0.8
@@ -6005,6 +6025,9 @@ snapshots:
       '@types/node': 25.1.0
 
   '@types/stack-utils@2.0.3': {}
+
+  '@types/trusted-types@2.0.7':
+    optional: true
 
   '@types/unist@2.0.11': {}
 
@@ -6851,6 +6874,10 @@ snapshots:
   domhandler@5.0.3:
     dependencies:
       domelementtype: 2.3.0
+
+  dompurify@3.3.1:
+    optionalDependencies:
+      '@types/trusted-types': 2.0.7
 
   domutils@3.2.2:
     dependencies:
