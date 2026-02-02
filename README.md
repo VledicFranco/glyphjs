@@ -1,21 +1,32 @@
-# Glyph JS
+<p align="center">
+  <picture>
+    <source media="(prefers-color-scheme: dark)" srcset="assets/logo-dark.svg">
+    <source media="(prefers-color-scheme: light)" srcset="assets/logo-light.svg">
+    <img alt="Glyph JS" src="assets/logo-light.svg" width="340">
+  </picture>
+</p>
 
-[![CI](https://github.com/VledicFranco/glyphjs/actions/workflows/ci.yml/badge.svg)](https://github.com/VledicFranco/glyphjs/actions/workflows/ci.yml)
-[![Deploy Docs](https://github.com/VledicFranco/glyphjs/actions/workflows/deploy-docs.yml/badge.svg)](https://github.com/VledicFranco/glyphjs/actions/workflows/deploy-docs.yml)
+<p align="center">
+  A Markdown-to-interactive-UI rendering engine.<br>
+  Write enhanced Markdown with embedded <code>ui:</code> components and render rich, interactive documents in React.
+</p>
 
-A Markdown-to-interactive-UI rendering engine. Write enhanced Markdown with embedded `ui:` components and render rich, interactive documents in React.
+<p align="center">
+  <a href="https://github.com/VledicFranco/glyphjs/actions/workflows/ci.yml"><img src="https://github.com/VledicFranco/glyphjs/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+  <a href="https://github.com/VledicFranco/glyphjs/actions/workflows/deploy-docs.yml"><img src="https://github.com/VledicFranco/glyphjs/actions/workflows/deploy-docs.yml/badge.svg" alt="Deploy Docs"></a>
+</p>
 
 ## Packages
 
-| Package | Description |
-|---------|-------------|
-| `@glyphjs/types` | TypeScript type definitions for IR, AST, plugins, and runtime |
-| `@glyphjs/schemas` | Zod schemas for all 8 built-in UI components |
-| `@glyphjs/parser` | Remark plugin for parsing `ui:` fenced code blocks |
-| `@glyphjs/ir` | Intermediate representation: validation, diffing, patching, migration |
-| `@glyphjs/compiler` | End-to-end Markdown-to-IR compiler |
-| `@glyphjs/runtime` | React rendering engine with theming, layouts, and plugins |
-| `@glyphjs/components` | 8 built-in UI components (graph, table, chart, etc.) |
+| Package               | Description                                                           |
+| --------------------- | --------------------------------------------------------------------- |
+| `@glyphjs/types`      | TypeScript type definitions for IR, AST, plugins, and runtime         |
+| `@glyphjs/schemas`    | Zod schemas for all 8 built-in UI components                          |
+| `@glyphjs/parser`     | Remark plugin for parsing `ui:` fenced code blocks                    |
+| `@glyphjs/ir`         | Intermediate representation: validation, diffing, patching, migration |
+| `@glyphjs/compiler`   | End-to-end Markdown-to-IR compiler                                    |
+| `@glyphjs/runtime`    | React rendering engine with theming, layouts, and plugins             |
+| `@glyphjs/components` | 8 built-in UI components (graph, table, chart, etc.)                  |
 
 ## Quick Start
 
