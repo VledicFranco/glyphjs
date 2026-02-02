@@ -9,6 +9,7 @@ import { timelineSchema } from './timeline.js';
 import { calloutSchema } from './callout.js';
 import { tabsSchema } from './tabs.js';
 import { stepsSchema } from './steps.js';
+import { architectureSchema } from './architecture.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -21,11 +22,10 @@ const entries: [string, z.ZodType][] = [
   ['callout', calloutSchema],
   ['tabs', tabsSchema],
   ['steps', stepsSchema],
+  ['architecture', architectureSchema],
 ];
 
-export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(
-  entries,
-);
+export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);
 
 // ─── JSON Schema Helper ─────────────────────────────────────
 

@@ -14,6 +14,7 @@ import { graphSchema } from '../../packages/schemas/src/graph';
 import { chartSchema } from '../../packages/schemas/src/chart';
 import { relationSchema } from '../../packages/schemas/src/relation';
 import { timelineSchema } from '../../packages/schemas/src/timeline';
+import { architectureSchema } from '../../packages/schemas/src/architecture';
 
 // ─── Callout examples ───────────────────────────────────────
 
@@ -77,7 +78,11 @@ describe('Steps doc examples validate against schema', () => {
       steps: [
         { title: 'Install Dependencies', status: 'completed', content: 'Run pnpm install.' },
         { title: 'Configure the Runtime', status: 'active', content: 'Create a runtime instance.' },
-        { title: 'Render Documents', status: 'pending', content: 'Pass compiled IR to GlyphDocument.' },
+        {
+          title: 'Render Documents',
+          status: 'pending',
+          content: 'Pass compiled IR to GlyphDocument.',
+        },
       ],
     };
     expect(stepsSchema.safeParse(data).success).toBe(true);
@@ -240,9 +245,7 @@ describe('Relation doc examples validate against schema', () => {
           ],
         },
       ],
-      relationships: [
-        { from: 'users', to: 'posts', cardinality: '1:N', label: 'writes' },
-      ],
+      relationships: [{ from: 'users', to: 'posts', cardinality: '1:N', label: 'writes' }],
     };
     expect(relationSchema.safeParse(data).success).toBe(true);
   });
@@ -254,9 +257,24 @@ describe('Timeline doc examples validate against schema', () => {
   it('vertical timeline with ISO dates', () => {
     const data = {
       events: [
-        { date: '2026-01-15', title: 'Project kickoff', description: 'Initial RFC published.', type: 'milestone' },
-        { date: '2026-01-22', title: 'Parser v0.1', description: 'First working parser.', type: 'release' },
-        { date: '2026-02-12', title: 'Public beta', description: 'First public release.', type: 'milestone' },
+        {
+          date: '2026-01-15',
+          title: 'Project kickoff',
+          description: 'Initial RFC published.',
+          type: 'milestone',
+        },
+        {
+          date: '2026-01-22',
+          title: 'Parser v0.1',
+          description: 'First working parser.',
+          type: 'release',
+        },
+        {
+          date: '2026-02-12',
+          title: 'Public beta',
+          description: 'First public release.',
+          type: 'milestone',
+        },
       ],
       orientation: 'vertical',
     };
@@ -286,5 +304,81 @@ describe('Timeline doc examples validate against schema', () => {
       ],
     };
     expect(timelineSchema.safeParse(data).success).toBe(true);
+  });
+});
+
+// ─── Architecture examples ─────────────────────────────────
+
+describe('Architecture doc examples validate against schema', () => {
+  it('simple 3-tier architecture', () => {
+    const data = {
+      children: [
+        { id: 'web', label: 'Web App', icon: 'cloud' },
+        { id: 'api', label: 'API Server', icon: 'server' },
+        { id: 'db', label: 'Database', icon: 'database' },
+      ],
+      edges: [
+        { from: 'web', to: 'api', label: 'REST' },
+        { from: 'api', to: 'db', label: 'queries' },
+      ],
+      layout: 'top-down',
+    };
+    expect(architectureSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('cloud VPC with nested subnets', () => {
+    const data = {
+      title: 'Cloud Platform',
+      children: [
+        {
+          id: 'vpc',
+          label: 'Production VPC',
+          type: 'zone',
+          children: [
+            {
+              id: 'pub-subnet',
+              label: 'Public Subnet',
+              type: 'zone',
+              children: [
+                { id: 'alb', label: 'Load Balancer', icon: 'loadbalancer' },
+                { id: 'bastion', label: 'Bastion Host', icon: 'server' },
+              ],
+            },
+            {
+              id: 'priv-subnet',
+              label: 'Private Subnet',
+              type: 'zone',
+              children: [
+                { id: 'api', label: 'API Service', icon: 'server' },
+                { id: 'worker', label: 'Worker', icon: 'function' },
+              ],
+            },
+          ],
+        },
+        { id: 'users', label: 'Users', icon: 'user' },
+      ],
+      edges: [
+        { from: 'users', to: 'alb', label: 'HTTPS' },
+        { from: 'alb', to: 'api' },
+        { from: 'api', to: 'worker' },
+      ],
+      layout: 'top-down',
+    };
+    expect(architectureSchema.safeParse(data).success).toBe(true);
+  });
+
+  it('architecture with edge types', () => {
+    const data = {
+      children: [
+        { id: 'a', label: 'Producer', icon: 'server' },
+        { id: 'b', label: 'Queue', icon: 'queue' },
+        { id: 'c', label: 'Consumer', icon: 'function' },
+      ],
+      edges: [
+        { from: 'a', to: 'b', type: 'async' },
+        { from: 'b', to: 'c', type: 'data' },
+      ],
+    };
+    expect(architectureSchema.safeParse(data).success).toBe(true);
   });
 });

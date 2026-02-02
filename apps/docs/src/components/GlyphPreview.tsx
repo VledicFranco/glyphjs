@@ -10,6 +10,7 @@ import {
   tableDefinition,
   tabsDefinition,
   timelineDefinition,
+  architectureDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -21,6 +22,7 @@ const allComponents = [
   tableDefinition,
   tabsDefinition,
   timelineDefinition,
+  architectureDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {

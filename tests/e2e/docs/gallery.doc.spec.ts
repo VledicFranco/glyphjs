@@ -4,7 +4,7 @@ import { docsUrl, getPreviewContainers, waitForAllPreviews, assertPreviewRendere
 test.describe('Gallery doc page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsUrl('gallery'));
-    await waitForAllPreviews(page, 7);
+    await waitForAllPreviews(page, 8);
   });
 
   test('all previews render without error and have valid dimensions', async ({ page }) => {
@@ -43,8 +43,16 @@ test.describe('Gallery doc page', () => {
     await expect(preview).toContainText('API Gateway');
   });
 
-  test('data model preview contains relation diagram', async ({ page }) => {
+  test('platform architecture preview contains architecture diagram', async ({ page }) => {
     const preview = getPreviewContainers(page).nth(4);
+    const svg = preview.locator('svg[role="img"]');
+    await expect(svg).toBeVisible();
+    await expect(preview).toContainText('API Gateway');
+    await expect(preview).toContainText('PostgreSQL');
+  });
+
+  test('data model preview contains relation diagram', async ({ page }) => {
+    const preview = getPreviewContainers(page).nth(5);
     const svg = preview.locator('svg[role="img"]');
     await expect(svg).toBeVisible();
     await expect(preview).toContainText('User');
@@ -52,13 +60,13 @@ test.describe('Gallery doc page', () => {
   });
 
   test('project timeline preview contains timeline', async ({ page }) => {
-    const preview = getPreviewContainers(page).nth(5);
+    const preview = getPreviewContainers(page).nth(6);
     await expect(preview).toContainText('Alpha Release');
     await expect(preview).toContainText('Beta Release');
   });
 
   test('kitchen sink preview contains multiple components', async ({ page }) => {
-    const preview = getPreviewContainers(page).nth(6);
+    const preview = getPreviewContainers(page).nth(7);
     // Callout
     await expect(preview).toContainText('Sprint Summary');
     // Table

@@ -9,6 +9,7 @@ export { timelineSchema } from './timeline.js';
 export { calloutSchema } from './callout.js';
 export { tabsSchema } from './tabs.js';
 export { stepsSchema } from './steps.js';
+export { architectureSchema } from './architecture.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';

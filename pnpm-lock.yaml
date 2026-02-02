@@ -208,6 +208,9 @@ importers:
       dagre:
         specifier: ^0.8.5
         version: 0.8.5
+      elkjs:
+        specifier: ^0.11.0
+        version: 0.11.0
       react:
         specifier: ^18.0.0 || ^19.0.0
         version: 19.2.4
@@ -4546,6 +4549,13 @@ packages:
       {
         integrity: sha512-3vifjt1HgrGW/h76UEeny+adYApveS9dH2h3p57JYzBSXJIKUJAvtmIytDKjcSCt9xHfrNCFJ7gts6vkhuq++w==,
         tarball: https://registry.npmjs.org/electron-to-chromium/-/electron-to-chromium-1.5.283.tgz,
+      }
+
+  elkjs@0.11.0:
+    resolution:
+      {
+        integrity: sha512-u4J8h9mwEDaYMqo0RYJpqNMFDoMK7f+pu4GjcV+N8jIC7TRdORgzkfSjTJemhqONFfH6fBI3wpysgWbhgVWIXw==,
+        tarball: https://registry.npmjs.org/elkjs/-/elkjs-0.11.0.tgz,
       }
 
   emoji-regex-xs@1.0.0:
@@ -11155,6 +11165,8 @@ snapshots:
   eastasianwidth@0.2.0: {}
 
   electron-to-chromium@1.5.283: {}
+
+  elkjs@0.11.0: {}
 
   emoji-regex-xs@1.0.0: {}
 

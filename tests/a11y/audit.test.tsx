@@ -29,6 +29,8 @@ import { Chart } from '../../packages/components/src/chart/Chart';
 import type { ChartData } from '../../packages/components/src/chart/Chart';
 import { Relation } from '../../packages/components/src/relation/Relation';
 import type { RelationData } from '../../packages/components/src/relation/Relation';
+import { Architecture } from '../../packages/components/src/architecture/Architecture';
+import type { ArchitectureData } from '../../packages/components/src/architecture/Architecture';
 
 // ─── Renderers ─────────────────────────────────────────────────
 import { GlyphHeading } from '../../packages/runtime/src/renderers/GlyphHeading';
@@ -40,7 +42,13 @@ import { GlyphImage } from '../../packages/runtime/src/renderers/GlyphImage';
 import { GlyphThematicBreak } from '../../packages/runtime/src/renderers/GlyphThematicBreak';
 
 // ─── Test Helpers ──────────────────────────────────────────────
-import type { GlyphComponentProps, BlockProps, Block, LayoutHints, GlyphThemeContext } from '../../packages/types/src/index';
+import type {
+  GlyphComponentProps,
+  BlockProps,
+  Block,
+  LayoutHints,
+  GlyphThemeContext,
+} from '../../packages/types/src/index';
 
 // ─── jsdom Polyfills ───────────────────────────────────────────
 // ResizeObserver is not available in jsdom; provide a minimal stub.
@@ -246,16 +254,38 @@ describe('Accessibility: axe-core automated checks', () => {
     const props = mockComponentProps<RelationData>(
       {
         entities: [
-          { id: 'users', label: 'Users', attributes: [{ name: 'id', type: 'int', primaryKey: true }] },
-          { id: 'posts', label: 'Posts', attributes: [{ name: 'id', type: 'int', primaryKey: true }] },
+          {
+            id: 'users',
+            label: 'Users',
+            attributes: [{ name: 'id', type: 'int', primaryKey: true }],
+          },
+          {
+            id: 'posts',
+            label: 'Posts',
+            attributes: [{ name: 'id', type: 'int', primaryKey: true }],
+          },
         ],
-        relationships: [
-          { from: 'users', to: 'posts', label: 'writes', cardinality: '1:N' },
-        ],
+        relationships: [{ from: 'users', to: 'posts', label: 'writes', cardinality: '1:N' }],
       },
       'ui:relation',
     );
     const { container } = render(<Relation {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Architecture has no axe-core violations', async () => {
+    const props = mockComponentProps<ArchitectureData>(
+      {
+        children: [
+          { id: 'a', label: 'Service A', icon: 'server' },
+          { id: 'b', label: 'Service B', icon: 'database' },
+        ],
+        edges: [{ from: 'a', to: 'b' }],
+      },
+      'ui:architecture',
+    );
+    const { container } = render(<Architecture {...props} />);
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
@@ -299,10 +329,7 @@ describe('Accessibility: axe-core automated checks', () => {
   });
 
   it('GlyphCodeBlock has no axe-core violations', async () => {
-    const props = mockBlockProps(
-      { language: 'javascript', value: 'const x = 1;' },
-      'code',
-    );
+    const props = mockBlockProps({ language: 'javascript', value: 'const x = 1;' }, 'code');
     const { container } = render(<GlyphCodeBlock {...props} />);
     const results = await axe(container);
     expect(results).toHaveNoViolations();
@@ -351,7 +378,12 @@ describe('Accessibility: ARIA roles and attributes', () => {
 
     for (const variant of variants) {
       const { unmount } = render(
-        <Callout {...mockComponentProps<CalloutData>({ type: variant.type, content: 'test' }, 'ui:callout')} />,
+        <Callout
+          {...mockComponentProps<CalloutData>(
+            { type: variant.type, content: 'test' },
+            'ui:callout',
+          )}
+        />,
       );
       const note = screen.getByRole('note');
       expect(note).toHaveAttribute('aria-label', variant.label);
@@ -361,7 +393,9 @@ describe('Accessibility: ARIA roles and attributes', () => {
 
   it('Callout icon is aria-hidden', () => {
     const { container } = render(
-      <Callout {...mockComponentProps<CalloutData>({ type: 'info', content: 'test' }, 'ui:callout')} />,
+      <Callout
+        {...mockComponentProps<CalloutData>({ type: 'info', content: 'test' }, 'ui:callout')}
+      />,
     );
     const icon = container.querySelector('[aria-hidden="true"]');
     expect(icon).toBeInTheDocument();
@@ -371,7 +405,12 @@ describe('Accessibility: ARIA roles and attributes', () => {
     render(
       <Tabs
         {...mockComponentProps<TabsData>(
-          { tabs: [{ label: 'A', content: 'Content A' }, { label: 'B', content: 'Content B' }] },
+          {
+            tabs: [
+              { label: 'A', content: 'Content A' },
+              { label: 'B', content: 'Content B' },
+            ],
+          },
           'ui:tabs',
         )}
       />,
@@ -533,9 +572,7 @@ describe('Accessibility: ARIA roles and attributes', () => {
       <Timeline
         {...mockComponentProps<TimelineData>(
           {
-            events: [
-              { date: '2024-01-01', title: 'New Year' },
-            ],
+            events: [{ date: '2024-01-01', title: 'New Year' }],
           },
           'ui:timeline',
         )}
@@ -673,7 +710,11 @@ describe('Accessibility: ARIA roles and attributes', () => {
         {...mockComponentProps<RelationData>(
           {
             entities: [
-              { id: 'users', label: 'Users', attributes: [{ name: 'id', type: 'int', primaryKey: true }] },
+              {
+                id: 'users',
+                label: 'Users',
+                attributes: [{ name: 'id', type: 'int', primaryKey: true }],
+              },
             ],
             relationships: [],
           },
@@ -685,6 +726,48 @@ describe('Accessibility: ARIA roles and attributes', () => {
     const srTable = container.querySelector('table.sr-only');
     expect(srTable).toBeInTheDocument();
     expect(srTable).toHaveAttribute('aria-label', 'Entity-relationship data');
+  });
+
+  it('Architecture SVG has role="img" and descriptive aria-label', () => {
+    const { container } = render(
+      <Architecture
+        {...mockComponentProps<ArchitectureData>(
+          {
+            children: [
+              { id: 'a', label: 'Node A', icon: 'server' },
+              { id: 'b', label: 'Node B', icon: 'database' },
+            ],
+            edges: [{ from: 'a', to: 'b' }],
+          },
+          'ui:architecture',
+        )}
+      />,
+    );
+
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('aria-label', expect.stringContaining('2 nodes'));
+  });
+
+  it('Architecture has hidden data table for screen readers', () => {
+    const { container } = render(
+      <Architecture
+        {...mockComponentProps<ArchitectureData>(
+          {
+            children: [{ id: 'a', label: 'Service A', icon: 'server' }],
+            edges: [],
+          },
+          'ui:architecture',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table.sr-only');
+    expect(srTable).toBeInTheDocument();
+    expect(srTable).toHaveAttribute('aria-label', 'Architecture data');
+
+    const caption = srTable?.querySelector('caption');
+    expect(caption).toHaveTextContent('Architecture nodes and connections');
   });
 
   it('GlyphImage uses semantic figure/figcaption and alt text', () => {
@@ -818,7 +901,7 @@ describe('Accessibility: Keyboard navigation', () => {
     );
 
     const tabs = screen.getAllByRole('tab');
-    expect(tabs[0]).toHaveAttribute('tabindex', '0');  // active
+    expect(tabs[0]).toHaveAttribute('tabindex', '0'); // active
     expect(tabs[1]).toHaveAttribute('tabindex', '-1'); // inactive
   });
 
@@ -846,11 +929,7 @@ describe('Accessibility: Keyboard navigation', () => {
         {...mockComponentProps<TableData>(
           {
             columns: [{ key: 'name', label: 'Name', sortable: true }],
-            rows: [
-              { name: 'Charlie' },
-              { name: 'Alice' },
-              { name: 'Bob' },
-            ],
+            rows: [{ name: 'Charlie' }, { name: 'Alice' }, { name: 'Bob' }],
           },
           'ui:table',
         )}
@@ -940,9 +1019,7 @@ describe('Accessibility: Screen reader fallbacks for D3/SVG components', () => {
                 attributes: [{ name: 'id', type: 'int', primaryKey: true }],
               },
             ],
-            relationships: [
-              { from: 'users', to: 'posts', label: 'authors', cardinality: '1:N' },
-            ],
+            relationships: [{ from: 'users', to: 'posts', label: 'authors', cardinality: '1:N' }],
           },
           'ui:relation',
         )}
@@ -994,6 +1071,40 @@ describe('Accessibility: Screen reader fallbacks for D3/SVG components', () => {
     // Should contain series name
     const content = table?.textContent;
     expect(content).toContain('Sales');
+  });
+
+  it('Architecture sr-only table lists nodes with zone membership', () => {
+    const { container } = render(
+      <Architecture
+        {...mockComponentProps<ArchitectureData>(
+          {
+            children: [
+              {
+                id: 'zone1',
+                label: 'Zone One',
+                type: 'zone',
+                children: [{ id: 'svc', label: 'Service', icon: 'server' }],
+              },
+              { id: 'ext', label: 'External', icon: 'cloud' },
+            ],
+            edges: [{ from: 'ext', to: 'svc', label: 'calls' }],
+          },
+          'ui:architecture',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table.sr-only');
+    const rows = srTable?.querySelectorAll('tbody tr');
+    expect(rows).toHaveLength(2);
+
+    // Service node should mention zone
+    expect(rows![0]!.textContent).toContain('Service');
+    expect(rows![0]!.textContent).toContain('Zone One');
+
+    // External node connections
+    expect(rows![1]!.textContent).toContain('External');
+    expect(rows![1]!.textContent).toContain('-> svc');
   });
 
   it('Timeline sr-only list contains semantic time elements', () => {

@@ -1,0 +1,245 @@
+---
+title: Architecture
+description: Render complex architecture diagrams with nested zones, icons, and orthogonal edge routing.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Architecture** component (`ui:architecture`) renders architecture diagrams with nested boundary zones, built-in SVG icons, and orthogonal edge routing. It uses ELK.js for hierarchical compound layout, supporting arbitrary nesting depth for zones like VPCs, subnets, and service boundaries.
+
+## Examples
+
+export const simpleExample = `\`\`\`ui:architecture
+children:
+  - id: web
+    label: Web App
+    icon: cloud
+  - id: api
+    label: API Server
+    icon: server
+  - id: db
+    label: Database
+    icon: database
+edges:
+  - from: web
+    to: api
+    label: REST
+  - from: api
+    to: db
+    label: queries
+layout: top-down
+\`\`\``;
+
+<GlyphPreview client:only="react" source={simpleExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:architecture
+children:
+  - id: web
+    label: Web App
+    icon: cloud
+  - id: api
+    label: API Server
+    icon: server
+  - id: db
+    label: Database
+    icon: database
+edges:
+  - from: web
+    to: api
+    label: REST
+  - from: api
+    to: db
+    label: queries
+layout: top-down
+```
+````
+
+</details>
+
+### Cloud VPC with nested subnets
+
+export const vpcExample = `\`\`\`ui:architecture
+title: Cloud Platform
+children:
+  - id: vpc
+    label: Production VPC
+    type: zone
+    children:
+      - id: pub-subnet
+        label: Public Subnet
+        type: zone
+        children:
+          - id: alb
+            label: Load Balancer
+            icon: loadbalancer
+          - id: bastion
+            label: Bastion Host
+            icon: server
+      - id: priv-subnet
+        label: Private Subnet
+        type: zone
+        children:
+          - id: api
+            label: API Service
+            icon: server
+          - id: worker
+            label: Worker
+            icon: function
+      - id: data-subnet
+        label: Data Subnet
+        type: zone
+        children:
+          - id: db
+            label: PostgreSQL
+            icon: database
+          - id: cache
+            label: Redis
+            icon: cache
+  - id: users
+    label: Users
+    icon: user
+edges:
+  - from: users
+    to: alb
+    label: HTTPS
+  - from: alb
+    to: api
+  - from: api
+    to: db
+    label: queries
+  - from: api
+    to: cache
+    label: reads
+  - from: worker
+    to: db
+layout: top-down
+\`\`\``;
+
+<GlyphPreview client:only="react" source={vpcExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:architecture
+title: Cloud Platform
+children:
+  - id: vpc
+    label: Production VPC
+    type: zone
+    children:
+      - id: pub-subnet
+        label: Public Subnet
+        type: zone
+        children:
+          - id: alb
+            label: Load Balancer
+            icon: loadbalancer
+          - id: bastion
+            label: Bastion Host
+            icon: server
+      - id: priv-subnet
+        label: Private Subnet
+        type: zone
+        children:
+          - id: api
+            label: API Service
+            icon: server
+          - id: worker
+            label: Worker
+            icon: function
+      - id: data-subnet
+        label: Data Subnet
+        type: zone
+        children:
+          - id: db
+            label: PostgreSQL
+            icon: database
+          - id: cache
+            label: Redis
+            icon: cache
+  - id: users
+    label: Users
+    icon: user
+edges:
+  - from: users
+    to: alb
+    label: HTTPS
+  - from: alb
+    to: api
+  - from: api
+    to: db
+    label: queries
+  - from: api
+    to: cache
+    label: reads
+  - from: worker
+    to: db
+layout: top-down
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional title for the diagram, included in the accessible label. |
+| `children` | `Node[]` | Yes | -- | An array of node objects. Nodes with `type: "zone"` can contain nested children. |
+| `edges` | `Edge[]` | Yes | -- | An array of edge objects connecting nodes by their `id`. |
+| `layout` | `"top-down" \| "left-right" \| "bottom-up"` | No | `"top-down"` | Layout direction for the diagram. |
+
+### Node object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `id` | `string` | Yes | -- | Unique identifier. Referenced by edges and other nodes. |
+| `label` | `string` | Yes | -- | Display text rendered inside the node or zone header. |
+| `icon` | `string` | No | -- | One of the 12 built-in SVG icons (see Icon reference below). |
+| `type` | `"zone"` | No | -- | When set to `"zone"`, the node renders as a boundary group that can contain children. |
+| `children` | `Node[]` | No | -- | Nested child nodes. Only valid when `type` is `"zone"`. |
+| `style` | `Record<string, string>` | No | -- | CSS-like style overrides. |
+
+### Edge object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `from` | `string` | Yes | -- | The `id` of the source node. |
+| `to` | `string` | Yes | -- | The `id` of the target node. |
+| `label` | `string` | No | -- | Text displayed on the edge at its midpoint. |
+| `type` | `"sync" \| "async" \| "data"` | No | -- | Edge type. `async` renders dashed, `data` renders thicker. |
+| `style` | `Record<string, string>` | No | -- | CSS-like style overrides for the edge path. |
+
+## Icon reference
+
+| Icon | Description |
+|---|---|
+| `server` | Rack server |
+| `database` | Database cylinder |
+| `queue` | Message queue |
+| `cache` | Cache (lightning bolt) |
+| `loadbalancer` | Load balancer (branching) |
+| `function` | Serverless function (lambda) |
+| `storage` | Storage disk/bucket |
+| `gateway` | API gateway arch |
+| `user` | Person silhouette |
+| `cloud` | Cloud shape |
+| `container` | Container box |
+| `network` | Network mesh |
+
+## Zone nesting
+
+Zones are defined by setting `type: "zone"` on a node and providing `children`. Zones can be nested to arbitrary depth, rendering as boundary rectangles with dashed borders and tinted backgrounds that increase in opacity with depth. Zone labels appear in the top-left corner of the boundary.
+
+The ELK.js layout engine handles compound hierarchical layout automatically, ensuring child nodes are positioned within their parent zones with appropriate padding.
+
+## Accessibility
+
+- The diagram is rendered inside an SVG with `role="img"` and a descriptive `aria-label` summarizing the title, node count, and edge count.
+- A visually hidden table provides screen reader access to all nodes, their zone membership, and connections.
+- The `prefers-reduced-motion` media query is respected by the loading state.

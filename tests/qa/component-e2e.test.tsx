@@ -19,6 +19,7 @@ import { graphDefinition } from '../../packages/components/src/graph/index';
 import { chartDefinition } from '../../packages/components/src/chart/index';
 import { relationDefinition } from '../../packages/components/src/relation/index';
 import { timelineDefinition } from '../../packages/components/src/timeline/index';
+import { architectureDefinition } from '../../packages/components/src/architecture/index';
 import type { GlyphComponentDefinition } from '../../packages/types/src/index';
 
 // ─── jsdom polyfills ────────────────────────────────────────
@@ -41,6 +42,7 @@ const allComponents: GlyphComponentDefinition[] = [
   chartDefinition,
   relationDefinition,
   timelineDefinition,
+  architectureDefinition,
 ];
 
 // ─── Helper ─────────────────────────────────────────────────
@@ -418,6 +420,70 @@ orientation: horizontal
 
     // Should not show "Jan 1, 1970" for unparseable dates
     expect(container.textContent).not.toContain('1970');
+  });
+});
+
+// ─── Architecture ────────────────────────────────────────────
+
+describe('Architecture E2E', () => {
+  it('compiles and renders simple architecture diagram', () => {
+    const md = `\`\`\`ui:architecture
+children:
+  - id: web
+    label: Web App
+    icon: cloud
+  - id: api
+    label: API Server
+    icon: server
+  - id: db
+    label: Database
+    icon: database
+edges:
+  - from: web
+    to: api
+  - from: api
+    to: db
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const svg = container.querySelector('svg[role="img"]');
+    expect(svg).toBeInTheDocument();
+  });
+
+  it('compiles and renders architecture with nested zones', () => {
+    const md = `\`\`\`ui:architecture
+title: VPC
+children:
+  - id: vpc
+    label: VPC
+    type: zone
+    children:
+      - id: subnet
+        label: Subnet
+        type: zone
+        children:
+          - id: svc
+            label: Service
+            icon: server
+  - id: user
+    label: User
+    icon: user
+edges:
+  - from: user
+    to: svc
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const svg = container.querySelector('svg[role="img"]');
+    expect(svg).toBeInTheDocument();
   });
 });
 

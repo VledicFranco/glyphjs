@@ -262,7 +262,7 @@ rows:
 
 ## Architecture Diagrams
 
-Graph and relation components visualize system architecture and data models.
+Graph and relation components visualize system architecture and data models. The architecture component supports nested zones and built-in icons.
 
 export const archExample = `## System Architecture
 
@@ -328,6 +328,163 @@ edges:
   - from: api
     to: cache
     label: Cache
+```
+````
+
+</details>
+
+### Platform Architecture
+
+export const platformArchExample = `\`\`\`ui:architecture
+title: Platform Architecture
+children:
+  - id: cloud
+    label: Cloud Region
+    type: zone
+    children:
+      - id: frontend
+        label: Frontend
+        type: zone
+        children:
+          - id: cdn
+            label: CDN
+            icon: cloud
+          - id: lb
+            label: Load Balancer
+            icon: loadbalancer
+      - id: services
+        label: Services
+        type: zone
+        children:
+          - id: api
+            label: API Gateway
+            icon: gateway
+          - id: auth
+            label: Auth
+            icon: server
+          - id: worker
+            label: Workers
+            icon: function
+      - id: data
+        label: Data
+        type: zone
+        children:
+          - id: db
+            label: PostgreSQL
+            icon: database
+          - id: cache
+            label: Redis
+            icon: cache
+          - id: queue
+            label: Queue
+            icon: queue
+  - id: users
+    label: Users
+    icon: user
+edges:
+  - from: users
+    to: cdn
+    label: HTTPS
+  - from: cdn
+    to: lb
+  - from: lb
+    to: api
+  - from: api
+    to: auth
+  - from: api
+    to: db
+    label: queries
+  - from: api
+    to: cache
+    label: reads
+  - from: api
+    to: queue
+    type: async
+  - from: queue
+    to: worker
+    type: async
+  - from: worker
+    to: db
+layout: top-down
+\`\`\``;
+
+<GlyphPreview client:only="react" source={platformArchExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:architecture
+title: Platform Architecture
+children:
+  - id: cloud
+    label: Cloud Region
+    type: zone
+    children:
+      - id: frontend
+        label: Frontend
+        type: zone
+        children:
+          - id: cdn
+            label: CDN
+            icon: cloud
+          - id: lb
+            label: Load Balancer
+            icon: loadbalancer
+      - id: services
+        label: Services
+        type: zone
+        children:
+          - id: api
+            label: API Gateway
+            icon: gateway
+          - id: auth
+            label: Auth
+            icon: server
+          - id: worker
+            label: Workers
+            icon: function
+      - id: data
+        label: Data
+        type: zone
+        children:
+          - id: db
+            label: PostgreSQL
+            icon: database
+          - id: cache
+            label: Redis
+            icon: cache
+          - id: queue
+            label: Queue
+            icon: queue
+  - id: users
+    label: Users
+    icon: user
+edges:
+  - from: users
+    to: cdn
+    label: HTTPS
+  - from: cdn
+    to: lb
+  - from: lb
+    to: api
+  - from: api
+    to: auth
+  - from: api
+    to: db
+    label: queries
+  - from: api
+    to: cache
+    label: reads
+  - from: api
+    to: queue
+    type: async
+  - from: queue
+    to: worker
+    type: async
+  - from: worker
+    to: db
+layout: top-down
 ```
 ````
 

@@ -10,6 +10,7 @@ import {
   tableDefinition,
   tabsDefinition,
   timelineDefinition,
+  architectureDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -54,6 +55,7 @@ const allComponents = [
   tableDefinition,
   tabsDefinition,
   timelineDefinition,
+  architectureDefinition,
 ];
 
 export default function Playground() {

@@ -15,3 +15,15 @@ export { graphDefinition, Graph, computeDagreLayout, computeForceLayout } from '
 export type { GraphData, PositionedNode, PositionedEdge, LayoutResult } from './graph/index.js';
 export { relationDefinition, Relation } from './relation/index.js';
 export type { RelationData } from './relation/index.js';
+export {
+  architectureDefinition,
+  Architecture,
+  computeArchitectureLayout,
+} from './architecture/index.js';
+export type {
+  ArchitectureData,
+  ArchitectureLayout,
+  PositionedArchNode,
+  PositionedZone,
+  PositionedArchEdge,
+} from './architecture/index.js';
