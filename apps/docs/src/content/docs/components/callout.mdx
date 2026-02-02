@@ -24,14 +24,6 @@ The **Callout** component (`ui:callout`) renders a visually distinct block that 
 
 ## Example
 
-````markdown
-```ui:callout
-type: warning
-title: Breaking change in v2
-content: The refs field now requires an explicit target type. Update your YAML blocks accordingly.
-```
-````
-
 export const warningExample = `\`\`\`ui:callout
 type: warning
 title: Breaking change in v2
@@ -40,14 +32,20 @@ content: The refs field now requires an explicit target type. Update your YAML b
 
 <GlyphPreview client:only="react" source={warningExample} />
 
-### Info callout (no title)
+<details>
+<summary>View Glyph Markdown source</summary>
 
 ````markdown
 ```ui:callout
-type: info
-content: Glyph JS validates all YAML payloads at compile time using Zod schemas.
+type: warning
+title: Breaking change in v2
+content: The refs field now requires an explicit target type. Update your YAML blocks accordingly.
 ```
 ````
+
+</details>
+
+### Info callout (no title)
 
 export const infoExample = `\`\`\`ui:callout
 type: info
@@ -56,15 +54,19 @@ content: Glyph JS validates all YAML payloads at compile time using Zod schemas.
 
 <GlyphPreview client:only="react" source={infoExample} />
 
-### Tip callout
+<details>
+<summary>View Glyph Markdown source</summary>
 
 ````markdown
 ```ui:callout
-type: tip
-title: LLM authoring
-content: LLMs generate callouts reliably because the schema is minimal -- just type, optional title, and content.
+type: info
+content: Glyph JS validates all YAML payloads at compile time using Zod schemas.
 ```
 ````
+
+</details>
+
+### Tip callout
 
 export const tipExample = `\`\`\`ui:callout
 type: tip
@@ -74,7 +76,31 @@ content: LLMs generate callouts reliably because the schema is minimal -- just t
 
 <GlyphPreview client:only="react" source={tipExample} />
 
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:callout
+type: tip
+title: LLM authoring
+content: LLMs generate callouts reliably because the schema is minimal -- just type, optional title, and content.
+```
+````
+
+</details>
+
 ### Error callout
+
+export const errorExample = `\`\`\`ui:callout
+type: error
+title: Validation failed
+content: Column key revenue in aggregation does not match any column definition.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={errorExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
 
 ````markdown
 ```ui:callout
@@ -84,13 +110,7 @@ content: Column key revenue in aggregation does not match any column definition.
 ```
 ````
 
-export const errorExample = `\`\`\`ui:callout
-type: error
-title: Validation failed
-content: Column key revenue in aggregation does not match any column definition.
-\`\`\``;
-
-<GlyphPreview client:only="react" source={errorExample} />
+</details>
 
 ## Accessibility
 

@@ -53,17 +53,15 @@ export default function GlyphPreview({ source }: GlyphPreviewProps) {
       data-glyph-preview
       data-glyph-status={error ? 'error' : ir ? 'ready' : 'empty'}
       style={{
-        border: '1px solid #e2e8f0',
-        borderRadius: '8px',
+        border: '1px solid #dce1e8',
+        borderRadius: '3px',
         padding: '1.5rem',
         margin: '1rem 0',
-        background: '#fff',
+        background: '#f8f9fb',
       }}
     >
       {error ? (
-        <div style={{ color: '#e74c3c', fontFamily: 'monospace', fontSize: '13px' }}>
-          {error}
-        </div>
+        <div style={{ color: '#c84a4a', fontFamily: 'monospace', fontSize: '13px' }}>{error}</div>
       ) : ir ? (
         <GlyphDocument ir={ir} />
       ) : null}

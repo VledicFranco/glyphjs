@@ -42,40 +42,6 @@ The **Chart** component (`ui:chart`) renders data visualizations using D3. It su
 
 ### Line chart
 
-````markdown
-```ui:chart
-type: line
-series:
-  - name: Revenue
-    data:
-      - month: Jan
-        value: 4200
-      - month: Feb
-        value: 5100
-      - month: Mar
-        value: 6800
-      - month: Apr
-        value: 5900
-  - name: Expenses
-    data:
-      - month: Jan
-        value: 3100
-      - month: Feb
-        value: 3400
-      - month: Mar
-        value: 3800
-      - month: Apr
-        value: 3600
-xAxis:
-  key: month
-  label: Month
-yAxis:
-  key: value
-  label: Amount (USD)
-legend: true
-```
-````
-
 export const lineChartExample = `\`\`\`ui:chart
 type: line
 series:
@@ -110,7 +76,72 @@ legend: true
 
 <GlyphPreview client:only="react" source={lineChartExample} />
 
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:chart
+type: line
+series:
+  - name: Revenue
+    data:
+      - month: Jan
+        value: 4200
+      - month: Feb
+        value: 5100
+      - month: Mar
+        value: 6800
+      - month: Apr
+        value: 5900
+  - name: Expenses
+    data:
+      - month: Jan
+        value: 3100
+      - month: Feb
+        value: 3400
+      - month: Mar
+        value: 3800
+      - month: Apr
+        value: 3600
+xAxis:
+  key: month
+  label: Month
+yAxis:
+  key: value
+  label: Amount (USD)
+legend: true
+```
+````
+
+</details>
+
 ### Bar chart
+
+export const barChartExample = `\`\`\`ui:chart
+type: bar
+series:
+  - name: Downloads
+    data:
+      - package: runtime
+        count: 12400
+      - package: schemas
+        count: 9800
+      - package: compiler
+        count: 7200
+      - package: parser
+        count: 6500
+xAxis:
+  key: package
+  label: Package
+yAxis:
+  key: count
+  label: Weekly Downloads
+\`\`\``;
+
+<GlyphPreview client:only="react" source={barChartExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
 
 ````markdown
 ```ui:chart
@@ -135,28 +166,7 @@ yAxis:
 ```
 ````
 
-export const barChartExample = `\`\`\`ui:chart
-type: bar
-series:
-  - name: Downloads
-    data:
-      - package: runtime
-        count: 12400
-      - package: schemas
-        count: 9800
-      - package: compiler
-        count: 7200
-      - package: parser
-        count: 6500
-xAxis:
-  key: package
-  label: Package
-yAxis:
-  key: count
-  label: Weekly Downloads
-\`\`\``;
-
-<GlyphPreview client:only="react" source={barChartExample} />
+</details>
 
 ## Accessibility
 

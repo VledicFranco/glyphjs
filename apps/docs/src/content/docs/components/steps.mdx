@@ -31,6 +31,29 @@ When `status` is omitted, the step renders in a neutral style without a progress
 
 ## Example
 
+export const stepsExample = `\`\`\`ui:steps
+steps:
+  - title: Install dependencies
+    status: completed
+    content: |
+      Run pnpm install to install all packages.
+  - title: Configure the project
+    status: active
+    content: |
+      Edit glyph.config.ts to set up your theme and register plugins.
+
+      You can also configure custom components in this file.
+  - title: Build and deploy
+    status: pending
+    content: |
+      Run pnpm build and deploy to your hosting provider.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={stepsExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
 ````markdown
 ```ui:steps
 steps:
@@ -51,25 +74,7 @@ steps:
 ```
 ````
 
-export const stepsExample = `\`\`\`ui:steps
-steps:
-  - title: Install dependencies
-    status: completed
-    content: |
-      Run pnpm install to install all packages.
-  - title: Configure the project
-    status: active
-    content: |
-      Edit glyph.config.ts to set up your theme and register plugins.
-
-      You can also configure custom components in this file.
-  - title: Build and deploy
-    status: pending
-    content: |
-      Run pnpm build and deploy to your hosting provider.
-\`\`\``;
-
-<GlyphPreview client:only="react" source={stepsExample} />
+</details>
 
 ## Content nesting
 

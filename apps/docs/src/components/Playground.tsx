@@ -94,27 +94,24 @@ export default function Playground() {
 
   useEffect(() => {
     compileSource(markdown);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
     <div style={{ display: 'flex', gap: '1rem', minHeight: '500px', flexWrap: 'wrap' }}>
       <div style={{ flex: 1, minWidth: '300px' }}>
-        <div style={{ marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.875rem' }}>
-          Editor
-        </div>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.875rem' }}>Editor</div>
         <textarea
           value={markdown}
           onChange={(e) => setMarkdown(e.target.value)}
           style={{
             width: '100%',
             height: '460px',
-            fontFamily: '"Fira Code", "Cascadia Code", Consolas, monospace',
+            fontFamily: 'Inter, "Fira Code", "Cascadia Code", Consolas, monospace',
             fontSize: '13px',
             lineHeight: '1.6',
             padding: '0.75rem',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
+            border: '1px solid #dce1e8',
+            borderRadius: '3px',
             resize: 'vertical',
             tabSize: 2,
           }}
@@ -122,26 +119,24 @@ export default function Playground() {
         />
       </div>
       <div style={{ flex: 1, minWidth: '300px' }}>
-        <div style={{ marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.875rem' }}>
-          Preview
-        </div>
+        <div style={{ marginBottom: '0.5rem', fontWeight: 600, fontSize: '0.875rem' }}>Preview</div>
         <div
           style={{
             height: '460px',
-            border: '1px solid #ddd',
-            borderRadius: '4px',
+            border: '1px solid #dce1e8',
+            borderRadius: '3px',
             overflow: 'auto',
             padding: '1rem',
           }}
         >
           {error ? (
-            <div style={{ color: '#e74c3c', fontFamily: 'monospace', fontSize: '13px' }}>
+            <div style={{ color: '#c84a4a', fontFamily: 'monospace', fontSize: '13px' }}>
               {error}
             </div>
           ) : ir ? (
             <GlyphDocument ir={ir} />
           ) : (
-            <p style={{ color: '#999', fontStyle: 'italic' }}>
+            <p style={{ color: '#7a8599', fontStyle: 'italic' }}>
               Type some markdown to see the preview...
             </p>
           )}

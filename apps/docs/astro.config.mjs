@@ -13,6 +13,7 @@ export default defineConfig({
     starlight({
       title: 'Glyph JS',
       social: { github: 'https://github.com/VledicFranco/glyphjs' },
+      customCss: ['./src/styles/oblivion.css'],
       sidebar: [
         { label: 'Getting Started', items: [
           { label: 'Introduction', slug: 'getting-started' },
