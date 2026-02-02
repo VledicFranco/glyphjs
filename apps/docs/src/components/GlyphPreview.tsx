@@ -50,6 +50,8 @@ export default function GlyphPreview({ source }: GlyphPreviewProps) {
 
   return (
     <div
+      data-glyph-preview
+      data-glyph-status={error ? 'error' : ir ? 'ready' : 'empty'}
       style={{
         border: '1px solid #e2e8f0',
         borderRadius: '8px',

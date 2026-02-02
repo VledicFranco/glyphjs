@@ -20,6 +20,16 @@ export default defineConfig({
       testMatch: ['pipeline.spec.ts', 'components.spec.ts', 'theming.spec.ts', 'errors.spec.ts', 'determinism.spec.ts'],
       use: { browserName: 'chromium', baseURL: 'http://localhost:5173' },
     },
+    {
+      name: 'docs',
+      testDir: './tests/e2e/docs',
+      use: {
+        browserName: 'chromium',
+        baseURL: 'http://localhost:4321',
+        viewport: { width: 1280, height: 720 },
+        contextOptions: { reducedMotion: 'reduce' },
+      },
+    },
   ],
   webServer: [
     {
@@ -31,6 +41,12 @@ export default defineConfig({
     {
       command: 'cd apps/demo && pnpm dev --port 5173',
       port: 5173,
+      reuseExistingServer: !process.env.CI,
+      timeout: 120_000,
+    },
+    {
+      command: 'pnpm --filter @glyphjs/docs preview --port 4321',
+      port: 4321,
       reuseExistingServer: !process.env.CI,
       timeout: 120_000,
     },
