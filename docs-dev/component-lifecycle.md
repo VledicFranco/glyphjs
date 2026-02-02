@@ -6,9 +6,28 @@ Throughout this guide, replace `widget` / `Widget` / `WidgetData` with your actu
 
 ---
 
+## Naming conventions
+
+All names derive from a single lowercase identifier (e.g., `widget`):
+
+| Context                   | Pattern                           | Example                         |
+| ------------------------- | --------------------------------- | ------------------------------- |
+| Schema key (registry map) | `widget`                          | `['widget', widgetSchema]`      |
+| Block type                | `ui:widget`                       | ` ```ui:widget ` in Markdown    |
+| Directory                 | `packages/components/src/widget/` | —                               |
+| React component           | `Widget`                          | `export function Widget(...)`   |
+| Data interface            | `WidgetData`                      | `export interface WidgetData`   |
+| Component definition      | `widgetDefinition`                | `export const widgetDefinition` |
+| Schema export             | `widgetSchema`                    | `export const widgetSchema`     |
+| Storybook title           | `Components/Widget`               | `title: 'Components/Widget'`    |
+| Storybook story ID        | `components-widget--default`      | Used in e2e `storyUrl()`        |
+| Docs slug                 | `components/widget`               | MDX at `components/widget.mdx`  |
+
+---
+
 ## Phase 1 — Schema
 
-Define the data shape that authors will write in YAML.
+Define the data shape that authors write in YAML inside ` ```ui:widget ` code blocks.
 
 ### 1.1 Create the Zod schema
 
@@ -36,6 +55,8 @@ const entries: [string, z.ZodType][] = [
 ];
 ```
 
+The key `'widget'` is the part after `ui:` in the block type. The compiler uses this map to validate YAML data automatically — no compiler changes are needed.
+
 ### 1.3 Export the schema
 
 **Modify** `packages/schemas/src/index.ts` — add the barrel export:
@@ -44,11 +65,9 @@ const entries: [string, z.ZodType][] = [
 export { widgetSchema } from './widget.js';
 ```
 
-At this point the compiler will automatically validate `ui:widget` YAML blocks against your schema (no compiler changes needed).
-
 ---
 
-## Phase 2 — Component
+## Phase 2 — Component and unit tests
 
 ### 2.1 Implement the React component
 
@@ -63,19 +82,43 @@ export interface WidgetData {
   value?: number;
 }
 
-export function Widget({ data }: GlyphComponentProps<WidgetData>): ReactElement {
+export function Widget({ data, block }: GlyphComponentProps<WidgetData>): ReactElement {
+  const baseId = `glyph-widget-${block.id}`;
+
   return (
-    <div style={{ fontFamily: 'var(--glyph-font-body, inherit)' }}>
-      {data.label}: {data.value ?? '—'}
+    <div
+      id={baseId}
+      role="region"
+      aria-label={data.label}
+      style={{
+        fontFamily: 'var(--glyph-font-body, inherit)',
+        color: 'var(--glyph-text, inherit)',
+        border: '1px solid var(--glyph-border, #dce1e8)',
+        borderRadius: 'var(--glyph-radius-md, 0.1875rem)',
+        padding: 'var(--glyph-spacing-md, 1rem)',
+      }}
+    >
+      {data.label}: {data.value ?? '\u2014'}
     </div>
   );
 }
 ```
 
-Guidelines:
+**Theming rules:**
 
-- Use CSS custom properties (`var(--glyph-*, fallback)`) for all colors, fonts, spacing, and borders. Never use `theme.isDark` or `theme.resolveVar()` — this ensures the Storybook theme toggle and any consumer theme work automatically.
-- The `WidgetData` interface must match the Zod schema from Phase 1.
+- Use CSS custom properties (`var(--glyph-*, fallback)`) for all colors, fonts, spacing, and borders. Never use `theme.isDark` or `theme.resolveVar()` — CSS vars are set by the consumer's theme wrapper and by the Storybook decorator, so both light and dark themes work automatically.
+- Use existing global variables (`--glyph-text`, `--glyph-border`, `--glyph-surface`, etc.) whenever possible. Only introduce component-specific variables (`--glyph-widget-*`) when the component needs styling that doesn't map to an existing global variable.
+- Every `var()` must include a sensible light-theme fallback as the second argument so the component renders correctly even without a theme wrapper.
+
+**Accessibility rules:**
+
+- Use `block.id` (via a prefix like `glyph-widget-${block.id}`) to generate unique DOM IDs. This is essential when multiple instances of the same component appear in a document, and for ARIA `id`/`aria-controls`/`aria-labelledby` relationships.
+- Use semantic HTML elements and ARIA roles appropriate to the component's purpose.
+- Support keyboard navigation for interactive components.
+
+**Data interface:**
+
+- The `WidgetData` interface must match the Zod schema from Phase 1 exactly.
 - Destructure only the props you use from `GlyphComponentProps<T>` (commonly `data` and `block`).
 
 ### 2.2 Create the component definition and barrel export
@@ -109,7 +152,7 @@ export type { WidgetData } from './widget/index.js';
 
 ### 2.4 Add to BlockType (optional, recommended)
 
-**Modify** `packages/types/src/ir.ts` — add the literal to the `BlockType` union for discoverability:
+**Modify** `packages/types/src/ir.ts` — add the literal to the `BlockType` union:
 
 ```typescript
 export type BlockType =
@@ -119,31 +162,9 @@ export type BlockType =
   | `ui:${string}`;
 ```
 
-The `| \`ui:${string}\`` catch-all already makes this work without the explicit literal, but listing it aids documentation and IDE autocompletion.
+The catch-all `` `ui:${string}` `` already makes this work without the explicit literal, but listing it improves IDE autocompletion and serves as documentation.
 
----
-
-## Phase 3 — Register in consumers
-
-Every app that renders Glyph documents needs to know about the new definition.
-
-### 3.1 Demo app
-
-**Modify** `apps/demo/src/App.tsx` — import `widgetDefinition` from `@glyphjs/components` and add it to the `components` array in `createGlyphRuntime()`.
-
-### 3.2 Docs preview component
-
-**Modify** `apps/docs/src/components/GlyphPreview.tsx` — import and add to the `allComponents` array.
-
-### 3.3 Docs playground
-
-**Modify** `apps/docs/src/components/Playground.tsx` — import and add to the `allComponents` array.
-
----
-
-## Phase 4 — Testing
-
-### 4.1 Unit tests
+### 2.5 Unit tests
 
 **Create** `packages/components/src/widget/__tests__/Widget.test.tsx`
 
@@ -163,21 +184,35 @@ describe('Widget', () => {
     render(<Widget {...props} />);
     expect(screen.getByText(/Score/)).toBeInTheDocument();
   });
+
+  it('has an accessible role', () => {
+    const props = createMockProps<WidgetData>(
+      { label: 'Score', value: 42 },
+      'ui:widget',
+    );
+    render(<Widget {...props} />);
+    expect(screen.getByRole('region')).toHaveAttribute('aria-label', 'Score');
+  });
 });
 ```
 
 Use `createMockProps<T>(data, blockType)` from `packages/components/src/__tests__/helpers.ts`.
 
-Minimum coverage expectations:
+Minimum test coverage:
 
 - Renders without crashing with minimal valid data
 - Key data fields appear in the DOM
-- ARIA roles and labels are present (if applicable)
-- Interactive states work (click, keyboard) if the component is interactive
+- ARIA roles and labels are correct
+- Interactive states work (click, keyboard) for interactive components
+- Optional fields handled gracefully when absent
 
 Run with: `pnpm --filter @glyphjs/components test`
 
-### 4.2 Storybook stories
+---
+
+## Phase 3 — Storybook
+
+### 3.1 Stories
 
 **Create** `packages/components/src/widget/Widget.stories.tsx`
 
@@ -201,71 +236,64 @@ export const Default: Story = {
     { block: mockBlock({ id: 'widget-default', type: 'ui:widget' }) },
   ),
 };
+
+export const NoValue: Story = {
+  args: mockProps<WidgetData>(
+    { label: 'Pending' },
+    { block: mockBlock({ id: 'widget-no-value', type: 'ui:widget' }) },
+  ),
+};
 ```
 
 Use `mockProps<T>(data, overrides)` and `mockBlock(overrides)` from `packages/components/src/__storybook__/data.ts`.
 
 Guidelines:
 
-- Create one story per meaningful variant (e.g., `Default`, `WithOptionalField`, `Empty`).
+- Create one story per meaningful variant (e.g., `Default`, `WithOptionalField`, `Empty`, `LongContent`).
 - Do NOT create separate light/dark theme stories — use the Storybook toolbar theme toggle.
-- Verify the component looks correct in both light and dark themes via the toggle.
+- Verify the component in both themes via the toggle before moving on.
 
-### 4.3 E2E tests — Storybook
+### 3.2 Theme variables (if needed)
 
-**Create** `tests/e2e/visual/widget.spec.ts`
-
-```typescript
-import { test, expect } from '@playwright/test';
-import { storyUrl } from '../setup';
-
-test.describe('Widget', () => {
-  test('renders correctly', async ({ page }) => {
-    await page.goto(storyUrl('components-widget--default'));
-    // Assert on visible structure
-    await expect(page.locator('text=Score')).toBeVisible();
-  });
-});
-```
-
-The `storyUrl(storyId)` helper builds the Storybook iframe URL. The story ID follows the pattern: lowercase title with dashes, double-dash before the story name (e.g., `components-widget--default`).
-
-### 4.4 E2E tests — docs page
-
-**Create** `tests/e2e/docs/widget.doc.spec.ts`
+If your component introduces custom CSS variables (e.g., `--glyph-widget-header-bg`), add them to both theme maps in `packages/components/.storybook/preview.ts`:
 
 ```typescript
-import { test, expect } from '@playwright/test';
-import {
-  docsComponentUrl,
-  getPreviewContainers,
-  waitForAllPreviews,
-  assertPreviewRendered,
-} from './setup';
+const LIGHT_THEME_VARS: Record<string, string> = {
+  // ...existing vars...
+  '--glyph-widget-header-bg': '#eef1f5',
+};
 
-test.describe('Widget doc page', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto(docsComponentUrl('widget'));
-    await waitForAllPreviews(page, 1); // match the number of examples
-  });
-
-  test('preview renders without error', async ({ page }) => {
-    const previews = getPreviewContainers(page);
-    const count = await previews.count();
-    for (let i = 0; i < count; i++) {
-      await assertPreviewRendered(previews.nth(i));
-    }
-  });
-});
+const DARK_THEME_VARS: Record<string, string> = {
+  // ...existing vars...
+  '--glyph-widget-header-bg': '#111820',
+};
 ```
 
-Run all e2e: `npx playwright test`
+Always add to **both** maps. A missing dark-theme variable will cause the component to fall back to its light-theme default, producing unreadable contrast in dark mode.
+
+### 3.3 Visual check
+
+Open Storybook (`pnpm --filter @glyphjs/components storybook`) and verify:
+
+1. All stories render correctly in **light** theme.
+2. Switch to **dark** theme — all text, backgrounds, and borders remain readable.
+3. Check the **Accessibility** panel (addon-a11y) — resolve any violations.
 
 ---
 
-## Phase 5 — Documentation
+## Phase 4 — Documentation and consumer registration
 
-### 5.1 Create the docs page
+### 4.1 Register in consumer apps
+
+Every app that renders Glyph documents needs to import and register the new definition.
+
+**Modify** `apps/demo/src/App.tsx` — import `widgetDefinition` from `@glyphjs/components` and add it to the `components` array in `createGlyphRuntime()`.
+
+**Modify** `apps/docs/src/components/GlyphPreview.tsx` — import and add to the `allComponents` array.
+
+**Modify** `apps/docs/src/components/Playground.tsx` — import and add to the `allComponents` array.
+
+### 4.2 Create the docs page
 
 **Create** `apps/docs/src/content/docs/components/widget.mdx`
 
@@ -312,9 +340,9 @@ value: 42
 - Describe semantic roles, ARIA attributes, and keyboard support.
 ```
 
-### 5.2 Add to the docs sidebar
+### 4.3 Add to the docs sidebar
 
-**Modify** `apps/docs/astro.config.mjs` — add an entry inside the `Components` sidebar group:
+**Modify** `apps/docs/astro.config.mjs` — add an entry inside the `Components` sidebar group, in alphabetical order:
 
 ```javascript
 { label: 'Components', items: [
@@ -322,6 +350,66 @@ value: 42
   { label: 'Widget', slug: 'components/widget' },
 ]},
 ```
+
+---
+
+## Phase 5 — E2E tests
+
+These tests require Storybook stories (Phase 3) and the docs page (Phase 4) to exist.
+
+### 5.1 Storybook E2E
+
+**Create** `tests/e2e/visual/widget.spec.ts`
+
+```typescript
+import { test, expect } from '@playwright/test';
+import { storyUrl } from '../setup';
+
+test.describe('Widget', () => {
+  test('renders correctly', async ({ page }) => {
+    await page.goto(storyUrl('components-widget--default'));
+    await expect(page.locator('text=Score')).toBeVisible();
+  });
+});
+```
+
+The `storyUrl(storyId)` helper from `tests/e2e/setup.ts` builds the Storybook iframe URL. The story ID follows the pattern: lowercase title with dashes, double-dash before the story export name (e.g., `components-widget--default` for `Components/Widget` story `Default`).
+
+### 5.2 Docs page E2E
+
+**Create** `tests/e2e/docs/widget.doc.spec.ts`
+
+```typescript
+import { test, expect } from '@playwright/test';
+import {
+  docsComponentUrl,
+  getPreviewContainers,
+  waitForAllPreviews,
+  assertPreviewRendered,
+} from './setup';
+
+test.describe('Widget doc page', () => {
+  test.beforeEach(async ({ page }) => {
+    await page.goto(docsComponentUrl('widget'));
+    await waitForAllPreviews(page, 1); // match the number of GlyphPreview instances
+  });
+
+  test('preview renders without error', async ({ page }) => {
+    const previews = getPreviewContainers(page);
+    const count = await previews.count();
+    for (let i = 0; i < count; i++) {
+      await assertPreviewRendered(previews.nth(i));
+    }
+  });
+});
+```
+
+Helpers are in `tests/e2e/docs/setup.ts`:
+
+- `docsComponentUrl(name)` — builds `/glyphjs/components/{name}/`
+- `getPreviewContainers(page)` — locates `[data-glyph-preview]` elements
+- `waitForAllPreviews(page, count)` — waits until all previews report `status="ready"`
+- `assertPreviewRendered(locator)` — checks ready status and non-zero dimensions
 
 ---
 
@@ -333,9 +421,10 @@ Run all of the following before opening a PR:
 # Lint
 pnpm lint
 
-# Type check
+# Type-check and build
 pnpm --filter @glyphjs/schemas build
 pnpm --filter @glyphjs/components build
+pnpm --filter @glyphjs/docs build
 
 # Unit tests
 pnpm --filter @glyphjs/components test
@@ -347,11 +436,12 @@ npx playwright test
 pnpm size
 ```
 
-Verify manually in Storybook:
+Manual Storybook checks:
 
-1. Component renders correctly in the **light** theme.
-2. Switch to **dark** theme via the toolbar — all text, backgrounds, and borders remain readable.
-3. Interactive features (if any) work: click, keyboard navigation, screen reader.
+1. Component renders correctly in **light** theme.
+2. Switch to **dark** theme — all text, backgrounds, and borders remain readable.
+3. **Accessibility** panel shows zero violations.
+4. Interactive features (if any) work: click, keyboard navigation.
 
 ---
 
@@ -359,23 +449,24 @@ Verify manually in Storybook:
 
 A complete new component touches these files:
 
-| Action | File                                                       |
-| ------ | ---------------------------------------------------------- |
-| CREATE | `packages/schemas/src/widget.ts`                           |
-| MODIFY | `packages/schemas/src/registry.ts`                         |
-| MODIFY | `packages/schemas/src/index.ts`                            |
-| CREATE | `packages/components/src/widget/Widget.tsx`                |
-| CREATE | `packages/components/src/widget/index.ts`                  |
-| MODIFY | `packages/components/src/index.ts`                         |
-| MODIFY | `packages/types/src/ir.ts` (optional)                      |
-| MODIFY | `apps/demo/src/App.tsx`                                    |
-| MODIFY | `apps/docs/src/components/GlyphPreview.tsx`                |
-| MODIFY | `apps/docs/src/components/Playground.tsx`                  |
-| CREATE | `packages/components/src/widget/__tests__/Widget.test.tsx` |
-| CREATE | `packages/components/src/widget/Widget.stories.tsx`        |
-| CREATE | `tests/e2e/visual/widget.spec.ts`                          |
-| CREATE | `tests/e2e/docs/widget.doc.spec.ts`                        |
-| CREATE | `apps/docs/src/content/docs/components/widget.mdx`         |
-| MODIFY | `apps/docs/astro.config.mjs`                               |
+| Action | File                                                             |
+| ------ | ---------------------------------------------------------------- |
+| CREATE | `packages/schemas/src/widget.ts`                                 |
+| MODIFY | `packages/schemas/src/registry.ts`                               |
+| MODIFY | `packages/schemas/src/index.ts`                                  |
+| CREATE | `packages/components/src/widget/Widget.tsx`                      |
+| CREATE | `packages/components/src/widget/index.ts`                        |
+| MODIFY | `packages/components/src/index.ts`                               |
+| MODIFY | `packages/types/src/ir.ts` (recommended)                         |
+| MODIFY | `packages/components/.storybook/preview.ts` (if custom CSS vars) |
+| CREATE | `packages/components/src/widget/__tests__/Widget.test.tsx`       |
+| CREATE | `packages/components/src/widget/Widget.stories.tsx`              |
+| MODIFY | `apps/demo/src/App.tsx`                                          |
+| MODIFY | `apps/docs/src/components/GlyphPreview.tsx`                      |
+| MODIFY | `apps/docs/src/components/Playground.tsx`                        |
+| CREATE | `apps/docs/src/content/docs/components/widget.mdx`               |
+| MODIFY | `apps/docs/astro.config.mjs`                                     |
+| CREATE | `tests/e2e/visual/widget.spec.ts`                                |
+| CREATE | `tests/e2e/docs/widget.doc.spec.ts`                              |
 
-8 new files, 8 modified files.
+9 new files, 8 modified files (9 if custom CSS vars are needed).
