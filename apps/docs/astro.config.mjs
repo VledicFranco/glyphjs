@@ -50,6 +50,7 @@ export default defineConfig({
         { label: 'Gallery', slug: 'gallery' },
         { label: 'Troubleshooting', slug: 'troubleshooting' },
         { label: 'Playground', slug: 'playground' },
+        { label: 'Storybook', link: '/glyphjs/storybook/', attrs: { target: '_blank' } },
       ],
     }),
     react(),

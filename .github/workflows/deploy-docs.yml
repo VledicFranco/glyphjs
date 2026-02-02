@@ -38,6 +38,14 @@ jobs:
       - name: Build docs site
         run: pnpm --filter @glyphjs/docs build
 
+      - name: Build Storybook
+        run: pnpm --filter @glyphjs/components build-storybook
+        env:
+          STORYBOOK_BASE: /glyphjs/storybook/
+
+      - name: Copy Storybook into docs output
+        run: cp -r packages/components/storybook-static apps/docs/dist/storybook
+
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3
         with:
