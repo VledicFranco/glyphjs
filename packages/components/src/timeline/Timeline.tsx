@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 import type { ReactElement } from 'react';
 import type { GlyphComponentProps } from '@glyphjs/types';
 import { scaleTime, scaleOrdinal } from 'd3';
@@ -48,13 +48,29 @@ const TYPE_PALETTE = [
 // ─── Helpers ───────────────────────────────────────────────────
 
 function parseDate(raw: string): Date {
+  // Try native ISO / common formats first
   const d = new Date(raw);
-  // Return epoch as fallback for unparseable dates
-  return isNaN(d.getTime()) ? new Date(0) : d;
+  if (!isNaN(d.getTime())) return d;
+
+  // YYYY-MM  (e.g. "2026-01")
+  const ym = raw.match(/^(\d{4})-(\d{1,2})$/);
+  if (ym) return new Date(+ym[1]!, +ym[2]! - 1, 1);
+
+  // Q1 YYYY  or  YYYY-Q1  (quarter formats)
+  const q1 = raw.match(/^Q([1-4])\s+(\d{4})$/i);
+  if (q1) return new Date(+q1[2]!, (+q1[1]! - 1) * 3, 1);
+
+  const q2 = raw.match(/^(\d{4})-Q([1-4])$/i);
+  if (q2) return new Date(+q2[1]!, (+q2[2]! - 1) * 3, 1);
+
+  // Return epoch as fallback for truly unparseable dates
+  return new Date(0);
 }
 
 function formatDate(raw: string): string {
   const d = parseDate(raw);
+  // If the date resolved to epoch, the input was unparseable — show original
+  if (d.getTime() === 0) return raw;
   return d.toLocaleDateString(undefined, {
     year: 'numeric',
     month: 'short',
@@ -115,15 +131,6 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
       : (i % 2 === 0 ? 'top' : 'bottom'),
   }));
 
-  // --- D3 effect (for potential future interactivity) ---
-
-  useEffect(() => {
-    // Container ref reserved for future D3-driven interactions
-    // (tooltips, zoom, brush, etc.)
-    const _node = containerRef.current;
-    void _node;
-  }, [events, orientation]);
-
   // --- Styles ---
 
   const containerStyle: React.CSSProperties = {
@@ -132,7 +139,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
     color: 'var(--glyph-text, #1a1a1a)',
     ...(isVertical
       ? { width: '100%', minHeight: totalLength }
-      : { height: 'auto', minWidth: totalLength, overflowX: 'auto' }),
+      : { minHeight: 300, minWidth: totalLength, overflowX: 'auto' }),
   };
 
   const lineStyle: React.CSSProperties = isVertical
