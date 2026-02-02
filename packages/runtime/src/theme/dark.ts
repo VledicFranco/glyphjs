@@ -4,40 +4,42 @@ import type { GlyphTheme } from '@glyphjs/types';
  * Built-in dark theme.
  *
  * Provides all `--glyph-*` CSS variables with values suitable for
- * dark backgrounds and light text.
+ * dark backgrounds and light text. Palette inspired by the Oblivion
+ * (2013) interface design — deep cool blacks, desaturated cyan accents,
+ * geometric precision.
  */
 export const darkTheme: GlyphTheme = {
   name: 'dark',
   variables: {
     // Colors
-    '--glyph-bg': '#111827',
-    '--glyph-text': '#f3f4f6',
-    '--glyph-text-muted': '#9ca3af',
-    '--glyph-heading': '#f9fafb',
-    '--glyph-link': '#60a5fa',
-    '--glyph-link-hover': '#93bbfd',
-    '--glyph-border': '#374151',
-    '--glyph-border-strong': '#4b5563',
-    '--glyph-surface': '#1f2937',
-    '--glyph-surface-raised': '#374151',
+    '--glyph-bg': '#0a0e14',
+    '--glyph-text': '#d4dae3',
+    '--glyph-text-muted': '#7a8599',
+    '--glyph-heading': '#e8ecf1',
+    '--glyph-link': '#5bb8db',
+    '--glyph-link-hover': '#8fd4ef',
+    '--glyph-border': '#1e2633',
+    '--glyph-border-strong': '#2d3847',
+    '--glyph-surface': '#111820',
+    '--glyph-surface-raised': '#1a2230',
 
     // Code
-    '--glyph-code-bg': '#1f2937',
-    '--glyph-code-text': '#e5e7eb',
+    '--glyph-code-bg': '#111820',
+    '--glyph-code-text': '#d4dae3',
 
     // Blockquote
-    '--glyph-blockquote-border': '#4b5563',
-    '--glyph-blockquote-bg': '#1f2937',
+    '--glyph-blockquote-border': '#3a9bc8',
+    '--glyph-blockquote-bg': '#111820',
 
     // Callouts
-    '--glyph-callout-info-bg': '#1e293b',
-    '--glyph-callout-info-border': '#3b82f6',
-    '--glyph-callout-warning-bg': '#292524',
-    '--glyph-callout-warning-border': '#f59e0b',
-    '--glyph-callout-error-bg': '#2d1b1b',
-    '--glyph-callout-error-border': '#ef4444',
-    '--glyph-callout-tip-bg': '#1a2e1a',
-    '--glyph-callout-tip-border': '#22c55e',
+    '--glyph-callout-info-bg': '#0e1a26',
+    '--glyph-callout-info-border': '#3a9bc8',
+    '--glyph-callout-warning-bg': '#1a1608',
+    '--glyph-callout-warning-border': '#c89a3a',
+    '--glyph-callout-error-bg': '#1f0e0e',
+    '--glyph-callout-error-border': '#c84a4a',
+    '--glyph-callout-tip-bg': '#0e1f12',
+    '--glyph-callout-tip-border': '#3aab6e',
 
     // Spacing (same as light — spacing is mode-independent)
     '--glyph-spacing-xs': '0.25rem',
@@ -47,13 +49,13 @@ export const darkTheme: GlyphTheme = {
     '--glyph-spacing-xl': '2rem',
 
     // Typography (same as light — font stacks are mode-independent)
-    '--glyph-font-body': 'system-ui, -apple-system, sans-serif',
-    '--glyph-font-heading': 'system-ui, -apple-system, sans-serif',
+    '--glyph-font-body': '"Inter", "Helvetica Neue", system-ui, sans-serif',
+    '--glyph-font-heading': '"Inter", "Helvetica Neue", system-ui, sans-serif',
     '--glyph-font-mono': 'ui-monospace, "Cascadia Code", "Fira Code", monospace',
 
     // Border radius (same as light)
-    '--glyph-radius-sm': '0.25rem',
-    '--glyph-radius-md': '0.375rem',
-    '--glyph-radius-lg': '0.5rem',
+    '--glyph-radius-sm': '0.125rem',
+    '--glyph-radius-md': '0.1875rem',
+    '--glyph-radius-lg': '0.25rem',
   },
 };

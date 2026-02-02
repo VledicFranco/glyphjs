@@ -16,8 +16,8 @@ describe('Theme system', () => {
 
     // Check that light theme variables are set as inline styles
     const style = themeDiv!.getAttribute('style');
-    expect(style).toContain('#ffffff'); // --glyph-bg for light theme
-    expect(style).toContain('#1a1a1a'); // --glyph-text for light theme
+    expect(style).toContain('#f8f9fb'); // --glyph-bg for light theme
+    expect(style).toContain('#1b1f27'); // --glyph-text for light theme
   });
 
   it('dark theme applies dark CSS variables', () => {
@@ -31,8 +31,8 @@ describe('Theme system', () => {
 
     // Check that dark theme variables are set as inline styles
     const style = themeDiv!.getAttribute('style');
-    expect(style).toContain('#111827'); // --glyph-bg for dark theme
-    expect(style).toContain('#f3f4f6'); // --glyph-text for dark theme
+    expect(style).toContain('#0a0e14'); // --glyph-bg for dark theme
+    expect(style).toContain('#d4dae3'); // --glyph-text for dark theme
   });
 
   it('defaults to light theme when no theme is specified', () => {
