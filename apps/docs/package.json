@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@astrojs/react": "^4.0.0",
-    "@astrojs/starlight": "^0.32.0",
+    "@astrojs/starlight": "^0.37.5",
     "@glyphjs/compiler": "workspace:*",
     "@glyphjs/components": "workspace:*",
     "@glyphjs/runtime": "workspace:*",
