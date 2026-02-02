@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Tabs } from './Tabs.js';
-import { mockProps, mockBlock, mockTheme } from '../__storybook__/data.js';
+import { mockProps, mockBlock } from '../__storybook__/data.js';
 import type { TabsData } from './Tabs.js';
 
 const meta: Meta<typeof Tabs> = {
@@ -21,10 +21,7 @@ export const TwoTabs: Story = {
         { label: 'Details', content: 'These are the detailed notes in the second tab.' },
       ],
     },
-    {
-      block: mockBlock({ id: 'tabs-2', type: 'ui:tabs' }),
-      theme: mockTheme(false),
-    },
+    { block: mockBlock({ id: 'tabs-2', type: 'ui:tabs' }) },
   ),
 };
 
@@ -39,26 +36,6 @@ export const ThreeTabs: Story = {
         { label: 'Usage', content: 'Import the component and use it in your JSX.' },
       ],
     },
-    {
-      block: mockBlock({ id: 'tabs-3', type: 'ui:tabs' }),
-      theme: mockTheme(false),
-    },
-  ),
-};
-
-// ─── Dark Theme ────────────────────────────────────────────────
-
-export const DarkTheme: Story = {
-  args: mockProps<TabsData>(
-    {
-      tabs: [
-        { label: 'Light', content: 'Content for the light theme tab.' },
-        { label: 'Dark', content: 'Content for the dark theme tab.' },
-      ],
-    },
-    {
-      block: mockBlock({ id: 'tabs-dark', type: 'ui:tabs' }),
-      theme: mockTheme(true),
-    },
+    { block: mockBlock({ id: 'tabs-3', type: 'ui:tabs' }) },
   ),
 };

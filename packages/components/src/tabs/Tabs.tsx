@@ -16,7 +16,7 @@ export interface TabsData {
  * - ARIA roles: tablist, tab, tabpanel with proper aria-selected, aria-controls,
  *   and aria-labelledby attributes.
  */
-export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
+export function Tabs({ data, block }: GlyphComponentProps<TabsData>) {
   const [activeIndex, setActiveIndex] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -62,25 +62,12 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
     [activeIndex, focusTab, tabs.length],
   );
 
-  /* ─── Theming ────────────────────────────────────────────── */
-  const borderColor = theme.resolveVar('--glyph-border') || (theme.isDark ? '#1e2633' : '#dce1e8');
-  const activeBg =
-    theme.resolveVar('--glyph-surface-raised') || (theme.isDark ? '#1a2230' : '#f8f9fb');
-  const inactiveBg = theme.resolveVar('--glyph-surface') || (theme.isDark ? '#111820' : '#eef1f5');
-  const activeColor = theme.resolveVar('--glyph-heading') || (theme.isDark ? '#e8ecf1' : '#0f1319');
-  const inactiveColor =
-    theme.resolveVar('--glyph-text-muted') || (theme.isDark ? '#7a8599' : '#7a8599');
-  const panelBg = theme.resolveVar('--glyph-surface-raised') || activeBg;
-  const fontFamily = theme.resolveVar('--glyph-font-body') || '"Inter", system-ui, sans-serif';
-  const accentColor = theme.resolveVar('--glyph-accent') || '#d4a843';
-  const borderRadius = theme.resolveVar('--glyph-radius-lg') || '0.25rem';
-
   return (
     <div
       style={{
-        fontFamily,
-        border: `1px solid ${borderColor}`,
-        borderRadius,
+        fontFamily: 'var(--glyph-font-body, "Inter", system-ui, sans-serif)',
+        border: '1px solid var(--glyph-border, #dce1e8)',
+        borderRadius: 'var(--glyph-radius-lg, 0.25rem)',
         overflow: 'hidden',
       }}
     >
@@ -90,8 +77,8 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
         aria-label="Tabs"
         style={{
           display: 'flex',
-          borderBottom: `1px solid ${borderColor}`,
-          backgroundColor: inactiveBg,
+          borderBottom: '1px solid var(--glyph-border, #dce1e8)',
+          backgroundColor: 'var(--glyph-surface, #eef1f5)',
           margin: 0,
           padding: 0,
         }}
@@ -117,9 +104,13 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
               style={{
                 padding: '10px 18px',
                 border: 'none',
-                borderBottom: isActive ? `2px solid ${accentColor}` : '2px solid transparent',
-                background: isActive ? activeBg : 'transparent',
-                color: isActive ? activeColor : inactiveColor,
+                borderBottom: isActive
+                  ? '2px solid var(--glyph-accent, #d4a843)'
+                  : '2px solid transparent',
+                background: isActive ? 'var(--glyph-surface-raised, #f8f9fb)' : 'transparent',
+                color: isActive
+                  ? 'var(--glyph-heading, #0f1319)'
+                  : 'var(--glyph-text-muted, #7a8599)',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
                 fontSize: '0.9rem',
@@ -152,8 +143,8 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
             tabIndex={0}
             style={{
               padding: '16px',
-              backgroundColor: panelBg,
-              color: activeColor,
+              backgroundColor: 'var(--glyph-surface-raised, #f8f9fb)',
+              color: 'var(--glyph-heading, #0f1319)',
               lineHeight: 1.6,
             }}
           >
