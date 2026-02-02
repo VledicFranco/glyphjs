@@ -69,9 +69,9 @@ export interface ArchitectureLayout {
 const NODE_WIDTH = 120;
 const NODE_HEIGHT_WITH_ICON = 60;
 const NODE_HEIGHT_NO_ICON = 40;
-const ZONE_PADDING_TOP = 40;
-const ZONE_PADDING_SIDES = 20;
-const ZONE_PADDING_BOTTOM = 20;
+const ZONE_PADDING_TOP = 30;
+const ZONE_PADDING_SIDES = 15;
+const ZONE_PADDING_BOTTOM = 15;
 const LAYOUT_PADDING = 20;
 
 // ─── Direction Mapping ──────────────────────────────────────
@@ -170,10 +170,10 @@ function buildElkGraph(data: ArchitectureData): ElkRoot {
       'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
       'elk.edgeRouting': 'ORTHOGONAL',
       'elk.direction': direction,
-      'elk.spacing.nodeNode': '30',
-      'elk.layered.spacing.nodeNodeBetweenLayers': '40',
-      'elk.spacing.edgeNode': '15',
-      'elk.spacing.edgeEdge': '10',
+      'elk.spacing.nodeNode': '20',
+      'elk.layered.spacing.nodeNodeBetweenLayers': '30',
+      'elk.spacing.edgeNode': '10',
+      'elk.spacing.edgeEdge': '8',
     },
   };
 }

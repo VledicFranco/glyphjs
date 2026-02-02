@@ -127,18 +127,46 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
       .attr('stroke-dasharray', dashArray);
 
     if (edge.label && edge.points.length > 1) {
-      const mid = edge.points[Math.floor(edge.points.length / 2)];
-      if (mid) {
-        edgeG
-          .append('text')
-          .attr('x', mid.x)
-          .attr('y', mid.y - 8)
-          .attr('text-anchor', 'middle')
-          .attr('font-size', '11px')
-          .attr('font-family', 'Inter, system-ui, sans-serif')
-          .attr('fill', 'var(--glyph-text-muted, #7a8599)')
-          .text(edge.label);
+      // Compute geometric midpoint along the polyline path
+      let totalLen = 0;
+      const segments: number[] = [];
+      for (let i = 1; i < edge.points.length; i++) {
+        const prev = edge.points[i - 1];
+        const curr = edge.points[i];
+        if (prev && curr) {
+          const dx = curr.x - prev.x;
+          const dy = curr.y - prev.y;
+          const len = Math.sqrt(dx * dx + dy * dy);
+          segments.push(len);
+          totalLen += len;
+        }
       }
+      let remaining = totalLen / 2;
+      let labelX = edge.points[0]?.x ?? 0;
+      let labelY = edge.points[0]?.y ?? 0;
+      for (let i = 0; i < segments.length; i++) {
+        const segLen = segments[i] ?? 0;
+        const prev = edge.points[i];
+        const curr = edge.points[i + 1];
+        if (prev && curr) {
+          if (remaining <= segLen && segLen > 0) {
+            const t = remaining / segLen;
+            labelX = prev.x + t * (curr.x - prev.x);
+            labelY = prev.y + t * (curr.y - prev.y);
+            break;
+          }
+          remaining -= segLen;
+        }
+      }
+      edgeG
+        .append('text')
+        .attr('x', labelX)
+        .attr('y', labelY - 8)
+        .attr('text-anchor', 'middle')
+        .attr('font-size', '11px')
+        .attr('font-family', 'Inter, system-ui, sans-serif')
+        .attr('fill', 'var(--glyph-text-muted, #7a8599)')
+        .text(edge.label);
     }
   }
 
