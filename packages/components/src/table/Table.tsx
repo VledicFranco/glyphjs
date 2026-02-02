@@ -213,6 +213,8 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                       borderRadius: '3px',
                       fontSize: 'inherit',
                       boxSizing: 'border-box',
+                      background: 'var(--glyph-surface, #fff)',
+                      color: 'var(--glyph-text, inherit)',
                     }}
                   />
                 ) : (
