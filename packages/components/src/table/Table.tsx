@@ -155,8 +155,8 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
       style={{
         width: '100%',
         borderCollapse: 'collapse',
-        border: '1px solid var(--glyph-table-border, #ddd)',
-        fontFamily: 'var(--glyph-table-font, inherit)',
+        border: '1px solid var(--glyph-table-border, #dce1e8)',
+        fontFamily: 'var(--glyph-font-body, inherit)',
         fontSize: 'var(--glyph-table-font-size, 0.9rem)',
       }}
     >
@@ -177,8 +177,8 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                 style={{
                   padding: 'var(--glyph-table-cell-padding, 8px 12px)',
                   textAlign: 'left',
-                  borderBottom: '2px solid var(--glyph-table-border, #ddd)',
-                  background: 'var(--glyph-table-header-bg, #f5f5f5)',
+                  borderBottom: '2px solid var(--glyph-table-border, #dce1e8)',
+                  background: 'var(--glyph-table-header-bg, #eef1f5)',
                   color: 'var(--glyph-table-header-color, inherit)',
                   cursor: col.sortable ? 'pointer' : 'default',
                   userSelect: col.sortable ? 'none' : undefined,
@@ -194,7 +194,11 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
         {hasFilters && (
           <tr>
             {columns.map((col) => (
-              <th key={`filter-${col.key}`} scope="col" style={{ padding: '4px 8px', fontWeight: 'normal' }}>
+              <th
+                key={`filter-${col.key}`}
+                scope="col"
+                style={{ padding: '4px 8px', fontWeight: 'normal' }}
+              >
                 {col.filterable ? (
                   <input
                     type="text"
@@ -205,7 +209,7 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                     style={{
                       width: '100%',
                       padding: '4px 6px',
-                      border: '1px solid var(--glyph-table-border, #ddd)',
+                      border: '1px solid var(--glyph-table-border, #dce1e8)',
                       borderRadius: '3px',
                       fontSize: 'inherit',
                       boxSizing: 'border-box',
@@ -213,7 +217,14 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                   />
                 ) : (
                   <span
-                    style={{ position: 'absolute', width: '1px', height: '1px', overflow: 'hidden', clip: 'rect(0,0,0,0)', whiteSpace: 'nowrap' }}
+                    style={{
+                      position: 'absolute',
+                      width: '1px',
+                      height: '1px',
+                      overflow: 'hidden',
+                      clip: 'rect(0,0,0,0)',
+                      whiteSpace: 'nowrap',
+                    }}
                   >
                     {`No filter for ${col.label}`}
                   </span>
@@ -231,7 +242,7 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
               background:
                 rowIdx % 2 === 0
                   ? 'var(--glyph-table-row-bg, transparent)'
-                  : 'var(--glyph-table-row-alt-bg, #fafafa)',
+                  : 'var(--glyph-table-row-alt-bg, #f8f9fb)',
             }}
           >
             {columns.map((col) => (
@@ -239,7 +250,7 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                 key={col.key}
                 style={{
                   padding: 'var(--glyph-table-cell-padding, 8px 12px)',
-                  borderBottom: '1px solid var(--glyph-table-border, #ddd)',
+                  borderBottom: '1px solid var(--glyph-table-border, #dce1e8)',
                   color: 'var(--glyph-table-cell-color, inherit)',
                 }}
               >
@@ -259,9 +270,9 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                   key={col.key}
                   style={{
                     padding: 'var(--glyph-table-cell-padding, 8px 12px)',
-                    borderTop: '2px solid var(--glyph-table-border, #ddd)',
+                    borderTop: '2px solid var(--glyph-table-border, #dce1e8)',
                     fontWeight: 'bold',
-                    background: 'var(--glyph-table-footer-bg, #f5f5f5)',
+                    background: 'var(--glyph-table-footer-bg, #eef1f5)',
                     color: 'var(--glyph-table-footer-color, inherit)',
                   }}
                 >

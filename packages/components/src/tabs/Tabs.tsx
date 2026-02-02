@@ -63,24 +63,24 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
   );
 
   /* ─── Theming ────────────────────────────────────────────── */
-  const borderColor = theme.resolveVar('--glyph-tabs-border') || (theme.isDark ? '#444' : '#ddd');
+  const borderColor = theme.resolveVar('--glyph-border') || (theme.isDark ? '#1e2633' : '#dce1e8');
   const activeBg =
-    theme.resolveVar('--glyph-tabs-active-bg') || (theme.isDark ? '#1e1e1e' : '#fff');
-  const inactiveBg =
-    theme.resolveVar('--glyph-tabs-inactive-bg') || (theme.isDark ? '#2a2a2a' : '#f5f5f5');
-  const activeColor =
-    theme.resolveVar('--glyph-tabs-active-color') || (theme.isDark ? '#e0e0e0' : '#111');
+    theme.resolveVar('--glyph-surface-raised') || (theme.isDark ? '#1a2230' : '#f8f9fb');
+  const inactiveBg = theme.resolveVar('--glyph-surface') || (theme.isDark ? '#111820' : '#eef1f5');
+  const activeColor = theme.resolveVar('--glyph-heading') || (theme.isDark ? '#e8ecf1' : '#0f1319');
   const inactiveColor =
-    theme.resolveVar('--glyph-tabs-inactive-color') || (theme.isDark ? '#999' : '#555');
-  const panelBg = theme.resolveVar('--glyph-tabs-panel-bg') || activeBg;
-  const fontFamily = theme.resolveVar('--glyph-font-family') || 'system-ui, sans-serif';
+    theme.resolveVar('--glyph-text-muted') || (theme.isDark ? '#7a8599' : '#7a8599');
+  const panelBg = theme.resolveVar('--glyph-surface-raised') || activeBg;
+  const fontFamily = theme.resolveVar('--glyph-font-body') || '"Inter", system-ui, sans-serif';
+  const accentColor = theme.resolveVar('--glyph-accent') || '#d4a843';
+  const borderRadius = theme.resolveVar('--glyph-radius-lg') || '0.25rem';
 
   return (
     <div
       style={{
         fontFamily,
         border: `1px solid ${borderColor}`,
-        borderRadius: '6px',
+        borderRadius,
         overflow: 'hidden',
       }}
     >
@@ -117,7 +117,7 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
               style={{
                 padding: '10px 18px',
                 border: 'none',
-                borderBottom: isActive ? `2px solid ${activeColor}` : '2px solid transparent',
+                borderBottom: isActive ? `2px solid ${accentColor}` : '2px solid transparent',
                 background: isActive ? activeBg : 'transparent',
                 color: isActive ? activeColor : inactiveColor,
                 cursor: 'pointer',

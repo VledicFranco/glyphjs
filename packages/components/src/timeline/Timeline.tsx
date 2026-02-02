@@ -35,14 +35,14 @@ const EVENT_SPACING_MIN = 80;
  * through these when assigning colors based on the event `type` field.
  */
 const TYPE_PALETTE = [
-  'var(--glyph-timeline-color-1, #4e79a7)',
-  'var(--glyph-timeline-color-2, #f28e2b)',
-  'var(--glyph-timeline-color-3, #e15759)',
-  'var(--glyph-timeline-color-4, #76b7b2)',
-  'var(--glyph-timeline-color-5, #59a14f)',
-  'var(--glyph-timeline-color-6, #edc948)',
-  'var(--glyph-timeline-color-7, #b07aa1)',
-  'var(--glyph-timeline-color-8, #ff9da7)',
+  'var(--glyph-timeline-color-1, #d4a843)',
+  'var(--glyph-timeline-color-2, #5b8a72)',
+  'var(--glyph-timeline-color-3, #c75d4a)',
+  'var(--glyph-timeline-color-4, #6a9bc8)',
+  'var(--glyph-timeline-color-5, #9b7cb8)',
+  'var(--glyph-timeline-color-6, #d4805a)',
+  'var(--glyph-timeline-color-7, #4a8a8a)',
+  'var(--glyph-timeline-color-8, #c7657a)',
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -54,14 +54,14 @@ function parseDate(raw: string): Date {
 
   // YYYY-MM  (e.g. "2026-01")
   const ym = raw.match(/^(\d{4})-(\d{1,2})$/);
-  if (ym) return new Date(+ym[1]!, +ym[2]! - 1, 1);
+  if (ym && ym[1] && ym[2]) return new Date(+ym[1], +ym[2] - 1, 1);
 
   // Q1 YYYY  or  YYYY-Q1  (quarter formats)
   const q1 = raw.match(/^Q([1-4])\s+(\d{4})$/i);
-  if (q1) return new Date(+q1[2]!, (+q1[1]! - 1) * 3, 1);
+  if (q1 && q1[1] && q1[2]) return new Date(+q1[2], (+q1[1] - 1) * 3, 1);
 
   const q2 = raw.match(/^(\d{4})-Q([1-4])$/i);
-  if (q2) return new Date(+q2[1]!, (+q2[2]! - 1) * 3, 1);
+  if (q2 && q2[1] && q2[2]) return new Date(+q2[1], (+q2[2] - 1) * 3, 1);
 
   // Return epoch as fallback for truly unparseable dates
   return new Date(0);
@@ -116,9 +116,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
     .range([MARKER_RADIUS + 20, totalLength - MARKER_RADIUS - 20]);
 
   const typeValues = [...new Set(events.map((e) => e.type ?? '_default'))];
-  const colorScale = scaleOrdinal<string, string>()
-    .domain(typeValues)
-    .range(TYPE_PALETTE);
+  const colorScale = scaleOrdinal<string, string>().domain(typeValues).range(TYPE_PALETTE);
 
   // --- Positioned events ---
 
@@ -126,9 +124,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
     event: e,
     parsed: e._parsed,
     position: dates.length === 1 ? totalLength / 2 : (timeScale(e._parsed) as number),
-    side: isVertical
-      ? (i % 2 === 0 ? 'left' : 'right')
-      : (i % 2 === 0 ? 'top' : 'bottom'),
+    side: isVertical ? (i % 2 === 0 ? 'left' : 'right') : i % 2 === 0 ? 'top' : 'bottom',
   }));
 
   // --- Styles ---
@@ -149,7 +145,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
         top: 0,
         bottom: 0,
         width: LINE_THICKNESS,
-        backgroundColor: 'var(--glyph-timeline-line, #d1d5db)',
+        backgroundColor: 'var(--glyph-timeline-line, #dce1e8)',
         transform: 'translateX(-50%)',
       }
     : {
@@ -158,7 +154,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
         left: 0,
         right: 0,
         height: LINE_THICKNESS,
-        backgroundColor: 'var(--glyph-timeline-line, #d1d5db)',
+        backgroundColor: 'var(--glyph-timeline-line, #dce1e8)',
         transform: 'translateY(-50%)',
       };
 
@@ -178,11 +174,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
       {positioned.map((pe, idx) => {
         const color = colorScale(pe.event.type ?? '_default');
         return (
-          <div
-            key={idx}
-            style={eventContainerStyle(pe, isVertical)}
-            aria-hidden="true"
-          >
+          <div key={idx} style={eventContainerStyle(pe, isVertical)} aria-hidden="true">
             {/* Connector arm from axis to marker */}
             <div style={connectorStyle(pe, isVertical)} aria-hidden="true" />
 
@@ -193,8 +185,8 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
                 height: MARKER_RADIUS * 2,
                 borderRadius: '50%',
                 backgroundColor: color,
-                border: '2px solid var(--glyph-timeline-marker-border, #fff)',
-                boxShadow: '0 0 0 2px var(--glyph-timeline-line, #d1d5db)',
+                border: '2px solid var(--glyph-timeline-marker-border, var(--glyph-bg, #f8f9fb))',
+                boxShadow: '0 0 0 2px var(--glyph-border, #dce1e8)',
                 flexShrink: 0,
                 zIndex: 1,
               }}
@@ -205,7 +197,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
               <div
                 style={{
                   fontSize: 'var(--glyph-timeline-date-size, 0.75rem)',
-                  color: 'var(--glyph-timeline-date-color, #6b7280)',
+                  color: 'var(--glyph-timeline-date-color, #7a8599)',
                   fontWeight: 600,
                 }}
               >
@@ -224,7 +216,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
                 <div
                   style={{
                     fontSize: 'var(--glyph-timeline-desc-size, 0.8rem)',
-                    color: 'var(--glyph-timeline-desc-color, #6b7280)',
+                    color: 'var(--glyph-timeline-desc-color, #7a8599)',
                     marginTop: 2,
                   }}
                 >
@@ -263,10 +255,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
 
 // ─── Style helpers ─────────────────────────────────────────────
 
-function eventContainerStyle(
-  pe: PositionedEvent,
-  isVertical: boolean,
-): React.CSSProperties {
+function eventContainerStyle(pe: PositionedEvent, isVertical: boolean): React.CSSProperties {
   if (isVertical) {
     const isLeft = pe.side === 'left';
     return {
@@ -297,28 +286,22 @@ function eventContainerStyle(
   };
 }
 
-function connectorStyle(
-  _pe: PositionedEvent,
-  isVertical: boolean,
-): React.CSSProperties {
+function connectorStyle(_pe: PositionedEvent, isVertical: boolean): React.CSSProperties {
   if (isVertical) {
     return {
       flex: '0 0 20px',
       height: LINE_THICKNESS,
-      backgroundColor: 'var(--glyph-timeline-line, #d1d5db)',
+      backgroundColor: 'var(--glyph-timeline-line, #dce1e8)',
     };
   }
   return {
     flex: '0 0 20px',
     width: LINE_THICKNESS,
-    backgroundColor: 'var(--glyph-timeline-line, #d1d5db)',
+    backgroundColor: 'var(--glyph-timeline-line, #dce1e8)',
   };
 }
 
-function labelStyle(
-  pe: PositionedEvent,
-  isVertical: boolean,
-): React.CSSProperties {
+function labelStyle(pe: PositionedEvent, isVertical: boolean): React.CSSProperties {
   if (isVertical) {
     return {
       textAlign: pe.side === 'left' ? 'right' : 'left',

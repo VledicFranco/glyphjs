@@ -114,7 +114,10 @@ function computeRelationLayout(data: RelationData): RelationLayout {
 
   const positionedEntities: PositionedEntity[] = data.entities.map((entity) => {
     const dagreNode = g.node(entity.id) as dagre.Node;
-    const size = sizeMap.get(entity.id) ?? { width: ENTITY_MIN_WIDTH, height: ENTITY_HEADER_HEIGHT };
+    const size = sizeMap.get(entity.id) ?? {
+      width: ENTITY_MIN_WIDTH,
+      height: ENTITY_HEADER_HEIGHT,
+    };
     return {
       ...entity,
       x: dagreNode.x,
@@ -190,7 +193,7 @@ function drawCrowsFoot(
       .attr('y1', y)
       .attr('x2', cx)
       .attr('y2', cy)
-      .attr('stroke', 'var(--glyph-relation-line, #666)')
+      .attr('stroke', 'var(--glyph-relation-line, #7a8599)')
       .attr('stroke-width', 1.5);
 
     // Left fork
@@ -201,7 +204,7 @@ function drawCrowsFoot(
       .attr('y1', y)
       .attr('x2', lx)
       .attr('y2', ly)
-      .attr('stroke', 'var(--glyph-relation-line, #666)')
+      .attr('stroke', 'var(--glyph-relation-line, #7a8599)')
       .attr('stroke-width', 1.5);
 
     // Right fork
@@ -212,7 +215,7 @@ function drawCrowsFoot(
       .attr('y1', y)
       .attr('x2', rx)
       .attr('y2', ry)
-      .attr('stroke', 'var(--glyph-relation-line, #666)')
+      .attr('stroke', 'var(--glyph-relation-line, #7a8599)')
       .attr('stroke-width', 1.5);
   } else {
     // Single line perpendicular to the edge for "1"
@@ -225,7 +228,7 @@ function drawCrowsFoot(
       .attr('y1', ty - Math.sin(perpAngle) * halfLen)
       .attr('x2', tx + Math.cos(perpAngle) * halfLen)
       .attr('y2', ty + Math.sin(perpAngle) * halfLen)
-      .attr('stroke', 'var(--glyph-relation-line, #666)')
+      .attr('stroke', 'var(--glyph-relation-line, #7a8599)')
       .attr('stroke-width', 1.5);
   }
 }
@@ -277,7 +280,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
       .append('path')
       .attr('d', lineGen(rel.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', 'var(--glyph-relation-line, #666)')
+      .attr('stroke', 'var(--glyph-relation-line, #7a8599)')
       .attr('stroke-width', 1.5);
 
     // Cardinality notation
@@ -309,8 +312,8 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
           .attr('y', mid.y - 10)
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
-          .attr('font-family', 'system-ui, -apple-system, sans-serif')
-          .attr('fill', 'var(--glyph-relation-label, #555)')
+          .attr('font-family', 'Inter, system-ui, sans-serif')
+          .attr('fill', 'var(--glyph-relation-label, #7a8599)')
           .text(rel.label);
       }
     }
@@ -327,8 +330,8 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
         .attr('y', fromLabelY)
         .attr('text-anchor', 'middle')
         .attr('font-size', '10px')
-        .attr('font-family', 'system-ui, -apple-system, sans-serif')
-        .attr('fill', 'var(--glyph-relation-cardinality, #888)')
+        .attr('font-family', 'Inter, system-ui, sans-serif')
+        .attr('fill', 'var(--glyph-relation-cardinality, #7a8599)')
         .text(fromSymbol);
     }
 
@@ -343,8 +346,8 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
         .attr('y', toLabelY)
         .attr('text-anchor', 'middle')
         .attr('font-size', '10px')
-        .attr('font-family', 'system-ui, -apple-system, sans-serif')
-        .attr('fill', 'var(--glyph-relation-cardinality, #888)')
+        .attr('font-family', 'Inter, system-ui, sans-serif')
+        .attr('fill', 'var(--glyph-relation-cardinality, #7a8599)')
         .text(toSymbol);
     }
   }
@@ -368,8 +371,8 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
       .attr('height', entity.height)
       .attr('rx', 4)
       .attr('ry', 4)
-      .attr('fill', 'var(--glyph-relation-entity-bg, #fff)')
-      .attr('stroke', 'var(--glyph-relation-entity-border, #333)')
+      .attr('fill', 'var(--glyph-relation-entity-bg, #f8f9fb)')
+      .attr('stroke', 'var(--glyph-relation-entity-border, #b8c0cc)')
       .attr('stroke-width', 1.5);
 
     // Header background
@@ -382,7 +385,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
       .attr('height', headerHeight)
       .attr('rx', 4)
       .attr('ry', 4)
-      .attr('fill', 'var(--glyph-relation-header-bg, #4e79a7)');
+      .attr('fill', 'var(--glyph-relation-header-bg, #d4a843)');
 
     // Clip the bottom corners of the header rectangle so it's flat at the bottom
     entityG
@@ -391,7 +394,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
       .attr('y', y + headerHeight - 4)
       .attr('width', entity.width)
       .attr('height', 4)
-      .attr('fill', 'var(--glyph-relation-header-bg, #4e79a7)');
+      .attr('fill', 'var(--glyph-relation-header-bg, #d4a843)');
 
     // Header label
     entityG
@@ -402,7 +405,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
       .attr('text-anchor', 'middle')
       .attr('font-size', '13px')
       .attr('font-weight', 'bold')
-      .attr('font-family', 'system-ui, -apple-system, sans-serif')
+      .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('fill', 'var(--glyph-relation-header-text, #fff)')
       .text(entity.label);
 
@@ -414,7 +417,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
         .attr('y1', y + headerHeight)
         .attr('x2', x + entity.width)
         .attr('y2', y + headerHeight)
-        .attr('stroke', 'var(--glyph-relation-entity-border, #333)')
+        .attr('stroke', 'var(--glyph-relation-entity-border, #b8c0cc)')
         .attr('stroke-width', 1);
     }
 
@@ -431,20 +434,18 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
         .attr('dy', '0.35em')
         .attr('font-size', '12px')
         .attr('font-family', 'system-ui, -apple-system, monospace')
-        .attr('fill', 'var(--glyph-relation-attr-text, #333)');
+        .attr('fill', 'var(--glyph-relation-attr-text, #1b1f27)');
 
       // Attribute name (bold + underline if primary key)
       const nameSpan = textEl.append('tspan').text(attr.name);
       if (attr.primaryKey) {
-        nameSpan
-          .attr('font-weight', 'bold')
-          .attr('text-decoration', 'underline');
+        nameSpan.attr('font-weight', 'bold').attr('text-decoration', 'underline');
       }
 
       // Attribute type
       textEl
         .append('tspan')
-        .attr('fill', 'var(--glyph-relation-attr-type, #888)')
+        .attr('fill', 'var(--glyph-relation-attr-type, #7a8599)')
         .text(`: ${attr.type}`);
     }
   }
@@ -452,9 +453,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
 
 // ─── Component ──────────────────────────────────────────────
 
-export function Relation({
-  data,
-}: GlyphComponentProps<RelationData>): ReactElement {
+export function Relation({ data }: GlyphComponentProps<RelationData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
 
   const layoutResult = useMemo<RelationLayout>(() => {

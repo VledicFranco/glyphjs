@@ -19,7 +19,18 @@ export const DEFAULT_WIDTH = 600;
 export const DEFAULT_HEIGHT = 400;
 export const MARGIN = { top: 20, right: 30, bottom: 50, left: 60 };
 
-export const COLOR_SCHEME = d3.schemeCategory10;
+export const COLOR_SCHEME = [
+  '#d4a843', // amber (accent)
+  '#5b8a72', // sage
+  '#c75d4a', // terracotta
+  '#6a9bc8', // steel blue
+  '#9b7cb8', // lavender
+  '#d4805a', // burnt orange
+  '#4a8a8a', // teal
+  '#c7657a', // rose
+  '#8a7a5a', // khaki
+  '#7a9aa8', // slate
+];
 
 // ─── Helpers ───────────────────────────────────────────────────
 
@@ -28,10 +39,7 @@ export function getNumericValue(d: DataRecord, key: string): number {
   return typeof v === 'number' ? v : Number(v);
 }
 
-export function getAllNumericValues(
-  series: ChartData['series'],
-  key: string,
-): number[] {
+export function getAllNumericValues(series: ChartData['series'], key: string): number[] {
   return series.flatMap((s: ChartData['series'][number]) =>
     s.data.map((d: DataRecord) => getNumericValue(d, key)),
   );
@@ -78,7 +86,7 @@ export function renderAxes(
   xAxisG
     .selectAll('text, line, path')
     .attr('fill', 'var(--glyph-text, #1a1a1a)')
-    .attr('stroke', 'var(--glyph-grid, #ccc)');
+    .attr('stroke', 'var(--glyph-grid, #dce1e8)');
 
   if (xAxisConfig?.label) {
     g.append('text')
@@ -101,7 +109,7 @@ export function renderAxes(
   yAxisG
     .selectAll('text, line, path')
     .attr('fill', 'var(--glyph-text, #1a1a1a)')
-    .attr('stroke', 'var(--glyph-grid, #ccc)');
+    .attr('stroke', 'var(--glyph-grid, #dce1e8)');
 
   if (yAxisConfig?.label) {
     g.append('text')
@@ -130,7 +138,7 @@ export function renderGridLines(
     .attr('x2', innerWidth)
     .attr('y1', (d: number) => yScale(d))
     .attr('y2', (d: number) => yScale(d))
-    .attr('stroke', 'var(--glyph-grid, #e0e0e0)')
+    .attr('stroke', 'var(--glyph-grid, #dce1e8)')
     .attr('stroke-opacity', 0.5)
     .attr('stroke-dasharray', '2,2');
 }
@@ -171,10 +179,7 @@ export function renderLineSeries(
     .attr('fill', color)
     .attr('cursor', 'pointer')
     .on('mouseenter', function (this: SVGCircleElement, event: MouseEvent, d: DataRecord) {
-      showTooltip(
-        event,
-        `${seriesName}: ${String(d[xKey] ?? '')}, ${String(d[yKey] ?? '')}`,
-      );
+      showTooltip(event, `${seriesName}: ${String(d[xKey] ?? '')}, ${String(d[yKey] ?? '')}`);
     })
     .on('mouseleave', () => hideTooltip());
 }
@@ -217,10 +222,7 @@ export function renderAreaSeries(
     .attr('fill', color)
     .attr('cursor', 'pointer')
     .on('mouseenter', function (this: SVGCircleElement, event: MouseEvent, d: DataRecord) {
-      showTooltip(
-        event,
-        `${seriesName}: ${String(d[xKey] ?? '')}, ${String(d[yKey] ?? '')}`,
-      );
+      showTooltip(event, `${seriesName}: ${String(d[xKey] ?? '')}, ${String(d[yKey] ?? '')}`);
     })
     .on('mouseleave', () => hideTooltip());
 }
@@ -248,24 +250,14 @@ export function renderBarSeries(
     .data(seriesData)
     .join('rect')
     .attr('class', `bar-${String(index)}`)
-    .attr(
-      'x',
-      (d: DataRecord) =>
-        (band(String(d[xKey] ?? '')) ?? 0) + barWidth * index,
-    )
+    .attr('x', (d: DataRecord) => (band(String(d[xKey] ?? '')) ?? 0) + barWidth * index)
     .attr('y', (d: DataRecord) => yScale(getNumericValue(d, yKey)))
     .attr('width', barWidth - 1)
-    .attr(
-      'height',
-      (d: DataRecord) => innerHeight - yScale(getNumericValue(d, yKey)),
-    )
+    .attr('height', (d: DataRecord) => innerHeight - yScale(getNumericValue(d, yKey)))
     .attr('fill', color)
     .attr('cursor', 'pointer')
     .on('mouseenter', function (this: SVGRectElement, event: MouseEvent, d: DataRecord) {
-      showTooltip(
-        event,
-        `${seriesName}: ${String(d[xKey] ?? '')}, ${String(d[yKey] ?? '')}`,
-      );
+      showTooltip(event, `${seriesName}: ${String(d[xKey] ?? '')}, ${String(d[yKey] ?? '')}`);
     })
     .on('mouseleave', () => hideTooltip());
 }
@@ -295,8 +287,8 @@ export function renderOHLCSeries(
     const cx = xScalePoint(d);
     const isBullish = close >= open;
     const candleColor = isBullish
-      ? 'var(--glyph-chart-bullish, #26a69a)'
-      : 'var(--glyph-chart-bearish, #ef5350)';
+      ? 'var(--glyph-chart-bullish, #5b8a72)'
+      : 'var(--glyph-chart-bearish, #c75d4a)';
 
     // High-low wick
     g.append('line')
@@ -338,23 +330,13 @@ export function renderLegend(
 ): void {
   const legendG = sel
     .append('g')
-    .attr(
-      'transform',
-      `translate(${String(marginLeft + 8)},${String(marginTop)})`,
-    );
+    .attr('transform', `translate(${String(marginLeft + 8)},${String(marginTop)})`);
 
   series.forEach((s: ChartData['series'][number], i: number) => {
     const color = COLOR_SCHEME[i % COLOR_SCHEME.length] ?? '#333';
-    const row = legendG
-      .append('g')
-      .attr('transform', `translate(0,${String(i * 20)})`);
+    const row = legendG.append('g').attr('transform', `translate(0,${String(i * 20)})`);
 
-    row
-      .append('rect')
-      .attr('width', 14)
-      .attr('height', 14)
-      .attr('fill', color)
-      .attr('rx', 2);
+    row.append('rect').attr('width', 14).attr('height', 14).attr('fill', color).attr('rx', 2);
 
     row
       .append('text')

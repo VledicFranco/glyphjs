@@ -4,14 +4,14 @@
    Light-mode palette (default)
    ---------------------------------------------------------------- */
 :root {
-  /* Accent: cyan-derived */
-  --sl-color-accent-low: #e0f4f8;
-  --sl-color-accent: #0ea5c7;
-  --sl-color-accent-high: #0b7a95;
+  /* Accent: amber/gold-derived */
+  --sl-color-accent-low: #faf4e8;
+  --sl-color-accent: #b8922e;
+  --sl-color-accent-high: #96760e;
 
   /* Text */
   --sl-color-text: #2b3544;
-  --sl-color-text-accent: #0ea5c7;
+  --sl-color-text-accent: #b8922e;
 
   /* Backgrounds */
   --sl-color-bg: #f8f9fb;
@@ -42,12 +42,12 @@
    Dark-mode palette
    ---------------------------------------------------------------- */
 :root[data-theme="dark"] {
-  --sl-color-accent-low: #0b3a47;
-  --sl-color-accent: #22d3ee;
-  --sl-color-accent-high: #a5f3fc;
+  --sl-color-accent-low: #1f1a0e;
+  --sl-color-accent: #d4a843;
+  --sl-color-accent-high: #e4be6a;
 
   --sl-color-text: #e2e8f0;
-  --sl-color-text-accent: #22d3ee;
+  --sl-color-text-accent: #d4a843;
 
   --sl-color-bg: #0f1219;
   --sl-color-bg-nav: #161b26;

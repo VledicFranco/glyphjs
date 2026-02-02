@@ -2,10 +2,7 @@ import type { CSSProperties, ReactElement } from 'react';
 import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 import type { GlyphComponentProps, Reference } from '@glyphjs/types';
-import {
-  computeDagreLayout,
-  computeForceLayout,
-} from './layout.js';
+import { computeDagreLayout, computeForceLayout } from './layout.js';
 import type { LayoutResult } from './layout.js';
 
 // ─── Types ───────────────────────────────────────────────────
@@ -38,19 +35,19 @@ type LayoutDirection = 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'for
 // ─── Group Color Palette ─────────────────────────────────────
 
 const GROUP_PALETTE = [
-  '#4e79a7', // steel blue
-  '#f28e2b', // orange
-  '#e15759', // red
-  '#76b7b2', // teal
-  '#59a14f', // green
-  '#edc948', // yellow
-  '#b07aa1', // purple
-  '#ff9da7', // pink
-  '#9c755f', // brown
-  '#bab0ac', // grey
+  '#d4a843', // amber (accent)
+  '#5b8a72', // sage
+  '#c75d4a', // terracotta
+  '#6a9bc8', // steel blue
+  '#9b7cb8', // lavender
+  '#d4805a', // burnt orange
+  '#4a8a8a', // teal
+  '#c7657a', // rose
+  '#8a7a5a', // khaki
+  '#7a9aa8', // slate
 ];
 
-const DEFAULT_NODE_COLOR = '#4e79a7';
+const DEFAULT_NODE_COLOR = '#d4a843';
 
 function getGroupColor(group: string | undefined, groupIndex: Map<string, number>): string {
   if (!group) return GROUP_PALETTE[0] ?? DEFAULT_NODE_COLOR;
@@ -108,7 +105,7 @@ function renderGraph(
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
-    .attr('fill', '#666');
+    .attr('fill', '#7a8599');
 
   // Root group for zoom/pan
   const root = svg.append('g').attr('class', 'glyph-graph-root');
@@ -150,7 +147,7 @@ function renderGraph(
       .append('path')
       .attr('d', lineGen(edge.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', edge.style?.['stroke'] ?? '#999')
+      .attr('stroke', edge.style?.['stroke'] ?? '#7a8599')
       .attr('stroke-width', edge.style?.['stroke-width'] ?? '1.5')
       .attr('marker-end', `url(#${ARROW_MARKER_ID})`)
       .attr('stroke-dasharray', edge.type === 'dashed' ? '5,5' : null);
@@ -164,7 +161,7 @@ function renderGraph(
           .attr('y', mid.y - 8)
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
-          .attr('fill', '#555')
+          .attr('fill', '#7a8599')
           .text(edge.label);
       }
     }
@@ -189,7 +186,10 @@ function renderGraph(
         .attr('cy', node.y)
         .attr('r', Math.min(node.width, node.height) / 2)
         .attr('fill', node.style?.['fill'] ?? color)
-        .attr('stroke', node.style?.['stroke'] ?? d3.color(color)?.darker(0.5)?.toString() ?? '#333')
+        .attr(
+          'stroke',
+          node.style?.['stroke'] ?? d3.color(color)?.darker(0.5)?.toString() ?? '#333',
+        )
         .attr('stroke-width', node.style?.['stroke-width'] ?? '1.5')
         .attr('opacity', 0.85);
     } else {
@@ -199,10 +199,13 @@ function renderGraph(
         .attr('y', nodeY)
         .attr('width', node.width)
         .attr('height', node.height)
-        .attr('rx', 6)
-        .attr('ry', 6)
+        .attr('rx', 3)
+        .attr('ry', 3)
         .attr('fill', node.style?.['fill'] ?? color)
-        .attr('stroke', node.style?.['stroke'] ?? d3.color(color)?.darker(0.5)?.toString() ?? '#333')
+        .attr(
+          'stroke',
+          node.style?.['stroke'] ?? d3.color(color)?.darker(0.5)?.toString() ?? '#333',
+        )
         .attr('stroke-width', node.style?.['stroke-width'] ?? '1.5')
         .attr('opacity', 0.85);
     }
@@ -215,7 +218,7 @@ function renderGraph(
       .attr('dy', '0.35em')
       .attr('text-anchor', 'middle')
       .attr('font-size', '13px')
-      .attr('font-family', 'system-ui, -apple-system, sans-serif')
+      .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('fill', '#fff')
       .attr('pointer-events', 'none')
       .text(node.label);

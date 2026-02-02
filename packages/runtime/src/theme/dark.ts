@@ -5,7 +5,7 @@ import type { GlyphTheme } from '@glyphjs/types';
  *
  * Provides all `--glyph-*` CSS variables with values suitable for
  * dark backgrounds and light text. Palette inspired by the Oblivion
- * (2013) interface design — deep cool blacks, desaturated cyan accents,
+ * (2013) interface design — deep cool blacks, warm amber accents,
  * geometric precision.
  */
 export const darkTheme: GlyphTheme = {
@@ -16,20 +16,31 @@ export const darkTheme: GlyphTheme = {
     '--glyph-text': '#d4dae3',
     '--glyph-text-muted': '#7a8599',
     '--glyph-heading': '#e8ecf1',
-    '--glyph-link': '#5bb8db',
-    '--glyph-link-hover': '#8fd4ef',
+    '--glyph-link': '#d4a843',
+    '--glyph-link-hover': '#e4be6a',
     '--glyph-border': '#1e2633',
     '--glyph-border-strong': '#2d3847',
     '--glyph-surface': '#111820',
     '--glyph-surface-raised': '#1a2230',
+
+    // Accent
+    '--glyph-accent': '#d4a843',
+    '--glyph-accent-hover': '#e4be6a',
+    '--glyph-accent-subtle': '#1f1a0e',
+    '--glyph-accent-muted': '#5c4a24',
 
     // Code
     '--glyph-code-bg': '#111820',
     '--glyph-code-text': '#d4dae3',
 
     // Blockquote
-    '--glyph-blockquote-border': '#3a9bc8',
-    '--glyph-blockquote-bg': '#111820',
+    '--glyph-blockquote-border': '#d4a843',
+    '--glyph-blockquote-bg': '#1f1a0e',
+
+    // Grid / Tooltip
+    '--glyph-grid': '#1e2633',
+    '--glyph-tooltip-bg': 'rgba(0, 0, 0, 0.9)',
+    '--glyph-tooltip-text': '#d4dae3',
 
     // Callouts
     '--glyph-callout-info-bg': '#0e1a26',

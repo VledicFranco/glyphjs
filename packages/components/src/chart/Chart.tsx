@@ -59,17 +59,14 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
 
   // ─── Tooltip helpers ───────────────────────────────────────
 
-  const showTooltip = useCallback(
-    (event: MouseEvent, text: string) => {
-      const tip = tooltipRef.current;
-      if (!tip) return;
-      tip.textContent = text;
-      tip.style.display = 'block';
-      tip.style.left = `${String(event.offsetX + 12)}px`;
-      tip.style.top = `${String(event.offsetY - 12)}px`;
-    },
-    [],
-  );
+  const showTooltip = useCallback((event: MouseEvent, text: string) => {
+    const tip = tooltipRef.current;
+    if (!tip) return;
+    tip.textContent = text;
+    tip.style.display = 'block';
+    tip.style.left = `${String(event.offsetX + 12)}px`;
+    tip.style.top = `${String(event.offsetY - 12)}px`;
+  }, []);
 
   const hideTooltip = useCallback(() => {
     const tip = tooltipRef.current;
@@ -85,8 +82,7 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
 
     // Determine if x-axis is numeric or categorical
     const firstRecord = series[0]?.data[0];
-    const xIsNumeric =
-      firstRecord != null && typeof firstRecord[xKey] === 'number';
+    const xIsNumeric = firstRecord != null && typeof firstRecord[xKey] === 'number';
 
     // X scale
     let xScale: d3.ScaleLinear<number, number> | d3.ScaleBand<string>;
@@ -94,19 +90,13 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
 
     if (type === 'bar' || !xIsNumeric) {
       // Categorical / band scale
-      const allLabels: string[] = series.flatMap(
-        (s: ChartData['series'][number]) =>
-          s.data.map((d: DataRecord) => String(d[xKey] ?? '')),
+      const allLabels: string[] = series.flatMap((s: ChartData['series'][number]) =>
+        s.data.map((d: DataRecord) => String(d[xKey] ?? '')),
       );
       const uniqueLabels = [...new Set<string>(allLabels)];
-      const band = d3
-        .scaleBand<string>()
-        .domain(uniqueLabels)
-        .range([0, innerWidth])
-        .padding(0.2);
+      const band = d3.scaleBand<string>().domain(uniqueLabels).range([0, innerWidth]).padding(0.2);
       xScale = band;
-      xScalePoint = (d: DataRecord) =>
-        (band(String(d[xKey] ?? '')) ?? 0) + band.bandwidth() / 2;
+      xScalePoint = (d: DataRecord) => (band(String(d[xKey] ?? '')) ?? 0) + band.bandwidth() / 2;
     } else {
       // Linear scale
       const allX = getAllNumericValues(series, xKey);
@@ -134,11 +124,7 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
       yMax = d3.max(allY) ?? 0;
     }
 
-    const yScale = d3
-      .scaleLinear()
-      .domain([yMin, yMax])
-      .nice()
-      .range([innerHeight, 0]);
+    const yScale = d3.scaleLinear().domain([yMin, yMax]).nice().range([innerHeight, 0]);
 
     return { xScale, xScalePoint, yScale, innerWidth, innerHeight };
   }, [width, height, type, series, xKey, yKey]);
@@ -171,33 +157,66 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
       switch (type) {
         case 'line':
           renderLineSeries(
-            g, s.data, xScalePoint, yScale,
-            yKey, xKey, color, i, s.name,
-            showTooltip, hideTooltip,
+            g,
+            s.data,
+            xScalePoint,
+            yScale,
+            yKey,
+            xKey,
+            color,
+            i,
+            s.name,
+            showTooltip,
+            hideTooltip,
           );
           break;
 
         case 'area':
           renderAreaSeries(
-            g, s.data, xScalePoint, yScale,
-            yKey, xKey, innerHeight, color, i, s.name,
-            showTooltip, hideTooltip,
+            g,
+            s.data,
+            xScalePoint,
+            yScale,
+            yKey,
+            xKey,
+            innerHeight,
+            color,
+            i,
+            s.name,
+            showTooltip,
+            hideTooltip,
           );
           break;
 
         case 'bar':
           renderBarSeries(
-            g, s.data, xScale, yScale,
-            yKey, xKey, color, i, series.length, innerHeight, s.name,
-            showTooltip, hideTooltip,
+            g,
+            s.data,
+            xScale,
+            yScale,
+            yKey,
+            xKey,
+            color,
+            i,
+            series.length,
+            innerHeight,
+            s.name,
+            showTooltip,
+            hideTooltip,
           );
           break;
 
         case 'ohlc':
           renderOHLCSeries(
-            g, s.data, xScale, xScalePoint, yScale,
-            innerWidth, s.name,
-            showTooltip, hideTooltip,
+            g,
+            s.data,
+            xScale,
+            xScalePoint,
+            yScale,
+            innerWidth,
+            s.name,
+            showTooltip,
+            hideTooltip,
           );
           break;
       }
@@ -207,18 +226,7 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
     if (legend) {
       renderLegend(sel, series, MARGIN.left, MARGIN.top);
     }
-  }, [
-    scales,
-    type,
-    series,
-    xKey,
-    yKey,
-    xAxis,
-    yAxis,
-    legend,
-    showTooltip,
-    hideTooltip,
-  ]);
+  }, [scales, type, series, xKey, yKey, xAxis, yAxis, legend, showTooltip, hideTooltip]);
 
   // ─── Accessible hidden data table ──────────────────────────
 
@@ -236,9 +244,7 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
         border: 0,
       }}
     >
-      <caption>
-        {type} chart data
-      </caption>
+      <caption>{type} chart data</caption>
       {series.map((s: ChartData['series'][number], si: number) => (
         <tbody key={si}>
           <tr>
@@ -296,7 +302,7 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
           backgroundColor: 'var(--glyph-tooltip-bg, rgba(0,0,0,0.8))',
           color: 'var(--glyph-tooltip-text, #fff)',
           padding: '4px 8px',
-          borderRadius: '4px',
+          borderRadius: '3px',
           fontSize: '12px',
           whiteSpace: 'nowrap',
           zIndex: 10,

@@ -43,7 +43,7 @@ export function Callout({ data }: GlyphComponentProps<CalloutData>): ReactElemen
   const containerStyle: React.CSSProperties = {
     backgroundColor: `var(--glyph-callout-${type}-bg)`,
     borderLeft: `4px solid var(--glyph-callout-${type}-border)`,
-    borderRadius: 'var(--glyph-radius-md, 0.375rem)',
+    borderRadius: 'var(--glyph-radius-md, 0.1875rem)',
     padding: 'var(--glyph-spacing-md, 1rem)',
     margin: 'var(--glyph-spacing-sm, 0.5rem) 0',
     fontFamily: 'var(--glyph-font-body, system-ui, sans-serif)',
