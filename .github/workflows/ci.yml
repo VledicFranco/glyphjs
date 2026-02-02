@@ -102,9 +102,12 @@ jobs:
       - name: Build Storybook
         run: pnpm --filter @glyphjs/components build-storybook
 
-      - name: Run axe-core scan
-        run: npx @axe-core/cli http-server packages/components/storybook-static -p 6007 --exit || true
-        # Note: axe-core CLI scan against static Storybook build
+      - name: Serve Storybook and run axe scan
+        continue-on-error: true
+        run: |
+          npx http-server packages/components/storybook-static -p 6007 --silent &
+          sleep 3
+          npx @axe-core/cli http://localhost:6007 --exit
 
   bundle-size:
     runs-on: ubuntu-latest
