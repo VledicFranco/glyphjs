@@ -84,6 +84,87 @@ content: Open an issue on GitHub or visit the discussion board.
 
 ---
 
+## Installation Guides
+
+Tabs organize variant content like platform-specific instructions or language alternatives.
+
+export const installGuideExample = `## Getting Started
+
+\`\`\`ui:tabs
+tabs:
+  - label: npm
+    content: |
+      Install the core packages using **npm**:
+
+      npm install @glyphjs/runtime @glyphjs/compiler @glyphjs/components
+
+      Then import the compiler and runtime in your project to start rendering Glyph documents.
+  - label: pnpm
+    content: |
+      Install the core packages using **pnpm**:
+
+      pnpm add @glyphjs/runtime @glyphjs/compiler @glyphjs/components
+
+      Then import the compiler and runtime in your project to start rendering Glyph documents.
+  - label: yarn
+    content: |
+      Install the core packages using **yarn**:
+
+      yarn add @glyphjs/runtime @glyphjs/compiler @glyphjs/components
+
+      Then import the compiler and runtime in your project to start rendering Glyph documents.
+\`\`\`
+
+\`\`\`ui:callout
+type: tip
+title: Recommended
+content: We recommend pnpm for its speed and efficient disk usage.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={installGuideExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+## Getting Started
+
+```ui:tabs
+tabs:
+  - label: npm
+    content: |
+      Install the core packages using **npm**:
+
+      npm install @glyphjs/runtime @glyphjs/compiler @glyphjs/components
+
+      Then import the compiler and runtime in your project to start rendering Glyph documents.
+  - label: pnpm
+    content: |
+      Install the core packages using **pnpm**:
+
+      pnpm add @glyphjs/runtime @glyphjs/compiler @glyphjs/components
+
+      Then import the compiler and runtime in your project to start rendering Glyph documents.
+  - label: yarn
+    content: |
+      Install the core packages using **yarn**:
+
+      yarn add @glyphjs/runtime @glyphjs/compiler @glyphjs/components
+
+      Then import the compiler and runtime in your project to start rendering Glyph documents.
+```
+
+```ui:callout
+type: tip
+title: Recommended
+content: We recommend pnpm for its speed and efficient disk usage.
+```
+````
+
+</details>
+
+---
+
 ## Data Visualization
 
 Charts and tables bring data to life directly inside your documents.

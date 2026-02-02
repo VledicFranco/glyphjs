@@ -64,18 +64,16 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
 
   /* ─── Theming ────────────────────────────────────────────── */
   const borderColor = theme.resolveVar('--glyph-tabs-border') || (theme.isDark ? '#444' : '#ddd');
-  const activeBg = theme.resolveVar('--glyph-tabs-active-bg') || (theme.isDark ? '#1e1e1e' : '#fff');
-  const inactiveBg = theme.resolveVar('--glyph-tabs-inactive-bg') || (theme.isDark ? '#2a2a2a' : '#f5f5f5');
-  const activeColor = theme.resolveVar('--glyph-tabs-active-color') || (theme.isDark ? '#e0e0e0' : '#111');
-  const inactiveColor = theme.resolveVar('--glyph-tabs-inactive-color') || (theme.isDark ? '#999' : '#555');
+  const activeBg =
+    theme.resolveVar('--glyph-tabs-active-bg') || (theme.isDark ? '#1e1e1e' : '#fff');
+  const inactiveBg =
+    theme.resolveVar('--glyph-tabs-inactive-bg') || (theme.isDark ? '#2a2a2a' : '#f5f5f5');
+  const activeColor =
+    theme.resolveVar('--glyph-tabs-active-color') || (theme.isDark ? '#e0e0e0' : '#111');
+  const inactiveColor =
+    theme.resolveVar('--glyph-tabs-inactive-color') || (theme.isDark ? '#999' : '#555');
   const panelBg = theme.resolveVar('--glyph-tabs-panel-bg') || activeBg;
   const fontFamily = theme.resolveVar('--glyph-font-family') || 'system-ui, sans-serif';
-
-  /* ─── Render children blocks for the active tab if available ── */
-  const childrenForActiveTab =
-    block.children && block.children.length > 0
-      ? block.children.filter((_child, idx) => idx === activeIndex)
-      : null;
 
   return (
     <div
@@ -159,12 +157,7 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
               lineHeight: 1.6,
             }}
           >
-            {childrenForActiveTab && childrenForActiveTab.length > 0
-              ? /* Children blocks are rendered by the runtime; expose metadata */
-                childrenForActiveTab.map((child) => (
-                  <div key={child.id} data-block-id={child.id} />
-                ))
-              : tab.content}
+            {tab.content}
           </div>
         );
       })}
