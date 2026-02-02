@@ -53,18 +53,20 @@
   --sl-color-bg-nav: #161b26;
   --sl-color-bg-sidebar: #161b26;
 
-  --sl-color-hairline-shade: #3a4556;
-  --sl-color-hairline-light: #2d3748;
+  --sl-color-hairline-shade: #2d3748;
+  --sl-color-hairline-light: #3a4556;
 
-  --sl-color-gray-1: #1e2736;
-  --sl-color-gray-2: #3a4556;
-  --sl-color-gray-3: #8694a8;
-  --sl-color-gray-4: #a0aec0;
-  --sl-color-gray-5: #cbd5e0;
-  --sl-color-gray-6: #e2e8f0;
+  /* Gray scale: 1 = lightest → 6 = darkest (matches Starlight convention) */
+  --sl-color-gray-1: #e2e8f0;
+  --sl-color-gray-2: #cbd5e0;
+  --sl-color-gray-3: #a0aec0;
+  --sl-color-gray-4: #7a8599;
+  --sl-color-gray-5: #3a4556;
+  --sl-color-gray-6: #1e2736;
 
-  --sl-color-black: #f8f9fb;
-  --sl-color-white: #0f1219;
+  /* White stays light, black stays dark (Starlight does NOT invert these) */
+  --sl-color-black: #0f1219;
+  --sl-color-white: #f8f9fb;
 }
 
 /* ----------------------------------------------------------------
