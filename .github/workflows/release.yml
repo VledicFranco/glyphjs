@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.release.tag_name }}
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+      - run: pnpm typecheck
+      - run: pnpm test
+      - run: pnpm lint
+
+      # Verify package versions match the release tag
+      - name: Verify versions match tag
+        run: |
+          TAG="${{ github.event.release.tag_name }}"
+          EXPECTED_VERSION="${TAG#v}"
+          for pkg in packages/*/package.json; do
+            PKG_VERSION=$(node -p "require('./$pkg').version")
+            if [ "$PKG_VERSION" != "$EXPECTED_VERSION" ]; then
+              echo "Version mismatch in $pkg: expected $EXPECTED_VERSION, got $PKG_VERSION"
+              exit 1
+            fi
+          done
+          echo "All package versions match tag $TAG"
+
+      # Publish all public packages with provenance
+      - run: pnpm -r --filter './packages/*' publish --access public --provenance --no-git-checks
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}

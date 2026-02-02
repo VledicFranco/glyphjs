@@ -10,11 +10,19 @@
     "test:e2e": "playwright test",
     "size": "size-limit",
     "clean": "turbo run clean && rm -rf node_modules",
-    "prepare": "husky"
+    "prepare": "husky",
+    "release:patch": "node scripts/release.mjs patch",
+    "release:minor": "node scripts/release.mjs minor",
+    "release:major": "node scripts/release.mjs major"
   },
   "lint-staged": {
-    "*.{ts,tsx}": ["eslint --fix", "prettier --write"],
-    "*.{json,md,yml,yaml}": ["prettier --write"]
+    "*.{ts,tsx}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
   },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
