@@ -149,6 +149,7 @@ export function Tabs({ data, block, theme }: GlyphComponentProps<TabsData>) {
             id={panelId}
             role="tabpanel"
             aria-labelledby={tabId}
+            aria-live="polite"
             hidden={!isActive}
             tabIndex={0}
             style={{

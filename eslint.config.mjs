@@ -23,6 +23,28 @@ export default tseslint.config(
     },
   },
   {
+    files: ['packages/**/*.ts', 'packages/**/*.tsx'],
+    ignores: [
+      '**/*.test.ts',
+      '**/*.test.tsx',
+      '**/__tests__/**',
+      '**/__mocks__/**',
+      '**/tests/**',
+      '**/*.config.*',
+    ],
+    rules: {
+      'max-lines-per-function': [
+        'warn',
+        {
+          max: 200,
+          skipBlankLines: true,
+          skipComments: true,
+          IIFEs: true,
+        },
+      ],
+    },
+  },
+  {
     ignores: ['**/dist/**', '**/node_modules/**', '**/.turbo/**'],
   },
 );

@@ -6,6 +6,7 @@ import type {
   LayoutHints,
   Reference,
 } from '@glyphjs/types';
+import { componentSchemas } from '@glyphjs/schemas';
 import { useRuntime, useReferences } from './context.js';
 import { ErrorBoundary } from './ErrorBoundary.js';
 import { FallbackRenderer } from './FallbackRenderer.js';
@@ -33,6 +34,21 @@ function BlockDispatch({
   const { incomingRefs, outgoingRefs } = useReferences(block.id);
 
   const hasRefs = incomingRefs.length > 0 || outgoingRefs.length > 0;
+
+  // Dev-mode schema validation for ui:* block types
+  if (block.type.startsWith('ui:')) {
+    const componentName = block.type.slice(3); // strip 'ui:' prefix
+    const schema = componentSchemas.get(componentName);
+    if (schema) {
+      const result = schema.safeParse(block.data);
+      if (!result.success) {
+        console.warn(
+          `[GlyphJS] Schema validation failed for block "${block.id}" (${block.type}):`,
+          result.error.issues,
+        );
+      }
+    }
+  }
 
   // Resolve the rendered content for this block
   let content: ReactNode;

@@ -255,7 +255,7 @@ export function Graph({
   }, [layoutResult, outgoingRefs, onNavigate]);
 
   // Build an accessible description
-  const ariaLabel = `Graph visualization: ${data.type} with ${data.nodes.length} nodes and ${data.edges.length} edges`;
+  const ariaLabel = `${data.type} graph with ${data.nodes.length} nodes and ${data.edges.length} edges`;
 
   return (
     <div className="glyph-graph-container">

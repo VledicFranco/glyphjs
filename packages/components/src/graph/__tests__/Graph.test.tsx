@@ -87,7 +87,7 @@ describe('Graph', () => {
     const svg = screen.getByRole('img');
     expect(svg).toHaveAttribute(
       'aria-label',
-      'Graph visualization: dag with 2 nodes and 1 edges',
+      'dag graph with 2 nodes and 1 edges',
     );
   });
 
