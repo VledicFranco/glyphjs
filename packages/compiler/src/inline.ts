@@ -64,6 +64,9 @@ type MdastPhrasingContent =
  *
  * Unknown node types are converted to text nodes with their string value
  * (if present) or skipped entirely.
+ *
+ * @param nodes - Raw MDAST phrasing content nodes (typed as unknown[] to avoid a hard @types/mdast dependency).
+ * @returns Normalized InlineNode array suitable for inclusion in IR blocks.
  */
 export function convertPhrasingContent(nodes: unknown[]): InlineNode[] {
   const result: InlineNode[] = [];

@@ -49,6 +49,10 @@ function isGlyphUIBlock(node: GlyphUIBlock | MdastContentNode): node is GlyphUIB
  * MDAST content node) into an IR Block.
  *
  * Returns null for nodes that should be skipped (e.g., yaml frontmatter).
+ *
+ * @param node - The AST node to translate (GlyphUIBlock or standard MDAST content node).
+ * @param ctx - Translation context carrying document ID, accumulated diagnostics, and references.
+ * @returns The translated IR Block, or null if the node should be skipped.
  */
 export function translateNode(
   node: GlyphUIBlock | MdastContentNode,

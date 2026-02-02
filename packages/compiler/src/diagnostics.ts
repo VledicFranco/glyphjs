@@ -4,6 +4,14 @@ import type { Diagnostic, DiagnosticSource, SourcePosition } from '@glyphjs/type
 
 /**
  * Create a diagnostic with the given source, severity, message, and optional position.
+ *
+ * @param source - The subsystem that produced the diagnostic (e.g., 'compiler', 'parser', 'schema').
+ * @param severity - Severity level: 'error', 'warning', or 'info'.
+ * @param code - Machine-readable diagnostic code (e.g., 'YAML_PARSE_ERROR').
+ * @param message - Human-readable description of the issue.
+ * @param position - Optional source position where the issue was detected.
+ * @param details - Optional structured details (e.g., Zod issue objects).
+ * @returns A fully constructed Diagnostic object.
  */
 export function createDiagnostic(
   source: DiagnosticSource,
@@ -25,6 +33,12 @@ export function createDiagnostic(
 
 /**
  * Create a schema validation error diagnostic.
+ *
+ * @param componentType - The ui: component type that failed validation (without the `ui:` prefix).
+ * @param message - Concatenated validation error messages from Zod.
+ * @param position - Optional source position of the component block.
+ * @param details - Optional raw Zod issue objects.
+ * @returns A Diagnostic with severity 'error' and code 'SCHEMA_VALIDATION_FAILED'.
  */
 export function createSchemaError(
   componentType: string,
@@ -44,6 +58,10 @@ export function createSchemaError(
 
 /**
  * Create an info diagnostic for unknown component types.
+ *
+ * @param componentType - The unrecognized component type (without the `ui:` prefix).
+ * @param position - Optional source position of the component block.
+ * @returns A Diagnostic with severity 'info' and code 'UNKNOWN_COMPONENT_TYPE'.
  */
 export function createUnknownComponentInfo(
   componentType: string,
@@ -60,6 +78,11 @@ export function createUnknownComponentInfo(
 
 /**
  * Create a diagnostic for YAML parse errors on ui: blocks.
+ *
+ * @param componentType - The ui: component type whose YAML failed to parse (without the `ui:` prefix).
+ * @param yamlError - The YAML parser error message.
+ * @param position - Optional source position of the fenced code block.
+ * @returns A Diagnostic with severity 'error' and code 'YAML_PARSE_ERROR'.
  */
 export function createYamlError(
   componentType: string,

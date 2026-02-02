@@ -1,0 +1,76 @@
+---
+title: Troubleshooting
+description: Common issues and how to resolve them
+---
+
+## Common Issues
+
+### Component not rendering
+
+**Symptom:** A `ui:*` block shows as a gray fallback box instead of the expected component.
+
+**Cause:** The component definition was not registered with the runtime.
+
+**Fix:** Pass all component definitions when creating the runtime:
+```typescript
+import { createGlyphRuntime } from '@glyphjs/runtime';
+import { calloutDefinition, tabsDefinition, ... } from '@glyphjs/components';
+
+const runtime = createGlyphRuntime({
+  components: [calloutDefinition, tabsDefinition, ...],
+});
+```
+
+### YAML parse error in ui block
+
+**Symptom:** Compilation diagnostic: `Failed to parse YAML payload`.
+
+**Cause:** The YAML inside a `ui:*` fenced block has a syntax error (wrong indentation, missing colon, etc.).
+
+**Fix:** Check the YAML syntax. All `ui:*` blocks use YAML for their data payload. Use 2-space indentation consistently.
+
+### Schema validation error
+
+**Symptom:** Compilation diagnostic: `Schema validation failed for block type ui:chart`.
+
+**Cause:** The YAML data doesn't match the component's expected schema.
+
+**Fix:** Check the component's documentation page for the required fields. Common issues:
+- Missing required fields (e.g., `type` for chart, `entities` for relation)
+- Wrong data types (e.g., string where number is expected)
+- Invalid enum values (e.g., `type: pie` when only `line | bar | area | ohlc` are supported)
+
+### Timeline dates showing as "Jan 1, 1970"
+
+**Symptom:** Timeline events are all clustered at the left side, dates show epoch.
+
+**Cause:** Date strings that can't be parsed. The timeline supports:
+- ISO dates: `2026-01-15`
+- Year-month: `2026-01`
+- Quarter format: `Q1 2026` or `2026-Q1`
+
+**Fix:** Use one of the supported date formats.
+
+### Browser crypto error
+
+**Symptom:** `crypto.createHash is not a function` in the browser.
+
+**Cause:** The `@glyphjs/ir` package uses Node.js crypto for content-addressed IDs. In browsers, you need a shim.
+
+**Fix:** Add a Vite alias for `crypto` and `node:crypto` pointing to the `shared/crypto-shim.ts` file.
+
+### Build error: Cannot find name 'process'
+
+**Symptom:** TypeScript error when building the runtime package.
+
+**Cause:** The runtime uses `process.env.NODE_ENV` checks but doesn't depend on `@types/node`.
+
+**Fix:** This has been resolved. The runtime now uses a `typeof` guard that works in all environments.
+
+## Debugging Tips
+
+- Check `result.diagnostics` after calling `compile()` — it contains all warnings and errors
+- Set `result.hasErrors` to see if any error-level diagnostics were produced
+- In development mode, the runtime logs schema validation warnings to the console
+- Use the Playground (`/playground`) to test markdown interactively
+- The Diagnostics Overlay can be toggled with Escape key in development mode

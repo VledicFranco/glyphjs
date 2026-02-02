@@ -19,7 +19,8 @@ const UI_TYPE_PATTERN = /^ui:.+$/;
  * 2. `schema` must be present with `parse` and `safeParse` methods
  * 3. `render` must be present and be a function or class
  *
- * Returns an object with `valid` (boolean) and `errors` (string[]).
+ * @param definition - The component definition to validate.
+ * @returns A ValidationResult with `valid` (boolean) and `errors` (string[]).
  */
 export function validateComponentDefinition(
   definition: GlyphComponentDefinition,

@@ -36,7 +36,11 @@ export default defineConfig({
           { label: 'Plugin API', slug: 'reference/plugin-api' },
           { label: 'Theming', slug: 'reference/theming' },
         ]},
+        { label: 'Internals', items: [
+          { label: 'Architecture', slug: 'architecture' },
+        ]},
         { label: 'Gallery', slug: 'gallery' },
+        { label: 'Troubleshooting', slug: 'troubleshooting' },
         { label: 'Playground', slug: 'playground' },
       ],
     }),

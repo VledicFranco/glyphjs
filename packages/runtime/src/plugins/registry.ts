@@ -31,6 +31,9 @@ export class PluginRegistry {
    * Validates the definition first; throws if invalid.
    * Merges any `themeDefaults` from the definition into
    * the accumulated theme defaults map.
+   *
+   * @param definition - The component definition to register.
+   * @throws Error if the definition fails validation.
    */
   registerComponent(definition: GlyphComponentDefinition): void {
     const result = validateComponentDefinition(definition);
@@ -107,6 +110,9 @@ export class PluginRegistry {
   /**
    * Merge accumulated plugin theme defaults into a GlyphTheme.
    * Plugin defaults have lower priority than existing theme variables.
+   *
+   * @param theme - The base theme to merge defaults into.
+   * @returns A new GlyphTheme with plugin defaults applied under existing variables.
    */
   mergeThemeDefaults(theme: GlyphTheme): GlyphTheme {
     return {
@@ -120,7 +126,12 @@ export class PluginRegistry {
 
   // ─── Change Notification ─────────────────────────────────────
 
-  /** Subscribe to registry changes. Returns an unsubscribe function. */
+  /**
+   * Subscribe to registry changes.
+   *
+   * @param listener - Callback invoked whenever a component or override is registered.
+   * @returns An unsubscribe function that removes the listener.
+   */
   subscribe(listener: RegistryChangeListener): () => void {
     this.listeners.add(listener);
     return () => {

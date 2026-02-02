@@ -12,6 +12,9 @@ import { createDiagnostic } from './diagnostics.js';
  *
  * This function mutates blocks in-place, populating their `children` field
  * and updating data entries with parsed child blocks.
+ *
+ * @param blocks - The top-level block array to scan for container blocks.
+ * @param ctx - Translation context used for recursive compilation.
  */
 export function compileContainerBlocks(
   blocks: Block[],
@@ -114,6 +117,9 @@ function parseContentToBlocks(
 /**
  * Check if content contains nested ui: blocks by looking for the pattern.
  * This is a quick heuristic check. The actual detection happens during parsing.
+ *
+ * @param content - Raw Markdown string to test for nested ui: fenced blocks.
+ * @returns True if the content matches the `` ```ui: `` pattern.
  */
 export function hasNestedUiBlocks(content: string): boolean {
   return /```ui:/m.test(content);
@@ -124,6 +130,9 @@ export function hasNestedUiBlocks(content: string): boolean {
 /**
  * Post-process container blocks to ensure data consistency.
  * Called after container compilation is complete.
+ *
+ * @param blocks - The compiled block array to validate.
+ * @param diagnostics - Accumulator for warning diagnostics (e.g., missing labels/titles).
  */
 export function validateContainerBlocks(
   blocks: Block[],

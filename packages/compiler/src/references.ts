@@ -21,7 +21,9 @@ const GLYPH_LINK_PREFIX = '#glyph:';
  * Scan a block's inline content for `[text](#glyph:block-id)` links
  * and create Reference objects for each match.
  *
- * Returns the newly created references.
+ * @param block - The block whose inline data fields are scanned for glyph links.
+ * @param documentId - Document ID used to generate deterministic reference IDs.
+ * @returns Newly created (unresolved) Reference objects.
  */
 export function extractInlineReferences(
   block: Block,
@@ -57,7 +59,12 @@ export function extractInlineReferences(
 }
 
 /**
- * Scan all blocks for inline `#glyph:` link references and collect them.
+ * Scan all blocks (including nested children) for inline `#glyph:` link references
+ * and collect them.
+ *
+ * @param blocks - Top-level block array to scan recursively.
+ * @param documentId - Document ID used to generate deterministic reference IDs.
+ * @returns Aggregated array of unresolved Reference objects from all blocks.
  */
 export function extractAllInlineReferences(
   blocks: Block[],
@@ -86,6 +93,10 @@ export function extractAllInlineReferences(
  * Marks unresolved references and adds warning diagnostics.
  *
  * Collects all block IDs including children (for container blocks).
+ *
+ * @param references - The reference array to resolve in-place (mutates `unresolved` flag).
+ * @param blocks - All blocks in the document (used to build the known-ID set).
+ * @param diagnostics - Accumulator for 'UNRESOLVED_REFERENCE' warnings.
  */
 export function resolveReferences(
   references: Reference[],
@@ -132,6 +143,10 @@ function collectAllBlockIds(blocks: Block[]): Set<string> {
 /**
  * Validate that all user-assigned glyph-ids are unique within the document.
  * Emits error diagnostics for duplicates.
+ *
+ * @param blockIdMap - Map of user-assigned glyph-id to resolved block ID (from translation).
+ * @param blocks - All blocks in the document (scanned to count occurrences).
+ * @param diagnostics - Accumulator for 'DUPLICATE_GLYPH_ID' error diagnostics.
  */
 export function validateGlyphIdUniqueness(
   blockIdMap: Map<string, string>,

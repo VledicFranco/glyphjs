@@ -1,0 +1,97 @@
+---
+title: Architecture
+description: How the Glyph JS compiler pipeline works
+---
+
+## Overview
+
+Glyph JS transforms Markdown documents with embedded UI components into interactive React applications. The pipeline consists of three main phases: **Parse**, **Compile**, and **Render**.
+
+## Pipeline
+
+```
+Markdown → Parser → AST → Compiler → IR → Runtime → React Components
+```
+
+### 1. Parse Phase (`@glyphjs/parser`)
+
+The parser extends [remark](https://github.com/remarkjs/remark) with a custom plugin that recognizes `ui:*` fenced code blocks. Standard Markdown is parsed normally; fenced blocks with the `ui:` prefix are extracted as `GlyphUIBlock` AST nodes with their YAML payload preserved.
+
+### 2. Compile Phase (`@glyphjs/compiler`)
+
+The compiler walks the AST and produces the **Glyph IR** (Intermediate Representation). This is a 14-step pipeline:
+
+1. Parse markdown via `parseGlyphMarkdown()`
+2. Extract frontmatter metadata and layout hints
+3. Generate document ID (content-addressed)
+4. Create translation context
+5. Walk AST and translate each node to IR blocks
+6. Compile container blocks (`ui:tabs`, `ui:steps`) — recursively parse content
+7. Validate container block data against Zod schemas
+8. Infer metadata from content (title from h1, description from first paragraph)
+9. Resolve block ID collisions
+10. Validate `glyph-id` uniqueness
+11. Extract inline references from `[text](#glyph:block-id)` links
+12. Resolve all references
+13. Build the final IR document
+14. Return `CompilationResult` with IR, diagnostics, and `hasErrors` flag
+
+The compiler uses a **collect-all-errors** strategy: IR is always produced, even when errors exist.
+
+### 3. Render Phase (`@glyphjs/runtime`)
+
+The runtime receives the IR and renders it as React components:
+
+- **`createGlyphRuntime(config)`** creates a runtime instance with registered components
+- **`<GlyphDocument ir={ir} />`** renders the full document
+- **`BlockRenderer`** dispatches each block to the correct renderer:
+  1. Override renderer (user-provided)
+  2. Registered `ui:*` component definition
+  3. Built-in Markdown renderer (heading, paragraph, list, etc.)
+  4. Fallback renderer (unknown types)
+
+Each block is wrapped in an `ErrorBoundary` for fault isolation.
+
+## IR Format
+
+The Glyph IR is a JSON document with this structure:
+
+```typescript
+interface GlyphIR {
+  version: string;       // Always "1.0.0"
+  id: string;            // Content-addressed document ID
+  metadata: {            // Title, description, authors, tags
+    title?: string;
+    description?: string;
+    authors?: string[];
+    tags?: string[];
+  };
+  blocks: Block[];       // Ordered array of content blocks
+  references: Reference[]; // Cross-block relationships
+  layout: LayoutHints;   // Document layout mode and spacing
+}
+```
+
+Each `Block` has an `id`, `type`, `data` payload, and source `position`.
+
+## Schemas
+
+All 8 UI components have Zod schemas in `@glyphjs/schemas`. These are used:
+- At compile time to validate YAML payloads
+- At runtime (dev mode) to validate block data before rendering
+- For JSON Schema generation (used by MCP tools and editor integrations)
+
+## Package Dependency Graph
+
+```
+@glyphjs/types (shared type definitions)
+  ↓
+@glyphjs/schemas (Zod schemas, depends on types)
+@glyphjs/parser (Markdown → AST, depends on types)
+@glyphjs/ir (IR utilities, depends on types)
+  ↓
+@glyphjs/compiler (AST → IR, depends on parser + ir + schemas)
+  ↓
+@glyphjs/runtime (IR → React, depends on types + schemas)
+@glyphjs/components (8 UI components, depends on types)
+```

@@ -17,6 +17,14 @@ import type {
  *   (plus bidirectional refs where `sourceBlockId === block.id`)
  * - Wires the `onNavigate` callback
  * - Passes theme context and layout hints
+ *
+ * @param block - The IR block to resolve props for.
+ * @param definition - The registered component definition (provides the Zod schema).
+ * @param references - All references in the document (filtered to this block).
+ * @param onNavigate - Callback invoked when the component triggers navigation via a reference.
+ * @param themeContext - Current theme context passed through to the component.
+ * @param layoutHints - Layout hints (e.g., viewport size, container width) for responsive rendering.
+ * @returns Fully assembled GlyphComponentProps ready to pass to the component's render function.
  */
 export function resolveComponentProps<T = unknown>(
   block: Block,
