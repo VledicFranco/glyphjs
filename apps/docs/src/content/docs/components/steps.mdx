@@ -7,28 +7,6 @@ import GlyphPreview from '../../../components/GlyphPreview.tsx';
 
 The **Steps** component (`ui:steps`) renders a numbered, vertical step list with optional progress indication. Each step has a title, an optional status, and rich Markdown content. Steps are a **container component** -- the compiler re-parses each step's `content` field recursively.
 
-## Properties
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `steps` | `Step[]` | Yes | -- | An array of step objects. Must contain at least one step. |
-
-### Step object
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `title` | `string` | Yes | -- | The heading text for this step. |
-| `status` | `"pending" \| "active" \| "completed"` | No | -- | Visual indicator of the step's progress state. |
-| `content` | `string` | Yes | -- | Markdown content rendered inside the step body. Parsed recursively by the compiler. |
-
-## Status variants
-
-- **pending** -- The step is not yet started. Rendered with a muted style and an empty circle indicator.
-- **active** -- The step is currently in progress. Rendered with a highlighted style and a pulsing indicator.
-- **completed** -- The step is finished. Rendered with a success style and a checkmark indicator.
-
-When `status` is omitted, the step renders in a neutral style without a progress indicator.
-
 ## Example
 
 export const stepsExample = `\`\`\`ui:steps
@@ -75,6 +53,28 @@ steps:
 ````
 
 </details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `steps` | `Step[]` | Yes | -- | An array of step objects. Must contain at least one step. |
+
+### Step object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | Yes | -- | The heading text for this step. |
+| `status` | `"pending" \| "active" \| "completed"` | No | -- | Visual indicator of the step's progress state. |
+| `content` | `string` | Yes | -- | Markdown content rendered inside the step body. Parsed recursively by the compiler. |
+
+## Status variants
+
+- **pending** -- The step is not yet started. Rendered with a muted style and an empty circle indicator.
+- **active** -- The step is currently in progress. Rendered with a highlighted style and a pulsing indicator.
+- **completed** -- The step is finished. Rendered with a success style and a checkmark indicator.
+
+When `status` is omitted, the step renders in a neutral style without a progress indicator.
 
 ## Content nesting
 

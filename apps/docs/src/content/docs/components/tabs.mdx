@@ -7,19 +7,6 @@ import GlyphPreview from '../../../components/GlyphPreview.tsx';
 
 The **Tabs** component (`ui:tabs`) organizes content into multiple switchable panels, each identified by a label. Only one tab panel is visible at a time. Tabs are a **container component** -- each tab's `content` field contains Markdown that the compiler re-parses recursively into child blocks.
 
-## Properties
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `tabs` | `Tab[]` | Yes | -- | An array of tab objects. Must contain at least one tab. |
-
-### Tab object
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `label` | `string` | Yes | -- | The text shown on the tab button. |
-| `content` | `string` | Yes | -- | Markdown content rendered inside the tab panel. Parsed recursively by the compiler. |
-
 ## Example
 
 export const tabsExample = `\`\`\`ui:tabs
@@ -66,6 +53,19 @@ tabs:
 ````
 
 </details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `tabs` | `Tab[]` | Yes | -- | An array of tab objects. Must contain at least one tab. |
+
+### Tab object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `label` | `string` | Yes | -- | The text shown on the tab button. |
+| `content` | `string` | Yes | -- | Markdown content rendered inside the tab panel. Parsed recursively by the compiler. |
 
 ## Content nesting
 

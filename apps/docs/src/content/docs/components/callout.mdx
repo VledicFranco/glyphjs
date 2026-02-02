@@ -7,22 +7,7 @@ import GlyphPreview from '../../../components/GlyphPreview.tsx';
 
 The **Callout** component (`ui:callout`) renders a visually distinct block that highlights important information. Use callouts to draw the reader's attention to tips, warnings, errors, or general notes within your document.
 
-## Properties
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `type` | `"info" \| "warning" \| "error" \| "tip"` | Yes | -- | The visual variant that controls color and icon. |
-| `title` | `string` | No | -- | An optional heading displayed at the top of the callout. |
-| `content` | `string` | Yes | -- | The body text of the callout. Supports inline Markdown. |
-
-## Variants
-
-- **info** -- A neutral blue callout for general notes and supplementary information.
-- **warning** -- An amber/yellow callout for cautionary messages the reader should be aware of.
-- **error** -- A red callout for critical issues, breaking changes, or error conditions.
-- **tip** -- A green callout for helpful suggestions, best practices, and pro tips.
-
-## Example
+## Examples
 
 export const warningExample = `\`\`\`ui:callout
 type: warning
@@ -111,6 +96,21 @@ content: Column key revenue in aggregation does not match any column definition.
 ````
 
 </details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `type` | `"info" \| "warning" \| "error" \| "tip"` | Yes | -- | The visual variant that controls color and icon. |
+| `title` | `string` | No | -- | An optional heading displayed at the top of the callout. |
+| `content` | `string` | Yes | -- | The body text of the callout. Supports inline Markdown. |
+
+## Variants
+
+- **info** -- A neutral blue callout for general notes and supplementary information.
+- **warning** -- An amber/yellow callout for cautionary messages the reader should be aware of.
+- **error** -- A red callout for critical issues, breaking changes, or error conditions.
+- **tip** -- A green callout for helpful suggestions, best practices, and pro tips.
 
 ## Accessibility
 

@@ -7,37 +7,6 @@ import GlyphPreview from '../../../components/GlyphPreview.tsx';
 
 The **Chart** component (`ui:chart`) renders data visualizations using D3. It supports line charts, bar charts, area charts, and OHLC (open-high-low-close) financial charts. Data is provided as named series of key-value records.
 
-## Properties
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `type` | `"line" \| "bar" \| "area" \| "ohlc"` | Yes | -- | The chart visualization type. |
-| `series` | `Series[]` | Yes | -- | An array of data series to plot. |
-| `xAxis` | `Axis` | No | -- | Configuration for the horizontal axis. |
-| `yAxis` | `Axis` | No | -- | Configuration for the vertical axis. |
-| `legend` | `boolean` | No | -- | Whether to display a legend identifying each series. |
-
-### Series object
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `name` | `string` | Yes | -- | Display name for the series, shown in the legend and tooltips. |
-| `data` | `Record<string, number \| string>[]` | Yes | -- | An array of data point objects. Keys must match the axis `key` values. |
-
-### Axis object
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `key` | `string` | Yes | -- | The data key in each record that maps to this axis. |
-| `label` | `string` | No | -- | Display label for the axis. |
-
-## Chart types
-
-- **line** -- Connects data points with lines. Best for trends over continuous intervals.
-- **bar** -- Renders vertical bars for each data point. Best for comparing discrete categories.
-- **area** -- Like a line chart but with a filled region beneath the line. Emphasizes volume.
-- **ohlc** -- Open-high-low-close candlestick chart for financial data. Each data point must include `open`, `high`, `low`, and `close` keys.
-
 ## Example
 
 ### Line chart
@@ -167,6 +136,37 @@ yAxis:
 ````
 
 </details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `type` | `"line" \| "bar" \| "area" \| "ohlc"` | Yes | -- | The chart visualization type. |
+| `series` | `Series[]` | Yes | -- | An array of data series to plot. |
+| `xAxis` | `Axis` | No | -- | Configuration for the horizontal axis. |
+| `yAxis` | `Axis` | No | -- | Configuration for the vertical axis. |
+| `legend` | `boolean` | No | -- | Whether to display a legend identifying each series. |
+
+### Series object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `name` | `string` | Yes | -- | Display name for the series, shown in the legend and tooltips. |
+| `data` | `Record<string, number \| string>[]` | Yes | -- | An array of data point objects. Keys must match the axis `key` values. |
+
+### Axis object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `key` | `string` | Yes | -- | The data key in each record that maps to this axis. |
+| `label` | `string` | No | -- | Display label for the axis. |
+
+## Chart types
+
+- **line** -- Connects data points with lines. Best for trends over continuous intervals.
+- **bar** -- Renders vertical bars for each data point. Best for comparing discrete categories.
+- **area** -- Like a line chart but with a filled region beneath the line. Emphasizes volume.
+- **ohlc** -- Open-high-low-close candlestick chart for financial data. Each data point must include `open`, `high`, `low`, and `close` keys.
 
 ## Accessibility
 

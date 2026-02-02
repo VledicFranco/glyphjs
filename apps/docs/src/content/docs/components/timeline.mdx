@@ -7,29 +7,6 @@ import GlyphPreview from '../../../components/GlyphPreview.tsx';
 
 The **Timeline** component (`ui:timeline`) renders a sequence of chronological events on a visual timeline. Each event has a date, title, and optional description and type. The timeline can be oriented vertically or horizontally.
 
-## Properties
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `events` | `Event[]` | Yes | -- | An array of event objects to display on the timeline. |
-| `orientation` | `"vertical" \| "horizontal"` | No | -- | Layout direction of the timeline. |
-
-### Event object
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `date` | `string` | Yes | -- | The date or datetime string for the event (e.g. "2026-01-15", "Q1 2026"). |
-| `title` | `string` | Yes | -- | The heading text for the event. |
-| `description` | `string` | No | -- | Additional detail text shown beneath the title. |
-| `type` | `string` | No | -- | A semantic type used for color-coding and grouping (e.g. "release", "milestone", "breaking-change"). |
-
-## Orientation
-
-- **vertical** -- Events are stacked top-to-bottom with dates on the left and content on the right. Best for long timelines and mobile layouts.
-- **horizontal** -- Events are arranged left-to-right along a horizontal axis. Best for short timelines and wide viewports.
-
-When `orientation` is omitted, the renderer chooses a default based on the viewport and number of events.
-
 ## Example
 
 export const verticalExample = `\`\`\`ui:timeline
@@ -129,6 +106,29 @@ orientation: horizontal
 ````
 
 </details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `events` | `Event[]` | Yes | -- | An array of event objects to display on the timeline. |
+| `orientation` | `"vertical" \| "horizontal"` | No | -- | Layout direction of the timeline. |
+
+### Event object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `date` | `string` | Yes | -- | The date or datetime string for the event (e.g. "2026-01-15", "Q1 2026"). |
+| `title` | `string` | Yes | -- | The heading text for the event. |
+| `description` | `string` | No | -- | Additional detail text shown beneath the title. |
+| `type` | `string` | No | -- | A semantic type used for color-coding and grouping (e.g. "release", "milestone", "breaking-change"). |
+
+## Orientation
+
+- **vertical** -- Events are stacked top-to-bottom with dates on the left and content on the right. Best for long timelines and mobile layouts.
+- **horizontal** -- Events are arranged left-to-right along a horizontal axis. Best for short timelines and wide viewports.
+
+When `orientation` is omitted, the renderer chooses a default based on the viewport and number of events.
 
 ## Event types
 

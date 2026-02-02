@@ -7,31 +7,6 @@ import GlyphPreview from '../../../components/GlyphPreview.tsx';
 
 The **Table** component (`ui:table`) renders structured data as an interactive, accessible HTML table with optional sorting, filtering, and aggregation. Define columns with types and features, then provide row data as key-value records.
 
-## Properties
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `columns` | `Column[]` | Yes | -- | Column definitions that control headers, types, and interactive features. |
-| `rows` | `Record<string, unknown>[]` | Yes | -- | An array of data objects. Each object's keys correspond to column `key` values. |
-| `aggregation` | `Aggregation[]` | No | -- | Optional aggregation functions computed over column data. |
-
-### Column object
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `key` | `string` | Yes | -- | The data key used to look up values from each row object. |
-| `label` | `string` | Yes | -- | The display text shown in the column header. |
-| `sortable` | `boolean` | No | -- | Whether the column supports click-to-sort. |
-| `filterable` | `boolean` | No | -- | Whether the column supports text-based filtering. |
-| `type` | `"string" \| "number" \| "date" \| "boolean"` | No | -- | The data type hint used for sorting and display formatting. |
-
-### Aggregation object
-
-| Property | Type | Required | Default | Description |
-|---|---|---|---|---|
-| `column` | `string` | Yes | -- | The column `key` to aggregate. Must match a defined column. |
-| `function` | `"sum" \| "avg" \| "count" \| "min" \| "max"` | Yes | -- | The aggregation function to compute. |
-
 ## Example
 
 export const tableExample = `\`\`\`ui:table
@@ -112,6 +87,31 @@ aggregation:
 ````
 
 </details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `columns` | `Column[]` | Yes | -- | Column definitions that control headers, types, and interactive features. |
+| `rows` | `Record<string, unknown>[]` | Yes | -- | An array of data objects. Each object's keys correspond to column `key` values. |
+| `aggregation` | `Aggregation[]` | No | -- | Optional aggregation functions computed over column data. |
+
+### Column object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `key` | `string` | Yes | -- | The data key used to look up values from each row object. |
+| `label` | `string` | Yes | -- | The display text shown in the column header. |
+| `sortable` | `boolean` | No | -- | Whether the column supports click-to-sort. |
+| `filterable` | `boolean` | No | -- | Whether the column supports text-based filtering. |
+| `type` | `"string" \| "number" \| "date" \| "boolean"` | No | -- | The data type hint used for sorting and display formatting. |
+
+### Aggregation object
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `column` | `string` | Yes | -- | The column `key` to aggregate. Must match a defined column. |
+| `function` | `"sum" \| "avg" \| "count" \| "min" \| "max"` | Yes | -- | The aggregation function to compute. |
 
 ## Sorting and filtering
 
