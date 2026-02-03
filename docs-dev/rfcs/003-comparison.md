@@ -10,7 +10,7 @@
 
 ## 1. Summary
 
-A structured comparison component for displaying feature matrices, option evaluations, and side-by-side tradeoff analysis. Renders as a card-based or table-like layout with visual support indicators.
+A structured comparison component for displaying feature matrices, option evaluations, and side-by-side tradeoff analysis. Renders as a table layout with visual support indicators (checkmarks, crosses, badges).
 
 ## 2. Motivation
 
@@ -56,7 +56,10 @@ const comparisonSchema = z.object({
     name: z.string(),
     values: z.array(z.string()),
   })).min(1),
-});
+}).refine(
+  (data) => data.features.every((f) => f.values.length === data.options.length),
+  { message: 'Each feature must have one value per option' },
+);
 ````
 
 ### Value conventions
@@ -92,4 +95,4 @@ Feature values are free-form strings, but the renderer recognizes special values
 - Reuse the Table component's CSS variable patterns (`--glyph-table-*`).
 - Value normalization should be case-insensitive (`Yes` = `yes` = `YES`).
 - Limit options to 6 columns max to prevent horizontal overflow on desktop.
-- The `values` array length must match `options` array length — validate at schema level or render gracefully if mismatched.
+- The `values` array length must match `options` array length — enforced by the schema's `.refine()` check. The renderer should also handle mismatches gracefully (render empty cells) as a defensive measure.

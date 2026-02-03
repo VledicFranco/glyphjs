@@ -3,7 +3,7 @@
 - **Status:** Draft
 - **Parent:** [RFC-002: Component Roadmap](./002-component-roadmap.md)
 - **Priority:** P6
-- **Complexity:** S
+- **Complexity:** M
 - **Block type:** `ui:filetree`
 
 ---
@@ -77,4 +77,5 @@ const filetreeSchema = z.object({
 - File type detection is purely by extension — no need for MIME types.
 - Keep icons simple: 2–3 SVG paths (folder, file, specialized file). Can expand icon coverage over time.
 - The component is self-contained — no layout engine needed. Recursive React rendering of the tree structure.
+- Keyboard navigation follows the WAI-ARIA Treeview pattern (ArrowUp/Down, ArrowLeft/Right, Home/End, Enter). This is the primary source of complexity — implementing the full keyboard model with roving tabindex across a recursive tree is non-trivial.
 - `defaultExpanded` applies to all directories. Per-node expansion state could be added later but isn't needed for v1.

@@ -45,11 +45,13 @@ Components are ranked by the product of three factors:
 | P3       | Flowchart       | High      | Very high | L    | RFC-005 |
 | P4       | KPI             | High      | High      | S    | RFC-006 |
 | P5       | Accordion       | High      | High      | S    | RFC-007 |
-| P6       | FileTree        | High      | Medium    | S    | RFC-008 |
+| P6       | FileTree        | High      | Medium    | M    | RFC-008 |
 | P7       | SequenceDiagram | Medium    | Very high | L    | RFC-009 |
 | P8       | MindMap         | Medium    | High      | L    | RFC-010 |
 | P9       | Equation        | Medium    | Very high | M    | RFC-011 |
 | P10      | Quiz            | Low       | Very high | M    | RFC-012 |
+| P11      | Card            | High      | High      | S    | RFC-013 |
+| P12      | Infographic     | Medium    | High      | M    | RFC-014 |
 
 ### Suggested batches
 
@@ -57,14 +59,17 @@ Components are ranked by the product of three factors:
 — Four components, mostly S/M complexity. Covers the highest-frequency gaps. Comparison and CodeDiff serve the two most common LLM patterns (comparing things, explaining code). KPI and Accordion are small utilities with broad applicability.
 
 **Batch 2 (visualization):** Flowchart, FileTree, SequenceDiagram
-— Adds structured diagramming. Flowchart and SequenceDiagram are L-sized but high value. FileTree is an easy win in between.
+— Adds structured diagramming. Flowchart and SequenceDiagram are L-sized but high value. FileTree is M-sized (keyboard navigation adds complexity beyond the recursive rendering).
 
 **Batch 3 (advanced):** MindMap, Equation, Quiz
 — Rounds out the set with topic exploration, math rendering, and the first interactive/bidirectional component.
 
+**Batch 4 (presentation):** Card, Infographic
+— Adds content presentation primitives. Card provides a general-purpose container for showcasing items with images, body text, and action links. Infographic provides multi-section visual summaries mixing stats, facts, progress bars, and text.
+
 ## 5. Existing component coverage map
 
-For reference, here's what the full component set covers once all 10 are shipped:
+For reference, here's what the full component set covers once all 12 are shipped:
 
 | Communication pattern | Existing components           | New components           |
 | --------------------- | ----------------------------- | ------------------------ |
@@ -78,6 +83,8 @@ For reference, here's what the full component set covers once all 10 are shipped
 | Organize content      | Tabs                          | Accordion                |
 | Math / science        | —                             | Equation                 |
 | Interact / assess     | —                             | Quiz                     |
+| Showcase / recommend  | —                             | Card                     |
+| Visual data summary   | —                             | Infographic              |
 
 ## 6. Individual RFCs
 
@@ -93,13 +100,15 @@ Each component has its own RFC with schema design, visual specification, accessi
 - [RFC-010: MindMap](./010-mindmap.md)
 - [RFC-011: Equation](./011-equation.md)
 - [RFC-012: Quiz](./012-quiz.md)
+- [RFC-013: Card](./013-card.md)
+- [RFC-014: Infographic](./014-infographic.md)
 
 ## 7. Success criteria
 
 The roadmap is complete when:
 
-1. All 10 components pass the validation checklist in `docs-dev/component-lifecycle.md`.
+1. All 12 components pass the validation checklist in `docs-dev/component-lifecycle.md`.
 2. Each component has Storybook stories with light/dark theme coverage.
 3. Each component has a docs page with live preview.
 4. Bundle size stays within the limit defined in `.size-limit.json` (may need an increase — track delta per batch).
-5. The docs sidebar lists all 19 components (9 existing + 10 new).
+5. The docs sidebar lists all 21 components (9 existing + 12 new).

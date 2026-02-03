@@ -120,7 +120,7 @@ const quizSchema = z.object({
 ## 6. Implementation notes
 
 - State management: each question tracks `{ selected: number | number[] | boolean | null, submitted: boolean }`.
-- The `answer` field is the index (0-based) for multiple-choice, an array of indices for multi-select, or a boolean for true-false. This keeps the schema simple and unambiguous.
+- The `answer` field is the index (0-based) for multiple-choice, an array of indices for multi-select, or a boolean for true-false. This keeps the schema simple and unambiguous. The renderer should validate that answer indices are within the `options` array bounds and show a schema error if not.
 - Multi-select submission: needs an explicit "Check answer" button since clicking an option is a toggle, not a submission.
 - The explanation should remain hidden until the user submits their answer — no peeking.
 - This is the first component with meaningful user interaction state. Other components are display-only. Consider whether this pattern should emit events (stretch goal: quiz completion callback).

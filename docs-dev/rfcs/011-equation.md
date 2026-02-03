@@ -89,6 +89,7 @@ const equationSchema = z.object({
 
 - **Rendering engine**: KaTeX is the clear choice — it's fast (no DOM manipulation), produces static HTML/CSS, supports MathML output, and is ~120KB gzipped. This is the largest dependency in the roadmap and the main reason for M complexity.
 - KaTeX should be loaded dynamically (`import()`) to avoid bloating the base bundle. The component shows a formatted code fallback until KaTeX loads.
-- The `expression` field uses standard LaTeX math notation. Backslashes need escaping in YAML (`\\frac` instead of `\frac`), but most LLMs handle this correctly.
+- **YAML escaping**: The `expression` field uses standard LaTeX math notation. Backslashes must be doubled in YAML (`\\frac` instead of `\frac`). Most LLMs handle this correctly, but the parser should also accept single-backslash forms and normalize them, since this is a common source of errors.
 - For the derivation layout, use a CSS grid or flex column with alignment on the `=` operator.
+- **Bundle size impact**: KaTeX is ~120KB gzipped (JS + CSS + fonts). This is the largest single dependency in the roadmap and will likely require increasing the budget in `.size-limit.json`. Track the exact delta and document it in the PR.
 - Consider bundling only the KaTeX CSS + fonts needed for the most common math symbols, not the full set.

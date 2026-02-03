@@ -96,7 +96,7 @@ const flowchartSchema = z.object({
 
 ## 6. Implementation notes
 
-- Reuse the Dagre layout engine already used by Graph and Architecture. Dagre handles directed graph layout well and is already in the bundle.
+- Reuse the Dagre layout engine already used by Graph and Relation. Dagre handles directed graph layout well and is already in the bundle. (Architecture uses ELK, which is a different layout engine.)
 - Node shapes are rendered as SVG `<rect>`, `<polygon>` (diamond), or `<rect rx>` (rounded).
 - Decision nodes need two outgoing edges — validate or render gracefully if fewer/more exist.
 - The `direction` field maps to Dagre's `rankdir` option (`TB` or `LR`).

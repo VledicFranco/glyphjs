@@ -10,7 +10,7 @@
 
 ## 1. Summary
 
-A side-by-side or unified code diff component with syntax highlighting, line numbers, and addition/deletion markers. Designed for the most common LLM use case: explaining code changes.
+A unified code diff component with syntax highlighting, line numbers, and addition/deletion markers. Designed for the most common LLM use case: explaining code changes.
 
 ## 2. Motivation
 
@@ -47,7 +47,7 @@ const codediffSchema = z.object({
 
 ## 4. Visual design
 
-- Default view: unified diff (single pane with additions in green, deletions in red).
+- Unified diff layout: single pane with additions in green, deletions in red. (Side-by-side view is a stretch goal for v2.)
 - Line numbers in a gutter column.
 - Addition lines: green background (`--glyph-codediff-add-bg`), `+` gutter marker.
 - Deletion lines: red background (`--glyph-codediff-del-bg`), `-` gutter marker.
@@ -58,12 +58,12 @@ const codediffSchema = z.object({
 
 ### Diff computation
 
-Use a simple line-based diff algorithm (longest common subsequence). No dependency on external diff libraries — keep the bundle small. The diff is computed client-side from the `before` and `after` strings.
+Use a line-based Myers' diff algorithm. This is the standard diff algorithm (used by `git diff`) and can be implemented in ~100 lines with no external dependencies. It produces minimal edit scripts (fewest insertions + deletions), which yields clean, readable diffs. The diff is computed client-side from the `before` and `after` strings.
 
 ## 5. Accessibility
 
-- Rendered as a `<table>` with `role="grid"` or `<pre>` with ARIA annotations.
-- Each line has `aria-label` indicating its status: "added", "removed", or "unchanged".
+- Rendered as a `<table>` with `role="grid"`. Each row is a diff line, with columns for: gutter marker, line number(s), and code content.
+- Each row has `aria-label` indicating its status: "added", "removed", or "unchanged".
 - Color is supplemented by `+`/`-` text markers in the gutter.
 - Screen reader announcement: "Code diff: X lines added, Y lines removed."
 

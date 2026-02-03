@@ -10,7 +10,7 @@
 
 ## 1. Summary
 
-A UML-style sequence diagram component showing interactions between actors/systems over time, with messages, replies, and optional activation bars.
+A UML-style sequence diagram component showing interactions between actors/systems over time, with messages, replies, and self-calls.
 
 ## 2. Motivation
 
@@ -93,7 +93,9 @@ const sequenceSchema = z.object({
 - Layout is simpler than it looks: actors are evenly spaced horizontally, messages are evenly spaced vertically. No graph layout engine needed.
 - Actor x-positions: divide SVG width by actor count.
 - Message y-positions: fixed vertical spacing (e.g., 50px per message).
-- Self-messages need a small arc or loop rendered on one lifeline.
-- SVG width adapts to actor count; height adapts to message count.
-- Arrow markers defined as SVG `<marker>` elements (solid and dashed variants).
+- Self-messages rendered as a rightward arc looping back to the same lifeline: a short horizontal stub, a vertical segment down, and an arrow back. The arc occupies the same vertical slot as a regular message.
+- SVG width adapts to actor count and label widths; height adapts to message count.
+- Vertical message spacing should account for label text length — use a minimum of 50px but allow more if labels are multi-line or long.
+- Arrow markers defined as SVG `<marker>` elements (solid for `message`, dashed for `reply`).
+- Activation bars are a stretch goal for v2 (not included in v1 schema).
 - No external dependencies required — this is pure SVG geometry.

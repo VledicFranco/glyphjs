@@ -89,6 +89,6 @@ Both layouts rendered as SVG.
 - **Radial layout**: Compute angles for each subtree based on its weight (number of descendants). Use polar-to-Cartesian conversion for positioning.
 - **Tree layout**: Can reuse Dagre or a simpler recursive position algorithm since the structure is strictly hierarchical (no cycles).
 - The recursive schema uses `z.lazy()` for self-referential nodes.
-- Maximum recommended depth: 4 levels. Beyond that, labels become too small. Validate or truncate gracefully.
+- Maximum rendered depth: 4 levels. If the data has deeper nesting, collapse levels 5+ into their parent node (show as a "+N" badge). This keeps the visual clean while preserving the data in the hidden accessible tree.
 - Node labels may need to be truncated with ellipsis beyond a character threshold.
 - Consider zoom/pan for large maps (but defer to v2 — keep v1 simple with a fit-to-container approach).
