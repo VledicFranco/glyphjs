@@ -1,0 +1,170 @@
+---
+title: CodeDiff
+description: Unified code diff viewer with line numbers and addition/deletion markers.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **CodeDiff** component (`ui:codediff`) renders a unified code diff with color-coded additions (green) and deletions (red). It uses a built-in Myers' diff algorithm to compute the minimal edit script between `before` and `after` code strings.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:codediff
+language: typescript
+beforeLabel: Before
+afterLabel: After
+before: |
+  function greet(name) {
+    console.log("Hello " + name);
+  }
+after: |
+  function greet(name: string): void {
+    console.log(\\\`Hello \\\${name}\\\`);
+  }
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:codediff
+language: typescript
+beforeLabel: Before
+afterLabel: After
+before: |
+  function greet(name) {
+    console.log("Hello " + name);
+  }
+after: |
+  function greet(name: string): void {
+    console.log(`Hello ${name}`);
+  }
+```
+````
+
+</details>
+
+### Config additions
+
+export const additionsExample = `\`\`\`ui:codediff
+language: typescript
+before: |
+  const config = {
+    port: 3000,
+  };
+after: |
+  const config = {
+    port: 3000,
+    host: 'localhost',
+    debug: true,
+  };
+\`\`\``;
+
+<GlyphPreview client:only="react" source={additionsExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:codediff
+language: typescript
+before: |
+  const config = {
+    port: 3000,
+  };
+after: |
+  const config = {
+    port: 3000,
+    host: 'localhost',
+    debug: true,
+  };
+```
+````
+
+</details>
+
+### Package migration
+
+export const migrationExample = `\`\`\`ui:codediff
+language: json
+beforeLabel: package.json (v1)
+afterLabel: package.json (v2)
+before: |
+  {
+    "dependencies": {
+      "react": "^18.0.0",
+      "react-dom": "^18.0.0"
+    },
+    "scripts": {
+      "start": "vite"
+    }
+  }
+after: |
+  {
+    "dependencies": {
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "react-router": "^7.0.0"
+    },
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build"
+    }
+  }
+\`\`\``;
+
+<GlyphPreview client:only="react" source={migrationExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:codediff
+language: json
+beforeLabel: package.json (v1)
+afterLabel: package.json (v2)
+before: |
+  {
+    "dependencies": {
+      "react": "^18.0.0",
+      "react-dom": "^18.0.0"
+    },
+    "scripts": {
+      "start": "vite"
+    }
+  }
+after: |
+  {
+    "dependencies": {
+      "react": "^19.0.0",
+      "react-dom": "^19.0.0",
+      "react-router": "^7.0.0"
+    },
+    "scripts": {
+      "dev": "vite",
+      "build": "vite build"
+    }
+  }
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `before` | `string` | Yes | -- | The original code (left side of the diff). |
+| `after` | `string` | Yes | -- | The modified code (right side of the diff). |
+| `language` | `string` | No | -- | Language hint (for future syntax highlighting). |
+| `beforeLabel` | `string` | No | -- | Label for the original code (shown in header bar). |
+| `afterLabel` | `string` | No | -- | Label for the modified code (shown in header bar). |
+
+## Accessibility
+
+- The diff renders as a `<table>` with `role="grid"`. Each row is a diff line with columns for gutter marker, line numbers, and code content.
+- Each row has `aria-label` indicating its status: "added", "removed", or "unchanged".
+- The container `role="region"` has a summary aria-label: "Code diff: X lines added, Y lines removed."
+- Color is supplemented by `+`/`-` text markers in the gutter, so diff status is never color-dependent.

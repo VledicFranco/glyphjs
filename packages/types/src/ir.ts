@@ -32,6 +32,7 @@ export type BlockType =
   | 'ui:kpi'
   | 'ui:accordion'
   | 'ui:comparison'
+  | 'ui:codediff'
   // Extensible
   | `ui:${string}`;
 

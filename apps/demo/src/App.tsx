@@ -13,6 +13,7 @@ import {
   kpiDefinition,
   accordionDefinition,
   comparisonDefinition,
+  codeDiffDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -141,6 +142,7 @@ export function App() {
         kpiDefinition,
         accordionDefinition,
         comparisonDefinition,
+        codeDiffDefinition,
       ],
     });
     return rt;

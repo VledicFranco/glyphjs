@@ -13,6 +13,7 @@ import { architectureSchema } from './architecture.js';
 import { kpiSchema } from './kpi.js';
 import { accordionSchema } from './accordion.js';
 import { comparisonSchema } from './comparison.js';
+import { codediffSchema } from './codediff.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -29,6 +30,7 @@ const entries: [string, z.ZodType][] = [
   ['kpi', kpiSchema],
   ['accordion', accordionSchema],
   ['comparison', comparisonSchema],
+  ['codediff', codediffSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);

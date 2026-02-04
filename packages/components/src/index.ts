@@ -21,6 +21,8 @@ export { accordionDefinition, Accordion } from './accordion/index.js';
 export type { AccordionData, AccordionSection } from './accordion/index.js';
 export { comparisonDefinition, Comparison } from './comparison/index.js';
 export type { ComparisonData, ComparisonOption, ComparisonFeature } from './comparison/index.js';
+export { codeDiffDefinition, CodeDiff, computeDiff } from './codediff/index.js';
+export type { CodeDiffData, DiffLine, DiffLineKind } from './codediff/index.js';
 export {
   architectureDefinition,
   Architecture,

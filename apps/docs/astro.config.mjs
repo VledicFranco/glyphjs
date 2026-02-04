@@ -41,6 +41,7 @@ export default defineConfig({
           { label: 'KPI', slug: 'components/kpi' },
           { label: 'Accordion', slug: 'components/accordion' },
           { label: 'Comparison', slug: 'components/comparison' },
+          { label: 'CodeDiff', slug: 'components/codediff' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

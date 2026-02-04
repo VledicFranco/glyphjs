@@ -14,6 +14,7 @@ import {
   kpiDefinition,
   accordionDefinition,
   comparisonDefinition,
+  codeDiffDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -62,6 +63,7 @@ const allComponents = [
   kpiDefinition,
   accordionDefinition,
   comparisonDefinition,
+  codeDiffDefinition,
 ];
 
 export default function Playground() {
