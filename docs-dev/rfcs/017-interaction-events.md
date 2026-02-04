@@ -110,6 +110,13 @@ export interface TableSortEvent extends InteractionEventBase {
   payload: {
     column: string;
     direction: 'asc' | 'desc' | 'none';
+    /** Full component state so LLMs don't need to track history */
+    state: {
+      sort: { column: string; direction: 'asc' | 'desc' | 'none' } | null;
+      filters: Record<string, string>;
+      visibleRowCount: number;
+      totalRowCount: number;
+    };
   };
 }
 
@@ -118,6 +125,13 @@ export interface TableFilterEvent extends InteractionEventBase {
   payload: {
     column: string;
     value: string;
+    /** Full component state so LLMs don't need to track history */
+    state: {
+      sort: { column: string; direction: 'asc' | 'desc' | 'none' } | null;
+      filters: Record<string, string>;
+      visibleRowCount: number;
+      totalRowCount: number;
+    };
   };
 }
 
@@ -173,6 +187,12 @@ export interface ComparisonSelectEvent extends InteractionEventBase {
   };
 }
 
+/** Extensibility for plugin-authored components (mirrors ReferenceType pattern) */
+export interface CustomInteractionEvent extends InteractionEventBase {
+  kind: `custom:${string}`;
+  payload: Record<string, unknown>;
+}
+
 export type InteractionEvent =
   | QuizSubmitEvent
   | TableSortEvent
@@ -182,7 +202,8 @@ export type InteractionEvent =
   | FileTreeSelectEvent
   | GraphNodeClickEvent
   | ChartSelectEvent
-  | ComparisonSelectEvent;
+  | ComparisonSelectEvent
+  | CustomInteractionEvent;
 
 /** Discriminant values for exhaustive switch */
 export type InteractionKind = InteractionEvent['kind'];
@@ -424,15 +445,50 @@ Every component always emits events for every interaction. Rejected because:
 
 ---
 
-## 7. Open Questions
+## 7. Design Decisions
 
-1. **Debouncing**: Should `table-filter` events be debounced? The user typing "react" generates 5 events ("r", "re", "rea", "reac", "react"). The runtime could debounce by default (300ms) or leave it to the host app.
+### 7.1 Debouncing: host app's responsibility, with a helper
 
-2. **Event batching**: Should the runtime batch events (e.g., emit an array every 100ms) or fire them individually? Individual is simpler; batching is more efficient for high-frequency interactions.
+GlyphJS fires events immediately, 1:1 with user actions. This is the honest, predictable behavior — the same contract as DOM events and React callbacks. The runtime does not debounce.
 
-3. **State snapshots**: Should events include the component's full current state (all sort columns, all filter values) or just the delta? Full state is more useful for LLMs (no need to track history), but larger payloads.
+For the common case (table filter typing generates rapid events), `@glyphjs/runtime` exports an optional utility:
 
-4. **Custom component events**: Should the plugin API allow custom components to define their own event kinds? A `custom:${string}` pattern would work, matching the existing `ReferenceType` extensibility. This can be deferred to a follow-up RFC.
+```typescript
+import { debounceInteractions } from '@glyphjs/runtime';
+
+const runtime = createGlyphRuntime({
+  onInteraction: debounceInteractions((event) => {
+    sendToLLM(event);
+  }, 300),
+});
+```
+
+The `debounceInteractions` helper groups events by `blockId + kind` and only fires the last one within the window. Different from a generic `debounce` because it debounces per-stream, not globally — a tab switch fires immediately even if a table filter is being debounced.
+
+### 7.2 Event batching: individual firing
+
+One interaction, one `onInteraction` call. No batching, no timers, no arrays. This matches developer expectations from every other event system.
+
+If a host app wants to accumulate events before sending to an LLM (e.g. "send everything from the last 2 seconds as one message"), that's 5 lines of collection logic in the host app. It's an LLM orchestration concern, not a rendering engine concern.
+
+### 7.3 State snapshots: full state where meaningful
+
+Event payloads are self-contained. An LLM receiving a single event should understand the full picture without needing to reconstruct history from prior events.
+
+In practice this means:
+
+- **Table**: sort and filter events include a `state` object with the full sort column, all active filters, and visible/total row counts. The LLM sees "the table is sorted by Status ascending, filtered to 'dark' on Feature, showing 1 of 3 rows" in one event.
+- **Quiz**: the submit event already carries the selected answer, correctness, and score — it _is_ the full state.
+- **Tabs**: `tabIndex` and `tabLabel` _are_ the full state. No extra fields needed.
+- **Accordion**: `sectionIndex`, `sectionTitle`, and `expanded` are the full state.
+
+There is no generic `state` field on `InteractionEventBase`. Each event type's `payload` is designed to be self-contained by construction.
+
+### 7.4 Custom component events: typed slot, deferred plumbing
+
+The `InteractionEvent` union includes `CustomInteractionEvent` with `kind: 'custom:${string}'` and `payload: Record<string, unknown>`. This mirrors the existing `ReferenceType` (`custom:${string}`) and `BlockType` (`ui:${string}`) extensibility patterns.
+
+The type is available from day one so plugin authors can use it. The plugin ergonomics (helpers for constructing well-formed custom events, documentation, validation) are deferred to a follow-up RFC after the built-in component events ship and we have real-world usage patterns.
 
 ---
 
