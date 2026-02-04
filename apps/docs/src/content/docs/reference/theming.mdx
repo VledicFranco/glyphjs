@@ -3,6 +3,9 @@ title: Theming
 description: Customize the look and feel of Glyph JS components with themes.
 ---
 
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+import { cyberpunk2077Theme } from './_examples/cyberpunk-theme';
+
 The Glyph JS theming system uses CSS custom properties (variables) prefixed with `--glyph-` to style all components. Two built-in themes (light and dark) ship with `@glyphjs/runtime`, and you can create fully custom themes by providing your own variable map.
 
 ## GlyphTheme interface
@@ -437,3 +440,235 @@ Pair the theme with CSS for scanline and glow effects using the `data-glyph-them
   transition: var(--glyph-transition);
 }
 ```
+
+---
+
+## Cyberpunk 2077 theme in action
+
+The examples below render live components using the Cyberpunk 2077 theme defined above. They showcase how the SVG and data-visualization variables (`--glyph-edge-color`, `--glyph-node-label-color`, `--glyph-node-fill-opacity`, `--glyph-icon-stroke`, etc.) affect complex components.
+
+### Graph — Microservices dependency map
+
+A directed acyclic graph of a microservices architecture. Notice the neon-yellow node labels (`--glyph-node-label-color`), cyber-red edges (`--glyph-edge-color`), and high fill opacity (`--glyph-node-fill-opacity`).
+
+export const graphExample = `
+\`\`\`ui:graph
+type: dag
+layout: top-down
+nodes:
+  - id: gateway
+    label: API Gateway
+    style:
+      fill: "#6d28d9"
+  - id: auth
+    label: Auth Service
+    style:
+      fill: "#0891b2"
+  - id: users
+    label: Users Service
+    style:
+      fill: "#0891b2"
+  - id: orders
+    label: Orders Service
+    style:
+      fill: "#0891b2"
+  - id: payments
+    label: Payments Service
+    style:
+      fill: "#059669"
+  - id: notifications
+    label: Notifications
+    style:
+      fill: "#059669"
+  - id: db
+    label: PostgreSQL
+    style:
+      fill: "#b45309"
+  - id: cache
+    label: Redis Cache
+    style:
+      fill: "#b45309"
+edges:
+  - from: gateway
+    to: auth
+    label: verify
+  - from: gateway
+    to: users
+  - from: gateway
+    to: orders
+  - from: orders
+    to: payments
+    label: charge
+  - from: orders
+    to: notifications
+    label: notify
+  - from: users
+    to: db
+    type: data
+  - from: orders
+    to: db
+    type: data
+  - from: auth
+    to: cache
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={graphExample} theme={cyberpunk2077Theme} />
+
+### Architecture — Cloud infrastructure
+
+A nested cloud infrastructure diagram with VPC zones, public and private subnets, and service dependencies. Shows `--glyph-icon-stroke` (electric blue icons), `--glyph-edge-color` (cyber-red connections), and `--glyph-node-radius` (sharp angular nodes).
+
+export const architectureExample = `
+\`\`\`ui:architecture
+title: Production Infrastructure
+layout: top-down
+children:
+  - id: vpc
+    label: VPC (10.0.0.0/16)
+    type: zone
+    children:
+      - id: public
+        label: Public Subnet
+        type: zone
+        children:
+          - id: alb
+            label: Load Balancer
+            icon: loadbalancer
+          - id: bastion
+            label: Bastion Host
+            icon: server
+      - id: private
+        label: Private Subnet
+        type: zone
+        children:
+          - id: app1
+            label: App Server 1
+            icon: server
+          - id: app2
+            label: App Server 2
+            icon: server
+          - id: worker
+            label: Worker
+            icon: function
+      - id: data
+        label: Data Subnet
+        type: zone
+        children:
+          - id: db
+            label: PostgreSQL
+            icon: database
+          - id: redis
+            label: Redis
+            icon: cache
+          - id: queue
+            label: SQS Queue
+            icon: queue
+  - id: cdn
+    label: CloudFront CDN
+    icon: cloud
+  - id: users
+    label: End Users
+    icon: user
+edges:
+  - from: users
+    to: cdn
+    label: HTTPS
+  - from: cdn
+    to: alb
+    label: origin
+  - from: alb
+    to: app1
+    type: sync
+  - from: alb
+    to: app2
+    type: sync
+  - from: app1
+    to: db
+    type: data
+    label: queries
+  - from: app2
+    to: db
+    type: data
+  - from: app1
+    to: redis
+    label: cache
+  - from: worker
+    to: queue
+    type: async
+  - from: app1
+    to: queue
+    type: async
+    label: enqueue
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={architectureExample} theme={cyberpunk2077Theme} />
+
+### Chart — System metrics over time
+
+A multi-series line chart tracking system metrics. The dark background (`--glyph-bg`) and light text (`--glyph-text`) from the cyberpunk palette frame the data visualization.
+
+export const chartExample = `
+\`\`\`ui:chart
+type: line
+legend: true
+xAxis:
+  key: x
+  label: Hour
+yAxis:
+  key: y
+  label: Value
+series:
+  - name: CPU (%)
+    data:
+      - x: "00:00"
+        y: 23
+      - x: "04:00"
+        y: 18
+      - x: "08:00"
+        y: 45
+      - x: "12:00"
+        y: 72
+      - x: "16:00"
+        y: 89
+      - x: "20:00"
+        y: 55
+      - x: "24:00"
+        y: 30
+  - name: Memory (%)
+    data:
+      - x: "00:00"
+        y: 61
+      - x: "04:00"
+        y: 58
+      - x: "08:00"
+        y: 64
+      - x: "12:00"
+        y: 78
+      - x: "16:00"
+        y: 82
+      - x: "20:00"
+        y: 74
+      - x: "24:00"
+        y: 66
+  - name: Network (Mbps)
+    data:
+      - x: "00:00"
+        y: 12
+      - x: "04:00"
+        y: 8
+      - x: "08:00"
+        y: 34
+      - x: "12:00"
+        y: 56
+      - x: "16:00"
+        y: 48
+      - x: "20:00"
+        y: 38
+      - x: "24:00"
+        y: 15
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={chartExample} theme={cyberpunk2077Theme} />

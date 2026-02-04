@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { compile } from '@glyphjs/compiler';
 import { createGlyphRuntime } from '@glyphjs/runtime';
+import type { GlyphTheme } from '@glyphjs/types';
 import {
   calloutDefinition,
   chartDefinition,
@@ -52,18 +53,19 @@ function useStarlightTheme(): 'light' | 'dark' {
 
 interface GlyphPreviewProps {
   source: string;
+  theme?: GlyphTheme;
 }
 
-export default function GlyphPreview({ source }: GlyphPreviewProps) {
-  const theme = useStarlightTheme();
+export default function GlyphPreview({ source, theme: customTheme }: GlyphPreviewProps) {
+  const starlightTheme = useStarlightTheme();
 
   const runtime = useMemo(
     () =>
       createGlyphRuntime({
-        theme,
+        theme: customTheme ?? starlightTheme,
         components: allComponents,
       }),
-    [theme],
+    [customTheme, starlightTheme],
   );
 
   const { ir, error } = useMemo(() => {
