@@ -27,6 +27,45 @@ describe('Infographic', () => {
     expect(screen.getByText('Users')).toBeInTheDocument();
   });
 
+  it('applies uppercase and letter-spacing to stat labels', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [{ type: 'stat', label: 'Revenue', value: '$5M' }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    const label = screen.getByText('Revenue');
+    expect(label).toHaveStyle({ textTransform: 'uppercase' });
+    expect(label).toHaveStyle({ letterSpacing: '0.06em' });
+  });
+
+  it('applies italic to stat descriptions', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'stat',
+                label: 'Revenue',
+                value: '$5M',
+                description: 'Year over year',
+              },
+            ],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    expect(screen.getByText('Year over year')).toHaveStyle({ fontStyle: 'italic' });
+  });
+
   it('renders progress bars with correct fill width', () => {
     const props = createMockProps<InfographicData>(
       {
@@ -88,6 +127,23 @@ describe('Infographic', () => {
     expect(p2.tagName).toBe('P');
   });
 
+  it('applies left border accent to text items', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [{ type: 'text', content: 'Bordered paragraph.' }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    const p = screen.getByText('Bordered paragraph.');
+    const style = p.getAttribute('style') ?? '';
+    expect(style).toContain('border-left');
+  });
+
   it('groups consecutive same-type items together', () => {
     const props = createMockProps<InfographicData>(
       {
@@ -131,6 +187,24 @@ describe('Infographic', () => {
     render(<Infographic {...props} />);
     expect(screen.getByText('Financial Overview')).toBeInTheDocument();
     expect(screen.getByText('User Metrics')).toBeInTheDocument();
+  });
+
+  it('applies left border accent to section headings', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            heading: 'Overview',
+            items: [{ type: 'stat', label: 'A', value: '1' }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    const heading = screen.getByText('Overview');
+    const style = heading.getAttribute('style') ?? '';
+    expect(style).toContain('border-left');
   });
 
   it('has correct ARIA roles and attributes', () => {
@@ -188,6 +262,24 @@ describe('Infographic', () => {
     render(<Infographic {...props} />);
     expect(screen.getByText('\u2713')).toBeInTheDocument();
     expect(screen.getByText('Task completed')).toBeInTheDocument();
+  });
+
+  it('applies accent color to fact icons', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [{ type: 'fact', icon: '\u2713', text: 'Done' }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    const icon = screen.getByText('\u2713');
+    const style = icon.getAttribute('style') ?? '';
+    expect(style).toContain('color');
+    expect(style).toContain('--glyph-infographic-accent');
   });
 
   it('renders stat description when provided', () => {
@@ -400,5 +492,59 @@ describe('Infographic', () => {
     expect(screen.getByText('Food Quality')).toBeInTheDocument();
     expect(screen.getByText('Based on 200 reviews')).toBeInTheDocument();
     expect(screen.getByText('4.5')).toBeInTheDocument();
+  });
+
+  // ─── Visual hierarchy tests ─────────────────────────────────
+
+  it('applies border-bottom accent to the title', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        title: 'Dashboard Title',
+        sections: [{ items: [{ type: 'text', content: 'Content' }] }],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    const title = screen.getByText('Dashboard Title');
+    const style = title.getAttribute('style') ?? '';
+    expect(style).toContain('border-bottom');
+  });
+
+  it('applies italic to rating descriptions', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'rating',
+                label: 'Quality',
+                value: 4,
+                description: 'Very good',
+              },
+            ],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    expect(screen.getByText('Very good')).toHaveStyle({ fontStyle: 'italic' });
+  });
+
+  it('applies bold weight to progress labels', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [{ type: 'progress', label: 'Sprint', value: 60 }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    const label = screen.getByText('Sprint');
+    expect(label).toHaveStyle({ fontWeight: 600 });
   });
 });

@@ -502,6 +502,76 @@ export const PieWithStats: Story = {
   ),
 };
 
+// ─── TypographyShowcase ──────────────────────────────────────
+
+export const TypographyShowcase: Story = {
+  args: mockProps<InfographicData>(
+    {
+      title: 'Visual Hierarchy Showcase',
+      sections: [
+        {
+          heading: 'Key Metrics',
+          items: [
+            { type: 'stat', label: 'Revenue', value: '$12.5M', description: '+18% year over year' },
+            { type: 'stat', label: 'Users', value: '84,200', description: 'Monthly active' },
+            { type: 'stat', label: 'Retention', value: '94%', description: 'Up from 89%' },
+          ],
+        },
+        {
+          heading: 'Project Status',
+          items: [
+            { type: 'progress', label: 'Development', value: 88 },
+            { type: 'progress', label: 'Testing', value: 62 },
+            { type: 'progress', label: 'Documentation', value: 35 },
+          ],
+        },
+        {
+          heading: 'Highlights',
+          items: [
+            { type: 'fact', icon: '\u2713', text: 'Shipped v3.0 ahead of schedule' },
+            { type: 'fact', icon: '\u2713', text: 'Zero critical incidents this quarter' },
+            { type: 'fact', icon: '\u26A0', text: 'Infrastructure migration pending' },
+            { type: 'divider', style: 'dashed' },
+            {
+              type: 'text',
+              content:
+                'The team delivered exceptional results this quarter, driven by improved CI/CD pipeline and reduced review cycles.',
+            },
+          ],
+        },
+        {
+          heading: 'Customer Feedback',
+          items: [
+            {
+              type: 'rating',
+              label: 'Overall Satisfaction',
+              value: 4.5,
+              description: 'Based on 1,240 responses',
+            },
+            {
+              type: 'rating',
+              label: 'Ease of Use',
+              value: 4,
+              description: 'Improved after onboarding redesign',
+            },
+            { type: 'divider' },
+            {
+              type: 'pie',
+              label: 'Response Distribution',
+              slices: [
+                { label: 'Promoters', value: 62 },
+                { label: 'Passives', value: 26 },
+                { label: 'Detractors', value: 12 },
+              ],
+            },
+          ],
+        },
+      ],
+    },
+    { block: mockBlock({ id: 'infographic-typography', type: 'ui:infographic' }) },
+  ),
+};
+
 // ─── WithIcons ────────────────────────────────────────────────
 
 export const WithIcons: Story = {

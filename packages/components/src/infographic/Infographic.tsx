@@ -118,20 +118,24 @@ function renderStatGroup(items: StatItem[], keyPrefix: string): ReactElement {
   const valueStyle: React.CSSProperties = {
     fontSize: '1.75rem',
     fontWeight: 700,
-    color: 'var(--glyph-heading, #0a0e1a)',
+    color: 'var(--glyph-infographic-value-color, #1d4ed8)',
     lineHeight: 1.2,
   };
 
   const labelStyle: React.CSSProperties = {
     fontSize: '0.8125rem',
-    color: 'var(--glyph-text-muted, #6b7a94)',
+    color: 'var(--glyph-infographic-label-color, #475569)',
     marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
+    textTransform: 'uppercase',
+    letterSpacing: '0.06em',
+    fontWeight: 600,
   };
 
   const descStyle: React.CSSProperties = {
     fontSize: '0.75rem',
-    color: 'var(--glyph-text-muted, #6b7a94)',
+    color: 'var(--glyph-infographic-desc-color, #64748b)',
     marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
+    fontStyle: 'italic',
   };
 
   return (
@@ -186,8 +190,15 @@ function renderProgressGroup(
                 fontSize: '0.875rem',
               }}
             >
-              <span style={{ color: 'var(--glyph-text, #1a2035)' }}>{item.label}</span>
-              <span style={{ color: 'var(--glyph-text-muted, #6b7a94)' }}>
+              <span style={{ color: 'var(--glyph-text, #1a2035)', fontWeight: 600 }}>
+                {item.label}
+              </span>
+              <span
+                style={{
+                  color: 'var(--glyph-infographic-value-color, #1d4ed8)',
+                  fontWeight: 700,
+                }}
+              >
                 {String(item.value)}%
               </span>
             </div>
@@ -219,6 +230,7 @@ function renderFactGroup(items: FactItem[], keyPrefix: string): ReactElement {
     padding: 'var(--glyph-spacing-xs, 0.25rem) 0',
     fontSize: '0.875rem',
     color: 'var(--glyph-text, #1a2035)',
+    fontWeight: 500,
   };
 
   return (
@@ -226,7 +238,13 @@ function renderFactGroup(items: FactItem[], keyPrefix: string): ReactElement {
       {items.map((item, i) => (
         <li key={`${keyPrefix}-${String(i)}`} style={itemStyle}>
           {item.icon && (
-            <span style={{ marginRight: 'var(--glyph-spacing-xs, 0.25rem)' }} aria-hidden="true">
+            <span
+              style={{
+                marginRight: 'var(--glyph-spacing-xs, 0.25rem)',
+                color: 'var(--glyph-infographic-accent, #3b82f6)',
+              }}
+              aria-hidden="true"
+            >
               {item.icon}
             </span>
           )}
@@ -243,6 +261,8 @@ function renderTextGroup(items: TextItem[], keyPrefix: string): ReactElement {
     fontSize: '0.875rem',
     lineHeight: 1.6,
     color: 'var(--glyph-text, #1a2035)',
+    borderLeft: '3px solid var(--glyph-infographic-accent, #3b82f6)',
+    paddingLeft: 'var(--glyph-spacing-sm, 0.5rem)',
   };
 
   return (
@@ -338,7 +358,7 @@ function renderPieGroup(items: PieItem[], keyPrefix: string, colorOffset: number
                 style={{
                   fontSize: '0.875rem',
                   fontWeight: 600,
-                  color: 'var(--glyph-heading, #0a0e1a)',
+                  color: 'var(--glyph-infographic-heading-color, #1e293b)',
                   marginBottom: 'var(--glyph-spacing-xs, 0.25rem)',
                 }}
               >
@@ -361,7 +381,12 @@ function renderPieGroup(items: PieItem[], keyPrefix: string, colorOffset: number
                 return (
                   <span
                     key={si}
-                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                    style={{
+                      display: 'inline-flex',
+                      alignItems: 'center',
+                      gap: '0.25rem',
+                      fontWeight: 500,
+                    }}
                   >
                     <span
                       style={{
@@ -474,7 +499,13 @@ function renderRatingGroup(items: RatingItem[], keyPrefix: string): ReactElement
               {String(item.value)}
             </span>
             <div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--glyph-text, #1a2035)' }}>
+              <div
+                style={{
+                  fontSize: '0.875rem',
+                  color: 'var(--glyph-text, #1a2035)',
+                  fontWeight: 600,
+                }}
+              >
                 {item.label}
               </div>
               <div
@@ -487,8 +518,9 @@ function renderRatingGroup(items: RatingItem[], keyPrefix: string): ReactElement
                 <div
                   style={{
                     fontSize: '0.75rem',
-                    color: 'var(--glyph-text-muted, #6b7a94)',
+                    color: 'var(--glyph-infographic-desc-color, #64748b)',
                     marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
+                    fontStyle: 'italic',
                   }}
                 >
                   {item.description}
@@ -518,11 +550,14 @@ export function Infographic({ data, block }: GlyphComponentProps<InfographicData
   };
 
   const titleStyle: React.CSSProperties = {
+    fontFamily: 'var(--glyph-font-heading, system-ui, sans-serif)',
     fontWeight: 700,
     fontSize: '1.25rem',
     color: 'var(--glyph-heading, #0a0e1a)',
-    marginBottom: 'var(--glyph-spacing-md, 1rem)',
     margin: 0,
+    paddingBottom: 'var(--glyph-spacing-sm, 0.5rem)',
+    marginBottom: 'var(--glyph-spacing-md, 1rem)',
+    borderBottom: '2px solid var(--glyph-infographic-accent, #3b82f6)',
   };
 
   const sectionDividerStyle: React.CSSProperties = {
@@ -534,8 +569,10 @@ export function Infographic({ data, block }: GlyphComponentProps<InfographicData
   const headingStyle: React.CSSProperties = {
     fontWeight: 700,
     fontSize: '1rem',
-    color: 'var(--glyph-heading, #0a0e1a)',
+    color: 'var(--glyph-infographic-heading-color, #1e293b)',
     marginBottom: 'var(--glyph-spacing-sm, 0.5rem)',
+    borderLeft: '3px solid var(--glyph-infographic-accent, #3b82f6)',
+    paddingLeft: 'var(--glyph-spacing-sm, 0.5rem)',
   };
 
   let progressColorOffset = 0;
