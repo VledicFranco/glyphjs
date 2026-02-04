@@ -310,7 +310,7 @@ function countAllNodes(children: MindMapNode[]): number {
 
 // ─── Component ──────────────────────────────────────────────
 
-export function MindMap({ data }: GlyphComponentProps<MindMapData>): ReactElement {
+export function MindMap({ data, container }: GlyphComponentProps<MindMapData>): ReactElement {
   const isTree = data.layout === 'tree';
   const { nodes, width, height } = isTree ? layoutTree(data) : layoutRadial(data);
 
@@ -324,7 +324,11 @@ export function MindMap({ data }: GlyphComponentProps<MindMapData>): ReactElemen
         aria-label={ariaLabel}
         viewBox={`0 0 ${width} ${height}`}
         width="100%"
-        style={{ minHeight: 200, maxHeight: 800, display: 'block' }}
+        style={{
+          minHeight: container.tier === 'compact' ? 150 : 200,
+          maxHeight: container.tier === 'compact' ? 500 : 800,
+          display: 'block',
+        }}
       >
         {/* Edge lines */}
         {nodes.map((node, idx) => {

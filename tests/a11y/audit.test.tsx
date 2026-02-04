@@ -110,6 +110,7 @@ function mockComponentProps<T>(data: T, type = 'ui:test'): GlyphComponentProps<T
     onNavigate: () => {},
     theme: mockTheme(),
     layout: mockLayout(),
+    container: { width: 0, tier: 'wide' },
   };
 }
 

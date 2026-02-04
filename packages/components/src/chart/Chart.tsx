@@ -28,7 +28,10 @@ export type { ChartData } from './render.js';
  * Renders a D3-powered chart supporting line, bar, area, and OHLC types.
  * Uses CSS variables for theming and includes accessibility features.
  */
-export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
+export function Chart({
+  data,
+  container: containerCtx,
+}: GlyphComponentProps<ChartData>): ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
@@ -38,6 +41,15 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
   const xKey = xAxis?.key ?? 'x';
   const yKey = yAxis?.key ?? 'y';
   const height = DEFAULT_HEIGHT;
+  const isCompact = containerCtx.tier === 'compact';
+  const margin = isCompact
+    ? {
+        top: Math.round(MARGIN.top * 0.7),
+        right: Math.round(MARGIN.right * 0.7),
+        bottom: Math.round(MARGIN.bottom * 0.7),
+        left: Math.round(MARGIN.left * 0.7),
+      }
+    : MARGIN;
 
   useEffect(() => {
     const container = containerRef.current;
@@ -72,8 +84,8 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
   }, []);
 
   const scales = useMemo(() => {
-    const innerWidth = width - MARGIN.left - MARGIN.right;
-    const innerHeight = height - MARGIN.top - MARGIN.bottom;
+    const innerWidth = width - margin.left - margin.right;
+    const innerHeight = height - margin.top - margin.bottom;
 
     const firstRecord = series[0]?.data[0];
     const xIsNumeric = firstRecord != null && typeof firstRecord[xKey] === 'number';
@@ -115,7 +127,7 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
     const yScale = d3.scaleLinear().domain([yMin, yMax]).nice().range([innerHeight, 0]);
 
     return { xScale, xScalePoint, yScale, innerWidth, innerHeight };
-  }, [width, height, type, series, xKey, yKey]);
+  }, [width, height, type, series, xKey, yKey, margin]);
 
   useEffect(() => {
     const svg = svgRef.current;
@@ -128,7 +140,7 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
 
     const g = sel
       .append('g')
-      .attr('transform', `translate(${String(MARGIN.left)},${String(MARGIN.top)})`);
+      .attr('transform', `translate(${String(margin.left)},${String(margin.top)})`);
 
     renderAxes(g, xScale, yScale, xAxis, yAxis, innerWidth, innerHeight);
     renderGridLines(g, yScale, innerWidth);
@@ -200,9 +212,22 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
     });
 
     if (legend) {
-      renderLegend(sel, series, MARGIN.left, MARGIN.top);
+      renderLegend(sel, series, margin.left, margin.top, isCompact ? '10px' : undefined);
     }
-  }, [scales, type, series, xKey, yKey, xAxis, yAxis, legend, showTooltip, hideTooltip]);
+  }, [
+    scales,
+    type,
+    series,
+    xKey,
+    yKey,
+    xAxis,
+    yAxis,
+    legend,
+    margin,
+    isCompact,
+    showTooltip,
+    hideTooltip,
+  ]);
 
   const ariaLabel = `${type} chart with ${String(series.length)} series: ${series.map((s: ChartData['series'][number]) => s.name).join(', ')}`;
 

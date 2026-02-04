@@ -9,7 +9,10 @@ export type { ArchitectureData };
 
 // ─── Component ──────────────────────────────────────────────
 
-export function Architecture({ data }: GlyphComponentProps<ArchitectureData>): ReactElement {
+export function Architecture({
+  data,
+  container,
+}: GlyphComponentProps<ArchitectureData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
   const [layout, setLayout] = useState<ArchLayoutResult | null>(null);
 
@@ -62,8 +65,8 @@ export function Architecture({ data }: GlyphComponentProps<ArchitectureData>): R
         width="100%"
         height="100%"
         style={{
-          minHeight: 300,
-          maxHeight: 700,
+          minHeight: container.tier === 'compact' ? 200 : 300,
+          maxHeight: container.tier === 'compact' ? 500 : 700,
           display: layout ? 'block' : 'none',
         }}
       />

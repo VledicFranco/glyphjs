@@ -48,10 +48,23 @@ function buildAriaLabel(metric: KpiMetric): string {
 
 // ─── Component ─────────────────────────────────────────────────
 
-export function Kpi({ data, block }: GlyphComponentProps<KpiData>): ReactElement {
+export function Kpi({ data, block, container }: GlyphComponentProps<KpiData>): ReactElement {
   const { title, metrics, columns } = data;
   const baseId = `glyph-kpi-${block.id}`;
-  const colCount = columns ?? Math.min(metrics.length, 4);
+  const authorCols = columns ?? Math.min(metrics.length, 4);
+
+  // Container-adaptive column clamping (RFC-015)
+  let colCount: number;
+  switch (container.tier) {
+    case 'compact':
+      colCount = Math.min(metrics.length, 2);
+      break;
+    case 'standard':
+      colCount = Math.min(authorCols, 3);
+      break;
+    default:
+      colCount = authorCols;
+  }
 
   const containerStyle: React.CSSProperties = {
     fontFamily: 'var(--glyph-font-body, system-ui, sans-serif)',

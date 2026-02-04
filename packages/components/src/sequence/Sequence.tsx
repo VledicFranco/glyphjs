@@ -38,25 +38,33 @@ export interface SequenceData {
 
 // ─── Component ──────────────────────────────────────────────
 
-export function Sequence({ data }: GlyphComponentProps<SequenceData>): ReactElement {
+export function Sequence({ data, container }: GlyphComponentProps<SequenceData>): ReactElement {
   const actorCount = data.actors.length;
   const messageCount = data.messages.length;
+  const isCompact = container.tier === 'compact';
+
+  // Adjust layout constants for compact containers
+  const effectiveActorGap = isCompact ? Math.round(ACTOR_GAP * 0.6) : ACTOR_GAP;
+  const effectiveActorWidth = isCompact ? Math.round(ACTOR_WIDTH * 0.7) : ACTOR_WIDTH;
+  const effectiveActorHeight = isCompact ? Math.round(ACTOR_HEIGHT * 0.85) : ACTOR_HEIGHT;
+  const actorFontSize = isCompact ? '11px' : '13px';
+  const msgFontSize = isCompact ? '10px' : '12px';
 
   // Build actor x-positions
   const actorX = new Map<string, number>();
   for (let i = 0; i < actorCount; i++) {
     const actor = data.actors[i];
     if (actor) {
-      actorX.set(actor.id, SIDE_PADDING + i * ACTOR_GAP + ACTOR_WIDTH / 2);
+      actorX.set(actor.id, SIDE_PADDING + i * effectiveActorGap + effectiveActorWidth / 2);
     }
   }
 
-  const svgWidth = SIDE_PADDING * 2 + (actorCount - 1) * ACTOR_GAP + ACTOR_WIDTH;
+  const svgWidth = SIDE_PADDING * 2 + (actorCount - 1) * effectiveActorGap + effectiveActorWidth;
   const actorBoxY = TOP_MARGIN;
-  const lifelineStartY = actorBoxY + ACTOR_HEIGHT;
+  const lifelineStartY = actorBoxY + effectiveActorHeight;
   const firstMsgY = lifelineStartY + MSG_SPACING;
   const lastMsgY = firstMsgY + (messageCount - 1) * MSG_SPACING;
-  const svgHeight = lastMsgY + BOTTOM_PADDING + ACTOR_HEIGHT;
+  const svgHeight = lastMsgY + BOTTOM_PADDING + effectiveActorHeight;
 
   const ariaLabel = data.title
     ? `${data.title}: sequence diagram with ${actorCount} actors and ${messageCount} messages`
@@ -113,7 +121,15 @@ export function Sequence({ data }: GlyphComponentProps<SequenceData>): ReactElem
         {/* Actor boxes (top) */}
         {data.actors.map((actor) => {
           const cx = actorX.get(actor.id) ?? 0;
-          return renderActorBox(actor, cx, actorBoxY, 'actor-top');
+          return renderActorBox(
+            actor,
+            cx,
+            actorBoxY,
+            'actor-top',
+            effectiveActorWidth,
+            effectiveActorHeight,
+            actorFontSize,
+          );
         })}
 
         {/* Lifelines */}
@@ -137,7 +153,15 @@ export function Sequence({ data }: GlyphComponentProps<SequenceData>): ReactElem
         {data.actors.map((actor) => {
           const cx = actorX.get(actor.id) ?? 0;
           const bottomY = lastMsgY + BOTTOM_PADDING / 2;
-          return renderActorBox(actor, cx, bottomY, 'actor-bottom');
+          return renderActorBox(
+            actor,
+            cx,
+            bottomY,
+            'actor-bottom',
+            effectiveActorWidth,
+            effectiveActorHeight,
+            actorFontSize,
+          );
         })}
 
         {/* Messages */}
@@ -147,10 +171,18 @@ export function Sequence({ data }: GlyphComponentProps<SequenceData>): ReactElem
           const toX = actorX.get(msg.to) ?? 0;
 
           if (msg.type === 'self') {
-            return renderSelfMessage(fromX, y, msg.label, idx);
+            return renderSelfMessage(fromX, y, msg.label, idx, msgFontSize);
           }
 
-          return renderStandardMessage(fromX, toX, y, msg.label, msg.type === 'reply', idx);
+          return renderStandardMessage(
+            fromX,
+            toX,
+            y,
+            msg.label,
+            msg.type === 'reply',
+            idx,
+            msgFontSize,
+          );
         })}
       </svg>
 

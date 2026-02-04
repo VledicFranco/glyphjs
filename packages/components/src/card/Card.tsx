@@ -46,10 +46,23 @@ function getVariantStyle(variant: 'default' | 'outlined' | 'elevated'): React.CS
 
 // ─── Component ─────────────────────────────────────────────────
 
-export function Card({ data, block }: GlyphComponentProps<CardData>): ReactElement {
+export function Card({ data, block, container }: GlyphComponentProps<CardData>): ReactElement {
   const { title, cards, variant = 'default', columns } = data;
   const baseId = `glyph-card-${block.id}`;
-  const colCount = columns ?? Math.min(cards.length, 3);
+  const authorCols = columns ?? Math.min(cards.length, 3);
+
+  // Container-adaptive column clamping (RFC-015)
+  let colCount: number;
+  switch (container.tier) {
+    case 'compact':
+      colCount = 1;
+      break;
+    case 'standard':
+      colCount = Math.min(authorCols, 2);
+      break;
+    default:
+      colCount = authorCols;
+  }
 
   const containerStyle: React.CSSProperties = {
     fontFamily: 'var(--glyph-font-body, system-ui, sans-serif)',

@@ -327,6 +327,7 @@ export function renderLegend(
   series: ChartData['series'],
   marginLeft: number,
   marginTop: number,
+  fontSize = '12px',
 ): void {
   const legendG = sel
     .append('g')
@@ -343,7 +344,7 @@ export function renderLegend(
       .attr('x', 20)
       .attr('y', 11)
       .attr('fill', 'var(--glyph-text, #1a2035)')
-      .attr('font-size', '12px')
+      .attr('font-size', fontSize)
       .text(s.name);
   });
 }

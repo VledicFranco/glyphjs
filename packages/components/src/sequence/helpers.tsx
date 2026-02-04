@@ -25,14 +25,17 @@ export function renderActorBox(
   cx: number,
   y: number,
   keyPrefix: string,
+  width = ACTOR_WIDTH,
+  height = ACTOR_HEIGHT,
+  fontSize = '13px',
 ): ReactElement {
   return (
     <g key={`${keyPrefix}-${actor.id}`}>
       <rect
-        x={cx - ACTOR_WIDTH / 2}
+        x={cx - width / 2}
         y={y}
-        width={ACTOR_WIDTH}
-        height={ACTOR_HEIGHT}
+        width={width}
+        height={height}
         rx={4}
         ry={4}
         fill="var(--glyph-surface-raised, #162038)"
@@ -41,10 +44,10 @@ export function renderActorBox(
       />
       <text
         x={cx}
-        y={y + ACTOR_HEIGHT / 2}
+        y={y + height / 2}
         dy="0.35em"
         textAnchor="middle"
-        fontSize="13px"
+        fontSize={fontSize}
         fontFamily="Inter, system-ui, sans-serif"
         fontWeight={600}
         fill="var(--glyph-text, #d4dae3)"
@@ -55,7 +58,13 @@ export function renderActorBox(
   );
 }
 
-export function renderSelfMessage(x: number, y: number, label: string, idx: number): ReactElement {
+export function renderSelfMessage(
+  x: number,
+  y: number,
+  label: string,
+  idx: number,
+  fontSize = '12px',
+): ReactElement {
   return (
     <g key={`msg-${idx}`}>
       <path
@@ -69,7 +78,7 @@ export function renderSelfMessage(x: number, y: number, label: string, idx: numb
         x={x + SELF_ARC_WIDTH + 6}
         y={y + SELF_ARC_HEIGHT / 2}
         dy="0.35em"
-        fontSize="12px"
+        fontSize={fontSize}
         fontFamily="Inter, system-ui, sans-serif"
         fill="var(--glyph-text, #d4dae3)"
       >
@@ -86,6 +95,7 @@ export function renderStandardMessage(
   label: string,
   isDashed: boolean,
   idx: number,
+  fontSize = '12px',
 ): ReactElement {
   const markerId = isDashed ? 'seq-arrow-dashed' : 'seq-arrow-solid';
   const midX = (fromX + toX) / 2;
@@ -106,7 +116,7 @@ export function renderStandardMessage(
         x={midX}
         y={y - 8}
         textAnchor="middle"
-        fontSize="12px"
+        fontSize={fontSize}
         fontFamily="Inter, system-ui, sans-serif"
         fill="var(--glyph-text, #d4dae3)"
       >

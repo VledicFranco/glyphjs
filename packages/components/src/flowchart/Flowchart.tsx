@@ -282,7 +282,7 @@ function renderFlowchart(
 
 // ─── Component ──────────────────────────────────────────────
 
-export function Flowchart({ data }: GlyphComponentProps<FlowchartData>): ReactElement {
+export function Flowchart({ data, container }: GlyphComponentProps<FlowchartData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
 
   const layoutResult = useMemo(() => computeLayout(data.nodes, data.edges, data.direction), [data]);
@@ -319,7 +319,11 @@ export function Flowchart({ data }: GlyphComponentProps<FlowchartData>): ReactEl
         aria-label={ariaLabel}
         width="100%"
         height="100%"
-        style={{ minHeight: 300, maxHeight: 700, display: 'block' }}
+        style={{
+          minHeight: container.tier === 'compact' ? 200 : 300,
+          maxHeight: container.tier === 'compact' ? 500 : 700,
+          display: 'block',
+        }}
       />
       {/* Hidden data table for screen readers */}
       <table className="sr-only" aria-label="Flowchart data" style={SR_ONLY_STYLE}>

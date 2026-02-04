@@ -78,7 +78,7 @@ function sortIndicator(direction: SortDirection): string {
  * and aggregation.  Styling is driven by `--glyph-table-*` CSS custom
  * properties so consumers can re-theme via the Glyph theme system.
  */
-export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
+export function Table({ data, container }: GlyphComponentProps<TableData>): ReactElement {
   const { columns, rows, aggregation } = data;
 
   const [sort, setSort] = useState<SortState>({ column: '', direction: 'none' });
@@ -149,7 +149,9 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
     return map;
   }, [aggregation]);
 
-  return (
+  const isCompact = container.tier === 'compact';
+
+  const tableEl = (
     <table
       role="grid"
       style={{
@@ -157,7 +159,7 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
         borderCollapse: 'collapse',
         border: '1px solid var(--glyph-table-border, #d0d8e4)',
         fontFamily: 'var(--glyph-font-body, inherit)',
-        fontSize: 'var(--glyph-table-font-size, 0.9rem)',
+        fontSize: isCompact ? '0.8125rem' : 'var(--glyph-table-font-size, 0.9rem)',
       }}
     >
       <thead>
@@ -287,4 +289,11 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
       )}
     </table>
   );
+
+  // Container-adaptive: wrap in scroll container at compact tier (RFC-015)
+  if (isCompact) {
+    return <div style={{ overflowX: 'auto' }}>{tableEl}</div>;
+  }
+
+  return tableEl;
 }

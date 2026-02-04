@@ -250,6 +250,7 @@ export function Graph({
   data,
   outgoingRefs,
   onNavigate,
+  container,
 }: GlyphComponentProps<GraphData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
   const groupIndex = useRef(new Map<string, number>());
@@ -278,7 +279,11 @@ export function Graph({
         aria-label={ariaLabel}
         width="100%"
         height="100%"
-        style={{ minHeight: 300, maxHeight: 700, display: 'block' }}
+        style={{
+          minHeight: container.tier === 'compact' ? 200 : 300,
+          maxHeight: container.tier === 'compact' ? 500 : 700,
+          display: 'block',
+        }}
       />
       {/* Hidden data table fallback for screen readers */}
       <table className="sr-only" aria-label="Graph data" style={SR_ONLY_STYLE}>

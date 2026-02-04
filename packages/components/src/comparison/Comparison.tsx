@@ -72,9 +72,19 @@ function renderValue(value: string): ReactElement {
 
 // ─── Component ─────────────────────────────────────────────────
 
-export function Comparison({ data, block }: GlyphComponentProps<ComparisonData>): ReactElement {
+export function Comparison({
+  data,
+  block,
+  container,
+}: GlyphComponentProps<ComparisonData>): ReactElement {
   const { title, options, features } = data;
   const baseId = `glyph-comparison-${block.id}`;
+  const isCompact = container.tier === 'compact';
+
+  // Container-adaptive padding/font (RFC-015)
+  const cellPadding = isCompact
+    ? 'var(--glyph-spacing-xs, 0.25rem) var(--glyph-spacing-sm, 0.5rem)'
+    : 'var(--glyph-spacing-sm, 0.5rem) var(--glyph-spacing-md, 1rem)';
 
   const containerStyle: React.CSSProperties = {
     fontFamily: 'var(--glyph-font-body, system-ui, sans-serif)',
@@ -87,11 +97,11 @@ export function Comparison({ data, block }: GlyphComponentProps<ComparisonData>)
     border: '1px solid var(--glyph-table-border, #d0d8e4)',
     borderRadius: 'var(--glyph-radius-md, 0.5rem)',
     overflow: 'hidden',
-    fontSize: '0.875rem',
+    fontSize: isCompact ? '0.8125rem' : '0.875rem',
   };
 
   const thStyle: React.CSSProperties = {
-    padding: 'var(--glyph-spacing-sm, 0.5rem) var(--glyph-spacing-md, 1rem)',
+    padding: cellPadding,
     textAlign: 'center',
     fontWeight: 600,
     background: 'var(--glyph-table-header-bg, #e8ecf3)',
@@ -105,7 +115,7 @@ export function Comparison({ data, block }: GlyphComponentProps<ComparisonData>)
   };
 
   const rowThStyle: React.CSSProperties = {
-    padding: 'var(--glyph-spacing-sm, 0.5rem) var(--glyph-spacing-md, 1rem)',
+    padding: cellPadding,
     textAlign: 'left',
     fontWeight: 600,
     borderBottom: '1px solid var(--glyph-table-border, #d0d8e4)',
@@ -113,7 +123,7 @@ export function Comparison({ data, block }: GlyphComponentProps<ComparisonData>)
   };
 
   const cellStyle = (rowIndex: number): React.CSSProperties => ({
-    padding: 'var(--glyph-spacing-sm, 0.5rem) var(--glyph-spacing-md, 1rem)',
+    padding: cellPadding,
     textAlign: 'center',
     borderBottom: '1px solid var(--glyph-table-border, #d0d8e4)',
     background: rowIndex % 2 === 1 ? 'var(--glyph-table-row-alt-bg, transparent)' : 'transparent',

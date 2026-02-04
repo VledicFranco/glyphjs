@@ -575,11 +575,16 @@ function renderRatingGroup(items: RatingItem[], keyPrefix: string): ReactElement
 
 // ─── Component ─────────────────────────────────────────────────
 
-export function Infographic({ data, block }: GlyphComponentProps<InfographicData>): ReactElement {
+export function Infographic({
+  data,
+  block,
+  container,
+}: GlyphComponentProps<InfographicData>): ReactElement {
   const { title, sections } = data;
   const baseId = `glyph-infographic-${block.id}`;
 
-  const useGrid = sections.length >= 2;
+  // Container-adaptive: disable grid at compact tier (RFC-015)
+  const useGrid = sections.length >= 2 && container.tier !== 'compact';
   const sectionLayouts = useMemo(() => computeSectionLayout(sections), [sections]);
 
   const containerStyle: React.CSSProperties = {
