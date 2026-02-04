@@ -135,7 +135,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
     color: 'var(--glyph-text, #1a2035)',
     ...(isVertical
       ? { width: '100%', minHeight: totalLength }
-      : { minHeight: 300, minWidth: totalLength, overflowX: 'auto' }),
+      : { minHeight: 300, minWidth: totalLength }),
   };
 
   const lineStyle: React.CSSProperties = isVertical
@@ -160,7 +160,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
 
   // --- Render ---
 
-  return (
+  const inner = (
     <div
       ref={containerRef}
       style={containerStyle}
@@ -251,6 +251,14 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
       </ol>
     </div>
   );
+
+  // Horizontal timelines use minWidth which can exceed the viewport.
+  // Wrap in a scrollable parent so the content is accessible on narrow screens.
+  if (!isVertical) {
+    return <div style={{ overflowX: 'auto', width: '100%' }}>{inner}</div>;
+  }
+
+  return inner;
 }
 
 // ─── Style helpers ─────────────────────────────────────────────

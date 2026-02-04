@@ -71,9 +71,12 @@ export function Kpi({ data, block, container }: GlyphComponentProps<KpiData>): R
     color: 'var(--glyph-text, #1a2035)',
   };
 
+  // CSS-level defensive auto-wrap: repeat(auto-fill, minmax(max(MIN, exact-fraction), 1fr))
+  // ensures at most colCount columns at wide widths, fewer on narrow viewports.
+  const gapCount = colCount - 1;
   const gridStyle: React.CSSProperties = {
     display: 'grid',
-    gridTemplateColumns: `repeat(${String(colCount)}, 1fr)`,
+    gridTemplateColumns: `repeat(auto-fill, minmax(max(120px, calc((100% - ${String(gapCount)}rem) / ${String(colCount)})), 1fr))`,
     gap: 'var(--glyph-spacing-md, 1rem)',
   };
 
