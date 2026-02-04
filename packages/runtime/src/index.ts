@@ -16,11 +16,7 @@ export { ErrorBoundary } from './ErrorBoundary.js';
 export { FallbackRenderer } from './FallbackRenderer.js';
 
 // Context & hooks
-export {
-  RuntimeProvider,
-  useRuntime,
-  useReferences,
-} from './context.js';
+export { RuntimeProvider, useRuntime, useReferences } from './context.js';
 export type { RuntimeContextValue, RuntimeProviderProps } from './context.js';
 
 // Registry
@@ -32,10 +28,7 @@ export {
   resolveComponentProps,
   PluginRegistry,
 } from './plugins/index.js';
-export type {
-  ValidationResult,
-  RegistryChangeListener,
-} from './plugins/index.js';
+export type { ValidationResult, RegistryChangeListener } from './plugins/index.js';
 
 // Layout engine
 export {
@@ -80,24 +73,17 @@ export {
   AnimationContext,
   useBlockAnimation,
 } from './animation/index.js';
-export type {
-  AnimationConfig,
-  AnimationState,
-  BlockAnimationResult,
-} from './animation/index.js';
+export type { AnimationConfig, AnimationState, BlockAnimationResult } from './animation/index.js';
 
 // Diagnostics
-export {
-  DiagnosticsOverlay,
-  BlockDiagnosticIndicator,
-} from './diagnostics/index.js';
+export { DiagnosticsOverlay, BlockDiagnosticIndicator } from './diagnostics/index.js';
 
 // Navigation
-export {
-  ReferenceIndicator,
-  useNavigation,
-} from './navigation/index.js';
+export { ReferenceIndicator, useNavigation } from './navigation/index.js';
 export type { NavigationResult } from './navigation/index.js';
+
+// Container measurement
+export { resolveTier, ContainerMeasure } from './container/index.js';
 
 // SSR utilities
 export { useIsClient, SSRPlaceholder } from './ssr/index.js';

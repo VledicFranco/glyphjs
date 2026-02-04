@@ -1,5 +1,6 @@
 import type {
   Block,
+  ContainerContext,
   GlyphComponentDefinition,
   GlyphComponentProps,
   GlyphThemeContext,
@@ -24,6 +25,7 @@ import type {
  * @param onNavigate - Callback invoked when the component triggers navigation via a reference.
  * @param themeContext - Current theme context passed through to the component.
  * @param layoutHints - Layout hints (e.g., viewport size, container width) for responsive rendering.
+ * @param containerContext - Container measurement context for container-adaptive layout.
  * @returns Fully assembled GlyphComponentProps ready to pass to the component's render function.
  */
 export function resolveComponentProps<T = unknown>(
@@ -33,6 +35,7 @@ export function resolveComponentProps<T = unknown>(
   onNavigate: (ref: Reference) => void,
   themeContext: GlyphThemeContext,
   layoutHints: LayoutHints,
+  containerContext: ContainerContext,
 ): GlyphComponentProps<T> {
   // Parse block data through the component's schema
   const parseResult = definition.schema.safeParse(block.data);
@@ -92,5 +95,6 @@ export function resolveComponentProps<T = unknown>(
     onNavigate,
     theme: themeContext,
     layout: layoutHints,
+    container: containerContext,
   };
 }

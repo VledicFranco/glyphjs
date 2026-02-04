@@ -2,6 +2,7 @@ import type { ComponentType as ReactComponentType, ReactNode } from 'react';
 import type {
   Block,
   BlockProps,
+  ContainerContext,
   GlyphComponentProps,
   LayoutHints,
   Reference,
@@ -22,14 +23,13 @@ interface BlockRendererProps {
   layout: LayoutHints;
   /** Position index used for stagger animation delay. */
   index?: number;
+  /** Container measurement context for responsive adaptation. */
+  container: ContainerContext;
 }
 
 // ─── Inner dispatch (unwrapped from ErrorBoundary) ────────────
 
-function BlockDispatch({
-  block,
-  layout,
-}: BlockRendererProps): ReactNode {
+function BlockDispatch({ block, layout, container }: BlockRendererProps): ReactNode {
   const { registry, references, theme, onNavigate } = useRuntime();
   const { incomingRefs, outgoingRefs } = useReferences(block.id);
 
@@ -76,6 +76,7 @@ function BlockDispatch({
         handleNavigate,
         theme,
         layout,
+        container,
       );
 
       // Cast from the generic ComponentType (returns unknown) to React's ComponentType
@@ -114,18 +115,15 @@ export function BlockRenderer({
   block,
   layout,
   index = 0,
+  container,
 }: BlockRendererProps): ReactNode {
   const { onDiagnostic } = useRuntime();
   const { ref, style } = useBlockAnimation(index);
 
   return (
     <div ref={ref} style={style} data-glyph-block-anim={block.id}>
-      <ErrorBoundary
-        blockId={block.id}
-        blockType={block.type}
-        onDiagnostic={onDiagnostic}
-      >
-        <BlockDispatch block={block} layout={layout} />
+      <ErrorBoundary blockId={block.id} blockType={block.type} onDiagnostic={onDiagnostic}>
+        <BlockDispatch block={block} layout={layout} container={container} />
       </ErrorBoundary>
     </div>
   );

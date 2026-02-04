@@ -29,12 +29,7 @@ export type {
 } from './ir.js';
 
 // ─── AST Types ────────────────────────────────────────────────
-export type {
-  RawRef,
-  GlyphUIBlock,
-  GlyphRoot,
-  MdastContentNode,
-} from './ast.js';
+export type { RawRef, GlyphUIBlock, GlyphRoot, MdastContentNode } from './ast.js';
 
 // ─── Patch Types ──────────────────────────────────────────────
 export type { GlyphPatchOperation, GlyphPatch } from './patch.js';
@@ -46,11 +41,7 @@ export type { IRMigration } from './migration.js';
 export type { DiagnosticSource, Diagnostic } from './diagnostic.js';
 
 // ─── Plugin Types ─────────────────────────────────────────────
-export type {
-  GlyphComponentDefinition,
-  GlyphComponentProps,
-  ComponentType,
-} from './plugin.js';
+export type { GlyphComponentDefinition, GlyphComponentProps, ComponentType } from './plugin.js';
 
 // ─── Runtime Types ────────────────────────────────────────────
 export type {
@@ -62,6 +53,8 @@ export type {
   GlyphRuntime,
 } from './runtime.js';
 
+// ─── Container Types ─────────────────────────────────────────
+export type { ContainerTier, ContainerContext } from './container.js';
+
 // ─── Graph Shared Types ──────────────────────────────────────
 export type { GraphNode, GraphEdge } from './graph.js';
-

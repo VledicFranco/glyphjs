@@ -1,4 +1,4 @@
-import type { Block, LayoutHints, Reference } from '@glyphjs/types';
+import type { Block, ContainerContext, LayoutHints, Reference } from '@glyphjs/types';
 import type { GlyphThemeContext } from '@glyphjs/types';
 import type { GlyphComponentProps } from '@glyphjs/types';
 
@@ -45,6 +45,16 @@ export const mockOnNavigate = (): void => {
   // noop — stub for storybook/tests
 };
 
+// ─── Mock Container ───────────────────────────────────────────
+
+export function mockContainer(overrides?: Partial<ContainerContext>): ContainerContext {
+  return {
+    width: 0,
+    tier: 'wide',
+    ...overrides,
+  };
+}
+
 // ─── Mock References ───────────────────────────────────────────
 
 export const emptyRefs: Reference[] = [];
@@ -63,6 +73,7 @@ export function mockProps<T>(
     onNavigate: mockOnNavigate,
     theme: mockTheme(),
     layout: mockLayout(),
+    container: mockContainer(),
     ...overrides,
   };
 }

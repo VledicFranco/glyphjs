@@ -1,5 +1,6 @@
 import type { Block, LayoutHints, Reference } from './ir.js';
 import type { GlyphThemeContext } from './runtime.js';
+import type { ContainerContext } from './container.js';
 
 // ─── Plugin System ────────────────────────────────────────────
 
@@ -10,7 +11,10 @@ import type { GlyphThemeContext } from './runtime.js';
  */
 export interface GlyphComponentDefinition<T = unknown> {
   type: `ui:${string}`;
-  schema: { parse: (data: unknown) => T; safeParse: (data: unknown) => { success: boolean; data?: T; error?: unknown } };
+  schema: {
+    parse: (data: unknown) => T;
+    safeParse: (data: unknown) => { success: boolean; data?: T; error?: unknown };
+  };
   render: ComponentType<GlyphComponentProps<T>>;
   themeDefaults?: Record<string, string>;
   dependencies?: string[];
@@ -24,6 +28,7 @@ export interface GlyphComponentProps<T = unknown> {
   onNavigate: (ref: Reference) => void;
   theme: GlyphThemeContext;
   layout: LayoutHints;
+  container: ContainerContext;
 }
 
 /**
@@ -31,6 +36,4 @@ export interface GlyphComponentProps<T = unknown> {
  * Compatible with React.ComponentType<P>.
  */
 // eslint-disable-next-line @typescript-eslint/no-empty-object-type
-export type ComponentType<P = {}> =
-  | ((props: P) => unknown)
-  | (new (props: P) => unknown);
+export type ComponentType<P = {}> = ((props: P) => unknown) | (new (props: P) => unknown);

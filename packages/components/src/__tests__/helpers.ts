@@ -14,5 +14,6 @@ export function createMockProps<T>(data: T, type: string): GlyphComponentProps<T
     onNavigate: () => {},
     theme: { name: 'light', resolveVar: (_v: string) => '', isDark: false },
     layout: { mode: 'document' },
+    container: { width: 0, tier: 'wide' },
   };
 }
