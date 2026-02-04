@@ -1,0 +1,5 @@
+{
+  "metrics": [
+    { "label": "Users", "value": "10K", "delta": "+15%", "trend": "up", "sentiment": "positive" }
+  ]
+}

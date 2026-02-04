@@ -1,0 +1,8 @@
+{
+  "title": "Auth Flow",
+  "actors": [
+    { "id": "c", "label": "Client" },
+    { "id": "s", "label": "Server" }
+  ],
+  "messages": [{ "from": "c", "to": "s", "label": "Login" }]
+}

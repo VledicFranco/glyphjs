@@ -6,6 +6,8 @@ export default defineConfig({
   dts: true,
   clean: true,
   target: 'es2022',
+  sourcemap: true,
+  treeshake: true,
   external: ['react'],
   esbuildOptions(options) {
     options.jsx = 'automatic';

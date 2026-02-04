@@ -1,0 +1,12 @@
+{
+  "title": "Report",
+  "sections": [
+    {
+      "heading": "Key Metrics",
+      "items": [
+        { "type": "stat", "label": "Rev", "value": "$5M" },
+        { "type": "progress", "label": "Goal", "value": 75 }
+      ]
+    }
+  ]
+}

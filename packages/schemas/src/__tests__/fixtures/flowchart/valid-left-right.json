@@ -1,0 +1,8 @@
+{
+  "nodes": [
+    { "id": "p", "type": "process", "label": "Step" },
+    { "id": "q", "type": "end", "label": "Done" }
+  ],
+  "edges": [{ "from": "p", "to": "q" }],
+  "direction": "left-right"
+}

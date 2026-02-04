@@ -1,0 +1,7 @@
+{
+  "actors": [
+    { "id": "a", "label": "Client" },
+    { "id": "b", "label": "Server" }
+  ],
+  "messages": [{ "from": "a", "to": "b", "label": "Request" }]
+}

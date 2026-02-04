@@ -1,0 +1,10 @@
+{
+  "questions": [
+    {
+      "type": "multi-select",
+      "question": "Select primes",
+      "options": ["2", "3", "4", "5"],
+      "answer": [0, 1, 3]
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "actors": [
+    { "id": "a", "label": "User" },
+    { "id": "b", "label": "API" }
+  ],
+  "messages": [
+    { "from": "a", "to": "b", "label": "GET", "type": "message" },
+    { "from": "b", "to": "a", "label": "200 OK", "type": "reply" }
+  ]
+}

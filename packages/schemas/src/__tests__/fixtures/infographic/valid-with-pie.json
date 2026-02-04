@@ -1,0 +1,15 @@
+{
+  "sections": [
+    {
+      "items": [
+        {
+          "type": "pie",
+          "slices": [
+            { "label": "A", "value": 60 },
+            { "label": "B", "value": 40 }
+          ]
+        }
+      ]
+    }
+  ]
+}

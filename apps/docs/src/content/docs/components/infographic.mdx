@@ -1,11 +1,11 @@
 ---
 title: Infographic
-description: Multi-section visual summaries with stats, progress bars, facts, and text.
+description: Multi-section visual summaries with stats, progress bars, facts, text, pie charts, dividers, and ratings.
 ---
 
 import GlyphPreview from '../../../components/GlyphPreview.tsx';
 
-The **Infographic** component (`ui:infographic`) renders multi-section visual summaries. Each section can contain stats, progress bars, facts, and text items. Consecutive items of the same type are automatically grouped for optimized layout.
+The **Infographic** component (`ui:infographic`) renders multi-section visual summaries. Each section can contain stats, progress bars, facts, text, pie charts, dividers, and ratings. Consecutive items of the same type are automatically grouped for optimized layout.
 
 ## Examples
 
@@ -123,6 +123,376 @@ sections:
 
 </details>
 
+### Pie charts
+
+Pie items render as SVG donut charts by default. Set `donut: false` for a filled pie, or customize `size` and individual slice `color` values.
+
+export const pieExample = `\`\`\`ui:infographic
+title: Revenue by Region
+sections:
+  - items:
+      - type: pie
+        label: Donut (default)
+        slices:
+          - label: North America
+            value: 42
+          - label: Europe
+            value: 28
+          - label: Asia Pacific
+            value: 18
+          - label: Other
+            value: 12
+      - type: pie
+        label: Solid pie
+        donut: false
+        size: 120
+        slices:
+          - label: Enterprise
+            value: 55
+            color: "#6366f1"
+          - label: Business
+            value: 30
+            color: "#06b6d4"
+          - label: Starter
+            value: 15
+            color: "#f43f5e"
+\`\`\``;
+
+<GlyphPreview client:only="react" source={pieExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:infographic
+title: Revenue by Region
+sections:
+  - items:
+      - type: pie
+        label: Donut (default)
+        slices:
+          - label: North America
+            value: 42
+          - label: Europe
+            value: 28
+          - label: Asia Pacific
+            value: 18
+          - label: Other
+            value: 12
+      - type: pie
+        label: Solid pie
+        donut: false
+        size: 120
+        slices:
+          - label: Enterprise
+            value: 55
+            color: "#6366f1"
+          - label: Business
+            value: 30
+            color: "#06b6d4"
+          - label: Starter
+            value: 15
+            color: "#f43f5e"
+```
+````
+
+</details>
+
+### Ratings
+
+Rating items display star indicators with support for half-star precision and a custom `max` scale.
+
+export const ratingExample = `\`\`\`ui:infographic
+title: Restaurant Review
+sections:
+  - heading: Scores
+    items:
+      - type: rating
+        label: Food Quality
+        value: 5
+        description: Exceptional seasonal menu
+      - type: rating
+        label: Ambiance
+        value: 4.5
+        description: Cozy and well-lit
+      - type: rating
+        label: Service
+        value: 4
+      - type: rating
+        label: Wait Time
+        value: 2.5
+        description: Busy weekends
+  - heading: Quick Score (3-star scale)
+    items:
+      - type: rating
+        label: Would Visit Again
+        value: 3
+        max: 3
+      - type: rating
+        label: Recommend to Friend
+        value: 2.5
+        max: 3
+\`\`\``;
+
+<GlyphPreview client:only="react" source={ratingExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:infographic
+title: Restaurant Review
+sections:
+  - heading: Scores
+    items:
+      - type: rating
+        label: Food Quality
+        value: 5
+        description: Exceptional seasonal menu
+      - type: rating
+        label: Ambiance
+        value: 4.5
+        description: Cozy and well-lit
+      - type: rating
+        label: Service
+        value: 4
+      - type: rating
+        label: Wait Time
+        value: 2.5
+        description: Busy weekends
+  - heading: Quick Score (3-star scale)
+    items:
+      - type: rating
+        label: Would Visit Again
+        value: 3
+        max: 3
+      - type: rating
+        label: Recommend to Friend
+        value: 2.5
+        max: 3
+```
+````
+
+</details>
+
+### Dividers
+
+Divider items visually separate content within a section. Three styles are available: `solid` (default), `dashed`, and `dotted`.
+
+export const dividerExample = `\`\`\`ui:infographic
+title: Divider Styles
+sections:
+  - items:
+      - type: stat
+        label: Users
+        value: "12,400"
+      - type: divider
+      - type: stat
+        label: Revenue
+        value: "$3.1M"
+      - type: divider
+        style: dashed
+      - type: progress
+        label: Q4 Target
+        value: 78
+      - type: divider
+        style: dotted
+      - type: fact
+        icon: "\u2713"
+        text: All systems operational
+\`\`\``;
+
+<GlyphPreview client:only="react" source={dividerExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:infographic
+title: Divider Styles
+sections:
+  - items:
+      - type: stat
+        label: Users
+        value: "12,400"
+      - type: divider
+      - type: stat
+        label: Revenue
+        value: "$3.1M"
+      - type: divider
+        style: dashed
+      - type: progress
+        label: Q4 Target
+        value: 78
+      - type: divider
+        style: dotted
+      - type: fact
+        icon: "\u2713"
+        text: All systems operational
+```
+````
+
+</details>
+
+### Full dashboard
+
+All seven item types combined into a multi-section dashboard.
+
+export const dashboardExample = `\`\`\`ui:infographic
+title: SaaS Product Dashboard — Q4 2025
+sections:
+  - heading: Key Metrics
+    items:
+      - type: stat
+        label: MRR
+        value: "$842K"
+        description: "+12% MoM"
+      - type: stat
+        label: Active Users
+        value: "24,800"
+        description: "+3,200 this month"
+      - type: stat
+        label: Churn
+        value: "1.4%"
+        description: Down from 2.1%
+  - heading: Customer Satisfaction
+    items:
+      - type: rating
+        label: NPS Score
+        value: 4.5
+        description: "Promoters: 72%"
+      - type: rating
+        label: Support Rating
+        value: 4
+        description: "Avg. resolution: 2.4 hrs"
+      - type: divider
+      - type: fact
+        icon: "\u2713"
+        text: CSAT improved 8 points since Q3
+      - type: fact
+        icon: "\u2713"
+        text: First response time under 15 minutes
+  - heading: Revenue Breakdown
+    items:
+      - type: pie
+        label: By Plan
+        slices:
+          - label: Enterprise
+            value: 55
+          - label: Business
+            value: 30
+          - label: Starter
+            value: 12
+          - label: Free Trial
+            value: 3
+      - type: pie
+        label: By Region
+        slices:
+          - label: Americas
+            value: 48
+          - label: EMEA
+            value: 32
+          - label: APAC
+            value: 20
+  - heading: OKR Progress
+    items:
+      - type: progress
+        label: Reach $1M MRR
+        value: 84
+      - type: progress
+        label: Ship V2 Platform
+        value: 92
+      - type: progress
+        label: Expand to 3 New Markets
+        value: 67
+      - type: divider
+        style: dashed
+      - type: text
+        content: "Overall OKR attainment is on track. The latency goal requires additional infrastructure investment planned for January."
+\`\`\``;
+
+<GlyphPreview client:only="react" source={dashboardExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:infographic
+title: SaaS Product Dashboard — Q4 2025
+sections:
+  - heading: Key Metrics
+    items:
+      - type: stat
+        label: MRR
+        value: "$842K"
+        description: "+12% MoM"
+      - type: stat
+        label: Active Users
+        value: "24,800"
+        description: "+3,200 this month"
+      - type: stat
+        label: Churn
+        value: "1.4%"
+        description: Down from 2.1%
+  - heading: Customer Satisfaction
+    items:
+      - type: rating
+        label: NPS Score
+        value: 4.5
+        description: "Promoters: 72%"
+      - type: rating
+        label: Support Rating
+        value: 4
+        description: "Avg. resolution: 2.4 hrs"
+      - type: divider
+      - type: fact
+        icon: "\u2713"
+        text: CSAT improved 8 points since Q3
+      - type: fact
+        icon: "\u2713"
+        text: First response time under 15 minutes
+  - heading: Revenue Breakdown
+    items:
+      - type: pie
+        label: By Plan
+        slices:
+          - label: Enterprise
+            value: 55
+          - label: Business
+            value: 30
+          - label: Starter
+            value: 12
+          - label: Free Trial
+            value: 3
+      - type: pie
+        label: By Region
+        slices:
+          - label: Americas
+            value: 48
+          - label: EMEA
+            value: 32
+          - label: APAC
+            value: 20
+  - heading: OKR Progress
+    items:
+      - type: progress
+        label: Reach $1M MRR
+        value: 84
+      - type: progress
+        label: Ship V2 Platform
+        value: 92
+      - type: progress
+        label: Expand to 3 New Markets
+        value: 67
+      - type: divider
+        style: dashed
+      - type: text
+        content: "Overall OKR attainment is on track. The latency goal requires additional infrastructure investment planned for January."
+```
+````
+
+</details>
+
 ## Properties
 
 | Property | Type | Required | Default | Description |
@@ -174,12 +544,50 @@ Items use a discriminated union on the `type` field:
 | `type` | `"text"` | Yes | Discriminator. |
 | `content` | `string` | Yes | Paragraph text. |
 
+#### pie
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"pie"` | Yes | Discriminator. |
+| `label` | `string` | No | Title above the chart. |
+| `slices` | `PieSlice[]` | Yes | Array of 1--12 slices (see below). |
+| `donut` | `boolean` | No | Render as donut (default `true`). |
+| `size` | `number` | No | Diameter in px, 80--300 (default `160`). |
+
+**PieSlice**
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `label` | `string` | Yes | Legend label. |
+| `value` | `number` | Yes | Positive numeric value (proportional). |
+| `color` | `string` | No | Custom fill color (CSS value). |
+
+#### divider
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"divider"` | Yes | Discriminator. |
+| `style` | `"solid" \| "dashed" \| "dotted"` | No | Line style (default `"solid"`). |
+
+#### rating
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"rating"` | Yes | Discriminator. |
+| `label` | `string` | Yes | Label for the rating. |
+| `value` | `number` | Yes | Rating value 0--5 (supports halves). |
+| `max` | `number` | No | Maximum stars 1--5 (default `5`). |
+| `description` | `string` | No | Additional context text. |
+
 ## Accessibility
 
 - The component renders with `role="region"` and `aria-label` set to the `title` (or "Infographic" if no title).
 - Progress bars use `role="progressbar"` with `aria-valuenow`, `aria-valuemin="0"`, and `aria-valuemax="100"`.
 - Each progress bar includes an `aria-label` with the label and percentage (e.g. "Sprint Progress: 80%").
 - Fact icons use `aria-hidden="true"` so they do not interfere with screen readers.
+- Pie chart SVGs use `role="img"` with an `aria-label` describing the chart and all slice values.
+- Dividers use `role="separator"` for assistive technology.
+- Rating stars are `aria-hidden="true"` with an `aria-label` like "4.5 out of 5 stars" on the star container.
 
 ## Custom CSS variables
 
@@ -191,3 +599,4 @@ Items use a discriminated union on the `type` field:
 | `--glyph-infographic-color-3` | `#f59e0b` | `#fbbf24` | Third progress fill color. |
 | `--glyph-infographic-color-4` | `#ef4444` | `#f87171` | Fourth progress fill color. |
 | `--glyph-infographic-section-divider` | `#d0d8e4` | `#1a2035` | Border between sections. |
+| `--glyph-infographic-star` | `#f59e0b` | `#fbbf24` | Star fill color for ratings. |

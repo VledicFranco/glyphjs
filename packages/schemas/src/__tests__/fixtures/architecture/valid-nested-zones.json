@@ -1,0 +1,11 @@
+{
+  "children": [
+    {
+      "id": "zone",
+      "label": "Zone",
+      "type": "zone",
+      "children": [{ "id": "svc", "label": "Service", "icon": "server" }]
+    }
+  ],
+  "edges": []
+}

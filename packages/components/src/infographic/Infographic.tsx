@@ -28,7 +28,41 @@ export interface TextItem {
   content: string;
 }
 
-export type InfographicItem = StatItem | FactItem | ProgressItem | TextItem;
+export interface PieSlice {
+  label: string;
+  value: number;
+  color?: string;
+}
+
+export interface PieItem {
+  type: 'pie';
+  label?: string;
+  slices: PieSlice[];
+  donut?: boolean;
+  size?: number;
+}
+
+export interface DividerItem {
+  type: 'divider';
+  style?: 'solid' | 'dashed' | 'dotted';
+}
+
+export interface RatingItem {
+  type: 'rating';
+  label: string;
+  value: number;
+  max?: number;
+  description?: string;
+}
+
+export type InfographicItem =
+  | StatItem
+  | FactItem
+  | ProgressItem
+  | TextItem
+  | PieItem
+  | DividerItem
+  | RatingItem;
 
 export interface InfographicSection {
   heading?: string;
@@ -222,6 +256,252 @@ function renderTextGroup(items: TextItem[], keyPrefix: string): ReactElement {
   );
 }
 
+function renderPieGroup(items: PieItem[], keyPrefix: string, colorOffset: number): ReactElement {
+  const wrapperStyle: React.CSSProperties = {
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 'var(--glyph-spacing-md, 1rem)',
+  };
+
+  return (
+    <div style={wrapperStyle} data-group="pie" key={keyPrefix}>
+      {items.map((item, i) => {
+        const size = item.size ?? 160;
+        const outerRadius = size / 2;
+        const innerRadius = (item.donut ?? true) ? outerRadius * 0.55 : 0;
+        const cx = outerRadius;
+        const cy = outerRadius;
+        const total = item.slices.reduce((sum, s) => sum + s.value, 0);
+
+        let cumAngle = -Math.PI / 2;
+        const paths: ReactElement[] = [];
+
+        for (let si = 0; si < item.slices.length; si++) {
+          const slice = item.slices[si];
+          if (!slice) continue;
+          const sliceAngle = (slice.value / total) * 2 * Math.PI;
+          const startAngle = cumAngle;
+          const endAngle = cumAngle + sliceAngle;
+          cumAngle = endAngle;
+
+          const sliceColorIndex = (colorOffset + si) % PROGRESS_COLORS.length;
+          const fillColor = slice.color ?? PROGRESS_COLORS[sliceColorIndex];
+
+          const x1 = cx + outerRadius * Math.cos(startAngle);
+          const y1 = cy + outerRadius * Math.sin(startAngle);
+          const x2 = cx + outerRadius * Math.cos(endAngle);
+          const y2 = cy + outerRadius * Math.sin(endAngle);
+          const largeArc = sliceAngle > Math.PI ? 1 : 0;
+
+          let d: string;
+          if (innerRadius > 0) {
+            const ix1 = cx + innerRadius * Math.cos(endAngle);
+            const iy1 = cy + innerRadius * Math.sin(endAngle);
+            const ix2 = cx + innerRadius * Math.cos(startAngle);
+            const iy2 = cy + innerRadius * Math.sin(startAngle);
+            d = [
+              `M ${String(x1)} ${String(y1)}`,
+              `A ${String(outerRadius)} ${String(outerRadius)} 0 ${String(largeArc)} 1 ${String(x2)} ${String(y2)}`,
+              `L ${String(ix1)} ${String(iy1)}`,
+              `A ${String(innerRadius)} ${String(innerRadius)} 0 ${String(largeArc)} 0 ${String(ix2)} ${String(iy2)}`,
+              'Z',
+            ].join(' ');
+          } else {
+            d = [
+              `M ${String(cx)} ${String(cy)}`,
+              `L ${String(x1)} ${String(y1)}`,
+              `A ${String(outerRadius)} ${String(outerRadius)} 0 ${String(largeArc)} 1 ${String(x2)} ${String(y2)}`,
+              'Z',
+            ].join(' ');
+          }
+
+          paths.push(<path key={si} d={d} fill={fillColor} />);
+        }
+
+        const ariaLabel = item.label
+          ? `${item.label}: ${item.slices.map((s) => `${s.label} ${String(s.value)}`).join(', ')}`
+          : `Pie chart: ${item.slices.map((s) => `${s.label} ${String(s.value)}`).join(', ')}`;
+
+        const legendStyle: React.CSSProperties = {
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: 'var(--glyph-spacing-sm, 0.5rem)',
+          marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
+          fontSize: '0.75rem',
+          color: 'var(--glyph-text-muted, #6b7a94)',
+        };
+
+        return (
+          <div key={`${keyPrefix}-${String(i)}`} style={{ textAlign: 'center' }}>
+            {item.label && (
+              <div
+                style={{
+                  fontSize: '0.875rem',
+                  fontWeight: 600,
+                  color: 'var(--glyph-heading, #0a0e1a)',
+                  marginBottom: 'var(--glyph-spacing-xs, 0.25rem)',
+                }}
+              >
+                {item.label}
+              </div>
+            )}
+            <svg
+              width={size}
+              height={size}
+              viewBox={`0 0 ${String(size)} ${String(size)}`}
+              role="img"
+              aria-label={ariaLabel}
+            >
+              {paths}
+            </svg>
+            <div style={legendStyle}>
+              {item.slices.map((slice, si) => {
+                const sliceColorIndex = (colorOffset + si) % PROGRESS_COLORS.length;
+                const legendColor = slice.color ?? PROGRESS_COLORS[sliceColorIndex];
+                return (
+                  <span
+                    key={si}
+                    style={{ display: 'inline-flex', alignItems: 'center', gap: '0.25rem' }}
+                  >
+                    <span
+                      style={{
+                        display: 'inline-block',
+                        width: '0.625rem',
+                        height: '0.625rem',
+                        borderRadius: '2px',
+                        background: legendColor,
+                      }}
+                      aria-hidden="true"
+                    />
+                    {slice.label}
+                  </span>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function renderDividerGroup(items: DividerItem[], keyPrefix: string): ReactElement {
+  return (
+    <div data-group="divider" key={keyPrefix}>
+      {items.map((item, i) => (
+        <hr
+          key={`${keyPrefix}-${String(i)}`}
+          role="separator"
+          style={{
+            border: 'none',
+            borderTop: `1px ${item.style ?? 'solid'} var(--glyph-infographic-section-divider, #d0d8e4)`,
+            margin: 'var(--glyph-spacing-sm, 0.5rem) 0',
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+function renderRatingGroup(items: RatingItem[], keyPrefix: string): ReactElement {
+  const starColor = 'var(--glyph-infographic-star, #f59e0b)';
+  const emptyColor = 'var(--glyph-text-muted, #6b7a94)';
+
+  return (
+    <div data-group="rating" key={keyPrefix}>
+      {items.map((item, i) => {
+        const max = item.max ?? 5;
+        const fullStars = Math.floor(item.value);
+        const hasHalf = item.value - fullStars >= 0.5;
+
+        const stars: ReactElement[] = [];
+        for (let s = 0; s < max; s++) {
+          if (s < fullStars) {
+            stars.push(
+              <span key={s} style={{ color: starColor }} aria-hidden="true">
+                {'\u2605'}
+              </span>,
+            );
+          } else if (s === fullStars && hasHalf) {
+            stars.push(
+              <span
+                key={s}
+                style={{ position: 'relative', display: 'inline-block' }}
+                aria-hidden="true"
+              >
+                <span style={{ color: emptyColor }}>{'\u2605'}</span>
+                <span
+                  style={{
+                    position: 'absolute',
+                    left: 0,
+                    top: 0,
+                    overflow: 'hidden',
+                    width: '50%',
+                    color: starColor,
+                  }}
+                >
+                  {'\u2605'}
+                </span>
+              </span>,
+            );
+          } else {
+            stars.push(
+              <span key={s} style={{ color: emptyColor }} aria-hidden="true">
+                {'\u2605'}
+              </span>,
+            );
+          }
+        }
+
+        return (
+          <div
+            key={`${keyPrefix}-${String(i)}`}
+            style={{
+              display: 'flex',
+              alignItems: 'baseline',
+              gap: 'var(--glyph-spacing-sm, 0.5rem)',
+              marginBottom: 'var(--glyph-spacing-sm, 0.5rem)',
+            }}
+          >
+            <span
+              style={{
+                fontSize: '1.5rem',
+                fontWeight: 700,
+                color: 'var(--glyph-heading, #0a0e1a)',
+                lineHeight: 1,
+              }}
+            >
+              {String(item.value)}
+            </span>
+            <div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--glyph-text, #1a2035)' }}>
+                {item.label}
+              </div>
+              <div
+                style={{ fontSize: '1.125rem', letterSpacing: '0.05em' }}
+                aria-label={`${String(item.value)} out of ${String(max)} stars`}
+              >
+                {stars}
+              </div>
+              {item.description && (
+                <div
+                  style={{
+                    fontSize: '0.75rem',
+                    color: 'var(--glyph-text-muted, #6b7a94)',
+                    marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
+                  }}
+                >
+                  {item.description}
+                </div>
+              )}
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── Component ─────────────────────────────────────────────────
 
 export function Infographic({ data, block }: GlyphComponentProps<InfographicData>): ReactElement {
@@ -287,6 +567,18 @@ export function Infographic({ data, block }: GlyphComponentProps<InfographicData
                   return renderFactGroup(group.items as FactItem[], key);
                 case 'text':
                   return renderTextGroup(group.items as TextItem[], key);
+                case 'pie': {
+                  const el = renderPieGroup(group.items as PieItem[], key, progressColorOffset);
+                  progressColorOffset += (group.items as PieItem[]).reduce(
+                    (sum, item) => sum + item.slices.length,
+                    0,
+                  );
+                  return el;
+                }
+                case 'divider':
+                  return renderDividerGroup(group.items as DividerItem[], key);
+                case 'rating':
+                  return renderRatingGroup(group.items as RatingItem[], key);
                 default:
                   return null;
               }

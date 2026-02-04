@@ -1,0 +1,7 @@
+{
+  "children": [
+    { "id": "a", "label": "A", "icon": "server" },
+    { "id": "b", "label": "B", "icon": "database" }
+  ],
+  "edges": [{ "from": "a", "to": "b" }]
+}

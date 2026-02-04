@@ -20,6 +20,18 @@ import { chartDefinition } from '../../packages/components/src/chart/index';
 import { relationDefinition } from '../../packages/components/src/relation/index';
 import { timelineDefinition } from '../../packages/components/src/timeline/index';
 import { architectureDefinition } from '../../packages/components/src/architecture/index';
+import { accordionDefinition } from '../../packages/components/src/accordion/index';
+import { cardDefinition } from '../../packages/components/src/card/index';
+import { codeDiffDefinition } from '../../packages/components/src/codediff/index';
+import { comparisonDefinition } from '../../packages/components/src/comparison/index';
+import { equationDefinition } from '../../packages/components/src/equation/index';
+import { fileTreeDefinition } from '../../packages/components/src/filetree/index';
+import { flowchartDefinition } from '../../packages/components/src/flowchart/index';
+import { kpiDefinition } from '../../packages/components/src/kpi/index';
+import { mindMapDefinition } from '../../packages/components/src/mindmap/index';
+import { quizDefinition } from '../../packages/components/src/quiz/index';
+import { sequenceDefinition } from '../../packages/components/src/sequence/index';
+import { infographicDefinition } from '../../packages/components/src/infographic/index';
 import type { GlyphComponentDefinition } from '../../packages/types/src/index';
 
 // ─── jsdom polyfills ────────────────────────────────────────
@@ -43,6 +55,18 @@ const allComponents: GlyphComponentDefinition[] = [
   relationDefinition,
   timelineDefinition,
   architectureDefinition,
+  accordionDefinition,
+  cardDefinition,
+  codeDiffDefinition,
+  comparisonDefinition,
+  equationDefinition,
+  fileTreeDefinition,
+  flowchartDefinition,
+  kpiDefinition,
+  mindMapDefinition,
+  quizDefinition,
+  sequenceDefinition,
+  infographicDefinition,
 ];
 
 // ─── Helper ─────────────────────────────────────────────────
@@ -484,6 +508,332 @@ edges:
 
     const svg = container.querySelector('svg[role="img"]');
     expect(svg).toBeInTheDocument();
+  });
+});
+
+// ─── Accordion ─────────────────────────────────────────────
+
+describe('Accordion E2E', () => {
+  it('compiles and renders accordion with multiple sections', () => {
+    const md = `\`\`\`ui:accordion
+sections:
+  - title: Getting Started
+    content: Install the package and configure your runtime.
+  - title: API Reference
+    content: See the full API documentation.
+  - title: FAQ
+    content: Frequently asked questions.
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const details = container.querySelectorAll('details');
+    expect(details.length).toBeGreaterThanOrEqual(3);
+  });
+});
+
+// ─── Card ──────────────────────────────────────────────────
+
+describe('Card E2E', () => {
+  it('compiles and renders card grid', () => {
+    const md = `\`\`\`ui:card
+cards:
+  - title: Parser
+    body: Parses Markdown into AST.
+  - title: Compiler
+    body: Compiles AST to IR.
+  - title: Runtime
+    body: Renders IR as React components.
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const headings = container.querySelectorAll('h3, h4, [class*="card"]');
+    expect(headings.length).toBeGreaterThanOrEqual(1);
+  });
+});
+
+// ─── CodeDiff ──────────────────────────────────────────────
+
+describe('CodeDiff E2E', () => {
+  it('compiles and renders code diff', () => {
+    const md = `\`\`\`ui:codediff
+language: javascript
+before: "const x = 1;"
+after: "const x = 2;"
+beforeLabel: Original
+afterLabel: Updated
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const table = container.querySelector('table');
+    expect(table).toBeInTheDocument();
+  });
+});
+
+// ─── Comparison ────────────────────────────────────────────
+
+describe('Comparison E2E', () => {
+  it('compiles and renders comparison table', () => {
+    const md = `\`\`\`ui:comparison
+options:
+  - name: Plan A
+    description: Basic plan
+  - name: Plan B
+    description: Pro plan
+features:
+  - name: Storage
+    values:
+      - 10 GB
+      - 100 GB
+  - name: Support
+    values:
+      - Email
+      - Phone
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const table = container.querySelector('table');
+    expect(table).toBeInTheDocument();
+  });
+});
+
+// ─── Equation ──────────────────────────────────────────────
+
+describe('Equation E2E', () => {
+  it('compiles and renders equation with steps', () => {
+    const md = `\`\`\`ui:equation
+expression: "E = mc^2"
+label: Mass-energy equivalence
+steps:
+  - expression: "E = mc^2"
+    annotation: Einstein's equation
+  - expression: "E / c^2 = m"
+    annotation: Solve for mass
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    expect(container.textContent).toContain('E');
+  });
+});
+
+// ─── FileTree ──────────────────────────────────────────────
+
+describe('FileTree E2E', () => {
+  it('compiles and renders file tree', () => {
+    const md = `\`\`\`ui:filetree
+root: project
+defaultExpanded: true
+tree:
+  - name: src
+    children:
+      - name: index.ts
+      - name: utils.ts
+  - name: package.json
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const tree = container.querySelector('[role="tree"], [role="group"], ul');
+    expect(tree).toBeInTheDocument();
+  });
+});
+
+// ─── Flowchart ─────────────────────────────────────────────
+
+describe('Flowchart E2E', () => {
+  it('compiles and renders flowchart', () => {
+    const md = `\`\`\`ui:flowchart
+direction: top-down
+nodes:
+  - id: start
+    type: start
+    label: Begin
+  - id: process
+    type: process
+    label: Process Data
+  - id: end
+    type: end
+    label: Done
+edges:
+  - from: start
+    to: process
+  - from: process
+    to: end
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const svg = container.querySelector('svg[role="img"]');
+    expect(svg).toBeInTheDocument();
+  });
+});
+
+// ─── KPI ───────────────────────────────────────────────────
+
+describe('KPI E2E', () => {
+  it('compiles and renders KPI metrics', () => {
+    const md = `\`\`\`ui:kpi
+title: Dashboard
+metrics:
+  - label: Revenue
+    value: "$1.2M"
+    delta: "+15%"
+    trend: up
+    sentiment: positive
+  - label: Churn
+    value: "2.1%"
+    delta: "-0.3%"
+    trend: down
+    sentiment: positive
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    expect(container.textContent).toContain('Revenue');
+    expect(container.textContent).toContain('$1.2M');
+  });
+});
+
+// ─── MindMap ───────────────────────────────────────────────
+
+describe('MindMap E2E', () => {
+  it('compiles and renders mind map', () => {
+    const md = `\`\`\`ui:mindmap
+root: GlyphJS
+layout: radial
+children:
+  - label: Parser
+    children:
+      - label: Remark
+  - label: Compiler
+  - label: Runtime
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const svg = container.querySelector('svg[role="img"]');
+    expect(svg).toBeInTheDocument();
+  });
+});
+
+// ─── Quiz ──────────────────────────────────────────────────
+
+describe('Quiz E2E', () => {
+  it('compiles and renders quiz with multiple choice', () => {
+    const md = `\`\`\`ui:quiz
+title: Quick Quiz
+questions:
+  - type: multiple-choice
+    question: "What does GlyphJS compile?"
+    options:
+      - HTML
+      - Markdown
+      - YAML
+    answer: 1
+  - type: true-false
+    question: "GlyphJS uses React."
+    answer: true
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const region = container.querySelector('[role="region"]');
+    expect(region).toBeInTheDocument();
+  });
+});
+
+// ─── Sequence ──────────────────────────────────────────────
+
+describe('Sequence E2E', () => {
+  it('compiles and renders sequence diagram', () => {
+    const md = `\`\`\`ui:sequence
+title: API Call
+actors:
+  - id: client
+    label: Client
+  - id: server
+    label: Server
+messages:
+  - from: client
+    to: server
+    label: GET /api/data
+    type: message
+  - from: server
+    to: client
+    label: 200 OK
+    type: reply
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    const svg = container.querySelector('svg[role="img"]');
+    expect(svg).toBeInTheDocument();
+  });
+});
+
+// ─── Infographic ───────────────────────────────────────────
+
+describe('Infographic E2E', () => {
+  it('compiles and renders infographic with stats', () => {
+    const md = `\`\`\`ui:infographic
+title: Company Overview
+sections:
+  - heading: Key Metrics
+    items:
+      - type: stat
+        label: Users
+        value: "1.2M"
+      - type: stat
+        label: Revenue
+        value: "$5M"
+      - type: progress
+        label: Goal Completion
+        value: 75
+\`\`\``;
+
+    const { result, container } = compileAndRender(md);
+
+    const errors = result.diagnostics.filter((d) => d.severity === 'error');
+    expect(errors).toHaveLength(0);
+
+    expect(container.textContent).toContain('Key Metrics');
   });
 });
 

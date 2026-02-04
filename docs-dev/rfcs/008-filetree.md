@@ -1,6 +1,6 @@
 # RFC-008: FileTree
 
-- **Status:** Draft
+- **Status:** Implemented
 - **Parent:** [RFC-002: Component Roadmap](./002-component-roadmap.md)
 - **Priority:** P6
 - **Complexity:** M

@@ -1,0 +1,5 @@
+{
+  "title": "Plans",
+  "options": [{ "name": "Free" }, { "name": "Paid" }],
+  "features": [{ "name": "Support", "values": ["Email", "Phone"] }]
+}

@@ -1,0 +1,8 @@
+{
+  "nodes": [
+    { "id": "a", "type": "start", "label": "Start" },
+    { "id": "b", "type": "end", "label": "End" }
+  ],
+  "edges": [{ "from": "a", "to": "b" }],
+  "direction": "top-down"
+}

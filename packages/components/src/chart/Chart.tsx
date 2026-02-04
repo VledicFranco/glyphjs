@@ -18,6 +18,7 @@ import {
   renderLegend,
 } from './render.js';
 import type { ChartData, DataRecord } from './render.js';
+import { ChartAccessibleTable } from './ChartAccessibleTable.js';
 
 export type { ChartData } from './render.js';
 
@@ -38,8 +39,6 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
   const yKey = yAxis?.key ?? 'y';
   const height = DEFAULT_HEIGHT;
 
-  // ─── Responsive width via ResizeObserver ───────────────────
-
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -57,8 +56,6 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
     return () => observer.disconnect();
   }, []);
 
-  // ─── Tooltip helpers ───────────────────────────────────────
-
   const showTooltip = useCallback((event: MouseEvent, text: string) => {
     const tip = tooltipRef.current;
     if (!tip) return;
@@ -74,22 +71,16 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
     tip.style.display = 'none';
   }, []);
 
-  // ─── Scale computation (memoised) ──────────────────────────
-
   const scales = useMemo(() => {
     const innerWidth = width - MARGIN.left - MARGIN.right;
     const innerHeight = height - MARGIN.top - MARGIN.bottom;
 
-    // Determine if x-axis is numeric or categorical
     const firstRecord = series[0]?.data[0];
     const xIsNumeric = firstRecord != null && typeof firstRecord[xKey] === 'number';
-
-    // X scale
     let xScale: d3.ScaleLinear<number, number> | d3.ScaleBand<string>;
     let xScalePoint: (d: DataRecord) => number;
 
     if (type === 'bar' || !xIsNumeric) {
-      // Categorical / band scale
       const allLabels: string[] = series.flatMap((s: ChartData['series'][number]) =>
         s.data.map((d: DataRecord) => String(d[xKey] ?? '')),
       );
@@ -98,7 +89,6 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
       xScale = band;
       xScalePoint = (d: DataRecord) => (band(String(d[xKey] ?? '')) ?? 0) + band.bandwidth() / 2;
     } else {
-      // Linear scale
       const allX = getAllNumericValues(series, xKey);
       const linear = d3
         .scaleLinear()
@@ -109,10 +99,8 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
       xScalePoint = (d: DataRecord) => linear(getNumericValue(d, xKey));
     }
 
-    // Y scale
     let yMin: number;
     let yMax: number;
-
     if (type === 'ohlc') {
       const lows = getAllNumericValues(series, 'low');
       const highs = getAllNumericValues(series, 'high');
@@ -129,8 +117,6 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
     return { xScale, xScalePoint, yScale, innerWidth, innerHeight };
   }, [width, height, type, series, xKey, yKey]);
 
-  // ─── D3 rendering ─────────────────────────────────────────
-
   useEffect(() => {
     const svg = svgRef.current;
     if (!svg || series.length === 0) return;
@@ -144,16 +130,10 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
       .append('g')
       .attr('transform', `translate(${String(MARGIN.left)},${String(MARGIN.top)})`);
 
-    // Axes
     renderAxes(g, xScale, yScale, xAxis, yAxis, innerWidth, innerHeight);
-
-    // Grid lines
     renderGridLines(g, yScale, innerWidth);
-
-    // Render each series
     series.forEach((s: ChartData['series'][number], i: number) => {
       const color = COLOR_SCHEME[i % COLOR_SCHEME.length] ?? '#333';
-
       switch (type) {
         case 'line':
           renderLineSeries(
@@ -170,7 +150,6 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
             hideTooltip,
           );
           break;
-
         case 'area':
           renderAreaSeries(
             g,
@@ -187,7 +166,6 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
             hideTooltip,
           );
           break;
-
         case 'bar':
           renderBarSeries(
             g,
@@ -205,7 +183,6 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
             hideTooltip,
           );
           break;
-
         case 'ohlc':
           renderOHLCSeries(
             g,
@@ -222,54 +199,10 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
       }
     });
 
-    // Legend
     if (legend) {
       renderLegend(sel, series, MARGIN.left, MARGIN.top);
     }
   }, [scales, type, series, xKey, yKey, xAxis, yAxis, legend, showTooltip, hideTooltip]);
-
-  // ─── Accessible hidden data table ──────────────────────────
-
-  const accessibleTable = (
-    <table
-      style={{
-        position: 'absolute',
-        width: '1px',
-        height: '1px',
-        padding: 0,
-        margin: '-1px',
-        overflow: 'hidden',
-        clip: 'rect(0,0,0,0)',
-        whiteSpace: 'nowrap',
-        border: 0,
-      }}
-    >
-      <caption>{type} chart data</caption>
-      {series.map((s: ChartData['series'][number], si: number) => (
-        <tbody key={si}>
-          <tr>
-            <th colSpan={2}>{s.name}</th>
-          </tr>
-          <tr>
-            <th>{xAxis?.label ?? xKey}</th>
-            <th>{yAxis?.label ?? yKey}</th>
-          </tr>
-          {s.data.map((d: DataRecord, di: number) => (
-            <tr key={di}>
-              <td>{String(d[xKey] ?? '')}</td>
-              <td>
-                {type === 'ohlc'
-                  ? `O=${String(d['open'] ?? '')} H=${String(d['high'] ?? '')} L=${String(d['low'] ?? '')} C=${String(d['close'] ?? '')}`
-                  : String(d[yKey] ?? '')}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      ))}
-    </table>
-  );
-
-  // ─── Render ────────────────────────────────────────────────
 
   const ariaLabel = `${type} chart with ${String(series.length)} series: ${series.map((s: ChartData['series'][number]) => s.name).join(', ')}`;
 
@@ -308,7 +241,14 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
           zIndex: 10,
         }}
       />
-      {accessibleTable}
+      <ChartAccessibleTable
+        type={type}
+        series={series}
+        xKey={xKey}
+        yKey={yKey}
+        xLabel={xAxis?.label}
+        yLabel={yAxis?.label}
+      />
     </div>
   );
 }

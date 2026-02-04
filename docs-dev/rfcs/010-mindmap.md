@@ -1,6 +1,6 @@
 # RFC-010: MindMap
 
-- **Status:** Draft
+- **Status:** Implemented
 - **Parent:** [RFC-002: Component Roadmap](./002-component-roadmap.md)
 - **Priority:** P8
 - **Complexity:** L

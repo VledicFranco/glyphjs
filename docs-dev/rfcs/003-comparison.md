@@ -1,6 +1,6 @@
 # RFC-003: Comparison
 
-- **Status:** Draft
+- **Status:** Implemented
 - **Parent:** [RFC-002: Component Roadmap](./002-component-roadmap.md)
 - **Priority:** P1
 - **Complexity:** M

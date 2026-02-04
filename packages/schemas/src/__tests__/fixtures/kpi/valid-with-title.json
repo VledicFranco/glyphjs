@@ -1,0 +1,8 @@
+{
+  "title": "Dashboard",
+  "metrics": [
+    { "label": "MRR", "value": "$50K" },
+    { "label": "Churn", "value": "2.1%" }
+  ],
+  "columns": 2
+}

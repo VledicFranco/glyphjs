@@ -74,6 +74,7 @@ const LIGHT_THEME_VARS: Record<string, string> = {
   '--glyph-infographic-color-3': '#f59e0b',
   '--glyph-infographic-color-4': '#ef4444',
   '--glyph-infographic-section-divider': '#d0d8e4',
+  '--glyph-infographic-star': '#f59e0b',
 };
 
 const DARK_THEME_VARS: Record<string, string> = {
@@ -154,6 +155,7 @@ const DARK_THEME_VARS: Record<string, string> = {
   '--glyph-infographic-color-3': '#fbbf24',
   '--glyph-infographic-color-4': '#f87171',
   '--glyph-infographic-section-divider': '#1a2035',
+  '--glyph-infographic-star': '#fbbf24',
 };
 
 function ThemeWrapper({ children, theme }: { children: React.ReactNode; theme: 'light' | 'dark' }) {

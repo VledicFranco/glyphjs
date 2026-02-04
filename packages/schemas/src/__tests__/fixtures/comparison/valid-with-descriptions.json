@@ -1,0 +1,7 @@
+{
+  "options": [
+    { "name": "Plan A", "description": "Basic" },
+    { "name": "Plan B", "description": "Pro" }
+  ],
+  "features": [{ "name": "Storage", "values": ["10GB", "100GB"] }]
+}

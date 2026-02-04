@@ -1,6 +1,6 @@
 # RFC-014: Infographic
 
-- **Status:** Draft
+- **Status:** Implemented
 - **Parent:** [RFC-002: Component Roadmap](./002-component-roadmap.md)
 - **Priority:** P12
 - **Complexity:** M

@@ -1,0 +1,6 @@
+{
+  "steps": [
+    { "expression": "x + 2 = 5", "annotation": "Given" },
+    { "expression": "x = 3", "annotation": "Solve" }
+  ]
+}

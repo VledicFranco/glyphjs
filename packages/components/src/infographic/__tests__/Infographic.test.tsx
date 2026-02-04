@@ -211,4 +211,194 @@ describe('Infographic', () => {
     render(<Infographic {...props} />);
     expect(screen.getByText('Year over year growth')).toBeInTheDocument();
   });
+
+  // ─── Pie tests ───────────────────────────────────────────────
+
+  it('renders pie SVG with path elements for slices', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'pie',
+                label: 'Budget',
+                slices: [
+                  { label: 'Engineering', value: 50 },
+                  { label: 'Marketing', value: 30 },
+                  { label: 'Sales', value: 20 },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
+    const svg = container.querySelector('svg');
+    expect(svg).toBeInTheDocument();
+    const paths = svg!.querySelectorAll('path');
+    expect(paths).toHaveLength(3);
+  });
+
+  it('renders pie legend labels below chart', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'pie',
+                slices: [
+                  { label: 'Alpha', value: 40 },
+                  { label: 'Beta', value: 60 },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    expect(screen.getByText('Alpha')).toBeInTheDocument();
+    expect(screen.getByText('Beta')).toBeInTheDocument();
+  });
+
+  it('sets aria-label on pie SVG containing label text', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'pie',
+                label: 'Languages',
+                slices: [
+                  { label: 'JS', value: 70 },
+                  { label: 'TS', value: 30 },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('aria-label');
+    expect(svg!.getAttribute('aria-label')).toContain('Languages');
+  });
+
+  it('renders pie without inner radius hole when donut is false', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'pie',
+                donut: false,
+                slices: [
+                  { label: 'A', value: 50 },
+                  { label: 'B', value: 50 },
+                ],
+              },
+            ],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
+    const paths = container.querySelectorAll('path');
+    expect(paths).toHaveLength(2);
+    // Non-donut paths use M cx cy L ... A ... Z (start from center)
+    const d = paths[0].getAttribute('d') ?? '';
+    expect(d).toMatch(/^M 80 80/);
+  });
+
+  // ─── Divider tests ──────────────────────────────────────────
+
+  it('renders divider as hr with role="separator"', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [{ type: 'divider' }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    const hr = screen.getByRole('separator');
+    expect(hr).toBeInTheDocument();
+    expect(hr.tagName).toBe('HR');
+  });
+
+  it('applies dashed borderStyle on divider', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [{ type: 'divider', style: 'dashed' }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    const hr = screen.getByRole('separator');
+    const style = hr.getAttribute('style') ?? '';
+    expect(style).toContain('dashed');
+  });
+
+  // ─── Rating tests ───────────────────────────────────────────
+
+  it('renders correct number of filled and empty stars', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [{ type: 'rating', label: 'Service', value: 3, max: 5 }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
+    const ratingGroup = container.querySelector('[data-group="rating"]');
+    expect(ratingGroup).toBeInTheDocument();
+    // Value "3" should be displayed
+    expect(screen.getByText('3')).toBeInTheDocument();
+    // Label should be displayed
+    expect(screen.getByText('Service')).toBeInTheDocument();
+  });
+
+  it('renders rating label and description text', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'rating',
+                label: 'Food Quality',
+                value: 4.5,
+                description: 'Based on 200 reviews',
+              },
+            ],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    expect(screen.getByText('Food Quality')).toBeInTheDocument();
+    expect(screen.getByText('Based on 200 reviews')).toBeInTheDocument();
+    expect(screen.getByText('4.5')).toBeInTheDocument();
+  });
 });

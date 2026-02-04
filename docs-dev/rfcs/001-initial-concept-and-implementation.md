@@ -1,6 +1,6 @@
 # RFC-001: Glyph JS — Initial Concept and Implementation
 
-- **Status:** Draft
+- **Status:** Implemented
 - **Authors:** VledicFranco
 - **Created:** 2026-01-31
 - **License:** MIT

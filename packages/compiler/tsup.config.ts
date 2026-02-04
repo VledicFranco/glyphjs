@@ -6,5 +6,7 @@ export default defineConfig({
   dts: true,
   clean: true,
   target: 'es2022',
+  sourcemap: true,
+  treeshake: true,
   external: ['unified', /^remark/, /^mdast/, /^unist/, 'yaml', 'zod'],
 });

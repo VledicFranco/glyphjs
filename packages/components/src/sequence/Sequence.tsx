@@ -1,5 +1,18 @@
 import type { CSSProperties, ReactElement } from 'react';
 import type { GlyphComponentProps } from '@glyphjs/types';
+import {
+  ACTOR_WIDTH,
+  ACTOR_HEIGHT,
+  ACTOR_GAP,
+  TOP_MARGIN,
+  MSG_SPACING,
+  BOTTOM_PADDING,
+  SIDE_PADDING,
+  ARROW_SIZE,
+  renderActorBox,
+  renderSelfMessage,
+  renderStandardMessage,
+} from './helpers.js';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -22,19 +35,6 @@ export interface SequenceData {
   actors: Actor[];
   messages: Message[];
 }
-
-// ─── Layout Constants ────────────────────────────────────────
-
-const ACTOR_WIDTH = 120;
-const ACTOR_HEIGHT = 40;
-const ACTOR_GAP = 160;
-const TOP_MARGIN = 20;
-const MSG_SPACING = 50;
-const SELF_ARC_WIDTH = 30;
-const SELF_ARC_HEIGHT = 30;
-const BOTTOM_PADDING = 40;
-const SIDE_PADDING = 40;
-const ARROW_SIZE = 8;
 
 // ─── Component ──────────────────────────────────────────────
 
@@ -113,33 +113,7 @@ export function Sequence({ data }: GlyphComponentProps<SequenceData>): ReactElem
         {/* Actor boxes (top) */}
         {data.actors.map((actor) => {
           const cx = actorX.get(actor.id) ?? 0;
-          return (
-            <g key={`actor-top-${actor.id}`}>
-              <rect
-                x={cx - ACTOR_WIDTH / 2}
-                y={actorBoxY}
-                width={ACTOR_WIDTH}
-                height={ACTOR_HEIGHT}
-                rx={4}
-                ry={4}
-                fill="var(--glyph-surface-raised, #162038)"
-                stroke="var(--glyph-border-strong, #2a3550)"
-                strokeWidth={1.5}
-              />
-              <text
-                x={cx}
-                y={actorBoxY + ACTOR_HEIGHT / 2}
-                dy="0.35em"
-                textAnchor="middle"
-                fontSize="13px"
-                fontFamily="Inter, system-ui, sans-serif"
-                fontWeight={600}
-                fill="var(--glyph-text, #d4dae3)"
-              >
-                {actor.label}
-              </text>
-            </g>
-          );
+          return renderActorBox(actor, cx, actorBoxY, 'actor-top');
         })}
 
         {/* Lifelines */}
@@ -163,33 +137,7 @@ export function Sequence({ data }: GlyphComponentProps<SequenceData>): ReactElem
         {data.actors.map((actor) => {
           const cx = actorX.get(actor.id) ?? 0;
           const bottomY = lastMsgY + BOTTOM_PADDING / 2;
-          return (
-            <g key={`actor-bottom-${actor.id}`}>
-              <rect
-                x={cx - ACTOR_WIDTH / 2}
-                y={bottomY}
-                width={ACTOR_WIDTH}
-                height={ACTOR_HEIGHT}
-                rx={4}
-                ry={4}
-                fill="var(--glyph-surface-raised, #162038)"
-                stroke="var(--glyph-border-strong, #2a3550)"
-                strokeWidth={1.5}
-              />
-              <text
-                x={cx}
-                y={bottomY + ACTOR_HEIGHT / 2}
-                dy="0.35em"
-                textAnchor="middle"
-                fontSize="13px"
-                fontFamily="Inter, system-ui, sans-serif"
-                fontWeight={600}
-                fill="var(--glyph-text, #d4dae3)"
-              >
-                {actor.label}
-              </text>
-            </g>
-          );
+          return renderActorBox(actor, cx, bottomY, 'actor-bottom');
         })}
 
         {/* Messages */}
@@ -199,61 +147,10 @@ export function Sequence({ data }: GlyphComponentProps<SequenceData>): ReactElem
           const toX = actorX.get(msg.to) ?? 0;
 
           if (msg.type === 'self') {
-            // Self-message arc
-            const x = fromX;
-            return (
-              <g key={`msg-${idx}`}>
-                <path
-                  d={`M ${x} ${y} L ${x + SELF_ARC_WIDTH} ${y} L ${x + SELF_ARC_WIDTH} ${y + SELF_ARC_HEIGHT} L ${x} ${y + SELF_ARC_HEIGHT}`}
-                  fill="none"
-                  stroke="var(--glyph-text, #d4dae3)"
-                  strokeWidth={1.5}
-                  markerEnd="url(#seq-arrow-solid)"
-                />
-                <text
-                  x={x + SELF_ARC_WIDTH + 6}
-                  y={y + SELF_ARC_HEIGHT / 2}
-                  dy="0.35em"
-                  fontSize="12px"
-                  fontFamily="Inter, system-ui, sans-serif"
-                  fill="var(--glyph-text, #d4dae3)"
-                >
-                  {msg.label}
-                </text>
-              </g>
-            );
+            return renderSelfMessage(fromX, y, msg.label, idx);
           }
 
-          const isDashed = msg.type === 'reply';
-          const markerId = isDashed ? 'seq-arrow-dashed' : 'seq-arrow-solid';
-          const midX = (fromX + toX) / 2;
-
-          return (
-            <g key={`msg-${idx}`}>
-              <line
-                x1={fromX}
-                y1={y}
-                x2={toX}
-                y2={y}
-                stroke={
-                  isDashed ? 'var(--glyph-text-muted, #6b7a94)' : 'var(--glyph-text, #d4dae3)'
-                }
-                strokeWidth={1.5}
-                strokeDasharray={isDashed ? '6,4' : undefined}
-                markerEnd={`url(#${markerId})`}
-              />
-              <text
-                x={midX}
-                y={y - 8}
-                textAnchor="middle"
-                fontSize="12px"
-                fontFamily="Inter, system-ui, sans-serif"
-                fill="var(--glyph-text, #d4dae3)"
-              >
-                {msg.label}
-              </text>
-            </g>
-          );
+          return renderStandardMessage(fromX, toX, y, msg.label, msg.type === 'reply', idx);
         })}
       </svg>
 

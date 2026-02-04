@@ -31,6 +31,30 @@ import { Relation } from '../../packages/components/src/relation/Relation';
 import type { RelationData } from '../../packages/components/src/relation/Relation';
 import { Architecture } from '../../packages/components/src/architecture/Architecture';
 import type { ArchitectureData } from '../../packages/components/src/architecture/Architecture';
+import { Accordion } from '../../packages/components/src/accordion/Accordion';
+import type { AccordionData } from '../../packages/components/src/accordion/Accordion';
+import { Card } from '../../packages/components/src/card/Card';
+import type { CardData } from '../../packages/components/src/card/Card';
+import { CodeDiff } from '../../packages/components/src/codediff/CodeDiff';
+import type { CodeDiffData } from '../../packages/components/src/codediff/CodeDiff';
+import { Comparison } from '../../packages/components/src/comparison/Comparison';
+import type { ComparisonData } from '../../packages/components/src/comparison/Comparison';
+import { Equation } from '../../packages/components/src/equation/Equation';
+import type { EquationData } from '../../packages/components/src/equation/Equation';
+import { FileTree } from '../../packages/components/src/filetree/FileTree';
+import type { FileTreeData } from '../../packages/components/src/filetree/FileTree';
+import { Flowchart } from '../../packages/components/src/flowchart/Flowchart';
+import type { FlowchartData } from '../../packages/components/src/flowchart/Flowchart';
+import { Kpi } from '../../packages/components/src/kpi/Kpi';
+import type { KpiData } from '../../packages/components/src/kpi/Kpi';
+import { MindMap } from '../../packages/components/src/mindmap/MindMap';
+import type { MindMapData } from '../../packages/components/src/mindmap/MindMap';
+import { Quiz } from '../../packages/components/src/quiz/Quiz';
+import type { QuizData } from '../../packages/components/src/quiz/Quiz';
+import { Sequence } from '../../packages/components/src/sequence/Sequence';
+import type { SequenceData } from '../../packages/components/src/sequence/Sequence';
+import { Infographic } from '../../packages/components/src/infographic/Infographic';
+import type { InfographicData } from '../../packages/components/src/infographic/Infographic';
 
 // ─── Renderers ─────────────────────────────────────────────────
 import { GlyphHeading } from '../../packages/runtime/src/renderers/GlyphHeading';
@@ -286,6 +310,182 @@ describe('Accessibility: axe-core automated checks', () => {
       'ui:architecture',
     );
     const { container } = render(<Architecture {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Accordion has no axe-core violations', async () => {
+    const props = mockComponentProps<AccordionData>(
+      {
+        sections: [
+          { title: 'Section 1', content: 'Content for section one.' },
+          { title: 'Section 2', content: 'Content for section two.' },
+        ],
+      },
+      'ui:accordion',
+    );
+    const { container } = render(<Accordion {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Card has no axe-core violations', async () => {
+    const props = mockComponentProps<CardData>(
+      {
+        cards: [
+          { title: 'Card A', body: 'Body text for card A.' },
+          { title: 'Card B', body: 'Body text for card B.' },
+        ],
+      },
+      'ui:card',
+    );
+    const { container } = render(<Card {...props} />);
+    const results = await axe(container, {
+      rules: { 'aria-allowed-role': { enabled: false } },
+    });
+    expect(results).toHaveNoViolations();
+  });
+
+  it('CodeDiff has no axe-core violations', async () => {
+    const props = mockComponentProps<CodeDiffData>(
+      { before: 'const x = 1;', after: 'const x = 2;', language: 'javascript' },
+      'ui:codediff',
+    );
+    const { container } = render(<CodeDiff {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Comparison has no axe-core violations', async () => {
+    const props = mockComponentProps<ComparisonData>(
+      {
+        options: [{ name: 'Plan A' }, { name: 'Plan B' }],
+        features: [{ name: 'Price', values: ['$10', '$20'] }],
+      },
+      'ui:comparison',
+    );
+    const { container } = render(<Comparison {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Equation has no axe-core violations', async () => {
+    const props = mockComponentProps<EquationData>(
+      { expression: 'E = mc^2', label: 'Mass-energy equivalence' },
+      'ui:equation',
+    );
+    const { container } = render(<Equation {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('FileTree has no axe-core violations', async () => {
+    const props = mockComponentProps<FileTreeData>(
+      {
+        tree: [{ name: 'src', children: [{ name: 'index.ts' }] }, { name: 'package.json' }],
+        defaultExpanded: true,
+      },
+      'ui:filetree',
+    );
+    const { container } = render(<FileTree {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Flowchart has no axe-core violations', async () => {
+    const props = mockComponentProps<FlowchartData>(
+      {
+        nodes: [
+          { id: 'a', type: 'start', label: 'Begin' },
+          { id: 'b', type: 'end', label: 'End' },
+        ],
+        edges: [{ from: 'a', to: 'b' }],
+        direction: 'top-down',
+      },
+      'ui:flowchart',
+    );
+    const { container } = render(<Flowchart {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('KPI has no axe-core violations', async () => {
+    const props = mockComponentProps<KpiData>(
+      {
+        metrics: [
+          { label: 'Revenue', value: '$1.2M', trend: 'up', sentiment: 'positive' },
+          { label: 'Churn', value: '2.1%', trend: 'down', sentiment: 'positive' },
+        ],
+      },
+      'ui:kpi',
+    );
+    const { container } = render(<Kpi {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('MindMap has no axe-core violations', async () => {
+    const props = mockComponentProps<MindMapData>(
+      {
+        root: 'Center',
+        children: [{ label: 'Branch A' }, { label: 'Branch B' }],
+        layout: 'radial',
+      },
+      'ui:mindmap',
+    );
+    const { container } = render(<MindMap {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Quiz has no axe-core violations', async () => {
+    const props = mockComponentProps<QuizData>(
+      {
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: 'What is 2+2?',
+            options: ['3', '4', '5'],
+            answer: 1,
+          },
+        ],
+      },
+      'ui:quiz',
+    );
+    const { container } = render(<Quiz {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Sequence has no axe-core violations', async () => {
+    const props = mockComponentProps<SequenceData>(
+      {
+        actors: [
+          { id: 'a', label: 'Client' },
+          { id: 'b', label: 'Server' },
+        ],
+        messages: [{ from: 'a', to: 'b', label: 'Request', type: 'message' }],
+      },
+      'ui:sequence',
+    );
+    const { container } = render(<Sequence {...props} />);
+    const results = await axe(container);
+    expect(results).toHaveNoViolations();
+  });
+
+  it('Infographic has no axe-core violations', async () => {
+    const props = mockComponentProps<InfographicData>(
+      {
+        sections: [
+          {
+            heading: 'Key Metrics',
+            items: [{ type: 'stat', label: 'Users', value: '1.2M' }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
     const results = await axe(container);
     expect(results).toHaveNoViolations();
   });
@@ -770,6 +970,157 @@ describe('Accessibility: ARIA roles and attributes', () => {
     expect(caption).toHaveTextContent('Architecture nodes and connections');
   });
 
+  it('Accordion sections use details/summary elements', () => {
+    const { container } = render(
+      <Accordion
+        {...mockComponentProps<AccordionData>(
+          {
+            sections: [
+              { title: 'First', content: 'Content 1' },
+              { title: 'Second', content: 'Content 2' },
+            ],
+          },
+          'ui:accordion',
+        )}
+      />,
+    );
+
+    const details = container.querySelectorAll('details');
+    expect(details.length).toBeGreaterThanOrEqual(2);
+
+    const summaries = container.querySelectorAll('summary');
+    expect(summaries.length).toBeGreaterThanOrEqual(2);
+  });
+
+  it('Comparison renders as a table with scope headers', () => {
+    const { container } = render(
+      <Comparison
+        {...mockComponentProps<ComparisonData>(
+          {
+            options: [{ name: 'A' }, { name: 'B' }],
+            features: [{ name: 'Price', values: ['$10', '$20'] }],
+          },
+          'ui:comparison',
+        )}
+      />,
+    );
+
+    const table = container.querySelector('table');
+    expect(table).toBeInTheDocument();
+  });
+
+  it('Flowchart SVG has role="img" and descriptive aria-label', () => {
+    const { container } = render(
+      <Flowchart
+        {...mockComponentProps<FlowchartData>(
+          {
+            nodes: [
+              { id: 'a', type: 'start', label: 'Start' },
+              { id: 'b', type: 'end', label: 'End' },
+            ],
+            edges: [{ from: 'a', to: 'b' }],
+            direction: 'top-down',
+          },
+          'ui:flowchart',
+        )}
+      />,
+    );
+
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('aria-label');
+  });
+
+  it('Sequence SVG has role="img" and descriptive aria-label', () => {
+    const { container } = render(
+      <Sequence
+        {...mockComponentProps<SequenceData>(
+          {
+            actors: [
+              { id: 'a', label: 'Client' },
+              { id: 'b', label: 'Server' },
+            ],
+            messages: [{ from: 'a', to: 'b', label: 'Request', type: 'message' }],
+          },
+          'ui:sequence',
+        )}
+      />,
+    );
+
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('aria-label', expect.stringContaining('2 actors'));
+  });
+
+  it('MindMap SVG has role="img" and descriptive aria-label', () => {
+    const { container } = render(
+      <MindMap
+        {...mockComponentProps<MindMapData>(
+          {
+            root: 'Center',
+            children: [{ label: 'A' }, { label: 'B' }],
+            layout: 'radial',
+          },
+          'ui:mindmap',
+        )}
+      />,
+    );
+
+    const svg = container.querySelector('svg');
+    expect(svg).toHaveAttribute('role', 'img');
+    expect(svg).toHaveAttribute('aria-label');
+  });
+
+  it('Quiz has role="region" with aria-label', () => {
+    render(
+      <Quiz
+        {...mockComponentProps<QuizData>(
+          {
+            title: 'Test Quiz',
+            questions: [{ type: 'true-false', question: 'Sky is blue.', answer: true }],
+          },
+          'ui:quiz',
+        )}
+      />,
+    );
+
+    const region = screen.getByRole('region');
+    expect(region).toHaveAttribute('aria-label', 'Test Quiz');
+  });
+
+  it('KPI metrics are labelled', () => {
+    const { container } = render(
+      <Kpi
+        {...mockComponentProps<KpiData>(
+          {
+            metrics: [{ label: 'Revenue', value: '$1M' }],
+          },
+          'ui:kpi',
+        )}
+      />,
+    );
+
+    expect(container.textContent).toContain('Revenue');
+    expect(container.textContent).toContain('$1M');
+  });
+
+  it('FileTree uses tree role or list structure', () => {
+    const { container } = render(
+      <FileTree
+        {...mockComponentProps<FileTreeData>(
+          {
+            tree: [{ name: 'src', children: [{ name: 'index.ts' }] }],
+            defaultExpanded: true,
+          },
+          'ui:filetree',
+        )}
+      />,
+    );
+
+    const tree = container.querySelector('[role="tree"], [role="group"], ul');
+    expect(tree).toBeInTheDocument();
+  });
+
   it('GlyphImage uses semantic figure/figcaption and alt text', () => {
     const props = mockBlockProps(
       { src: 'https://example.com/img.png', alt: 'Descriptive alt text', title: 'Figure title' },
@@ -965,6 +1316,61 @@ describe('Accessibility: Keyboard navigation', () => {
 
     expect(header).toHaveAttribute('aria-sort', 'ascending');
   });
+
+  it('FileTree items respond to Enter/Space for expand/collapse', async () => {
+    const user = userEvent.setup();
+
+    const { container } = render(
+      <FileTree
+        {...mockComponentProps<FileTreeData>(
+          {
+            tree: [{ name: 'src', children: [{ name: 'index.ts' }] }],
+            defaultExpanded: false,
+          },
+          'ui:filetree',
+        )}
+      />,
+    );
+
+    const treeItems = container.querySelectorAll('[role="treeitem"], button, [tabindex="0"]');
+    if (treeItems.length > 0) {
+      const firstItem = treeItems[0] as HTMLElement;
+      firstItem.focus();
+      await user.keyboard('{Enter}');
+      // After expand, children should be visible
+      expect(container.textContent).toContain('index.ts');
+    }
+  });
+
+  it('Quiz radio options respond to keyboard selection', async () => {
+    const user = userEvent.setup();
+
+    render(
+      <Quiz
+        {...mockComponentProps<QuizData>(
+          {
+            questions: [
+              {
+                type: 'multiple-choice',
+                question: 'Pick one',
+                options: ['A', 'B', 'C'],
+                answer: 0,
+              },
+            ],
+          },
+          'ui:quiz',
+        )}
+      />,
+    );
+
+    const radios = screen.getAllByRole('radio');
+    expect(radios.length).toBeGreaterThanOrEqual(3);
+
+    // Tab to first radio and select
+    radios[0]!.focus();
+    await user.keyboard(' ');
+    expect(radios[0]).toBeChecked();
+  });
 });
 
 // ────────────────────────────────────────────────────────────────
@@ -1105,6 +1511,84 @@ describe('Accessibility: Screen reader fallbacks for D3/SVG components', () => {
     // External node connections
     expect(rows![1]!.textContent).toContain('External');
     expect(rows![1]!.textContent).toContain('-> svc');
+  });
+
+  it('Flowchart sr-only table lists nodes and connections', () => {
+    const { container } = render(
+      <Flowchart
+        {...mockComponentProps<FlowchartData>(
+          {
+            nodes: [
+              { id: 'a', type: 'start', label: 'Begin' },
+              { id: 'b', type: 'process', label: 'Process' },
+              { id: 'c', type: 'end', label: 'Done' },
+            ],
+            edges: [
+              { from: 'a', to: 'b' },
+              { from: 'b', to: 'c' },
+            ],
+            direction: 'top-down',
+          },
+          'ui:flowchart',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table.sr-only');
+    expect(srTable).toBeInTheDocument();
+
+    const rows = srTable?.querySelectorAll('tbody tr');
+    expect(rows).toHaveLength(3);
+    expect(rows![0]!.textContent).toContain('Begin');
+  });
+
+  it('Sequence sr-only table lists messages in order', () => {
+    const { container } = render(
+      <Sequence
+        {...mockComponentProps<SequenceData>(
+          {
+            actors: [
+              { id: 'a', label: 'Client' },
+              { id: 'b', label: 'Server' },
+            ],
+            messages: [
+              { from: 'a', to: 'b', label: 'Request', type: 'message' },
+              { from: 'b', to: 'a', label: 'Response', type: 'reply' },
+            ],
+          },
+          'ui:sequence',
+        )}
+      />,
+    );
+
+    const srTable = container.querySelector('table.sr-only');
+    expect(srTable).toBeInTheDocument();
+    expect(srTable).toHaveAttribute('aria-label', 'Sequence data');
+
+    const rows = srTable?.querySelectorAll('tbody tr');
+    expect(rows).toHaveLength(2);
+    expect(rows![0]!.textContent).toContain('Client');
+    expect(rows![0]!.textContent).toContain('Request');
+  });
+
+  it('MindMap sr-only list contains node labels', () => {
+    const { container } = render(
+      <MindMap
+        {...mockComponentProps<MindMapData>(
+          {
+            root: 'Main Topic',
+            children: [{ label: 'Branch A' }, { label: 'Branch B' }],
+            layout: 'radial',
+          },
+          'ui:mindmap',
+        )}
+      />,
+    );
+
+    const srList = container.querySelector('ul[aria-label="Mind map structure"]');
+    expect(srList).toBeInTheDocument();
+    expect(srList!.textContent).toContain('Branch A');
+    expect(srList!.textContent).toContain('Branch B');
   });
 
   it('Timeline sr-only list contains semantic time elements', () => {

@@ -1,0 +1,7 @@
+{
+  "sections": [
+    { "title": "A", "content": "Content A" },
+    { "title": "B", "content": "Content B" }
+  ],
+  "multiple": true
+}

@@ -1,0 +1,5 @@
+{
+  "root": "project",
+  "tree": [{ "name": "package.json" }, { "name": "src", "children": [{ "name": "app.ts" }] }],
+  "defaultExpanded": true
+}

@@ -1,0 +1,5 @@
+{
+  "root": "Core",
+  "children": [{ "label": "A" }, { "label": "B" }, { "label": "C" }],
+  "layout": "radial"
+}

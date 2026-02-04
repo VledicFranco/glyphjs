@@ -10,4 +10,12 @@ export const infographicDefinition: GlyphComponentDefinition<InfographicData> = 
 };
 
 export { Infographic };
-export type { InfographicData, InfographicSection, InfographicItem } from './Infographic.js';
+export type {
+  InfographicData,
+  InfographicSection,
+  InfographicItem,
+  PieItem,
+  PieSlice,
+  DividerItem,
+  RatingItem,
+} from './Infographic.js';

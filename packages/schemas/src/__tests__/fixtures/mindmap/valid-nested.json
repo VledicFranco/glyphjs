@@ -1,0 +1,5 @@
+{
+  "root": "Topic",
+  "children": [{ "label": "Sub 1", "children": [{ "label": "Leaf" }] }],
+  "layout": "tree"
+}

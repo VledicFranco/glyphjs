@@ -13,6 +13,19 @@ import {
   calloutSchema,
   tabsSchema,
   stepsSchema,
+  architectureSchema,
+  kpiSchema,
+  accordionSchema,
+  comparisonSchema,
+  codediffSchema,
+  flowchartSchema,
+  filetreeSchema,
+  sequenceSchema,
+  mindmapSchema,
+  equationSchema,
+  quizSchema,
+  cardSchema,
+  infographicSchema,
   getJsonSchema,
 } from '../index.js';
 
@@ -33,6 +46,19 @@ const zodSchemas: Record<string, typeof calloutSchema> = {
   callout: calloutSchema,
   tabs: tabsSchema,
   steps: stepsSchema,
+  architecture: architectureSchema,
+  kpi: kpiSchema,
+  accordion: accordionSchema,
+  comparison: comparisonSchema,
+  codediff: codediffSchema,
+  flowchart: flowchartSchema,
+  filetree: filetreeSchema,
+  sequence: sequenceSchema,
+  mindmap: mindmapSchema,
+  equation: equationSchema,
+  quiz: quizSchema,
+  card: cardSchema,
+  infographic: infographicSchema,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -40,9 +66,7 @@ const zodSchemas: Record<string, typeof calloutSchema> = {
 function loadFixtures(component: string, kind: 'valid' | 'invalid') {
   const dir = join(fixturesDir, component);
   const prefix = kind === 'valid' ? 'valid-' : 'invalid-';
-  const files = readdirSync(dir).filter(
-    (f) => f.startsWith(prefix) && f.endsWith('.json'),
-  );
+  const files = readdirSync(dir).filter((f) => f.startsWith(prefix) && f.endsWith('.json'));
 
   return files.map((file) => ({
     name: file.replace('.json', ''),
@@ -61,6 +85,19 @@ const components = [
   'callout',
   'tabs',
   'steps',
+  'architecture',
+  'kpi',
+  'accordion',
+  'comparison',
+  'codediff',
+  'flowchart',
+  'filetree',
+  'sequence',
+  'mindmap',
+  'equation',
+  'quiz',
+  'card',
+  'infographic',
 ] as const;
 
 describe('Schema dual validation conformance', () => {

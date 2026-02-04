@@ -38,7 +38,25 @@ export function resolveComponentProps<T = unknown>(
   const parseResult = definition.schema.safeParse(block.data);
   const data: T = parseResult.success
     ? (parseResult.data as T)
-    : (block.data as T);
+    : (() => {
+        const err = parseResult.error;
+        const issues =
+          err != null &&
+          typeof err === 'object' &&
+          'issues' in err &&
+          Array.isArray((err as { issues: unknown }).issues)
+            ? (err as { issues: { path: string[]; message: string }[] }).issues
+                .map(
+                  (i: { path: string[]; message: string }) => `${i.path.join('.')}: ${i.message}`,
+                )
+                .join('; ')
+            : 'unknown error';
+        console.warn(
+          `[GlyphJS] Schema validation failed for block "${block.id}" (${block.type}). ` +
+            `Falling back to raw data. Issues: ${issues}`,
+        );
+        return block.data as T;
+      })();
 
   // Filter references for this block
   const outgoingRefs: Reference[] = [];

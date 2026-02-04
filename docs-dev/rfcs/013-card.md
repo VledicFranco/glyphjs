@@ -1,6 +1,6 @@
 # RFC-013: Card
 
-- **Status:** Draft
+- **Status:** Implemented
 - **Parent:** [RFC-002: Component Roadmap](./002-component-roadmap.md)
 - **Priority:** P11
 - **Complexity:** S

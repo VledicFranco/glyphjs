@@ -1,6 +1,6 @@
 # RFC-011: Equation
 
-- **Status:** Draft
+- **Status:** Implemented
 - **Parent:** [RFC-002: Component Roadmap](./002-component-roadmap.md)
 - **Priority:** P9
 - **Complexity:** M

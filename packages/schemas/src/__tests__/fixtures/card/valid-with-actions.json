@@ -1,0 +1,9 @@
+{
+  "cards": [
+    {
+      "title": "Docs",
+      "body": "Read the docs.",
+      "actions": [{ "label": "Visit", "url": "https://example.com" }]
+    }
+  ]
+}
