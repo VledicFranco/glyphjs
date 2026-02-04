@@ -31,6 +31,7 @@ export type BlockType =
   | 'ui:steps'
   | 'ui:kpi'
   | 'ui:accordion'
+  | 'ui:comparison'
   // Extensible
   | `ui:${string}`;
 

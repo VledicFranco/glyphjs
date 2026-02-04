@@ -40,6 +40,7 @@ export default defineConfig({
           { label: 'Architecture', slug: 'components/architecture' },
           { label: 'KPI', slug: 'components/kpi' },
           { label: 'Accordion', slug: 'components/accordion' },
+          { label: 'Comparison', slug: 'components/comparison' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

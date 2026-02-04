@@ -14,6 +14,7 @@ import {
   architectureDefinition,
   kpiDefinition,
   accordionDefinition,
+  comparisonDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -28,6 +29,7 @@ const allComponents = [
   architectureDefinition,
   kpiDefinition,
   accordionDefinition,
+  comparisonDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {

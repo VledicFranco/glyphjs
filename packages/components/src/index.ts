@@ -19,6 +19,8 @@ export { kpiDefinition, Kpi } from './kpi/index.js';
 export type { KpiData, KpiMetric } from './kpi/index.js';
 export { accordionDefinition, Accordion } from './accordion/index.js';
 export type { AccordionData, AccordionSection } from './accordion/index.js';
+export { comparisonDefinition, Comparison } from './comparison/index.js';
+export type { ComparisonData, ComparisonOption, ComparisonFeature } from './comparison/index.js';
 export {
   architectureDefinition,
   Architecture,

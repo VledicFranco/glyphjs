@@ -1,0 +1,206 @@
+---
+title: Comparison
+description: Feature comparison tables with color-coded support indicators for side-by-side option evaluation.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Comparison** component (`ui:comparison`) renders a feature comparison table for evaluating 2–6 options side by side. Values like `yes`, `no`, and `partial` are automatically rendered as color-coded icons, while any other string is displayed as plain text.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:comparison
+title: Frontend Frameworks
+options:
+  - name: React
+    description: Component-based library
+  - name: Vue
+    description: Progressive framework
+  - name: Svelte
+    description: Compiler-based framework
+features:
+  - name: Learning curve
+    values: [moderate, easy, easy]
+  - name: TypeScript support
+    values: [full, full, full]
+  - name: Bundle size
+    values: [large, medium, small]
+  - name: SSR built-in
+    values: [no, yes, yes]
+  - name: Ecosystem size
+    values: [very large, large, growing]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:comparison
+title: Frontend Frameworks
+options:
+  - name: React
+    description: Component-based library
+  - name: Vue
+    description: Progressive framework
+  - name: Svelte
+    description: Compiler-based framework
+features:
+  - name: Learning curve
+    values: [moderate, easy, easy]
+  - name: TypeScript support
+    values: [full, full, full]
+  - name: Bundle size
+    values: [large, medium, small]
+  - name: SSR built-in
+    values: [no, yes, yes]
+  - name: Ecosystem size
+    values: [very large, large, growing]
+```
+````
+
+</details>
+
+### Pricing plans
+
+export const pricingExample = `\`\`\`ui:comparison
+title: Pricing Plans
+options:
+  - name: Free
+    description: "$0/mo"
+  - name: Pro
+    description: "$29/mo"
+  - name: Enterprise
+    description: Custom pricing
+features:
+  - name: Users
+    values: ["5", "50", Unlimited]
+  - name: Storage
+    values: [1 GB, 100 GB, 1 TB]
+  - name: Support
+    values: [Community, Email, "24/7 dedicated"]
+  - name: SSO
+    values: [no, partial, yes]
+  - name: SLA
+    values: [none, "99.9%", "99.99%"]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={pricingExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:comparison
+title: Pricing Plans
+options:
+  - name: Free
+    description: "$0/mo"
+  - name: Pro
+    description: "$29/mo"
+  - name: Enterprise
+    description: Custom pricing
+features:
+  - name: Users
+    values: ["5", "50", Unlimited]
+  - name: Storage
+    values: [1 GB, 100 GB, 1 TB]
+  - name: Support
+    values: [Community, Email, "24/7 dedicated"]
+  - name: SSO
+    values: [no, partial, yes]
+  - name: SLA
+    values: [none, "99.9%", "99.99%"]
+```
+````
+
+</details>
+
+### Two-option comparison
+
+export const twoOptionExample = `\`\`\`ui:comparison
+title: SQL vs NoSQL
+options:
+  - name: SQL
+    description: Relational databases
+  - name: NoSQL
+    description: Document stores
+features:
+  - name: Schema enforcement
+    values: [yes, no]
+  - name: ACID compliance
+    values: [yes, partial]
+  - name: Horizontal scaling
+    values: [partial, yes]
+  - name: Complex joins
+    values: [yes, no]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={twoOptionExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:comparison
+title: SQL vs NoSQL
+options:
+  - name: SQL
+    description: Relational databases
+  - name: NoSQL
+    description: Document stores
+features:
+  - name: Schema enforcement
+    values: [yes, no]
+  - name: ACID compliance
+    values: [yes, partial]
+  - name: Horizontal scaling
+    values: [partial, yes]
+  - name: Complex joins
+    values: [yes, no]
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading displayed above the comparison table. |
+| `options` | `ComparisonOption[]` | Yes | -- | Array of 2–6 options to compare (table columns). |
+| `features` | `ComparisonFeature[]` | Yes | -- | Array of features to evaluate (table rows). |
+
+### ComparisonOption
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `name` | `string` | Yes | Option name displayed in the column header. |
+| `description` | `string` | No | Short description shown below the option name. |
+
+### ComparisonFeature
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `name` | `string` | Yes | Feature name displayed as the row header. |
+| `values` | `string[]` | Yes | One value per option. Length must match the `options` array. |
+
+### Value conventions
+
+| Value | Rendering |
+|---|---|
+| `yes`, `true`, `full` | Green checkmark (✓) |
+| `no`, `false`, `none` | Red cross (✗) |
+| `partial` | Yellow half-circle (◐) |
+| Any other string | Displayed as plain text |
+
+Value matching is case-insensitive (`Yes` = `yes` = `YES`).
+
+## Accessibility
+
+- Rendered as a `<table>` with `role="grid"` for structured data navigation.
+- Column headers use `<th scope="col">` for option names.
+- Row headers use `<th scope="row">` for feature names.
+- Visual indicators include `aria-label` text ("Supported", "Not supported", "Partially supported").
+- Color is supplemented by distinct shapes (✓, ✗, ◐) so meaning is never color-dependent.
