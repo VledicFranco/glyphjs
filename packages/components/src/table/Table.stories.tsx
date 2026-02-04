@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Table } from './Table.js';
-import { mockProps, mockBlock } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockBlock, mockContainer } from '../__storybook__/data.js';
 import type { TableData } from './Table.js';
 
 const meta: Meta<typeof Table> = {
@@ -66,7 +67,7 @@ export const Filterable: Story = {
         { product: 'Widget A', category: 'Electronics', price: 29.99 },
         { product: 'Widget B', category: 'Electronics', price: 49.99 },
         { product: 'Gadget C', category: 'Tools', price: 15.99 },
-        { product: 'Gadget D', category: 'Tools', price: 22.50 },
+        { product: 'Gadget D', category: 'Tools', price: 22.5 },
         { product: 'Doohickey', category: 'Misc', price: 9.99 },
       ],
     },
@@ -97,4 +98,31 @@ export const WithAggregation: Story = {
     },
     { block: mockBlock({ id: 'table-agg', type: 'ui:table' }) },
   ),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<TableData>(
+    {
+      columns: [
+        { key: 'name', label: 'Name' },
+        { key: 'role', label: 'Role' },
+        { key: 'email', label: 'Email' },
+      ],
+      rows: [
+        { name: 'Alice', role: 'Engineer', email: 'alice@example.com' },
+        { name: 'Bob', role: 'Designer', email: 'bob@example.com' },
+        { name: 'Carol', role: 'PM', email: 'carol@example.com' },
+      ],
+    },
+    {
+      block: mockBlock({ id: 'table-compact', type: 'ui:table' }),
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

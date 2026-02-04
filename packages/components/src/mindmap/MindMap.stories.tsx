@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MindMap } from './MindMap.js';
 import type { MindMapData } from './MindMap.js';
-import { mockProps } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockContainer } from '../__storybook__/data.js';
 
 const meta: Meta<typeof MindMap> = {
   title: 'Components/MindMap',
@@ -109,4 +110,36 @@ export const ManyChildren: Story = {
     ],
     layout: 'radial',
   }),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<MindMapData>(
+    {
+      root: 'JavaScript',
+      children: [
+        {
+          label: 'Frontend',
+          children: [{ label: 'React' }, { label: 'Vue' }, { label: 'Angular' }],
+        },
+        {
+          label: 'Backend',
+          children: [{ label: 'Node.js' }, { label: 'Deno' }],
+        },
+        {
+          label: 'Tooling',
+          children: [{ label: 'Vite' }, { label: 'Webpack' }, { label: 'ESLint' }],
+        },
+      ],
+      layout: 'radial',
+    },
+    {
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

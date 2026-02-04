@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Architecture } from './Architecture.js';
-import { mockProps, mockBlock } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockBlock, mockContainer } from '../__storybook__/data.js';
 import type { ArchitectureData } from './Architecture.js';
 
 const meta: Meta<typeof Architecture> = {
@@ -193,4 +194,30 @@ export const NestedZones: Story = {
     },
     { block: mockBlock({ id: 'arch-nested', type: 'ui:architecture' }) },
   ),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<ArchitectureData>(
+    {
+      children: [
+        { id: 'web', label: 'Web App', icon: 'cloud' },
+        { id: 'api', label: 'API Server', icon: 'server' },
+        { id: 'db', label: 'Database', icon: 'database' },
+      ],
+      edges: [
+        { from: 'web', to: 'api', label: 'REST' },
+        { from: 'api', to: 'db', label: 'queries' },
+      ],
+    },
+    {
+      block: mockBlock({ id: 'arch-compact', type: 'ui:architecture' }),
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

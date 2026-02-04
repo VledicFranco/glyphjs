@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Flowchart } from './Flowchart.js';
 import type { FlowchartData } from './Flowchart.js';
-import { mockProps } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockContainer } from '../__storybook__/data.js';
 
 const meta: Meta<typeof Flowchart> = {
   title: 'Components/Flowchart',
@@ -130,4 +131,37 @@ export const ComplexBranching: Story = {
       { from: 'resolve', to: 'done' },
     ],
   }),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<FlowchartData>(
+    {
+      title: 'Order Processing',
+      direction: 'top-down',
+      nodes: [
+        { id: 'start', type: 'start', label: 'Order Received' },
+        { id: 'validate', type: 'process', label: 'Validate Payment' },
+        { id: 'check', type: 'decision', label: 'Payment Valid?' },
+        { id: 'fulfill', type: 'process', label: 'Fulfill Order' },
+        { id: 'reject', type: 'end', label: 'Reject Order' },
+        { id: 'done', type: 'end', label: 'Complete' },
+      ],
+      edges: [
+        { from: 'start', to: 'validate' },
+        { from: 'validate', to: 'check' },
+        { from: 'check', to: 'fulfill', label: 'Yes' },
+        { from: 'check', to: 'reject', label: 'No' },
+        { from: 'fulfill', to: 'done' },
+      ],
+    },
+    {
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

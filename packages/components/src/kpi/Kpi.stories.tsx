@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Kpi } from './Kpi.js';
-import { mockProps, mockBlock } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockBlock, mockContainer } from '../__storybook__/data.js';
 import type { KpiData } from './Kpi.js';
 
 const meta: Meta<typeof Kpi> = {
@@ -87,4 +88,27 @@ export const FourColumns: Story = {
     },
     { block: mockBlock({ id: 'kpi-four-cols', type: 'ui:kpi' }) },
   ),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<KpiData>(
+    {
+      title: 'Business Metrics',
+      metrics: [
+        { label: 'Revenue', value: '$2.3M', delta: '+15%', trend: 'up' },
+        { label: 'Users', value: '48,200', delta: '+3,100', trend: 'up' },
+        { label: 'Churn', value: '2.1%', delta: '-0.3%', trend: 'down', sentiment: 'positive' },
+      ],
+    },
+    {
+      block: mockBlock({ id: 'kpi-compact', type: 'ui:kpi' }),
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

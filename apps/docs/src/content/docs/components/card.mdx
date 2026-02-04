@@ -164,6 +164,37 @@ cards:
 
 </details>
 
+## Responsive behavior
+
+Cards adapt automatically to their container width. In narrow containers (under 500px), the grid collapses to a single column so that each card remains readable.
+
+export const narrowCardExample = `\`\`\`ui:card
+title: Getting Started
+cards:
+  - title: Installation
+    icon: "\uD83D\uDCE6"
+    body: Install GlyphJS packages via pnpm.
+    actions:
+      - label: View Guide
+        url: https://example.com/install
+  - title: Configuration
+    icon: "\u2699\uFE0F"
+    body: Set up the runtime and configure your theme.
+    actions:
+      - label: Read Docs
+        url: https://example.com/config
+  - title: Deployment
+    icon: "\uD83D\uDE80"
+    body: Build and deploy to any hosting provider.
+    actions:
+      - label: Deploy Now
+        url: https://example.com/deploy
+\`\`\``;
+
+<div style="max-width: 420px; border: 1px solid var(--sl-color-gray-5); border-radius: 8px; padding: 0.5rem;">
+  <GlyphPreview client:only="react" source={narrowCardExample} />
+</div>
+
 ## Properties
 
 | Property | Type | Required | Default | Description |

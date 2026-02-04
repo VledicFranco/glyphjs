@@ -1,7 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Sequence } from './Sequence.js';
 import type { SequenceData } from './Sequence.js';
-import { mockProps } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockContainer } from '../__storybook__/data.js';
 
 const meta: Meta<typeof Sequence> = {
   title: 'Components/Sequence',
@@ -96,4 +97,33 @@ export const MixedTypes: Story = {
       { from: 'server', to: 'browser', label: 'WS: Welcome', type: 'message' },
     ],
   }),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<SequenceData>(
+    {
+      title: 'Authentication Flow',
+      actors: [
+        { id: 'client', label: 'Browser' },
+        { id: 'api', label: 'Auth API' },
+        { id: 'db', label: 'Database' },
+      ],
+      messages: [
+        { from: 'client', to: 'api', label: 'POST /login', type: 'message' },
+        { from: 'api', to: 'db', label: 'Query user', type: 'message' },
+        { from: 'db', to: 'api', label: 'User record', type: 'reply' },
+        { from: 'api', to: 'api', label: 'Verify password', type: 'self' },
+        { from: 'api', to: 'client', label: 'JWT token', type: 'reply' },
+      ],
+    },
+    {
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Graph } from './Graph.js';
-import { mockProps, mockBlock } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockBlock, mockContainer } from '../__storybook__/data.js';
 import type { GraphData } from './Graph.js';
 
 const meta: Meta<typeof Graph> = {
@@ -106,4 +107,31 @@ export const ForceLayout: Story = {
     },
     { block: mockBlock({ id: 'graph-force', type: 'ui:graph' }) },
   ),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<GraphData>(
+    {
+      type: 'dag',
+      nodes: [
+        { id: 'a', label: 'Start' },
+        { id: 'b', label: 'Process' },
+        { id: 'c', label: 'End' },
+      ],
+      edges: [
+        { from: 'a', to: 'b', label: 'step 1' },
+        { from: 'b', to: 'c', label: 'step 2' },
+      ],
+    },
+    {
+      block: mockBlock({ id: 'graph-compact', type: 'ui:graph' }),
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

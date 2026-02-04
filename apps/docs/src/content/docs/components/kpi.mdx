@@ -124,6 +124,32 @@ metrics:
 
 </details>
 
+## Responsive behavior
+
+KPI metrics adapt to narrow containers. Below 500px, the grid reduces to at most 2 columns so metric values stay readable without horizontal overflow.
+
+export const narrowKpiExample = `\`\`\`ui:kpi
+title: Business Metrics
+metrics:
+  - label: Revenue
+    value: "$2.3M"
+    delta: "+15%"
+    trend: up
+  - label: Users
+    value: "48,200"
+    delta: "+3,100"
+    trend: up
+  - label: Churn
+    value: "2.1%"
+    delta: "-0.3%"
+    trend: down
+    sentiment: positive
+\`\`\``;
+
+<div style="max-width: 420px; border: 1px solid var(--sl-color-gray-5); border-radius: 8px; padding: 0.5rem;">
+  <GlyphPreview client:only="react" source={narrowKpiExample} />
+</div>
+
 ## Properties
 
 | Property | Type | Required | Default | Description |

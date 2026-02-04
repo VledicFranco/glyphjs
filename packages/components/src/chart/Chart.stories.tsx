@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Chart } from './Chart.js';
-import { mockProps, mockBlock } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockBlock, mockContainer } from '../__storybook__/data.js';
 import type { ChartData } from './Chart.js';
 
 const meta: Meta<typeof Chart> = {
@@ -122,4 +123,37 @@ export const OHLCChart: Story = {
     },
     { block: mockBlock({ id: 'chart-ohlc', type: 'ui:chart' }) },
   ),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<ChartData>(
+    {
+      type: 'line',
+      series: [
+        {
+          name: 'Revenue',
+          data: [
+            { x: 1, y: 100 },
+            { x: 2, y: 150 },
+            { x: 3, y: 130 },
+            { x: 4, y: 200 },
+            { x: 5, y: 180 },
+          ],
+        },
+      ],
+      xAxis: { key: 'x', label: 'Month' },
+      yAxis: { key: 'y', label: 'Revenue ($K)' },
+      legend: true,
+    },
+    {
+      block: mockBlock({ id: 'chart-compact', type: 'ui:chart' }),
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

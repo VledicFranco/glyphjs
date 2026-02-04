@@ -88,6 +88,40 @@ aggregation:
 
 </details>
 
+## Responsive behavior
+
+Tables in narrow containers (under 500px) gain a horizontal scroll wrapper and use a slightly smaller font, keeping all columns accessible without breaking the layout.
+
+export const narrowTableExample = `\`\`\`ui:table
+columns:
+  - key: name
+    label: Employee
+    sortable: true
+  - key: role
+    label: Role
+  - key: salary
+    label: Salary (USD)
+    sortable: true
+    type: number
+rows:
+  - name: Alice
+    role: Engineer
+    salary: 120000
+  - name: Bob
+    role: Designer
+    salary: 105000
+  - name: Carol
+    role: Engineer
+    salary: 130000
+  - name: Dave
+    role: PM
+    salary: 115000
+\`\`\``;
+
+<div style="max-width: 420px; border: 1px solid var(--sl-color-gray-5); border-radius: 8px; padding: 0.5rem;">
+  <GlyphPreview client:only="react" source={narrowTableExample} />
+</div>
+
 ## Properties
 
 | Property | Type | Required | Default | Description |

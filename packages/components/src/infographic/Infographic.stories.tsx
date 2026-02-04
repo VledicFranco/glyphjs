@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Infographic } from './Infographic.js';
-import { mockProps, mockBlock } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockBlock, mockContainer } from '../__storybook__/data.js';
 import type { InfographicData } from './Infographic.js';
 
 const meta: Meta<typeof Infographic> = {
@@ -631,4 +632,39 @@ export const WithIcons: Story = {
     },
     { block: mockBlock({ id: 'infographic-icons', type: 'ui:infographic' }) },
   ),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<InfographicData>(
+    {
+      title: 'Company Overview',
+      sections: [
+        {
+          heading: 'Key Metrics',
+          items: [
+            { type: 'stat', label: 'Revenue', value: '$12.5M' },
+            { type: 'stat', label: 'Customers', value: '2,340' },
+            { type: 'stat', label: 'Growth', value: '+28%' },
+          ],
+        },
+        {
+          heading: 'Goals Progress',
+          items: [
+            { type: 'progress', label: 'Q4 Target', value: 78 },
+            { type: 'progress', label: 'Customer Satisfaction', value: 92 },
+          ],
+        },
+      ],
+    },
+    {
+      block: mockBlock({ id: 'infographic-compact', type: 'ui:infographic' }),
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

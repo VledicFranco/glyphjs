@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Card } from './Card.js';
-import { mockProps, mockBlock } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockBlock, mockContainer } from '../__storybook__/data.js';
 import type { CardData } from './Card.js';
 
 const meta: Meta<typeof Card> = {
@@ -159,4 +160,42 @@ export const NoActions: Story = {
     },
     { block: mockBlock({ id: 'card-no-actions', type: 'ui:card' }) },
   ),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<CardData>(
+    {
+      title: 'Getting Started',
+      cards: [
+        {
+          title: 'Installation',
+          icon: '📦',
+          body: 'Install GlyphJS packages via pnpm and configure your project for ESM modules.',
+          actions: [{ label: 'View Guide', url: 'https://example.com/install' }],
+        },
+        {
+          title: 'Configuration',
+          icon: '⚙️',
+          body: 'Set up the runtime, register components, and configure your theme.',
+          actions: [{ label: 'Read Docs', url: 'https://example.com/config' }],
+        },
+        {
+          title: 'Deployment',
+          icon: '🚀',
+          body: 'Build your app and deploy the static output to any hosting provider.',
+          actions: [{ label: 'Deploy Now', url: 'https://example.com/deploy' }],
+        },
+      ],
+    },
+    {
+      block: mockBlock({ id: 'card-compact', type: 'ui:card' }),
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };

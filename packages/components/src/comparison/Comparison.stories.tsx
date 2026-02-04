@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Comparison } from './Comparison.js';
-import { mockProps, mockBlock } from '../__storybook__/data.js';
+import React from 'react';
+import { mockProps, mockBlock, mockContainer } from '../__storybook__/data.js';
 import type { ComparisonData } from './Comparison.js';
 
 const meta: Meta<typeof Comparison> = {
@@ -117,4 +118,34 @@ export const CustomTextValues: Story = {
     },
     { block: mockBlock({ id: 'comparison-text', type: 'ui:comparison' }) },
   ),
+};
+
+// ─── Compact ────────────────────────────────────────────────
+
+export const Compact: Story = {
+  args: mockProps<ComparisonData>(
+    {
+      title: 'Frontend Frameworks',
+      options: [
+        { name: 'React', description: 'Component-based library' },
+        { name: 'Vue', description: 'Progressive framework' },
+        { name: 'Svelte', description: 'Compiler-based framework' },
+      ],
+      features: [
+        { name: 'Learning curve', values: ['moderate', 'easy', 'easy'] },
+        { name: 'TypeScript support', values: ['full', 'full', 'full'] },
+        { name: 'Bundle size', values: ['large', 'medium', 'small'] },
+        { name: 'SSR built-in', values: ['no', 'yes', 'yes'] },
+        { name: 'Ecosystem size', values: ['very large', 'large', 'growing'] },
+      ],
+    },
+    {
+      block: mockBlock({ id: 'comparison-compact', type: 'ui:comparison' }),
+      container: mockContainer({ tier: 'compact', width: 400 }),
+    },
+  ),
+  decorators: [
+    (Story) =>
+      React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
+  ],
 };
