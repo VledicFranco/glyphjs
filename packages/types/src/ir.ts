@@ -29,6 +29,7 @@ export type BlockType =
   | 'ui:callout'
   | 'ui:tabs'
   | 'ui:steps'
+  | 'ui:kpi'
   // Extensible
   | `ui:${string}`;
 

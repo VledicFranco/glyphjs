@@ -15,6 +15,8 @@ export { graphDefinition, Graph, computeDagreLayout, computeForceLayout } from '
 export type { GraphData, PositionedNode, PositionedEdge, LayoutResult } from './graph/index.js';
 export { relationDefinition, Relation } from './relation/index.js';
 export type { RelationData } from './relation/index.js';
+export { kpiDefinition, Kpi } from './kpi/index.js';
+export type { KpiData, KpiMetric } from './kpi/index.js';
 export {
   architectureDefinition,
   Architecture,

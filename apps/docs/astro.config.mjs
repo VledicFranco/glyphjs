@@ -38,6 +38,7 @@ export default defineConfig({
           { label: 'Chart', slug: 'components/chart' },
           { label: 'Timeline', slug: 'components/timeline' },
           { label: 'Architecture', slug: 'components/architecture' },
+          { label: 'KPI', slug: 'components/kpi' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

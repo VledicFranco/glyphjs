@@ -10,6 +10,7 @@ import {
   tableDefinition,
   tabsDefinition,
   timelineDefinition,
+  kpiDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -135,6 +136,7 @@ export function App() {
         tableDefinition,
         tabsDefinition,
         timelineDefinition,
+        kpiDefinition,
       ],
     });
     return rt;

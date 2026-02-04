@@ -1,0 +1,151 @@
+---
+title: KPI
+description: Display key performance indicators as a grid of metric cards with trends and deltas.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **KPI** component (`ui:kpi`) renders key performance indicators as a grid of metric cards. Each card displays a label, a large value, and optional trend indicators with deltas. Use it to make statistics visually prominent and scannable.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:kpi
+title: Business Metrics
+metrics:
+  - label: Revenue
+    value: "$2.3M"
+    delta: "+15%"
+    trend: up
+  - label: Users
+    value: "48,200"
+    delta: "+3,100"
+    trend: up
+  - label: Churn
+    value: "2.1%"
+    delta: "-0.3%"
+    trend: down
+    sentiment: positive
+  - label: NPS
+    value: "72"
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi
+title: Business Metrics
+metrics:
+  - label: Revenue
+    value: "$2.3M"
+    delta: "+15%"
+    trend: up
+  - label: Users
+    value: "48,200"
+    delta: "+3,100"
+    trend: up
+  - label: Churn
+    value: "2.1%"
+    delta: "-0.3%"
+    trend: down
+    sentiment: positive
+  - label: NPS
+    value: "72"
+```
+````
+
+</details>
+
+### Single metric
+
+export const singleExample = `\`\`\`ui:kpi
+metrics:
+  - label: Total Revenue
+    value: "$12.5M"
+    delta: "+22%"
+    trend: up
+\`\`\``;
+
+<GlyphPreview client:only="react" source={singleExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi
+metrics:
+  - label: Total Revenue
+    value: "$12.5M"
+    delta: "+22%"
+    trend: up
+```
+````
+
+</details>
+
+### System snapshot (no deltas)
+
+export const snapshotExample = `\`\`\`ui:kpi
+title: System Status
+columns: 4
+metrics:
+  - label: CPU
+    value: "72%"
+  - label: Memory
+    value: "4.2 GB"
+  - label: Disk
+    value: "89%"
+  - label: Network
+    value: "1.2 Gbps"
+\`\`\``;
+
+<GlyphPreview client:only="react" source={snapshotExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi
+title: System Status
+columns: 4
+metrics:
+  - label: CPU
+    value: "72%"
+  - label: Memory
+    value: "4.2 GB"
+  - label: Disk
+    value: "89%"
+  - label: Network
+    value: "1.2 Gbps"
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading displayed above the metric grid. |
+| `metrics` | `KpiMetric[]` | Yes | -- | Array of 1--8 metric objects (see below). |
+| `columns` | `1 \| 2 \| 3 \| 4` | No | `min(metrics.length, 4)` | Number of grid columns. |
+
+### KpiMetric
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `label` | `string` | Yes | -- | Metric name displayed above the value. |
+| `value` | `string` | Yes | -- | The metric value (string to allow formatted numbers like "$2.3M"). |
+| `delta` | `string` | No | -- | Change indicator (e.g. "+15%", "-0.3%"). |
+| `trend` | `"up" \| "down" \| "flat"` | No | -- | Direction of change. Controls arrow icon. |
+| `sentiment` | `"positive" \| "negative" \| "neutral"` | No | Derived from `trend` | Color of the delta. Defaults: up=positive (green), down=negative (red), flat=neutral (gray). Override to decouple direction from meaning (e.g. churn going down is positive). |
+| `unit` | `string` | No | -- | Optional unit label displayed after the value. |
+
+## Accessibility
+
+- The component renders with `role="region"` and `aria-label` set to the `title` (or "Key metrics" if no title).
+- Each metric card uses `role="group"` with a combined `aria-label` including the label, value, and trend direction (e.g. "Revenue: $2.3M, up +15%").
+- Trend direction is conveyed through text ("up", "down", "flat") in the aria-label, not just color and icon.
+- Sentiment colors are supplemented by distinct arrow shapes (up/down/dash) so meaning is not color-dependent.
