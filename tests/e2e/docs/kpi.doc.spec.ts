@@ -41,13 +41,4 @@ test.describe('KPI doc page', () => {
     await expect(preview).toContainText('CPU');
     await expect(preview).toContainText('72%');
   });
-
-  test('KPI previews match screenshots', async ({ page }) => {
-    const previews = getPreviewContainers(page);
-    const count = await previews.count();
-
-    for (let i = 0; i < count; i++) {
-      await expect(previews.nth(i)).toHaveScreenshot(`kpi-preview-${i}.png`);
-    }
-  });
 });

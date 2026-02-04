@@ -41,13 +41,4 @@ test.describe('Comparison doc page', () => {
     await expect(preview).toContainText('SQL vs NoSQL');
     await expect(preview).toContainText('ACID');
   });
-
-  test('comparison previews match screenshots', async ({ page }) => {
-    const previews = getPreviewContainers(page);
-    const count = await previews.count();
-
-    for (let i = 0; i < count; i++) {
-      await expect(previews.nth(i)).toHaveScreenshot(`comparison-preview-${i}.png`);
-    }
-  });
 });

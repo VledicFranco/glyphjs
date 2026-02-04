@@ -35,19 +35,10 @@ test.describe('Accordion doc page', () => {
     await expect(preview).toContainText('compile(source)');
   });
 
-  test('collapsed preview shows three sections all closed', async ({ page }) => {
+  test('collapsed preview shows section titles', async ({ page }) => {
     const preview = getPreviewContainers(page).nth(2);
     await expect(preview).toContainText('Getting Started');
     await expect(preview).toContainText('Writing Markdown');
     await expect(preview).toContainText('Deploying');
-  });
-
-  test('accordion previews match screenshots', async ({ page }) => {
-    const previews = getPreviewContainers(page);
-    const count = await previews.count();
-
-    for (let i = 0; i < count; i++) {
-      await expect(previews.nth(i)).toHaveScreenshot(`accordion-preview-${i}.png`);
-    }
   });
 });

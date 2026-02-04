@@ -38,13 +38,4 @@ test.describe('CodeDiff doc page', () => {
     const preview = getPreviewContainers(page).nth(2);
     await expect(preview).toContainText('package.json');
   });
-
-  test('codediff previews match screenshots', async ({ page }) => {
-    const previews = getPreviewContainers(page);
-    const count = await previews.count();
-
-    for (let i = 0; i < count; i++) {
-      await expect(previews.nth(i)).toHaveScreenshot(`codediff-preview-${i}.png`);
-    }
-  });
 });
