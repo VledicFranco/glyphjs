@@ -93,8 +93,8 @@ export function Widget({ data, block }: GlyphComponentProps<WidgetData>): ReactE
       style={{
         fontFamily: 'var(--glyph-font-body, inherit)',
         color: 'var(--glyph-text, inherit)',
-        border: '1px solid var(--glyph-border, #dce1e8)',
-        borderRadius: 'var(--glyph-radius-md, 0.1875rem)',
+        border: '1px solid var(--glyph-border, #d0d8e4)',
+        borderRadius: 'var(--glyph-radius-md, 0.5rem)',
         padding: 'var(--glyph-spacing-md, 1rem)',
       }}
     >
@@ -107,8 +107,30 @@ export function Widget({ data, block }: GlyphComponentProps<WidgetData>): ReactE
 **Theming rules:**
 
 - Use CSS custom properties (`var(--glyph-*, fallback)`) for all colors, fonts, spacing, and borders. Never use `theme.isDark` or `theme.resolveVar()` — CSS vars are set by the consumer's theme wrapper and by the Storybook decorator, so both light and dark themes work automatically.
-- Use existing global variables (`--glyph-text`, `--glyph-border`, `--glyph-surface`, etc.) whenever possible. Only introduce component-specific variables (`--glyph-widget-*`) when the component needs styling that doesn't map to an existing global variable.
+- Use existing global variables whenever possible. The built-in themes provide variables across these categories — check the full reference in `apps/docs/src/content/docs/reference/theming.mdx` before introducing component-specific vars:
+  - **Colors**: `--glyph-bg`, `--glyph-text`, `--glyph-border`, `--glyph-surface`, etc.
+  - **Accent**: `--glyph-accent`, `--glyph-accent-hover`, `--glyph-accent-subtle`, `--glyph-accent-muted`
+  - **Effects**: `--glyph-shadow-sm/md/lg`, `--glyph-shadow-glow`, `--glyph-text-shadow`, `--glyph-backdrop`, `--glyph-gradient-accent`, `--glyph-transition`, `--glyph-opacity-muted/disabled`, `--glyph-focus-ring`
+  - **SVG / Data Visualization**: `--glyph-node-fill-opacity`, `--glyph-node-radius`, `--glyph-node-stroke-width`, `--glyph-node-label-color`, `--glyph-edge-color`, `--glyph-icon-stroke`, `--glyph-icon-stroke-width`
+  - **Spacing, typography, border radius**: `--glyph-spacing-*`, `--glyph-font-*`, `--glyph-radius-*`
+- Only introduce component-specific variables (`--glyph-widget-*`) when the component needs styling that doesn't map to an existing global variable.
 - Every `var()` must include a sensible light-theme fallback as the second argument so the component renders correctly even without a theme wrapper.
+
+**D3/SVG component theming:**
+
+If your component renders SVG via D3, use `var(--glyph-*, fallback)` for attributes that support it (`fill`, `stroke`, `stroke-width`). For SVG attributes that don't support CSS `var()` in all browsers (`rx`, `ry`, `opacity`), read the computed value from the theme wrapper at render time:
+
+```typescript
+function getThemeVar(container: Element, varName: string, fallback: string): string {
+  return getComputedStyle(container).getPropertyValue(varName).trim() || fallback;
+}
+
+// Inside your render function:
+const container = svgElement.parentElement ?? svgElement;
+const nodeRadius = getThemeVar(container, '--glyph-node-radius', '3');
+```
+
+This pattern is used by Graph, Architecture, Chart, and Relation. See `packages/components/src/graph/Graph.tsx` for a complete example.
 
 **Accessibility rules:**
 
@@ -255,7 +277,9 @@ Guidelines:
 
 ### 3.2 Theme variables (if needed)
 
-If your component introduces custom CSS variables (e.g., `--glyph-widget-header-bg`), add them to both theme maps in `packages/components/.storybook/preview.ts`:
+Before introducing new variables, check the existing global variables in the built-in themes (`packages/runtime/src/theme/dark.ts` and `light.ts`). The theming system already provides variables for colors, effects (shadows, glow, gradients, transitions, opacity), SVG styling (node radius, stroke width, edge color, icon stroke), spacing, typography, and border radius. Most components should only need the globals.
+
+If your component genuinely needs custom CSS variables (e.g., `--glyph-widget-header-bg`), add them to both theme maps in `packages/components/.storybook/preview.ts`:
 
 ```typescript
 const LIGHT_THEME_VARS: Record<string, string> = {
@@ -470,3 +494,48 @@ A complete new component touches these files:
 | CREATE | `tests/e2e/docs/widget.doc.spec.ts`                              |
 
 9 new files, 8 modified files (9 if custom CSS vars are needed).
+
+---
+
+## Component Roadmap
+
+New components are prioritized by **Frequency x Visual Uplift x Feasibility** and grouped into implementation batches. Each component has a dedicated RFC in `docs-dev/rfcs/` with full schema, rendering, and accessibility specifications.
+
+### Batch 1 — Foundation (high frequency, low complexity)
+
+| Priority | RFC     | Component  | Block type      | Complexity | Summary                                                                                                                                                                         |
+| -------- | ------- | ---------- | --------------- | ---------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P1       | RFC-006 | KPI        | `ui:kpi`        | S          | Metric cards with labels, values, trend indicators, and deltas. Grid layout (1-4 columns). Simplest component in the roadmap — pure layout, no interactivity, no external deps. |
+| P2       | RFC-007 | Accordion  | `ui:accordion`  | S          | Collapsible sections for progressive disclosure. Built on native `<details>`/`<summary>` for accessibility. Supports exclusive mode and configurable default-open sections.     |
+| P3       | RFC-003 | Comparison | `ui:comparison` | M          | Feature comparison table with color-coded support indicators (checkmarks, crosses, badges). Reuses Table component CSS patterns.                                                |
+| P4       | RFC-004 | CodeDiff   | `ui:codediff`   | M          | Unified code diff viewer with syntax highlighting, line numbers, and +/- markers. Uses Myers' diff algorithm — no external dependencies.                                        |
+
+### Batch 2 — Visualization (structured diagramming)
+
+| Priority | RFC     | Component        | Block type     | Complexity | Summary                                                                                                                                                                             |
+| -------- | ------- | ---------------- | -------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P5       | RFC-005 | Flowchart        | `ui:flowchart` | L          | Decision trees and process flows with typed nodes (start, end, process, decision). Reuses Dagre layout engine (already bundled).                                                    |
+| P6       | RFC-008 | FileTree         | `ui:filetree`  | M          | Hierarchical file/directory tree with collapsible folders, file type icons, and optional badges. Implements WAI-ARIA Treeview keyboard navigation. Recursive schema via `z.lazy()`. |
+| P7       | RFC-009 | Sequence Diagram | `ui:sequence`  | L          | UML-style interaction diagrams showing messages between actors/systems over time. Supports regular, reply, and self-call message types. Pure SVG — no external graph engine.        |
+
+### Batch 3 — Advanced (interactivity and math)
+
+| Priority | RFC     | Component | Block type    | Complexity | Summary                                                                                                                                                                           |
+| -------- | ------- | --------- | ------------- | ---------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P8       | RFC-010 | MindMap   | `ui:mindmap`  | L          | Hierarchical topic visualization as radial or tree layout. Supports up to 4 visible depth levels. Radial layout uses polar-to-Cartesian positioning; tree layout reuses Dagre.    |
+| P9       | RFC-011 | Equation  | `ui:equation` | M          | LaTeX equation renderer with publication-quality output via KaTeX. Supports single equations and multi-step derivations. Largest new dependency in the roadmap (~120 KB gzipped). |
+| P10      | RFC-012 | Quiz      | `ui:quiz`     | M          | Interactive assessment with multiple-choice, true-false, and multi-select questions. First bidirectional component — captures user responses with immediate feedback.             |
+
+### Batch 4 — Presentation (content showcasing)
+
+| Priority | RFC     | Component   | Block type       | Complexity | Summary                                                                                                                                                                       |
+| -------- | ------- | ----------- | ---------------- | ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P11      | RFC-013 | Card        | `ui:card`        | S          | Content showcase cards with responsive grid layout (1-4 columns). Optional image, icon, title, subtitle, body, and action links. Three variants: default, outlined, elevated. |
+| P12      | RFC-014 | Infographic | `ui:infographic` | M          | Multi-section visual summary mixing stats, facts, progress bars, and narrative text. Auto-groups consecutive items of the same type. Discriminated union schema.              |
+
+### Implementation notes
+
+- **No cross-dependencies** — each component can be implemented independently by following the lifecycle phases above.
+- **Complexity guide** — S = < 200 LOC, single file; M = 200-500 LOC, may need helpers; L = 500+ LOC, layout engine or complex SVG rendering.
+- **Bundle impact** — all components except Equation (KaTeX) add < 5 KB gzipped. Track with `pnpm size` after each addition.
+- **Recommended cadence** — implement one batch at a time, validate all components in the batch pass the Phase 6 checklist before starting the next batch.
