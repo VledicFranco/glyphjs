@@ -40,6 +40,7 @@ export type BlockType =
   | 'ui:equation'
   | 'ui:quiz'
   | 'ui:card'
+  | 'ui:infographic'
   // Extensible
   | `ui:${string}`;
 

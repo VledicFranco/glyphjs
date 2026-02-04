@@ -21,6 +21,7 @@ import {
   equationDefinition,
   quizDefinition,
   cardDefinition,
+  infographicDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -157,6 +158,7 @@ export function App() {
         equationDefinition,
         quizDefinition,
         cardDefinition,
+        infographicDefinition,
       ],
     });
     return rt;

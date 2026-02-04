@@ -49,6 +49,7 @@ export default defineConfig({
           { label: 'Equation', slug: 'components/equation' },
           { label: 'Quiz', slug: 'components/quiz' },
           { label: 'Card', slug: 'components/card' },
+          { label: 'Infographic', slug: 'components/infographic' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

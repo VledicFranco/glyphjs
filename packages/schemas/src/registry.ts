@@ -21,6 +21,7 @@ import { mindmapSchema } from './mindmap.js';
 import { equationSchema } from './equation.js';
 import { quizSchema } from './quiz.js';
 import { cardSchema } from './card.js';
+import { infographicSchema } from './infographic.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -45,6 +46,7 @@ const entries: [string, z.ZodType][] = [
   ['equation', equationSchema],
   ['quiz', quizSchema],
   ['card', cardSchema],
+  ['infographic', infographicSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);

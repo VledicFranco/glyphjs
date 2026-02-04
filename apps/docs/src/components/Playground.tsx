@@ -22,6 +22,7 @@ import {
   equationDefinition,
   quizDefinition,
   cardDefinition,
+  infographicDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -78,6 +79,7 @@ const allComponents = [
   equationDefinition,
   quizDefinition,
   cardDefinition,
+  infographicDefinition,
 ];
 
 export default function Playground() {

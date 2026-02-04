@@ -49,3 +49,5 @@ export { quizDefinition, Quiz } from './quiz/index.js';
 export type { QuizData, QuizQuestion } from './quiz/index.js';
 export { cardDefinition, Card } from './card/index.js';
 export type { CardData, CardItem, CardAction } from './card/index.js';
+export { infographicDefinition, Infographic } from './infographic/index.js';
+export type { InfographicData, InfographicSection, InfographicItem } from './infographic/index.js';

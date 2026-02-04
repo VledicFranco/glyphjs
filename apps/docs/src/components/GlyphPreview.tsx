@@ -23,6 +23,7 @@ import {
   equationDefinition,
   quizDefinition,
   cardDefinition,
+  infographicDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -46,6 +47,7 @@ const allComponents = [
   equationDefinition,
   quizDefinition,
   cardDefinition,
+  infographicDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {

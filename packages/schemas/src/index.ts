@@ -21,6 +21,7 @@ export { mindmapSchema } from './mindmap.js';
 export { equationSchema } from './equation.js';
 export { quizSchema } from './quiz.js';
 export { cardSchema } from './card.js';
+export { infographicSchema } from './infographic.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';

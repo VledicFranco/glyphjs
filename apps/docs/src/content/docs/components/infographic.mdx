@@ -1,0 +1,193 @@
+---
+title: Infographic
+description: Multi-section visual summaries with stats, progress bars, facts, and text.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Infographic** component (`ui:infographic`) renders multi-section visual summaries. Each section can contain stats, progress bars, facts, and text items. Consecutive items of the same type are automatically grouped for optimized layout.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:infographic
+title: Company Overview
+sections:
+  - heading: Key Metrics
+    items:
+      - type: stat
+        label: Revenue
+        value: "$12.5M"
+      - type: stat
+        label: Customers
+        value: "2,340"
+      - type: stat
+        label: Growth
+        value: "+28%"
+  - heading: Goals Progress
+    items:
+      - type: progress
+        label: Q4 Target
+        value: 78
+      - type: progress
+        label: Customer Satisfaction
+        value: 92
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:infographic
+title: Company Overview
+sections:
+  - heading: Key Metrics
+    items:
+      - type: stat
+        label: Revenue
+        value: "$12.5M"
+      - type: stat
+        label: Customers
+        value: "2,340"
+      - type: stat
+        label: Growth
+        value: "+28%"
+  - heading: Goals Progress
+    items:
+      - type: progress
+        label: Q4 Target
+        value: 78
+      - type: progress
+        label: Customer Satisfaction
+        value: 92
+```
+````
+
+</details>
+
+### Mixed content
+
+export const mixedExample = `\`\`\`ui:infographic
+title: Project Report
+sections:
+  - items:
+      - type: text
+        content: "The Q4 results exceeded expectations across all key metrics."
+      - type: stat
+        label: Revenue
+        value: "$8.2M"
+      - type: stat
+        label: Profit
+        value: "$2.1M"
+      - type: progress
+        label: Annual Target
+        value: 91
+      - type: fact
+        icon: "\u2713"
+        text: Largest quarter in company history
+      - type: fact
+        icon: "\u2713"
+        text: Customer base grew 34% year-over-year
+\`\`\``;
+
+<GlyphPreview client:only="react" source={mixedExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:infographic
+title: Project Report
+sections:
+  - items:
+      - type: text
+        content: "The Q4 results exceeded expectations across all key metrics."
+      - type: stat
+        label: Revenue
+        value: "$8.2M"
+      - type: stat
+        label: Profit
+        value: "$2.1M"
+      - type: progress
+        label: Annual Target
+        value: 91
+      - type: fact
+        icon: "\u2713"
+        text: Largest quarter in company history
+      - type: fact
+        icon: "\u2713"
+        text: Customer base grew 34% year-over-year
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading displayed above all sections. |
+| `sections` | `InfographicSection[]` | Yes | -- | Array of 1--8 section objects (see below). |
+
+### InfographicSection
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `heading` | `string` | No | -- | Bold heading displayed at the top of the section. |
+| `items` | `InfographicItem[]` | Yes | -- | Array of items (min 1). Each item is one of the types below. |
+
+### Item types
+
+Items use a discriminated union on the `type` field:
+
+#### stat
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"stat"` | Yes | Discriminator. |
+| `label` | `string` | Yes | Label below the value. |
+| `value` | `string` | Yes | Large display value (e.g. "$2.3M"). |
+| `description` | `string` | No | Additional context below the label. |
+
+#### fact
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"fact"` | Yes | Discriminator. |
+| `icon` | `string` | No | Icon prefix (emoji or character). |
+| `text` | `string` | Yes | Fact text. |
+
+#### progress
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"progress"` | Yes | Discriminator. |
+| `label` | `string` | Yes | Label for the progress bar. |
+| `value` | `number` | Yes | Percentage 0--100. |
+| `color` | `string` | No | Custom fill color (CSS value). |
+
+#### text
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"text"` | Yes | Discriminator. |
+| `content` | `string` | Yes | Paragraph text. |
+
+## Accessibility
+
+- The component renders with `role="region"` and `aria-label` set to the `title` (or "Infographic" if no title).
+- Progress bars use `role="progressbar"` with `aria-valuenow`, `aria-valuemin="0"`, and `aria-valuemax="100"`.
+- Each progress bar includes an `aria-label` with the label and percentage (e.g. "Sprint Progress: 80%").
+- Fact icons use `aria-hidden="true"` so they do not interfere with screen readers.
+
+## Custom CSS variables
+
+| Variable | Light default | Dark default | Description |
+|---|---|---|---|
+| `--glyph-infographic-track` | `#e0e4ea` | `#2a3550` | Progress bar track background. |
+| `--glyph-infographic-color-1` | `#3b82f6` | `#60a5fa` | First progress fill color. |
+| `--glyph-infographic-color-2` | `#22c55e` | `#4ade80` | Second progress fill color. |
+| `--glyph-infographic-color-3` | `#f59e0b` | `#fbbf24` | Third progress fill color. |
+| `--glyph-infographic-color-4` | `#ef4444` | `#f87171` | Fourth progress fill color. |
+| `--glyph-infographic-section-divider` | `#d0d8e4` | `#1a2035` | Border between sections. |
