@@ -22,6 +22,7 @@ import {
   mindMapDefinition,
   equationDefinition,
   quizDefinition,
+  cardDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -44,6 +45,7 @@ const allComponents = [
   mindMapDefinition,
   equationDefinition,
   quizDefinition,
+  cardDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {

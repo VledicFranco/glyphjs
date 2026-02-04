@@ -39,6 +39,7 @@ export type BlockType =
   | 'ui:mindmap'
   | 'ui:equation'
   | 'ui:quiz'
+  | 'ui:card'
   // Extensible
   | `ui:${string}`;
 

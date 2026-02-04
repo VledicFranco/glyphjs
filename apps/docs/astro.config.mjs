@@ -48,6 +48,7 @@ export default defineConfig({
           { label: 'MindMap', slug: 'components/mindmap' },
           { label: 'Equation', slug: 'components/equation' },
           { label: 'Quiz', slug: 'components/quiz' },
+          { label: 'Card', slug: 'components/card' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

@@ -47,3 +47,5 @@ export { equationDefinition, Equation } from './equation/index.js';
 export type { EquationData, EquationStep } from './equation/index.js';
 export { quizDefinition, Quiz } from './quiz/index.js';
 export type { QuizData, QuizQuestion } from './quiz/index.js';
+export { cardDefinition, Card } from './card/index.js';
+export type { CardData, CardItem, CardAction } from './card/index.js';

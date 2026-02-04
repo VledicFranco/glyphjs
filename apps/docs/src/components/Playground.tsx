@@ -21,6 +21,7 @@ import {
   mindMapDefinition,
   equationDefinition,
   quizDefinition,
+  cardDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -76,6 +77,7 @@ const allComponents = [
   mindMapDefinition,
   equationDefinition,
   quizDefinition,
+  cardDefinition,
 ];
 
 export default function Playground() {

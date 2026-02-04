@@ -20,6 +20,7 @@ import {
   mindMapDefinition,
   equationDefinition,
   quizDefinition,
+  cardDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -155,6 +156,7 @@ export function App() {
         mindMapDefinition,
         equationDefinition,
         quizDefinition,
+        cardDefinition,
       ],
     });
     return rt;

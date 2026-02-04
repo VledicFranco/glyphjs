@@ -1,0 +1,200 @@
+---
+title: Card
+description: Content showcase cards with responsive grid layout and multiple visual variants.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Card** component (`ui:card`) renders content showcase cards in a responsive grid layout. Each card can include a title, subtitle, icon, image, body text, and action links. Three visual variants are available: default, outlined, and elevated.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:card
+title: Getting Started
+cards:
+  - title: Installation
+    icon: "\uD83D\uDCE6"
+    body: >
+      Install GlyphJS packages via pnpm and configure
+      your project for ESM modules.
+    actions:
+      - label: View Guide
+        url: https://example.com/install
+  - title: Configuration
+    icon: "\u2699\uFE0F"
+    body: >
+      Set up the runtime, register components, and
+      configure your theme.
+    actions:
+      - label: Read Docs
+        url: https://example.com/config
+  - title: Deployment
+    icon: "\uD83D\uDE80"
+    body: >
+      Build your app and deploy the static output to
+      any hosting provider.
+    actions:
+      - label: Deploy Now
+        url: https://example.com/deploy
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:card
+title: Getting Started
+cards:
+  - title: Installation
+    icon: "\uD83D\uDCE6"
+    body: >
+      Install GlyphJS packages via pnpm and configure
+      your project for ESM modules.
+    actions:
+      - label: View Guide
+        url: https://example.com/install
+  - title: Configuration
+    icon: "\u2699\uFE0F"
+    body: >
+      Set up the runtime, register components, and
+      configure your theme.
+    actions:
+      - label: Read Docs
+        url: https://example.com/config
+  - title: Deployment
+    icon: "\uD83D\uDE80"
+    body: >
+      Build your app and deploy the static output to
+      any hosting provider.
+    actions:
+      - label: Deploy Now
+        url: https://example.com/deploy
+```
+````
+
+</details>
+
+### Outlined variant
+
+The `outlined` variant uses a thicker, colored border to emphasize each card.
+
+export const outlinedExample = `\`\`\`ui:card
+title: Features
+variant: outlined
+cards:
+  - title: Markdown Parsing
+    body: Write content in standard Markdown with embedded UI components.
+  - title: React Rendering
+    body: Components are rendered as interactive React elements in the browser.
+  - title: Theme Support
+    body: Built-in light and dark themes with full CSS custom property support.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={outlinedExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:card
+title: Features
+variant: outlined
+cards:
+  - title: Markdown Parsing
+    body: Write content in standard Markdown with embedded UI components.
+  - title: React Rendering
+    body: Components are rendered as interactive React elements in the browser.
+  - title: Theme Support
+    body: Built-in light and dark themes with full CSS custom property support.
+```
+````
+
+</details>
+
+### Elevated variant
+
+The `elevated` variant adds a box-shadow for a raised appearance.
+
+export const elevatedExample = `\`\`\`ui:card
+title: Popular Packages
+variant: elevated
+columns: 2
+cards:
+  - title: "@glyphjs/compiler"
+    subtitle: Core compiler
+    body: Transforms Markdown into the intermediate representation.
+    actions:
+      - label: npm
+        url: https://npmjs.com/package/@glyphjs/compiler
+  - title: "@glyphjs/runtime"
+    subtitle: React runtime
+    body: Renders IR documents as interactive React component trees.
+    actions:
+      - label: npm
+        url: https://npmjs.com/package/@glyphjs/runtime
+\`\`\``;
+
+<GlyphPreview client:only="react" source={elevatedExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:card
+title: Popular Packages
+variant: elevated
+columns: 2
+cards:
+  - title: "@glyphjs/compiler"
+    subtitle: Core compiler
+    body: Transforms Markdown into the intermediate representation.
+    actions:
+      - label: npm
+        url: https://npmjs.com/package/@glyphjs/compiler
+  - title: "@glyphjs/runtime"
+    subtitle: React runtime
+    body: Renders IR documents as interactive React component trees.
+    actions:
+      - label: npm
+        url: https://npmjs.com/package/@glyphjs/runtime
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading displayed above the card grid. |
+| `cards` | `CardItem[]` | Yes | -- | Array of cards (1-12 items). |
+| `variant` | `'default' \| 'outlined' \| 'elevated'` | No | `'default'` | Visual style variant for all cards. |
+| `columns` | `number` | No | `min(cards.length, 3)` | Number of grid columns (1-4). |
+
+### CardItem
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `title` | `string` | Yes | Card heading text. |
+| `subtitle` | `string` | No | Secondary text below the title. |
+| `image` | `string` | No | URL of the card hero image (displayed at 16:9 aspect ratio). |
+| `icon` | `string` | No | Icon or emoji displayed above the title. |
+| `body` | `string` | No | Card body text content. |
+| `actions` | `CardAction[]` | No | Up to 3 action links displayed at the bottom of the card. |
+
+### CardAction
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `label` | `string` | Yes | Link text. |
+| `url` | `string` | Yes | Link destination URL. Opens in a new tab. |
+
+## Accessibility
+
+- The outer container uses `role="region"` with `aria-label` set to the `title` (or "Cards" if no title is provided).
+- The card grid uses `role="list"` and each card is an `<article>` element with `role="listitem"`.
+- Images include `alt` text derived from the card title and use `loading="lazy"` for performance.
+- Action links include `rel="noopener noreferrer"` and `target="_blank"` for security and UX.
+- All text uses sufficient contrast via CSS custom properties that adapt to light and dark themes.
