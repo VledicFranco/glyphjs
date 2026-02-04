@@ -14,11 +14,7 @@ import type {
 import { generateBlockId } from '@glyphjs/ir';
 import { componentSchemas } from '@glyphjs/schemas';
 import { convertPhrasingContent } from './inline.js';
-import {
-  createSchemaError,
-  createUnknownComponentInfo,
-  createYamlError,
-} from './diagnostics.js';
+import { createSchemaError, createUnknownComponentInfo, createYamlError } from './diagnostics.js';
 
 // ─── Default Source Position ─────────────────────────────────
 
@@ -66,10 +62,7 @@ export function translateNode(
 
 // ─── Glyph UI Block Translation ─────────────────────────────
 
-function translateGlyphUIBlock(
-  node: GlyphUIBlock,
-  ctx: TranslationContext,
-): Block {
+function translateGlyphUIBlock(node: GlyphUIBlock, ctx: TranslationContext): Block {
   const componentType = node.componentType;
   const blockType: BlockType = `ui:${componentType}`;
   const position: SourcePosition = node.position ?? DEFAULT_POSITION;
@@ -101,9 +94,9 @@ function translateGlyphUIBlock(
     if (schema) {
       const result = schema.safeParse(node.parsedData);
       if (!result.success) {
-        const zodErrors = result.error.issues.map(
-          (issue) => `${issue.path.join('.')}: ${issue.message}`,
-        ).join('; ');
+        const zodErrors = result.error.issues
+          .map((issue) => `${issue.path.join('.')}: ${issue.message}`)
+          .join('; ');
         const diag = createSchemaError(componentType, zodErrors, position, result.error.issues);
         blockDiagnostics.push(diag);
         ctx.diagnostics.push(diag);
@@ -132,6 +125,10 @@ function translateGlyphUIBlock(
     position,
   };
 
+  if (node.interactive) {
+    block.metadata = { interactive: true };
+  }
+
   if (blockDiagnostics.length > 0) {
     block.diagnostics = blockDiagnostics;
   }
@@ -141,11 +138,7 @@ function translateGlyphUIBlock(
 
 // ─── Reference Processing ────────────────────────────────────
 
-function processRefs(
-  refs: RawRef[],
-  sourceBlockId: string,
-  ctx: TranslationContext,
-): void {
+function processRefs(refs: RawRef[], sourceBlockId: string, ctx: TranslationContext): void {
   for (const ref of refs) {
     const reference: Reference = {
       id: generateBlockId(ctx.documentId, 'ref', `${sourceBlockId}->${ref.target}`),
@@ -176,10 +169,7 @@ function processRefs(
 
 // ─── Standard MDAST Node Translation ─────────────────────────
 
-function translateMdastNode(
-  node: MdastContentNode,
-  ctx: TranslationContext,
-): Block | null {
+function translateMdastNode(node: MdastContentNode, ctx: TranslationContext): Block | null {
   const position: SourcePosition = node.position ?? DEFAULT_POSITION;
 
   switch (node.type) {
@@ -373,10 +363,7 @@ function translateImage(
   };
 }
 
-function translateThematicBreak(
-  position: SourcePosition,
-  ctx: TranslationContext,
-): Block {
+function translateThematicBreak(position: SourcePosition, ctx: TranslationContext): Block {
   return {
     id: generateBlockId(ctx.documentId, 'thematic-break', '---'),
     type: 'thematic-break',

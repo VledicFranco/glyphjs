@@ -21,6 +21,7 @@ export interface GlyphUIBlock {
   yamlError?: string;
   glyphId?: string;
   refs?: RawRef[];
+  interactive?: boolean;
   position: SourcePosition;
 }
 

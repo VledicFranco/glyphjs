@@ -88,3 +88,6 @@ export { resolveTier, ContainerMeasure } from './container/index.js';
 // SSR utilities
 export { useIsClient, SSRPlaceholder } from './ssr/index.js';
 export type { SSRPlaceholderProps } from './ssr/index.js';
+
+// Interaction helpers
+export { debounceInteractions } from './debounce.js';

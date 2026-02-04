@@ -1,6 +1,13 @@
 import { createContext, useContext, useMemo } from 'react';
 import type { CSSProperties, ReactNode } from 'react';
-import type { Block, Reference, GlyphTheme, GlyphThemeContext, Diagnostic } from '@glyphjs/types';
+import type {
+  Block,
+  Reference,
+  GlyphTheme,
+  GlyphThemeContext,
+  Diagnostic,
+  InteractionEvent,
+} from '@glyphjs/types';
 import type { ComponentRegistry } from './registry.js';
 import {
   resolveTheme as resolveThemeObject,
@@ -17,9 +24,11 @@ const noop = () => {};
 export interface RuntimeContextValue {
   registry: ComponentRegistry;
   references: Reference[];
+  documentId: string;
   theme: GlyphThemeContext;
   onDiagnostic: (diagnostic: Diagnostic) => void;
   onNavigate: (ref: Reference, targetBlock: Block) => void;
+  onInteraction?: (event: InteractionEvent) => void;
 }
 
 const RuntimeContext = createContext<RuntimeContextValue | null>(null);
@@ -29,6 +38,7 @@ const RuntimeContext = createContext<RuntimeContextValue | null>(null);
 export interface RuntimeProviderProps {
   registry: ComponentRegistry;
   references: Reference[];
+  documentId: string;
   theme: 'light' | 'dark' | GlyphTheme | undefined;
   /** Optional CSS class name applied to the runtime wrapper div. */
   className?: string;
@@ -36,17 +46,20 @@ export interface RuntimeProviderProps {
   style?: CSSProperties;
   onDiagnostic?: (diagnostic: Diagnostic) => void;
   onNavigate?: (ref: Reference, targetBlock: Block) => void;
+  onInteraction?: (event: InteractionEvent) => void;
   children: ReactNode;
 }
 
 export function RuntimeProvider({
   registry,
   references,
+  documentId,
   theme,
   className,
   style: consumerStyle,
   onDiagnostic,
   onNavigate,
+  onInteraction,
   children,
 }: RuntimeProviderProps): ReactNode {
   const resolvedThemeObject = useMemo(() => resolveThemeObject(theme), [theme]);
@@ -64,11 +77,13 @@ export function RuntimeProvider({
     () => ({
       registry,
       references,
+      documentId,
       theme: resolvedTheme,
       onDiagnostic: onDiagnostic ?? noop,
       onNavigate: onNavigate ?? noop,
+      onInteraction,
     }),
-    [registry, references, resolvedTheme, onDiagnostic, onNavigate],
+    [registry, references, documentId, resolvedTheme, onDiagnostic, onNavigate, onInteraction],
   );
 
   // Build inline style object from the resolved theme's CSS variables.

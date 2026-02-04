@@ -4,6 +4,7 @@ import type {
   BlockProps,
   ContainerContext,
   GlyphComponentProps,
+  InteractionEvent,
   LayoutHints,
   Reference,
 } from '@glyphjs/types';
@@ -30,7 +31,7 @@ interface BlockRendererProps {
 // ─── Inner dispatch (unwrapped from ErrorBoundary) ────────────
 
 function BlockDispatch({ block, layout, container }: BlockRendererProps): ReactNode {
-  const { registry, references, theme, onNavigate } = useRuntime();
+  const { registry, references, theme, documentId, onNavigate, onInteraction } = useRuntime();
   const { incomingRefs, outgoingRefs } = useReferences(block.id);
 
   const hasRefs = incomingRefs.length > 0 || outgoingRefs.length > 0;
@@ -49,6 +50,17 @@ function BlockDispatch({ block, layout, container }: BlockRendererProps): ReactN
       }
     }
   }
+
+  // Build the interaction handler for interactive blocks.
+  // Gating rule: only blocks with metadata.interactive === true AND a config-level
+  // onInteraction callback receive the prop. The wrapper injects documentId so
+  // components don't need to know which document they belong to.
+  const handleInteraction =
+    onInteraction && block.metadata?.interactive === true
+      ? (event: Omit<InteractionEvent, 'documentId'>) => {
+          onInteraction({ ...event, documentId } as InteractionEvent);
+        }
+      : undefined;
 
   // Resolve the rendered content for this block
   let content: ReactNode;
@@ -77,6 +89,7 @@ function BlockDispatch({ block, layout, container }: BlockRendererProps): ReactN
         theme,
         layout,
         container,
+        handleInteraction,
       );
 
       // Cast from the generic ComponentType (returns unknown) to React's ComponentType

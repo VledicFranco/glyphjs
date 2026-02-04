@@ -75,9 +75,11 @@ export function createGlyphRuntime(config: GlyphRuntimeConfig): GlyphRuntime {
       <RuntimeProvider
         registry={registry}
         references={ir.references}
+        documentId={ir.id}
         theme={theme}
         onDiagnostic={config.onDiagnostic}
         onNavigate={config.onNavigate}
+        onInteraction={config.onInteraction}
       >
         <GlyphDocument ir={ir} className={className} animation={config.animation} />
       </RuntimeProvider>

@@ -1,4 +1,5 @@
 import type { Block, GlyphIR, LayoutHints, Reference } from './ir.js';
+import type { InteractionEvent } from './interaction.js';
 import type { Diagnostic } from './diagnostic.js';
 import type { ComponentType, GlyphComponentDefinition } from './plugin.js';
 
@@ -44,6 +45,7 @@ export interface GlyphRuntimeConfig {
   animation?: AnimationConfig;
   onDiagnostic?: (diagnostic: Diagnostic) => void;
   onNavigate?: (ref: Reference, targetBlock: Block) => void;
+  onInteraction?: (event: InteractionEvent) => void;
 }
 
 // ─── Runtime Instance ─────────────────────────────────────────

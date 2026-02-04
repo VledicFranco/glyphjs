@@ -64,6 +64,8 @@ interface TreeItemProps {
   posInSet: number;
   onFocusChange: (index: number) => void;
   flatItems: FlatItem[];
+  parentPath: string;
+  onSelect?: (path: string, type: 'file' | 'directory', expanded?: boolean) => void;
 }
 
 interface FlatItem {
@@ -82,15 +84,25 @@ function TreeItem({
   posInSet,
   onFocusChange,
   flatItems,
+  parentPath,
+  onSelect,
 }: TreeItemProps): ReactElement {
   const [expanded, setExpanded] = useState(defaultExpanded);
   const itemRef = useRef<HTMLLIElement>(null);
   const isDir = Array.isArray(node.children) && node.children.length > 0;
   const isFocused = flatIndex === focusedIndex;
+  const path = parentPath ? `${parentPath}/${node.name}` : node.name;
 
   const handleToggle = useCallback(() => {
-    if (isDir) setExpanded((prev) => !prev);
-  }, [isDir]);
+    if (isDir) {
+      setExpanded((prev) => {
+        onSelect?.(path, 'directory', !prev);
+        return !prev;
+      });
+    } else {
+      onSelect?.(path, 'file');
+    }
+  }, [isDir, path, onSelect]);
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent<HTMLLIElement>) => {
@@ -226,6 +238,8 @@ function TreeItem({
                 posInSet={childIdx + 1}
                 onFocusChange={onFocusChange}
                 flatItems={flatItems}
+                parentPath={path}
+                onSelect={onSelect}
               />
             );
           })}
@@ -272,7 +286,11 @@ function getChildFlatIndex(
 
 // ─── Component ──────────────────────────────────────────────
 
-export function FileTree({ data }: GlyphComponentProps<FileTreeData>): ReactElement {
+export function FileTree({
+  data,
+  block,
+  onInteraction,
+}: GlyphComponentProps<FileTreeData>): ReactElement {
   const [focusedIndex, setFocusedIndex] = useState(0);
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -286,6 +304,19 @@ export function FileTree({ data }: GlyphComponentProps<FileTreeData>): ReactElem
     const el = container.querySelector<HTMLElement>(`[data-flat-index="${String(index)}"]`);
     el?.focus();
   }, []);
+
+  const handleSelect = useCallback(
+    (path: string, type: 'file' | 'directory', expanded?: boolean) => {
+      onInteraction?.({
+        kind: 'filetree-select',
+        timestamp: new Date().toISOString(),
+        blockId: block.id,
+        blockType: block.type,
+        payload: { path, type, expanded },
+      });
+    },
+    [onInteraction, block.id, block.type],
+  );
 
   return (
     <div
@@ -340,6 +371,8 @@ export function FileTree({ data }: GlyphComponentProps<FileTreeData>): ReactElem
                     posInSet={idx + 1}
                     onFocusChange={handleFocusChange}
                     flatItems={flatItems}
+                    parentPath={data.root ?? ''}
+                    onSelect={handleSelect}
                   />
                 );
               })}
@@ -361,6 +394,8 @@ export function FileTree({ data }: GlyphComponentProps<FileTreeData>): ReactElem
                 posInSet={idx + 1}
                 onFocusChange={handleFocusChange}
                 flatItems={flatItems}
+                parentPath=""
+                onSelect={handleSelect}
               />
             );
           })}

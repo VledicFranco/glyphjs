@@ -43,6 +43,24 @@ export type { DiagnosticSource, Diagnostic } from './diagnostic.js';
 // ─── Plugin Types ─────────────────────────────────────────────
 export type { GlyphComponentDefinition, GlyphComponentProps, ComponentType } from './plugin.js';
 
+// ─── Interaction Types ───────────────────────────────────────
+export type {
+  InteractionEventBase,
+  TableState,
+  TableSortEvent,
+  TableFilterEvent,
+  QuizSubmitEvent,
+  TabSelectEvent,
+  AccordionToggleEvent,
+  FileTreeSelectEvent,
+  GraphNodeClickEvent,
+  ChartSelectEvent,
+  ComparisonSelectEvent,
+  CustomInteractionEvent,
+  InteractionEvent,
+  InteractionKind,
+} from './interaction.js';
+
 // ─── Runtime Types ────────────────────────────────────────────
 export type {
   GlyphTheme,

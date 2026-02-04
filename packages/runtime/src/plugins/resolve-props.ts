@@ -4,6 +4,7 @@ import type {
   GlyphComponentDefinition,
   GlyphComponentProps,
   GlyphThemeContext,
+  InteractionEvent,
   LayoutHints,
   Reference,
 } from '@glyphjs/types';
@@ -26,6 +27,7 @@ import type {
  * @param themeContext - Current theme context passed through to the component.
  * @param layoutHints - Layout hints (e.g., viewport size, container width) for responsive rendering.
  * @param containerContext - Container measurement context for container-adaptive layout.
+ * @param onInteraction - Optional callback for interactive blocks. Only provided when `block.metadata.interactive` is true.
  * @returns Fully assembled GlyphComponentProps ready to pass to the component's render function.
  */
 export function resolveComponentProps<T = unknown>(
@@ -36,6 +38,7 @@ export function resolveComponentProps<T = unknown>(
   themeContext: GlyphThemeContext,
   layoutHints: LayoutHints,
   containerContext: ContainerContext,
+  onInteraction?: (event: Omit<InteractionEvent, 'documentId'>) => void,
 ): GlyphComponentProps<T> {
   // Parse block data through the component's schema
   const parseResult = definition.schema.safeParse(block.data);
@@ -87,7 +90,7 @@ export function resolveComponentProps<T = unknown>(
     }
   }
 
-  return {
+  const props: GlyphComponentProps<T> = {
     data,
     block,
     outgoingRefs,
@@ -97,4 +100,10 @@ export function resolveComponentProps<T = unknown>(
     layout: layoutHints,
     container: containerContext,
   };
+
+  if (onInteraction) {
+    props.onInteraction = onInteraction;
+  }
+
+  return props;
 }

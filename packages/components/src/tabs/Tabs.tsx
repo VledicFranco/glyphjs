@@ -16,20 +16,30 @@ export interface TabsData {
  * - ARIA roles: tablist, tab, tabpanel with proper aria-selected, aria-controls,
  *   and aria-labelledby attributes.
  */
-export function Tabs({ data, block }: GlyphComponentProps<TabsData>) {
+export function Tabs({ data, block, onInteraction }: GlyphComponentProps<TabsData>) {
   const [activeIndex, setActiveIndex] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const tabs = data.tabs;
   const baseId = `glyph-tabs-${block.id}`;
 
-  const focusTab = useCallback(
+  const selectTab = useCallback(
     (index: number) => {
       const clampedIndex = Math.max(0, Math.min(index, tabs.length - 1));
       setActiveIndex(clampedIndex);
       tabRefs.current[clampedIndex]?.focus();
+      const tab = tabs[clampedIndex];
+      if (tab) {
+        onInteraction?.({
+          kind: 'tab-select',
+          timestamp: new Date().toISOString(),
+          blockId: block.id,
+          blockType: block.type,
+          payload: { tabIndex: clampedIndex, tabLabel: tab.label },
+        });
+      }
     },
-    [tabs.length],
+    [tabs, block.id, block.type, onInteraction],
   );
 
   const handleKeyDown = useCallback(
@@ -38,28 +48,28 @@ export function Tabs({ data, block }: GlyphComponentProps<TabsData>) {
         case 'ArrowRight': {
           e.preventDefault();
           const next = (activeIndex + 1) % tabs.length;
-          focusTab(next);
+          selectTab(next);
           break;
         }
         case 'ArrowLeft': {
           e.preventDefault();
           const prev = (activeIndex - 1 + tabs.length) % tabs.length;
-          focusTab(prev);
+          selectTab(prev);
           break;
         }
         case 'Home': {
           e.preventDefault();
-          focusTab(0);
+          selectTab(0);
           break;
         }
         case 'End': {
           e.preventDefault();
-          focusTab(tabs.length - 1);
+          selectTab(tabs.length - 1);
           break;
         }
       }
     },
-    [activeIndex, focusTab, tabs.length],
+    [activeIndex, selectTab, tabs.length],
   );
 
   return (
@@ -99,7 +109,7 @@ export function Tabs({ data, block }: GlyphComponentProps<TabsData>) {
               aria-selected={isActive}
               aria-controls={panelId}
               tabIndex={isActive ? 0 : -1}
-              onClick={() => setActiveIndex(index)}
+              onClick={() => selectTab(index)}
               onKeyDown={handleKeyDown}
               style={{
                 padding: '10px 18px',

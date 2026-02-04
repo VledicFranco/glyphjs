@@ -1,4 +1,5 @@
 import type { Block, LayoutHints, Reference } from './ir.js';
+import type { InteractionEvent } from './interaction.js';
 import type { GlyphThemeContext } from './runtime.js';
 import type { ContainerContext } from './container.js';
 
@@ -26,6 +27,7 @@ export interface GlyphComponentProps<T = unknown> {
   outgoingRefs: Reference[];
   incomingRefs: Reference[];
   onNavigate: (ref: Reference) => void;
+  onInteraction?: (event: Omit<InteractionEvent, 'documentId'>) => void;
   theme: GlyphThemeContext;
   layout: LayoutHints;
   container: ContainerContext;

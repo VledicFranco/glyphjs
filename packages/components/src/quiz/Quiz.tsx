@@ -73,7 +73,7 @@ function isCorrect(question: QuizQuestion, selected: number | number[] | boolean
 
 // ─── Component ─────────────────────────────────────────────────
 
-export function Quiz({ data, block }: GlyphComponentProps<QuizData>): ReactElement {
+export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizData>): ReactElement {
   const { questions, showScore = true, title } = data;
   const baseId = `glyph-quiz-${block.id}`;
 
@@ -259,7 +259,56 @@ export function Quiz({ data, block }: GlyphComponentProps<QuizData>): ReactEleme
             type="button"
             disabled={!hasSelection}
             style={buttonStyle(!hasSelection)}
-            onClick={() => updateState(qIndex, { submitted: true })}
+            onClick={() => {
+              updateState(qIndex, { submitted: true });
+
+              if (onInteraction) {
+                const correct = isCorrect(question, state.selected);
+                // Compute cumulative score including this submission
+                const newScore = states.reduce((acc, s, i) => {
+                  if (i === qIndex) return acc + (correct ? 1 : 0);
+                  const q = questions[i];
+                  if (!q || !s.submitted) return acc;
+                  return acc + (isCorrect(q, s.selected) ? 1 : 0);
+                }, 0);
+
+                // Convert selected value to human-readable strings
+                let selected: string[];
+                switch (question.type) {
+                  case 'multiple-choice':
+                    selected =
+                      typeof state.selected === 'number'
+                        ? [question.options[state.selected] ?? String(state.selected)]
+                        : [];
+                    break;
+                  case 'true-false':
+                    selected =
+                      typeof state.selected === 'boolean'
+                        ? [state.selected ? 'True' : 'False']
+                        : [];
+                    break;
+                  case 'multi-select':
+                    selected = Array.isArray(state.selected)
+                      ? state.selected.map((idx) => question.options[idx] ?? String(idx))
+                      : [];
+                    break;
+                }
+
+                onInteraction({
+                  kind: 'quiz-submit',
+                  timestamp: new Date().toISOString(),
+                  blockId: block.id,
+                  blockType: block.type,
+                  payload: {
+                    questionIndex: qIndex,
+                    question: question.question,
+                    selected,
+                    correct,
+                    score: { correct: newScore, total: questions.length },
+                  },
+                });
+              }
+            }}
           >
             Submit
           </button>

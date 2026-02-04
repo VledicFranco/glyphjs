@@ -75,6 +75,7 @@ function codeNodeToGlyphUIBlock(node: Code): GlyphUIBlock {
   let yamlError: string | undefined;
   let glyphId: string | undefined;
   let refs: RawRef[] | undefined;
+  let interactive: boolean | undefined;
 
   try {
     const parsed: unknown = parseYaml(rawYaml);
@@ -96,6 +97,15 @@ function codeNodeToGlyphUIBlock(node: Code): GlyphUIBlock {
           refs = validRefs;
         }
         delete data['refs'];
+      }
+
+      // Extract interactive if present
+      if ('interactive' in data && data['interactive'] === true) {
+        interactive = true;
+        delete data['interactive'];
+      } else if ('interactive' in data) {
+        // Remove the key even if not true (reserved key)
+        delete data['interactive'];
       }
 
       parsedData = data;
@@ -127,6 +137,9 @@ function codeNodeToGlyphUIBlock(node: Code): GlyphUIBlock {
   }
   if (refs !== undefined) {
     block.refs = refs;
+  }
+  if (interactive !== undefined) {
+    block.interactive = interactive;
   }
 
   return block;

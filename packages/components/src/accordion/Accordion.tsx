@@ -17,26 +17,43 @@ export interface AccordionData {
 
 // ─── Component ─────────────────────────────────────────────────
 
-export function Accordion({ data, block }: GlyphComponentProps<AccordionData>): ReactElement {
+export function Accordion({
+  data,
+  block,
+  onInteraction,
+}: GlyphComponentProps<AccordionData>): ReactElement {
   const { title, sections, defaultOpen = [], multiple = true } = data;
   const baseId = `glyph-accordion-${block.id}`;
   const containerRef = useRef<HTMLDivElement>(null);
 
   const handleToggle = useCallback(
-    (e: React.SyntheticEvent<HTMLDetailsElement>) => {
-      if (multiple) return;
+    (e: React.SyntheticEvent<HTMLDetailsElement>, sectionIndex: number) => {
       const target = e.currentTarget;
-      if (!target.open || !containerRef.current) return;
+      const expanded = target.open;
 
-      // Exclusive mode: close all other open details
-      const allDetails = containerRef.current.querySelectorAll('details');
-      for (const details of allDetails) {
-        if (details !== target && details.open) {
-          details.open = false;
+      if (!multiple && expanded && containerRef.current) {
+        // Exclusive mode: close all other open details
+        const allDetails = containerRef.current.querySelectorAll('details');
+        for (const details of allDetails) {
+          if (details !== target && details.open) {
+            details.open = false;
+          }
         }
       }
+
+      onInteraction?.({
+        kind: 'accordion-toggle',
+        timestamp: new Date().toISOString(),
+        blockId: block.id,
+        blockType: block.type,
+        payload: {
+          sectionIndex,
+          sectionTitle: sections[sectionIndex]?.title ?? '',
+          expanded,
+        },
+      });
     },
-    [multiple],
+    [multiple, sections, block.id, block.type, onInteraction],
   );
 
   const containerStyle: React.CSSProperties = {
@@ -95,7 +112,7 @@ export function Accordion({ data, block }: GlyphComponentProps<AccordionData>): 
         <details
           key={i}
           open={defaultOpen.includes(i)}
-          onToggle={handleToggle}
+          onToggle={(e) => handleToggle(e, i)}
           style={sectionStyle(i === sections.length - 1)}
         >
           <summary style={summaryStyle}>

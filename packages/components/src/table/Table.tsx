@@ -114,7 +114,12 @@ function TableAggregationFooter({
  * and aggregation.  Styling is driven by `--glyph-table-*` CSS custom
  * properties so consumers can re-theme via the Glyph theme system.
  */
-export function Table({ data, container }: GlyphComponentProps<TableData>): ReactElement {
+export function Table({
+  data,
+  block,
+  container,
+  onInteraction,
+}: GlyphComponentProps<TableData>): ReactElement {
   const { columns, rows, aggregation } = data;
 
   const [sort, setSort] = useState<SortState>({ column: '', direction: 'none' });
@@ -156,12 +161,32 @@ export function Table({ data, container }: GlyphComponentProps<TableData>): Reac
   }, [filteredRows, sort]);
 
   const handleSort = (columnKey: string) => {
-    setSort((prev) => {
-      if (prev.column === columnKey) {
-        return { column: columnKey, direction: nextDirection(prev.direction) };
-      }
-      return { column: columnKey, direction: 'ascending' };
-    });
+    const newDirection = sort.column === columnKey ? nextDirection(sort.direction) : 'ascending';
+    setSort({ column: columnKey, direction: newDirection });
+
+    if (onInteraction) {
+      const eventDir =
+        newDirection === 'ascending' ? 'asc' : newDirection === 'descending' ? 'desc' : 'none';
+      onInteraction({
+        kind: 'table-sort',
+        timestamp: new Date().toISOString(),
+        blockId: block.id,
+        blockType: block.type,
+        payload: {
+          column: columnKey,
+          direction: eventDir,
+          state: {
+            sort:
+              newDirection === 'none'
+                ? null
+                : { column: columnKey, direction: eventDir as 'asc' | 'desc' },
+            filters,
+            visibleRowCount: filteredRows.length,
+            totalRowCount: rows.length,
+          },
+        },
+      });
+    }
   };
 
   const handleHeaderKeyDown = (e: React.KeyboardEvent, columnKey: string) => {
@@ -172,7 +197,47 @@ export function Table({ data, container }: GlyphComponentProps<TableData>): Reac
   };
 
   const handleFilterChange = (columnKey: string, value: string) => {
-    setFilters((prev) => ({ ...prev, [columnKey]: value }));
+    const newFilters = { ...filters, [columnKey]: value };
+    setFilters(newFilters);
+
+    if (onInteraction) {
+      // Compute new visible row count with the updated filters
+      const newVisibleCount = rows.filter((row) =>
+        columns.every((col) => {
+          if (!col.filterable) return true;
+          const fv = newFilters[col.key];
+          if (!fv) return true;
+          return String(row[col.key] ?? '')
+            .toLowerCase()
+            .includes(fv.toLowerCase());
+        }),
+      ).length;
+
+      const eventSort =
+        sort.direction === 'none' || !sort.column
+          ? null
+          : {
+              column: sort.column,
+              direction: (sort.direction === 'ascending' ? 'asc' : 'desc') as 'asc' | 'desc',
+            };
+
+      onInteraction({
+        kind: 'table-filter',
+        timestamp: new Date().toISOString(),
+        blockId: block.id,
+        blockType: block.type,
+        payload: {
+          column: columnKey,
+          value,
+          state: {
+            sort: eventSort,
+            filters: newFilters,
+            visibleRowCount: newVisibleCount,
+            totalRowCount: rows.length,
+          },
+        },
+      });
+    }
   };
 
   const hasFilters = columns.some((c) => c.filterable);
