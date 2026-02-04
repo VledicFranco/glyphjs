@@ -3,7 +3,7 @@ title: Components Overview
 description: An overview of all built-in Glyph JS UI components.
 ---
 
-Glyph JS ships with **8 built-in UI components** that transform YAML payloads inside fenced code blocks into rich, interactive visualizations. Each component has a Zod schema that validates its YAML at compile time, producing clear diagnostics if anything is wrong.
+Glyph JS ships with **21 built-in UI components** that transform YAML payloads inside fenced code blocks into rich, interactive visualizations. Each component has a Zod schema that validates its YAML at compile time, producing clear diagnostics if anything is wrong.
 
 ## Authoring syntax
 
@@ -20,16 +20,46 @@ The YAML inside the block is parsed and validated by `@glyphjs/compiler` against
 
 ## Component catalog
 
+### Content & Layout
+
 | Component | Type | Description |
 |---|---|---|
 | [Callout](/glyphjs/components/callout/) | `ui:callout` | Highlighted info, warning, error, and tip blocks for narrative structuring. |
 | [Tabs](/glyphjs/components/tabs/) | `ui:tabs` | Tabbed content containers with switchable panels. |
 | [Steps](/glyphjs/components/steps/) | `ui:steps` | Sequential step-by-step guides with progress indication. |
+| [Accordion](/glyphjs/components/accordion/) | `ui:accordion` | Collapsible content sections with expand/collapse interaction. |
+| [Card](/glyphjs/components/card/) | `ui:card` | Grid of cards with titles, descriptions, and optional actions. |
+| [KPI](/glyphjs/components/kpi/) | `ui:kpi` | Key performance indicator metrics with trends and formatting. |
+
+### Data & Comparison
+
+| Component | Type | Description |
+|---|---|---|
 | [Table](/glyphjs/components/table/) | `ui:table` | Sortable, filterable, aggregatable data tables. |
+| [Chart](/glyphjs/components/chart/) | `ui:chart` | Line, bar, area, and OHLC financial charts. |
+| [Comparison](/glyphjs/components/comparison/) | `ui:comparison` | Side-by-side feature comparison tables. |
+| [CodeDiff](/glyphjs/components/codediff/) | `ui:codediff` | Syntax-highlighted code diffs with line-level changes. |
+
+### Diagrams & Visualization
+
+| Component | Type | Description |
+|---|---|---|
 | [Graph](/glyphjs/components/graph/) | `ui:graph` | DAGs, flowcharts, mind maps, and force-directed graphs. |
 | [Relation](/glyphjs/components/relation/) | `ui:relation` | Entity-relationship diagrams with cardinality annotations. |
-| [Chart](/glyphjs/components/chart/) | `ui:chart` | Line, bar, area, and OHLC financial charts. |
+| [Flowchart](/glyphjs/components/flowchart/) | `ui:flowchart` | Process flowcharts with decision nodes and directional edges. |
+| [Sequence](/glyphjs/components/sequence/) | `ui:sequence` | Sequence diagrams for message passing between actors. |
+| [MindMap](/glyphjs/components/mindmap/) | `ui:mindmap` | Hierarchical mind map diagrams with radial layout. |
+| [Architecture](/glyphjs/components/architecture/) | `ui:architecture` | System architecture diagrams with grouped nodes and connections. |
+| [FileTree](/glyphjs/components/filetree/) | `ui:filetree` | Interactive file and directory tree views. |
+
+### Narrative & Interactive
+
+| Component | Type | Description |
+|---|---|---|
 | [Timeline](/glyphjs/components/timeline/) | `ui:timeline` | Chronological event sequences on a visual timeline. |
+| [Infographic](/glyphjs/components/infographic/) | `ui:infographic` | Multi-section visual infographics with icons and stats. |
+| [Equation](/glyphjs/components/equation/) | `ui:equation` | Step-by-step mathematical equations with annotations. |
+| [Quiz](/glyphjs/components/quiz/) | `ui:quiz` | Interactive quizzes with multiple-choice questions and feedback. |
 
 ## Reserved YAML keys
 

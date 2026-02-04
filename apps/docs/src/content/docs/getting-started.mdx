@@ -3,6 +3,8 @@ title: Getting Started
 description: Install Glyph JS and render your first Markdown-driven document.
 ---
 
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
 ## What is Glyph JS?
 
 Glyph JS is a framework for compiling **Markdown** into an **Intermediate Representation (IR)** that renders into interactive, visually rich user interfaces with React. It bridges the gap between text-native authoring (ideal for humans and LLMs) and visual information display.
@@ -17,9 +19,23 @@ The pipeline has three stages:
 
 Install the core packages with your package manager of choice:
 
-```bash
-pnpm add @glyphjs/parser @glyphjs/compiler @glyphjs/runtime @glyphjs/components
-```
+<Tabs>
+  <TabItem label="npm">
+    ```bash
+    npm install @glyphjs/compiler @glyphjs/runtime @glyphjs/components
+    ```
+  </TabItem>
+  <TabItem label="pnpm">
+    ```bash
+    pnpm add @glyphjs/compiler @glyphjs/runtime @glyphjs/components
+    ```
+  </TabItem>
+  <TabItem label="yarn">
+    ```bash
+    yarn add @glyphjs/compiler @glyphjs/runtime @glyphjs/components
+    ```
+  </TabItem>
+</Tabs>
 
 **Peer dependencies:** Glyph JS requires **React 18+** and **ReactDOM 18+**.
 
@@ -167,7 +183,7 @@ runtime.setTheme("light");
 Now that you have a working Glyph JS setup, explore the rest of the documentation:
 
 - [**Markdown Syntax**](/glyphjs/authoring-guide) — Learn about all supported Markdown features and the `ui:` block authoring syntax.
-- [**Components**](/glyphjs/components) — Browse the full library of built-in components: Callout, Tabs, Steps, Table, Graph, Chart, Relation, and Timeline.
+- [**Components**](/glyphjs/components) — Browse all 21 built-in components for content, data, diagrams, and interactivity.
 - [**IR Spec**](/glyphjs/reference/ir-spec) — Understand the structure of the compiled Intermediate Representation.
 - [**Plugin API**](/glyphjs/reference/plugin-api) — Register custom components and extend the runtime.
 - [**Theming**](/glyphjs/reference/theming) — Customize colors, typography, and spacing across your documents.
