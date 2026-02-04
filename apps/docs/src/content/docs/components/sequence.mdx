@@ -1,0 +1,150 @@
+---
+title: Sequence Diagram
+description: UML-style interaction diagrams showing messages between actors over time.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Sequence Diagram** component renders UML-style interaction diagrams with actors, lifelines, and typed message arrows.
+
+## Basic example
+
+export const basicExample = `
+\`\`\`ui:sequence
+title: Authentication Flow
+actors:
+  - id: client
+    label: Browser
+  - id: api
+    label: Auth API
+  - id: db
+    label: Database
+messages:
+  - from: client
+    to: api
+    label: POST /login
+  - from: api
+    to: db
+    label: Query user
+  - from: db
+    to: api
+    label: User record
+    type: reply
+  - from: api
+    to: api
+    label: Verify password
+    type: self
+  - from: api
+    to: client
+    label: JWT token
+    type: reply
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={basicExample} />
+
+## Simple request-response
+
+A minimal two-actor sequence.
+
+export const simpleExample = `
+\`\`\`ui:sequence
+title: API Call
+actors:
+  - id: client
+    label: Client
+  - id: server
+    label: Server
+messages:
+  - from: client
+    to: server
+    label: GET /users
+  - from: server
+    to: client
+    label: "200 [{ id: 1 }]"
+    type: reply
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={simpleExample} />
+
+## Multi-service interaction
+
+Sequence diagrams excel at showing how messages flow across multiple services.
+
+export const multiExample = `
+\`\`\`ui:sequence
+title: Order Processing
+actors:
+  - id: user
+    label: Customer
+  - id: cart
+    label: Cart Service
+  - id: pay
+    label: Payment
+  - id: inv
+    label: Inventory
+messages:
+  - from: user
+    to: cart
+    label: Add to cart
+  - from: cart
+    to: inv
+    label: Check stock
+  - from: inv
+    to: cart
+    label: Available
+    type: reply
+  - from: user
+    to: cart
+    label: Checkout
+  - from: cart
+    to: pay
+    label: Charge card
+  - from: pay
+    to: cart
+    label: Success
+    type: reply
+  - from: cart
+    to: user
+    label: Order confirmed
+    type: reply
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={multiExample} />
+
+## Properties
+
+| Property   | Type             | Default      | Description                   |
+| ---------- | ---------------- | ------------ | ----------------------------- |
+| `title`    | `string`         | —            | Optional diagram title        |
+| `actors`   | `Actor[]`        | *(required)* | Participants (min 2)          |
+| `messages` | `Message[]`      | *(required)* | Messages in order (min 1)     |
+
+### Actor
+
+| Property | Type     | Default      | Description       |
+| -------- | -------- | ------------ | ----------------- |
+| `id`     | `string` | *(required)* | Unique identifier |
+| `label`  | `string` | *(required)* | Display name      |
+
+### Message
+
+| Property | Type                                | Default     | Description               |
+| -------- | ----------------------------------- | ----------- | ------------------------- |
+| `from`   | `string`                            | *(required)* | Source actor ID           |
+| `to`     | `string`                            | *(required)* | Target actor ID           |
+| `label`  | `string`                            | *(required)* | Message description       |
+| `type`   | `'message' \| 'reply' \| 'self'`    | `'message'` | Arrow style               |
+
+### Message types
+
+- **message** — solid arrow (standard request/call)
+- **reply** — dashed arrow (response/return)
+- **self** — loop arrow back to the same actor (internal processing)
+
+## Accessibility
+
+- SVG has `role="img"` with an `aria-label` describing the title, actor count, and message count.
+- A hidden data table lists all messages in temporal order with from, to, label, and type columns.

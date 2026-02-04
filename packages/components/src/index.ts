@@ -27,6 +27,8 @@ export { flowchartDefinition, Flowchart } from './flowchart/index.js';
 export type { FlowchartData } from './flowchart/index.js';
 export { fileTreeDefinition, FileTree } from './filetree/index.js';
 export type { FileTreeData } from './filetree/index.js';
+export { sequenceDefinition, Sequence } from './sequence/index.js';
+export type { SequenceData } from './sequence/index.js';
 export {
   architectureDefinition,
   Architecture,

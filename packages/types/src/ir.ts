@@ -35,6 +35,7 @@ export type BlockType =
   | 'ui:codediff'
   | 'ui:flowchart'
   | 'ui:filetree'
+  | 'ui:sequence'
   // Extensible
   | `ui:${string}`;
 

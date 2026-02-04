@@ -17,6 +17,7 @@ import {
   codeDiffDefinition,
   flowchartDefinition,
   fileTreeDefinition,
+  sequenceDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -68,6 +69,7 @@ const allComponents = [
   codeDiffDefinition,
   flowchartDefinition,
   fileTreeDefinition,
+  sequenceDefinition,
 ];
 
 export default function Playground() {

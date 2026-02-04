@@ -16,6 +16,7 @@ import {
   codeDiffDefinition,
   flowchartDefinition,
   fileTreeDefinition,
+  sequenceDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -147,6 +148,7 @@ export function App() {
         codeDiffDefinition,
         flowchartDefinition,
         fileTreeDefinition,
+        sequenceDefinition,
       ],
     });
     return rt;
