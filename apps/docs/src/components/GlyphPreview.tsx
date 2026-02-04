@@ -21,6 +21,7 @@ import {
   sequenceDefinition,
   mindMapDefinition,
   equationDefinition,
+  quizDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -42,6 +43,7 @@ const allComponents = [
   sequenceDefinition,
   mindMapDefinition,
   equationDefinition,
+  quizDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {

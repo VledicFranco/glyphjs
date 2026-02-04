@@ -19,6 +19,7 @@ export { filetreeSchema } from './filetree.js';
 export { sequenceSchema } from './sequence.js';
 export { mindmapSchema } from './mindmap.js';
 export { equationSchema } from './equation.js';
+export { quizSchema } from './quiz.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';

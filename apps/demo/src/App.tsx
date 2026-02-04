@@ -19,6 +19,7 @@ import {
   sequenceDefinition,
   mindMapDefinition,
   equationDefinition,
+  quizDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -153,6 +154,7 @@ export function App() {
         sequenceDefinition,
         mindMapDefinition,
         equationDefinition,
+        quizDefinition,
       ],
     });
     return rt;

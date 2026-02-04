@@ -1,0 +1,213 @@
+---
+title: Quiz
+description: Interactive assessment component with multiple-choice, true/false, and multi-select question types.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Quiz** component (`ui:quiz`) renders interactive assessments with per-question feedback, score tracking, and optional explanations. It supports three question types: multiple-choice (radio buttons), true/false, and multi-select (checkboxes).
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:quiz
+title: JavaScript Fundamentals
+questions:
+  - type: multiple-choice
+    question: Which keyword declares a block-scoped variable?
+    options:
+      - var
+      - let
+      - function
+      - declare
+    answer: 1
+    explanation: The "let" keyword declares a block-scoped local variable.
+  - type: true-false
+    question: JavaScript is a statically typed language.
+    answer: false
+    explanation: JavaScript is dynamically typed. TypeScript adds static types.
+  - type: multi-select
+    question: Which of these are primitive types in JavaScript?
+    options:
+      - string
+      - object
+      - number
+      - array
+      - boolean
+    answer:
+      - 0
+      - 2
+      - 4
+    explanation: string, number, and boolean are primitives. object and array are reference types.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:quiz
+title: JavaScript Fundamentals
+questions:
+  - type: multiple-choice
+    question: Which keyword declares a block-scoped variable?
+    options:
+      - var
+      - let
+      - function
+      - declare
+    answer: 1
+    explanation: The "let" keyword declares a block-scoped local variable.
+  - type: true-false
+    question: JavaScript is a statically typed language.
+    answer: false
+    explanation: JavaScript is dynamically typed. TypeScript adds static types.
+  - type: multi-select
+    question: Which of these are primitive types in JavaScript?
+    options:
+      - string
+      - object
+      - number
+      - array
+      - boolean
+    answer:
+      - 0
+      - 2
+      - 4
+    explanation: string, number, and boolean are primitives.
+```
+````
+
+</details>
+
+### True/False only
+
+A quiz composed entirely of true/false questions.
+
+export const trueFalseExample = `\`\`\`ui:quiz
+title: True or False
+questions:
+  - type: true-false
+    question: CSS stands for Cascading Style Sheets.
+    answer: true
+  - type: true-false
+    question: HTTP is a stateful protocol.
+    answer: false
+    explanation: HTTP is stateless. State is managed through cookies and sessions.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={trueFalseExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:quiz
+title: True or False
+questions:
+  - type: true-false
+    question: CSS stands for Cascading Style Sheets.
+    answer: true
+  - type: true-false
+    question: HTTP is a stateful protocol.
+    answer: false
+    explanation: HTTP is stateless. State is managed through cookies and sessions.
+```
+````
+
+</details>
+
+### No score tracking
+
+Set `showScore: false` to hide the score counter.
+
+export const noScoreExample = `\`\`\`ui:quiz
+title: Practice Quiz
+showScore: false
+questions:
+  - type: multiple-choice
+    question: Which planet is closest to the sun?
+    options:
+      - Venus
+      - Mercury
+      - Mars
+      - Earth
+    answer: 1
+  - type: true-false
+    question: Water boils at 100 degrees Celsius at sea level.
+    answer: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={noScoreExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:quiz
+title: Practice Quiz
+showScore: false
+questions:
+  - type: multiple-choice
+    question: Which planet is closest to the sun?
+    options:
+      - Venus
+      - Mercury
+      - Mars
+      - Earth
+    answer: 1
+  - type: true-false
+    question: Water boils at 100 degrees Celsius at sea level.
+    answer: true
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading displayed above the quiz. |
+| `questions` | `QuizQuestion[]` | Yes | -- | Array of questions (at least 1). |
+| `showScore` | `boolean` | No | `true` | When `false`, hides the score counter. |
+
+### QuizQuestion (discriminated union on `type`)
+
+#### multiple-choice
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"multiple-choice"` | Yes | Question type discriminator. |
+| `question` | `string` | Yes | The question text. |
+| `options` | `string[]` | Yes | 2 to 6 answer options. |
+| `answer` | `number` | Yes | 0-based index of the correct option. |
+| `explanation` | `string` | No | Explanation shown after submitting. |
+
+#### true-false
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"true-false"` | Yes | Question type discriminator. |
+| `question` | `string` | Yes | The question text. |
+| `answer` | `boolean` | Yes | The correct answer (`true` or `false`). |
+| `explanation` | `string` | No | Explanation shown after submitting. |
+
+#### multi-select
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `type` | `"multi-select"` | Yes | Question type discriminator. |
+| `question` | `string` | Yes | The question text. |
+| `options` | `string[]` | Yes | 2 to 8 answer options. |
+| `answer` | `number[]` | Yes | Array of 0-based indices of correct options. |
+| `explanation` | `string` | No | Explanation shown after submitting. |
+
+## Accessibility
+
+- Each question group uses `role="group"` with an `aria-label` indicating the question number.
+- Multiple-choice and true/false questions use `role="radiogroup"` with radio buttons.
+- Multi-select questions use checkboxes with `role="checkbox"`.
+- Feedback messages (correct/incorrect) and explanations are inside an `aria-live="polite"` region so screen readers announce results.
+- The outer container uses `role="region"` with `aria-label` set to the quiz title (or "Quiz" if no title is provided).
+- Submit buttons are disabled until a selection is made, preventing empty submissions.

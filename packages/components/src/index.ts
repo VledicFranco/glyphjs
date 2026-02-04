@@ -45,3 +45,5 @@ export { mindMapDefinition, MindMap } from './mindmap/index.js';
 export type { MindMapData } from './mindmap/index.js';
 export { equationDefinition, Equation } from './equation/index.js';
 export type { EquationData, EquationStep } from './equation/index.js';
+export { quizDefinition, Quiz } from './quiz/index.js';
+export type { QuizData, QuizQuestion } from './quiz/index.js';
