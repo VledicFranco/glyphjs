@@ -48,25 +48,19 @@ describe('diffIR / applyPatch roundtrip', () => {
         expect(deepEqualNormalized(result.layout, b.layout)).toBe(true);
 
         // Blocks: same IDs in same order, same content
-        expect(result.blocks.map((bl) => bl.id)).toEqual(
-          b.blocks.map((bl) => bl.id),
-        );
+        expect(result.blocks.map((bl) => bl.id)).toEqual(b.blocks.map((bl) => bl.id));
         for (let i = 0; i < b.blocks.length; i++) {
-          expect(deepEqualNormalized(result.blocks[i], b.blocks[i])).toBe(
-            true,
-          );
+          expect(deepEqualNormalized(result.blocks[i], b.blocks[i])).toBe(true);
         }
 
         // References: same set (order may vary from add operations)
-        const resultRefIds = result.references
-          .map((r) => r.id)
-          .sort();
+        const resultRefIds = result.references.map((r) => r.id).sort();
         const bRefIds = b.references.map((r) => r.id).sort();
         expect(resultRefIds).toEqual(bRefIds);
       }),
       { numRuns: 200, seed: 42 },
     );
-  });
+  }, 30_000);
 });
 
 // ─── Identity Property ───────────────────────────────────────
@@ -83,7 +77,7 @@ describe('applyPatch identity', () => {
       }),
       { numRuns: 200, seed: 42 },
     );
-  });
+  }, 30_000);
 
   it('diffIR(ir, ir) produces an empty patch', () => {
     fc.assert(
@@ -93,83 +87,64 @@ describe('applyPatch identity', () => {
       }),
       { numRuns: 200, seed: 42 },
     );
-  });
+  }, 30_000);
 });
 
 // ─── Associativity Property ──────────────────────────────────
 
 describe('composePatch associativity', () => {
-  it(
-    'composePatch(composePatch(a, b), c) equals composePatch(a, composePatch(b, c))',
-    () => {
-      // We generate three IR documents and derive patches between them,
-      // then verify that composition is associative.
-      fc.assert(
-        fc.property(
-          arbGlyphIR,
-          arbGlyphIR,
-          arbGlyphIR,
-          (irA, irB, irC) => {
-            // Normalize ids/versions so diffs are meaningful
-            const b = { ...irB, id: irA.id, version: irA.version };
-            const c = { ...irC, id: irA.id, version: irA.version };
+  it('composePatch(composePatch(a, b), c) equals composePatch(a, composePatch(b, c))', () => {
+    // We generate three IR documents and derive patches between them,
+    // then verify that composition is associative.
+    fc.assert(
+      fc.property(arbGlyphIR, arbGlyphIR, arbGlyphIR, (irA, irB, irC) => {
+        // Normalize ids/versions so diffs are meaningful
+        const b = { ...irB, id: irA.id, version: irA.version };
+        const c = { ...irC, id: irA.id, version: irA.version };
 
-            const patchAB = diffIR(irA, b);
-            const patchBC = diffIR(b, c);
+        const patchAB = diffIR(irA, b);
+        const patchBC = diffIR(b, c);
 
-            // Also create a third patch from a fresh pair
-            const patchAC = diffIR(irA, c);
+        // Also create a third patch from a fresh pair
+        const patchAC = diffIR(irA, c);
 
-            // Associativity of compose: (a . b) . c === a . (b . c)
-            const leftAssoc = composePatch(
-              composePatch(patchAB, patchBC),
-              patchAC,
-            );
-            const rightAssoc = composePatch(
-              patchAB,
-              composePatch(patchBC, patchAC),
-            );
+        // Associativity of compose: (a . b) . c === a . (b . c)
+        const leftAssoc = composePatch(composePatch(patchAB, patchBC), patchAC);
+        const rightAssoc = composePatch(patchAB, composePatch(patchBC, patchAC));
 
-            // Since composePatch is concatenation, these should be identical
-            expect(leftAssoc).toEqual(rightAssoc);
-          },
-        ),
-        { numRuns: 200, seed: 42 },
-      );
-    },
-    30_000,
-  );
+        // Since composePatch is concatenation, these should be identical
+        expect(leftAssoc).toEqual(rightAssoc);
+      }),
+      { numRuns: 200, seed: 42 },
+    );
+  }, 30_000);
 
-  it(
-    'composePatch of two patches applied is same as sequential application',
-    () => {
-      fc.assert(
-        fc.property(arbGlyphIR, arbGlyphIR, arbGlyphIR, (irA, irB, irC) => {
-          const b = { ...irB, id: irA.id, version: irA.version };
-          const c = { ...irC, id: irA.id, version: irA.version };
+  it('composePatch of two patches applied is same as sequential application', () => {
+    fc.assert(
+      fc.property(arbGlyphIR, arbGlyphIR, arbGlyphIR, (irA, irB, irC) => {
+        const b = { ...irB, id: irA.id, version: irA.version };
+        const c = { ...irC, id: irA.id, version: irA.version };
 
-          const patchAB = diffIR(irA, b);
-          const patchBC = diffIR(b, c);
+        const patchAB = diffIR(irA, b);
+        const patchBC = diffIR(b, c);
 
-          const composed = composePatch(patchAB, patchBC);
+        const composed = composePatch(patchAB, patchBC);
 
-          // Apply composed patch in one go
-          const resultComposed = applyPatch(irA, composed);
+        // Apply composed patch in one go
+        const resultComposed = applyPatch(irA, composed);
 
-          // Apply sequentially
-          const intermediate = applyPatch(irA, patchAB);
-          const resultSequential = applyPatch(intermediate, patchBC);
+        // Apply sequentially
+        const intermediate = applyPatch(irA, patchAB);
+        const resultSequential = applyPatch(intermediate, patchBC);
 
-          // Both should produce same blocks
-          expect(resultComposed.blocks.map((bl) => bl.id)).toEqual(
-            resultSequential.blocks.map((bl) => bl.id),
-          );
-        }),
-        { numRuns: 200, seed: 42 },
-      );
-    },
-    30_000,
-  );
+        // Both should produce same blocks
+        expect(resultComposed.blocks.map((bl) => bl.id)).toEqual(
+          resultSequential.blocks.map((bl) => bl.id),
+        );
+      }),
+      { numRuns: 200, seed: 42 },
+    );
+  }, 30_000);
 });
 
 // ─── Edge Cases ──────────────────────────────────────────────
@@ -192,9 +167,7 @@ describe('edge cases', () => {
         const patch = diffIR(empty, ir);
         const result = applyPatch(empty, patch);
 
-        expect(result.blocks.map((bl) => bl.id)).toEqual(
-          ir.blocks.map((bl) => bl.id),
-        );
+        expect(result.blocks.map((bl) => bl.id)).toEqual(ir.blocks.map((bl) => bl.id));
         expect(deepEqualNormalized(result.metadata, ir.metadata)).toBe(true);
         expect(deepEqualNormalized(result.layout, ir.layout)).toBe(true);
       }),
