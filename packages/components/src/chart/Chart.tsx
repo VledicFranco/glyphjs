@@ -300,7 +300,7 @@ export function Chart({ data }: GlyphComponentProps<ChartData>): ReactElement {
           position: 'absolute',
           pointerEvents: 'none',
           backgroundColor: 'var(--glyph-tooltip-bg, rgba(0,0,0,0.8))',
-          color: 'var(--glyph-tooltip-text, #fff)',
+          color: 'var(--glyph-tooltip-text, #d4dae3)',
           padding: '4px 8px',
           borderRadius: '3px',
           fontSize: '12px',

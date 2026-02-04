@@ -20,16 +20,16 @@ export const DEFAULT_HEIGHT = 400;
 export const MARGIN = { top: 20, right: 30, bottom: 50, left: 60 };
 
 export const COLOR_SCHEME = [
-  '#d4a843', // amber (accent)
-  '#5b8a72', // sage
-  '#c75d4a', // terracotta
-  '#6a9bc8', // steel blue
-  '#9b7cb8', // lavender
-  '#d4805a', // burnt orange
-  '#4a8a8a', // teal
-  '#c7657a', // rose
-  '#8a7a5a', // khaki
-  '#7a9aa8', // slate
+  '#00d4aa', // cyan-green
+  '#b44dff', // purple
+  '#22c55e', // green
+  '#e040fb', // magenta
+  '#00e5ff', // teal
+  '#84cc16', // lime
+  '#f472b6', // rose
+  '#fb923c', // orange
+  '#818cf8', // indigo
+  '#38bdf8', // sky
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -85,8 +85,8 @@ export function renderAxes(
 
   xAxisG
     .selectAll('text, line, path')
-    .attr('fill', 'var(--glyph-text, #1a1a1a)')
-    .attr('stroke', 'var(--glyph-grid, #dce1e8)');
+    .attr('fill', 'var(--glyph-text, #1a2035)')
+    .attr('stroke', 'var(--glyph-grid, #1a2035)');
 
   if (xAxisConfig?.label) {
     g.append('text')
@@ -94,7 +94,7 @@ export function renderAxes(
       .attr('x', innerWidth / 2)
       .attr('y', innerHeight + MARGIN.bottom - 6)
       .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--glyph-text, #1a1a1a)')
+      .attr('fill', 'var(--glyph-text, #1a2035)')
       .attr('font-size', '12px')
       .text(xAxisConfig.label);
   }
@@ -108,8 +108,8 @@ export function renderAxes(
 
   yAxisG
     .selectAll('text, line, path')
-    .attr('fill', 'var(--glyph-text, #1a1a1a)')
-    .attr('stroke', 'var(--glyph-grid, #dce1e8)');
+    .attr('fill', 'var(--glyph-text, #1a2035)')
+    .attr('stroke', 'var(--glyph-grid, #1a2035)');
 
   if (yAxisConfig?.label) {
     g.append('text')
@@ -118,7 +118,7 @@ export function renderAxes(
       .attr('x', -innerHeight / 2)
       .attr('y', -MARGIN.left + 14)
       .attr('text-anchor', 'middle')
-      .attr('fill', 'var(--glyph-text, #1a1a1a)')
+      .attr('fill', 'var(--glyph-text, #1a2035)')
       .attr('font-size', '12px')
       .text(yAxisConfig.label);
   }
@@ -138,7 +138,7 @@ export function renderGridLines(
     .attr('x2', innerWidth)
     .attr('y1', (d: number) => yScale(d))
     .attr('y2', (d: number) => yScale(d))
-    .attr('stroke', 'var(--glyph-grid, #dce1e8)')
+    .attr('stroke', 'var(--glyph-grid, #1a2035)')
     .attr('stroke-opacity', 0.5)
     .attr('stroke-dasharray', '2,2');
 }
@@ -287,8 +287,8 @@ export function renderOHLCSeries(
     const cx = xScalePoint(d);
     const isBullish = close >= open;
     const candleColor = isBullish
-      ? 'var(--glyph-chart-bullish, #5b8a72)'
-      : 'var(--glyph-chart-bearish, #c75d4a)';
+      ? 'var(--glyph-chart-bullish, #22c55e)'
+      : 'var(--glyph-chart-bearish, #f87171)';
 
     // High-low wick
     g.append('line')
@@ -342,7 +342,7 @@ export function renderLegend(
       .append('text')
       .attr('x', 20)
       .attr('y', 11)
-      .attr('fill', 'var(--glyph-text, #1a1a1a)')
+      .attr('fill', 'var(--glyph-text, #1a2035)')
       .attr('font-size', '12px')
       .text(s.name);
   });

@@ -66,7 +66,7 @@ export function Tabs({ data, block }: GlyphComponentProps<TabsData>) {
     <div
       style={{
         fontFamily: 'var(--glyph-font-body, "Inter", system-ui, sans-serif)',
-        border: '1px solid var(--glyph-border, #dce1e8)',
+        border: '1px solid var(--glyph-border, #d0d8e4)',
         borderRadius: 'var(--glyph-radius-lg, 0.25rem)',
         overflow: 'hidden',
       }}
@@ -77,8 +77,8 @@ export function Tabs({ data, block }: GlyphComponentProps<TabsData>) {
         aria-label="Tabs"
         style={{
           display: 'flex',
-          borderBottom: '1px solid var(--glyph-border, #dce1e8)',
-          backgroundColor: 'var(--glyph-surface, #eef1f5)',
+          borderBottom: '1px solid var(--glyph-border, #d0d8e4)',
+          backgroundColor: 'var(--glyph-surface, #e8ecf3)',
           margin: 0,
           padding: 0,
         }}
@@ -105,11 +105,11 @@ export function Tabs({ data, block }: GlyphComponentProps<TabsData>) {
                 padding: '10px 18px',
                 border: 'none',
                 borderBottom: isActive
-                  ? '2px solid var(--glyph-accent, #d4a843)'
+                  ? '2px solid var(--glyph-accent, #00d4aa)'
                   : '2px solid transparent',
-                background: isActive ? 'var(--glyph-surface-raised, #f8f9fb)' : 'transparent',
+                background: isActive ? 'var(--glyph-surface-raised, #f4f6fa)' : 'transparent',
                 color: isActive
-                  ? 'var(--glyph-heading, #0f1319)'
+                  ? 'var(--glyph-heading, #0a0e1a)'
                   : 'var(--glyph-text-muted, #7a8599)',
                 cursor: 'pointer',
                 fontFamily: 'inherit',
@@ -143,8 +143,8 @@ export function Tabs({ data, block }: GlyphComponentProps<TabsData>) {
             tabIndex={0}
             style={{
               padding: '16px',
-              backgroundColor: 'var(--glyph-surface-raised, #f8f9fb)',
-              color: 'var(--glyph-heading, #0f1319)',
+              backgroundColor: 'var(--glyph-surface-raised, #f4f6fa)',
+              color: 'var(--glyph-heading, #0a0e1a)',
               lineHeight: 1.6,
             }}
           >

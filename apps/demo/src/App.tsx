@@ -22,16 +22,16 @@ const styles = {
     flexDirection: 'column',
     height: '100vh',
     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-    background: dark ? '#1a1a2e' : '#f5f5f5',
-    color: dark ? '#e0e0e0' : '#333',
+    background: dark ? '#0a0e1a' : '#f4f6fa',
+    color: dark ? '#d4dae3' : '#1a2035',
   }),
   toolbar: (dark: boolean): React.CSSProperties => ({
     display: 'flex',
     alignItems: 'center',
     gap: '12px',
     padding: '8px 16px',
-    borderBottom: `1px solid ${dark ? '#333' : '#ddd'}`,
-    background: dark ? '#16213e' : '#fff',
+    borderBottom: `1px solid ${dark ? '#1a2035' : '#d0d8e4'}`,
+    background: dark ? '#0f1526' : '#f4f6fa',
     flexShrink: 0,
   }),
   title: {
@@ -41,18 +41,18 @@ const styles = {
   } as React.CSSProperties,
   select: (dark: boolean): React.CSSProperties => ({
     padding: '6px 12px',
-    borderRadius: '4px',
-    border: `1px solid ${dark ? '#555' : '#ccc'}`,
-    background: dark ? '#1a1a2e' : '#fff',
-    color: dark ? '#e0e0e0' : '#333',
+    borderRadius: '6px',
+    border: `1px solid ${dark ? '#2a3550' : '#d0d8e4'}`,
+    background: dark ? '#0a0e1a' : '#f4f6fa',
+    color: dark ? '#d4dae3' : '#1a2035',
     fontSize: '13px',
   }),
   button: (dark: boolean): React.CSSProperties => ({
     padding: '6px 14px',
-    borderRadius: '4px',
-    border: `1px solid ${dark ? '#555' : '#ccc'}`,
-    background: dark ? '#1a1a2e' : '#fff',
-    color: dark ? '#e0e0e0' : '#333',
+    borderRadius: '6px',
+    border: `1px solid ${dark ? '#2a3550' : '#d0d8e4'}`,
+    background: dark ? '#0a0e1a' : '#f4f6fa',
+    color: dark ? '#d4dae3' : '#1a2035',
     cursor: 'pointer',
     fontSize: '13px',
   }),
@@ -65,7 +65,7 @@ const styles = {
     flex: 1,
     display: 'flex',
     flexDirection: 'column',
-    borderRight: `1px solid ${dark ? '#333' : '#ddd'}`,
+    borderRight: `1px solid ${dark ? '#1a2035' : '#d0d8e4'}`,
   }),
   textarea: (dark: boolean): React.CSSProperties => ({
     flex: 1,
@@ -76,29 +76,29 @@ const styles = {
     fontFamily: '"Fira Code", "Cascadia Code", "Consolas", monospace',
     fontSize: '13px',
     lineHeight: '1.6',
-    background: dark ? '#0f3460' : '#fff',
-    color: dark ? '#e0e0e0' : '#333',
+    background: dark ? '#162038' : '#f4f6fa',
+    color: dark ? '#d4dae3' : '#1a2035',
     tabSize: 2,
   }),
   previewPane: (dark: boolean): React.CSSProperties => ({
     flex: 1,
     overflow: 'auto',
     padding: '16px',
-    background: dark ? '#1a1a2e' : '#fff',
+    background: dark ? '#0a0e1a' : '#f4f6fa',
   }),
   diagnostics: (dark: boolean): React.CSSProperties => ({
     flexShrink: 0,
     maxHeight: '160px',
     overflow: 'auto',
     padding: '8px 16px',
-    borderTop: `1px solid ${dark ? '#333' : '#ddd'}`,
-    background: dark ? '#16213e' : '#fafafa',
+    borderTop: `1px solid ${dark ? '#1a2035' : '#d0d8e4'}`,
+    background: dark ? '#0f1526' : '#e8ecf3',
     fontSize: '12px',
     fontFamily: 'monospace',
   }),
   diagItem: (severity: string): React.CSSProperties => ({
     padding: '2px 0',
-    color: severity === 'error' ? '#e74c3c' : severity === 'warning' ? '#f39c12' : '#3498db',
+    color: severity === 'error' ? '#f87171' : severity === 'warning' ? '#fb923c' : '#38bdf8',
   }),
   paneLabel: (dark: boolean): React.CSSProperties => ({
     padding: '4px 16px',
@@ -106,9 +106,9 @@ const styles = {
     fontWeight: 600,
     textTransform: 'uppercase',
     letterSpacing: '0.5px',
-    color: dark ? '#888' : '#999',
-    borderBottom: `1px solid ${dark ? '#333' : '#eee'}`,
-    background: dark ? '#16213e' : '#fafafa',
+    color: dark ? '#6b7a94' : '#6b7a94',
+    borderBottom: `1px solid ${dark ? '#1a2035' : '#d0d8e4'}`,
+    background: dark ? '#0f1526' : '#e8ecf3',
     flexShrink: 0,
   }),
 };
@@ -215,12 +215,12 @@ export function App() {
         {diagCount > 0 && (
           <span style={{ fontSize: '12px' }}>
             {errorCount > 0 && (
-              <span style={{ color: '#e74c3c', marginRight: '8px' }}>
+              <span style={{ color: '#f87171', marginRight: '8px' }}>
                 {errorCount} error{errorCount !== 1 ? 's' : ''}
               </span>
             )}
             {warnCount > 0 && (
-              <span style={{ color: '#f39c12' }}>
+              <span style={{ color: '#fb923c' }}>
                 {warnCount} warning{warnCount !== 1 ? 's' : ''}
               </span>
             )}
@@ -249,7 +249,7 @@ export function App() {
           {result?.ir && result.ir.blocks.length > 0 ? (
             <GlyphDocument ir={result.ir} />
           ) : (
-            <p style={{ color: '#999', fontStyle: 'italic' }}>
+            <p style={{ color: '#6b7a94', fontStyle: 'italic' }}>
               Type some markdown to see the preview...
             </p>
           )}

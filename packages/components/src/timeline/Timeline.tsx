@@ -35,14 +35,14 @@ const EVENT_SPACING_MIN = 80;
  * through these when assigning colors based on the event `type` field.
  */
 const TYPE_PALETTE = [
-  'var(--glyph-timeline-color-1, #d4a843)',
-  'var(--glyph-timeline-color-2, #5b8a72)',
-  'var(--glyph-timeline-color-3, #c75d4a)',
-  'var(--glyph-timeline-color-4, #6a9bc8)',
-  'var(--glyph-timeline-color-5, #9b7cb8)',
-  'var(--glyph-timeline-color-6, #d4805a)',
-  'var(--glyph-timeline-color-7, #4a8a8a)',
-  'var(--glyph-timeline-color-8, #c7657a)',
+  'var(--glyph-timeline-color-1, #00d4aa)',
+  'var(--glyph-timeline-color-2, #b44dff)',
+  'var(--glyph-timeline-color-3, #22c55e)',
+  'var(--glyph-timeline-color-4, #e040fb)',
+  'var(--glyph-timeline-color-5, #00e5ff)',
+  'var(--glyph-timeline-color-6, #84cc16)',
+  'var(--glyph-timeline-color-7, #f472b6)',
+  'var(--glyph-timeline-color-8, #fb923c)',
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -132,7 +132,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
   const containerStyle: React.CSSProperties = {
     position: 'relative',
     fontFamily: 'var(--glyph-font-body, system-ui, sans-serif)',
-    color: 'var(--glyph-text, #1a1a1a)',
+    color: 'var(--glyph-text, #1a2035)',
     ...(isVertical
       ? { width: '100%', minHeight: totalLength }
       : { minHeight: 300, minWidth: totalLength, overflowX: 'auto' }),
@@ -145,7 +145,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
         top: 0,
         bottom: 0,
         width: LINE_THICKNESS,
-        backgroundColor: 'var(--glyph-timeline-line, #dce1e8)',
+        backgroundColor: 'var(--glyph-timeline-line, #d0d8e4)',
         transform: 'translateX(-50%)',
       }
     : {
@@ -154,7 +154,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
         left: 0,
         right: 0,
         height: LINE_THICKNESS,
-        backgroundColor: 'var(--glyph-timeline-line, #dce1e8)',
+        backgroundColor: 'var(--glyph-timeline-line, #d0d8e4)',
         transform: 'translateY(-50%)',
       };
 
@@ -185,8 +185,8 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
                 height: MARKER_RADIUS * 2,
                 borderRadius: '50%',
                 backgroundColor: color,
-                border: '2px solid var(--glyph-timeline-marker-border, var(--glyph-bg, #f8f9fb))',
-                boxShadow: '0 0 0 2px var(--glyph-border, #dce1e8)',
+                border: '2px solid var(--glyph-timeline-marker-border, var(--glyph-bg, #f4f6fa))',
+                boxShadow: '0 0 0 2px var(--glyph-border, #d0d8e4)',
                 flexShrink: 0,
                 zIndex: 1,
               }}
@@ -291,13 +291,13 @@ function connectorStyle(_pe: PositionedEvent, isVertical: boolean): React.CSSPro
     return {
       flex: '0 0 20px',
       height: LINE_THICKNESS,
-      backgroundColor: 'var(--glyph-timeline-line, #dce1e8)',
+      backgroundColor: 'var(--glyph-timeline-line, #d0d8e4)',
     };
   }
   return {
     flex: '0 0 20px',
     width: LINE_THICKNESS,
-    backgroundColor: 'var(--glyph-timeline-line, #dce1e8)',
+    backgroundColor: 'var(--glyph-timeline-line, #d0d8e4)',
   };
 }
 

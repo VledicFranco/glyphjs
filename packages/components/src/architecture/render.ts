@@ -5,16 +5,16 @@ import { renderIcon } from './icons.js';
 // ─── Node Color Palette (Oblivion) ─────────────────────────
 
 const NODE_PALETTE = [
-  '#d4a843',
-  '#5b8a72',
-  '#c75d4a',
-  '#6a9bc8',
-  '#9b7cb8',
-  '#d4805a',
-  '#4a8a8a',
-  '#c7657a',
-  '#8a7a5a',
-  '#7a9aa8',
+  '#00d4aa',
+  '#b44dff',
+  '#22c55e',
+  '#e040fb',
+  '#00e5ff',
+  '#84cc16',
+  '#f472b6',
+  '#fb923c',
+  '#818cf8',
+  '#38bdf8',
 ];
 
 // ─── Zone Depth Colors ──────────────────────────────────────
@@ -22,7 +22,7 @@ const NODE_PALETTE = [
 function zoneBackground(depth: number): string {
   const alphas = [0.06, 0.1, 0.14, 0.18];
   const alpha = alphas[Math.min(depth, alphas.length - 1)] ?? 0.18;
-  return `rgba(212,168,67,${alpha})`;
+  return `rgba(0,212,170,${alpha})`;
 }
 
 // ─── Arrow Marker ID ────────────────────────────────────────
@@ -53,7 +53,7 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
-    .attr('fill', '#7a8599');
+    .attr('fill', '#6b7a94');
 
   // Root group for zoom/pan
   const root = svg.append('g').attr('class', 'glyph-architecture-root');
@@ -85,7 +85,7 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
       .attr('rx', 3)
       .attr('ry', 3)
       .attr('fill', zoneBackground(zone.depth))
-      .attr('stroke', 'var(--glyph-accent-muted, #b8a070)')
+      .attr('stroke', 'var(--glyph-accent-muted, #1a4a3a)')
       .attr('stroke-width', 1)
       .attr('stroke-dasharray', '6,3');
 
@@ -121,7 +121,7 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
       .append('path')
       .attr('d', lineGen(edge.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', edge.style?.['stroke'] ?? '#7a8599')
+      .attr('stroke', edge.style?.['stroke'] ?? '#6b7a94')
       .attr('stroke-width', edge.style?.['stroke-width'] ?? String(strokeWidth))
       .attr('marker-end', `url(#${ARROW_MARKER_ID})`)
       .attr('stroke-dasharray', dashArray);
@@ -180,7 +180,7 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
     const nodeG = nodeGroup.append('g').attr('class', 'glyph-architecture-node');
 
     // Pick color by node index for visual variety
-    const color = NODE_PALETTE[nodeIdx % NODE_PALETTE.length] ?? '#d4a843';
+    const color = NODE_PALETTE[nodeIdx % NODE_PALETTE.length] ?? '#00d4aa';
 
     // Node rect
     nodeG

@@ -8,7 +8,7 @@ import { createElement } from 'react';
 export const comboSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 64" fill="none">
   <g>
     <path d="M42 8L14 8L14 56L42 56L42 36L30 36" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
-    <line x1="42" y1="36" x2="50" y2="36" stroke="#3a9bc8" stroke-width="2"/>
+    <line x1="42" y1="36" x2="50" y2="36" stroke="#00d4aa" stroke-width="2"/>
   </g>
   <text x="76" y="40" font-family="Inter, Helvetica Neue, system-ui, sans-serif" font-size="24" font-weight="300" letter-spacing="0.08em" fill="currentColor">glyphjs</text>
 </svg>`;
@@ -46,7 +46,7 @@ export const ComboLogo: FC<LogoProps> = ({ width = 280, height = 64, className }
         y1: 36,
         x2: 50,
         y2: 36,
-        stroke: '#3a9bc8',
+        stroke: '#00d4aa',
         strokeWidth: 2,
       }),
     ),

@@ -4,34 +4,34 @@
    Light-mode palette (default)
    ---------------------------------------------------------------- */
 :root {
-  /* Accent: amber/gold-derived */
-  --sl-color-accent-low: #faf4e8;
-  --sl-color-accent: #b8922e;
-  --sl-color-accent-high: #96760e;
+  /* Accent: teal-derived */
+  --sl-color-accent-low: #e6f6f2;
+  --sl-color-accent: #0a9d7c;
+  --sl-color-accent-high: #088a6c;
 
   /* Text */
-  --sl-color-text: #2b3544;
-  --sl-color-text-accent: #b8922e;
+  --sl-color-text: #1a2035;
+  --sl-color-text-accent: #0a9d7c;
 
   /* Backgrounds */
-  --sl-color-bg: #f8f9fb;
-  --sl-color-bg-nav: #f0f2f5;
-  --sl-color-bg-sidebar: #f0f2f5;
+  --sl-color-bg: #f4f6fa;
+  --sl-color-bg-nav: #e8ecf3;
+  --sl-color-bg-sidebar: #e8ecf3;
 
   /* Hairlines / borders */
-  --sl-color-hairline-shade: #c9ced6;
-  --sl-color-hairline-light: #dce1e8;
+  --sl-color-hairline-shade: #a8b5c8;
+  --sl-color-hairline-light: #d0d8e4;
 
   /* Gray scale — remapped to Oblivion cool grays */
-  --sl-color-gray-1: #f0f2f5;
-  --sl-color-gray-2: #dce1e8;
-  --sl-color-gray-3: #c9ced6;
-  --sl-color-gray-4: #7a8599;
-  --sl-color-gray-5: #4a5568;
-  --sl-color-gray-6: #2b3544;
+  --sl-color-gray-1: #e8ecf3;
+  --sl-color-gray-2: #d0d8e4;
+  --sl-color-gray-3: #a8b5c8;
+  --sl-color-gray-4: #6b7a94;
+  --sl-color-gray-5: #3a4a60;
+  --sl-color-gray-6: #1a2035;
 
-  --sl-color-black: #1a202c;
-  --sl-color-white: #f8f9fb;
+  --sl-color-black: #0a0e1a;
+  --sl-color-white: #f4f6fa;
 
   /* Typography */
   --sl-font: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
@@ -42,31 +42,31 @@
    Dark-mode palette
    ---------------------------------------------------------------- */
 :root[data-theme="dark"] {
-  --sl-color-accent-low: #1f1a0e;
-  --sl-color-accent: #d4a843;
-  --sl-color-accent-high: #e4be6a;
+  --sl-color-accent-low: #0a1a1a;
+  --sl-color-accent: #00d4aa;
+  --sl-color-accent-high: #33e0be;
 
-  --sl-color-text: #e2e8f0;
-  --sl-color-text-accent: #d4a843;
+  --sl-color-text: #d4dae3;
+  --sl-color-text-accent: #00d4aa;
 
-  --sl-color-bg: #0f1219;
-  --sl-color-bg-nav: #161b26;
-  --sl-color-bg-sidebar: #161b26;
+  --sl-color-bg: #0a0e1a;
+  --sl-color-bg-nav: #0f1526;
+  --sl-color-bg-sidebar: #0f1526;
 
-  --sl-color-hairline-shade: #2d3748;
-  --sl-color-hairline-light: #3a4556;
+  --sl-color-hairline-shade: #2a3550;
+  --sl-color-hairline-light: #1a2035;
 
   /* Gray scale: 1 = lightest → 6 = darkest (matches Starlight convention) */
-  --sl-color-gray-1: #e2e8f0;
-  --sl-color-gray-2: #cbd5e0;
-  --sl-color-gray-3: #a0aec0;
-  --sl-color-gray-4: #7a8599;
-  --sl-color-gray-5: #3a4556;
-  --sl-color-gray-6: #1e2736;
+  --sl-color-gray-1: #d4dae3;
+  --sl-color-gray-2: #a8b5c8;
+  --sl-color-gray-3: #6b7a94;
+  --sl-color-gray-4: #4a5a70;
+  --sl-color-gray-5: #2a3550;
+  --sl-color-gray-6: #162038;
 
   /* White stays light, black stays dark (Starlight does NOT invert these) */
-  --sl-color-black: #0f1219;
-  --sl-color-white: #f8f9fb;
+  --sl-color-black: #0a0e1a;
+  --sl-color-white: #f4f6fa;
 }
 
 /* ----------------------------------------------------------------
@@ -78,19 +78,19 @@
 }
 
 /* ----------------------------------------------------------------
-   Tighter border-radius for code blocks, cards, etc.
+   Generous border-radius for code blocks, cards, etc.
    ---------------------------------------------------------------- */
 :root {
-  --sl-border-radius: 3px;
+  --sl-border-radius: 6px;
 }
 
 pre,
 code {
-  border-radius: 3px !important;
+  border-radius: 6px !important;
 }
 
 .card {
-  border-radius: 3px;
+  border-radius: 6px;
 }
 
 /* ----------------------------------------------------------------
@@ -98,7 +98,7 @@ code {
    ---------------------------------------------------------------- */
 details {
   border: 1px solid var(--sl-color-hairline-light);
-  border-radius: 3px;
+  border-radius: 6px;
   margin: 1rem 0;
   padding: 0;
 }

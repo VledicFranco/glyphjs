@@ -155,7 +155,7 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
       style={{
         width: '100%',
         borderCollapse: 'collapse',
-        border: '1px solid var(--glyph-table-border, #dce1e8)',
+        border: '1px solid var(--glyph-table-border, #d0d8e4)',
         fontFamily: 'var(--glyph-font-body, inherit)',
         fontSize: 'var(--glyph-table-font-size, 0.9rem)',
       }}
@@ -177,8 +177,8 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                 style={{
                   padding: 'var(--glyph-table-cell-padding, 8px 12px)',
                   textAlign: 'left',
-                  borderBottom: '2px solid var(--glyph-table-border, #dce1e8)',
-                  background: 'var(--glyph-table-header-bg, #eef1f5)',
+                  borderBottom: '2px solid var(--glyph-table-border, #d0d8e4)',
+                  background: 'var(--glyph-table-header-bg, #e8ecf3)',
                   color: 'var(--glyph-table-header-color, inherit)',
                   cursor: col.sortable ? 'pointer' : 'default',
                   userSelect: col.sortable ? 'none' : undefined,
@@ -209,11 +209,11 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                     style={{
                       width: '100%',
                       padding: '4px 6px',
-                      border: '1px solid var(--glyph-table-border, #dce1e8)',
+                      border: '1px solid var(--glyph-table-border, #d0d8e4)',
                       borderRadius: '3px',
                       fontSize: 'inherit',
                       boxSizing: 'border-box',
-                      background: 'var(--glyph-surface, #fff)',
+                      background: 'var(--glyph-surface, #e8ecf3)',
                       color: 'var(--glyph-text, inherit)',
                     }}
                   />
@@ -244,7 +244,7 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
               background:
                 rowIdx % 2 === 0
                   ? 'var(--glyph-table-row-bg, transparent)'
-                  : 'var(--glyph-table-row-alt-bg, #f8f9fb)',
+                  : 'var(--glyph-table-row-alt-bg, #f4f6fa)',
             }}
           >
             {columns.map((col) => (
@@ -252,7 +252,7 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                 key={col.key}
                 style={{
                   padding: 'var(--glyph-table-cell-padding, 8px 12px)',
-                  borderBottom: '1px solid var(--glyph-table-border, #dce1e8)',
+                  borderBottom: '1px solid var(--glyph-table-border, #d0d8e4)',
                   color: 'var(--glyph-table-cell-color, inherit)',
                 }}
               >
@@ -272,9 +272,9 @@ export function Table({ data }: GlyphComponentProps<TableData>): ReactElement {
                   key={col.key}
                   style={{
                     padding: 'var(--glyph-table-cell-padding, 8px 12px)',
-                    borderTop: '2px solid var(--glyph-table-border, #dce1e8)',
+                    borderTop: '2px solid var(--glyph-table-border, #d0d8e4)',
                     fontWeight: 'bold',
-                    background: 'var(--glyph-table-footer-bg, #eef1f5)',
+                    background: 'var(--glyph-table-footer-bg, #e8ecf3)',
                     color: 'var(--glyph-table-footer-color, inherit)',
                   }}
                 >

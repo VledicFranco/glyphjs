@@ -47,7 +47,7 @@ export function Callout({ data }: GlyphComponentProps<CalloutData>): ReactElemen
     padding: 'var(--glyph-spacing-md, 1rem)',
     margin: 'var(--glyph-spacing-sm, 0.5rem) 0',
     fontFamily: 'var(--glyph-font-body, system-ui, sans-serif)',
-    color: 'var(--glyph-text, #1a1a1a)',
+    color: 'var(--glyph-text, #1a2035)',
     display: 'flex',
     gap: 'var(--glyph-spacing-sm, 0.5rem)',
     alignItems: 'flex-start',

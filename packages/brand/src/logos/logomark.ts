@@ -7,7 +7,7 @@ import { createElement } from 'react';
  */
 export const logomarkSvg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
   <path d="M42 8L14 8L14 56L42 56L42 36L30 36" stroke="currentColor" stroke-width="2" stroke-linejoin="miter"/>
-  <line x1="42" y1="36" x2="50" y2="36" stroke="#3a9bc8" stroke-width="2"/>
+  <line x1="42" y1="36" x2="50" y2="36" stroke="#00d4aa" stroke-width="2"/>
 </svg>`;
 
 interface LogoProps {
@@ -40,7 +40,7 @@ export const Logomark: FC<LogoProps> = ({ width = 64, height = 64, className }) 
       y1: 36,
       x2: 50,
       y2: 36,
-      stroke: '#3a9bc8',
+      stroke: '#00d4aa',
       strokeWidth: 2,
     }),
   );

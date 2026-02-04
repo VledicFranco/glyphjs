@@ -35,19 +35,19 @@ type LayoutDirection = 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'for
 // ─── Group Color Palette ─────────────────────────────────────
 
 const GROUP_PALETTE = [
-  '#d4a843', // amber (accent)
-  '#5b8a72', // sage
-  '#c75d4a', // terracotta
-  '#6a9bc8', // steel blue
-  '#9b7cb8', // lavender
-  '#d4805a', // burnt orange
-  '#4a8a8a', // teal
-  '#c7657a', // rose
-  '#8a7a5a', // khaki
-  '#7a9aa8', // slate
+  '#00d4aa', // cyan-green
+  '#b44dff', // purple
+  '#22c55e', // green
+  '#e040fb', // magenta
+  '#00e5ff', // teal
+  '#84cc16', // lime
+  '#f472b6', // rose
+  '#fb923c', // orange
+  '#818cf8', // indigo
+  '#38bdf8', // sky
 ];
 
-const DEFAULT_NODE_COLOR = '#d4a843';
+const DEFAULT_NODE_COLOR = '#00d4aa';
 
 function getGroupColor(group: string | undefined, groupIndex: Map<string, number>): string {
   if (!group) return GROUP_PALETTE[0] ?? DEFAULT_NODE_COLOR;
@@ -105,7 +105,7 @@ function renderGraph(
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
-    .attr('fill', '#7a8599');
+    .attr('fill', '#6b7a94');
 
   // Root group for zoom/pan
   const root = svg.append('g').attr('class', 'glyph-graph-root');
@@ -147,7 +147,7 @@ function renderGraph(
       .append('path')
       .attr('d', lineGen(edge.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', edge.style?.['stroke'] ?? '#7a8599')
+      .attr('stroke', edge.style?.['stroke'] ?? '#6b7a94')
       .attr('stroke-width', edge.style?.['stroke-width'] ?? '1.5')
       .attr('marker-end', `url(#${ARROW_MARKER_ID})`)
       .attr('stroke-dasharray', edge.type === 'dashed' ? '5,5' : null);
@@ -161,7 +161,7 @@ function renderGraph(
           .attr('y', mid.y - 8)
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
-          .attr('fill', '#7a8599')
+          .attr('fill', '#6b7a94')
           .text(edge.label);
       }
     }

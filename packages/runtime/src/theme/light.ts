@@ -5,52 +5,52 @@ import type { GlyphTheme } from '@glyphjs/types';
  *
  * Provides all `--glyph-*` CSS variables with values suitable for
  * light backgrounds and dark text. Palette inspired by the Oblivion
- * (2013) interface design — cool whites, warm amber accents,
- * geometric precision.
+ * neon-on-dark design language — cool off-whites, teal accents,
+ * generous radii.
  */
 export const lightTheme: GlyphTheme = {
   name: 'light',
   variables: {
     // Colors
-    '--glyph-bg': '#f8f9fb',
-    '--glyph-text': '#1b1f27',
-    '--glyph-text-muted': '#7a8599',
-    '--glyph-heading': '#0f1319',
-    '--glyph-link': '#b8922e',
-    '--glyph-link-hover': '#96760e',
-    '--glyph-border': '#dce1e8',
-    '--glyph-border-strong': '#b8c0cc',
-    '--glyph-surface': '#eef1f5',
-    '--glyph-surface-raised': '#f8f9fb',
+    '--glyph-bg': '#f4f6fa',
+    '--glyph-text': '#1a2035',
+    '--glyph-text-muted': '#6b7a94',
+    '--glyph-heading': '#0a0e1a',
+    '--glyph-link': '#0a9d7c',
+    '--glyph-link-hover': '#088a6c',
+    '--glyph-border': '#d0d8e4',
+    '--glyph-border-strong': '#a8b5c8',
+    '--glyph-surface': '#e8ecf3',
+    '--glyph-surface-raised': '#f4f6fa',
 
     // Accent
-    '--glyph-accent': '#d4a843',
-    '--glyph-accent-hover': '#b8922e',
-    '--glyph-accent-subtle': '#faf4e8',
-    '--glyph-accent-muted': '#e8d5a8',
+    '--glyph-accent': '#0a9d7c',
+    '--glyph-accent-hover': '#088a6c',
+    '--glyph-accent-subtle': '#e6f6f2',
+    '--glyph-accent-muted': '#b0ddd0',
 
     // Code
-    '--glyph-code-bg': '#e8ecf1',
-    '--glyph-code-text': '#1b1f27',
+    '--glyph-code-bg': '#e8ecf3',
+    '--glyph-code-text': '#1a2035',
 
     // Blockquote
-    '--glyph-blockquote-border': '#d4a843',
-    '--glyph-blockquote-bg': '#faf4e8',
+    '--glyph-blockquote-border': '#0a9d7c',
+    '--glyph-blockquote-bg': '#e6f6f2',
 
     // Grid / Tooltip
-    '--glyph-grid': '#dce1e8',
-    '--glyph-tooltip-bg': 'rgba(15, 19, 25, 0.9)',
-    '--glyph-tooltip-text': '#f8f9fb',
+    '--glyph-grid': '#d0d8e4',
+    '--glyph-tooltip-bg': 'rgba(10, 14, 26, 0.9)',
+    '--glyph-tooltip-text': '#f4f6fa',
 
     // Callouts
-    '--glyph-callout-info-bg': '#e8f4fa',
-    '--glyph-callout-info-border': '#3a9bc8',
-    '--glyph-callout-warning-bg': '#faf4e8',
-    '--glyph-callout-warning-border': '#c89a3a',
-    '--glyph-callout-error-bg': '#faeaea',
-    '--glyph-callout-error-border': '#c84a4a',
-    '--glyph-callout-tip-bg': '#e8f5ee',
-    '--glyph-callout-tip-border': '#3aab6e',
+    '--glyph-callout-info-bg': '#e6f2fa',
+    '--glyph-callout-info-border': '#38bdf8',
+    '--glyph-callout-warning-bg': '#fef3e2',
+    '--glyph-callout-warning-border': '#fb923c',
+    '--glyph-callout-error-bg': '#fde8e8',
+    '--glyph-callout-error-border': '#f87171',
+    '--glyph-callout-tip-bg': '#e6f6f0',
+    '--glyph-callout-tip-border': '#22c55e',
 
     // Spacing
     '--glyph-spacing-xs': '0.25rem',
@@ -65,8 +65,8 @@ export const lightTheme: GlyphTheme = {
     '--glyph-font-mono': 'ui-monospace, "Cascadia Code", "Fira Code", monospace',
 
     // Border radius
-    '--glyph-radius-sm': '0.125rem',
-    '--glyph-radius-md': '0.1875rem',
-    '--glyph-radius-lg': '0.25rem',
+    '--glyph-radius-sm': '0.375rem',
+    '--glyph-radius-md': '0.5rem',
+    '--glyph-radius-lg': '0.75rem',
   },
 };
