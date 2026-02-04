@@ -15,6 +15,7 @@ import {
   comparisonDefinition,
   codeDiffDefinition,
   flowchartDefinition,
+  fileTreeDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -145,6 +146,7 @@ export function App() {
         comparisonDefinition,
         codeDiffDefinition,
         flowchartDefinition,
+        fileTreeDefinition,
       ],
     });
     return rt;

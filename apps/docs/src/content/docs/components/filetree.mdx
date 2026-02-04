@@ -1,0 +1,107 @@
+---
+title: FileTree
+description: Interactive hierarchical tree for displaying project structures with collapsible directories and file type icons.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **FileTree** component renders interactive hierarchical file trees with collapsible directories, file type icons, and optional annotations.
+
+## Basic example
+
+export const basicExample = `
+\`\`\`ui:filetree
+root: my-project
+defaultExpanded: true
+tree:
+  - name: src
+    children:
+      - name: index.ts
+        annotation: entry point
+      - name: components
+        children:
+          - name: App.tsx
+          - name: Header.tsx
+            annotation: new
+  - name: package.json
+  - name: tsconfig.json
+  - name: README.md
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={basicExample} />
+
+## Collapsed by default
+
+Set `defaultExpanded: false` to start with all directories collapsed.
+
+export const collapsedExample = `
+\`\`\`ui:filetree
+root: project
+defaultExpanded: false
+tree:
+  - name: src
+    children:
+      - name: index.ts
+      - name: utils.ts
+  - name: tests
+    children:
+      - name: index.test.ts
+  - name: package.json
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={collapsedExample} />
+
+## With annotations
+
+Annotations appear as muted badges next to file names — useful for marking file status.
+
+export const annotatedExample = `
+\`\`\`ui:filetree
+root: app
+defaultExpanded: true
+tree:
+  - name: src
+    children:
+      - name: api.ts
+        annotation: modified
+      - name: auth.ts
+        annotation: new
+      - name: db.ts
+      - name: config.ts
+        annotation: deprecated
+  - name: package.json
+    annotation: updated
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={annotatedExample} />
+
+## Properties
+
+| Property          | Type         | Default | Description                                 |
+| ----------------- | ------------ | ------- | ------------------------------------------- |
+| `root`            | `string`     | —       | Optional root directory label               |
+| `tree`            | `FileNode[]` | *(required)* | Array of file/directory nodes (min 1) |
+| `defaultExpanded` | `boolean`    | `true`  | Whether directories start expanded          |
+
+### FileNode
+
+| Property     | Type         | Default | Description                           |
+| ------------ | ------------ | ------- | ------------------------------------- |
+| `name`       | `string`     | *(required)* | File or directory name           |
+| `annotation` | `string`     | —       | Optional badge text (e.g. "new")      |
+| `children`   | `FileNode[]` | —       | Child nodes (presence = directory)    |
+
+## Accessibility
+
+- The tree uses `role="tree"` on the root `<ul>` and `role="treeitem"` on each node.
+- Directories include `aria-expanded` indicating their open/closed state.
+- Keyboard navigation follows the WAI-ARIA Treeview pattern:
+  - **ArrowDown** / **ArrowUp** — move focus between visible items
+  - **ArrowRight** — expand directory, or move to first child
+  - **ArrowLeft** — collapse directory, or move to parent
+  - **Enter** / **Space** — toggle expand/collapse
+  - **Home** / **End** — move to first/last visible item
+- Annotations are included in each item's `aria-label`.

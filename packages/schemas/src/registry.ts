@@ -15,6 +15,7 @@ import { accordionSchema } from './accordion.js';
 import { comparisonSchema } from './comparison.js';
 import { codediffSchema } from './codediff.js';
 import { flowchartSchema } from './flowchart.js';
+import { filetreeSchema } from './filetree.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -33,6 +34,7 @@ const entries: [string, z.ZodType][] = [
   ['comparison', comparisonSchema],
   ['codediff', codediffSchema],
   ['flowchart', flowchartSchema],
+  ['filetree', filetreeSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);

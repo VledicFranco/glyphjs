@@ -25,6 +25,8 @@ export { codeDiffDefinition, CodeDiff, computeDiff } from './codediff/index.js';
 export type { CodeDiffData, DiffLine, DiffLineKind } from './codediff/index.js';
 export { flowchartDefinition, Flowchart } from './flowchart/index.js';
 export type { FlowchartData } from './flowchart/index.js';
+export { fileTreeDefinition, FileTree } from './filetree/index.js';
+export type { FileTreeData } from './filetree/index.js';
 export {
   architectureDefinition,
   Architecture,

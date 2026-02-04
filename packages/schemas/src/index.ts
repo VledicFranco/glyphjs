@@ -15,6 +15,7 @@ export { accordionSchema } from './accordion.js';
 export { comparisonSchema } from './comparison.js';
 export { codediffSchema } from './codediff.js';
 export { flowchartSchema } from './flowchart.js';
+export { filetreeSchema } from './filetree.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';

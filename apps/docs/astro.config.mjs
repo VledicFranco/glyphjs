@@ -43,6 +43,7 @@ export default defineConfig({
           { label: 'Comparison', slug: 'components/comparison' },
           { label: 'CodeDiff', slug: 'components/codediff' },
           { label: 'Flowchart', slug: 'components/flowchart' },
+          { label: 'FileTree', slug: 'components/filetree' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

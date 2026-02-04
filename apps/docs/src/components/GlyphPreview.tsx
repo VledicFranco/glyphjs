@@ -17,6 +17,7 @@ import {
   comparisonDefinition,
   codeDiffDefinition,
   flowchartDefinition,
+  fileTreeDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -34,6 +35,7 @@ const allComponents = [
   comparisonDefinition,
   codeDiffDefinition,
   flowchartDefinition,
+  fileTreeDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {
