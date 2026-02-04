@@ -1,8 +1,8 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { Infographic } from '../Infographic.js';
-import type { InfographicData } from '../Infographic.js';
+import { Infographic, classifySectionWidth } from '../Infographic.js';
+import type { InfographicData, InfographicSection } from '../Infographic.js';
 import { createMockProps } from '../../__tests__/helpers.js';
 
 describe('Infographic', () => {
@@ -546,5 +546,154 @@ describe('Infographic', () => {
     render(<Infographic {...props} />);
     const label = screen.getByText('Sprint');
     expect(label).toHaveStyle({ fontWeight: 600 });
+  });
+
+  // ─── Grid layout tests ──────────────────────────────────────
+
+  it('activates grid layout with 2+ sections', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          { items: [{ type: 'stat', label: 'A', value: '1' }] },
+          { items: [{ type: 'stat', label: 'B', value: '2' }] },
+        ],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
+    const layoutDiv = container.querySelector('[data-layout="grid"]');
+    expect(layoutDiv).toBeInTheDocument();
+  });
+
+  it('uses stack layout for single section', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [{ items: [{ type: 'stat', label: 'A', value: '1' }] }],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
+    const layoutDiv = container.querySelector('[data-layout="stack"]');
+    expect(layoutDiv).toBeInTheDocument();
+    expect(container.querySelector('[data-layout="grid"]')).not.toBeInTheDocument();
+  });
+
+  it('applies gridColumn to wide sections (with text)', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          { items: [{ type: 'stat', label: 'A', value: '1' }] },
+          {
+            items: [{ type: 'text', content: 'Paragraph requiring full width.' }],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
+    const gridDiv = container.querySelector('[data-layout="grid"]');
+    expect(gridDiv).toBeInTheDocument();
+    // The second section (index 1) should have gridColumn style
+    const sectionDivs = gridDiv!.querySelectorAll(':scope > div');
+    // sectionDivs[0] might be title, but there's no title here
+    // so sectionDivs[0] is section 0, sectionDivs[1] is section 1
+    const wideSection = sectionDivs[1];
+    const style = wideSection.getAttribute('style') ?? '';
+    expect(style).toContain('grid-column');
+  });
+
+  it('does not apply gridColumn to narrow sections (stats only)', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              { type: 'stat', label: 'A', value: '1' },
+              { type: 'stat', label: 'B', value: '2' },
+            ],
+          },
+          {
+            items: [
+              { type: 'rating', label: 'R', value: 4 },
+              { type: 'fact', text: 'A fact' },
+            ],
+          },
+        ],
+      },
+      'ui:infographic',
+    );
+    const { container } = render(<Infographic {...props} />);
+    const gridDiv = container.querySelector('[data-layout="grid"]');
+    const sectionDivs = gridDiv!.querySelectorAll(':scope > div');
+    // Both sections are narrow — neither should have grid-column: 1 / -1
+    for (const div of sectionDivs) {
+      const style = div.getAttribute('style') ?? '';
+      expect(style).not.toContain('grid-column: 1 / -1');
+    }
+  });
+
+  // ─── classifySectionWidth unit tests ─────────────────────────
+
+  it('classifies section with text as wide', () => {
+    const section: InfographicSection = {
+      items: [{ type: 'text', content: 'Hello' }],
+    };
+    expect(classifySectionWidth(section)).toBe('wide');
+  });
+
+  it('classifies section with 3 stats as narrow', () => {
+    const section: InfographicSection = {
+      items: [
+        { type: 'stat', label: 'A', value: '1' },
+        { type: 'stat', label: 'B', value: '2' },
+        { type: 'stat', label: 'C', value: '3' },
+      ],
+    };
+    expect(classifySectionWidth(section)).toBe('narrow');
+  });
+
+  it('classifies section with 4+ stats as wide', () => {
+    const section: InfographicSection = {
+      items: [
+        { type: 'stat', label: 'A', value: '1' },
+        { type: 'stat', label: 'B', value: '2' },
+        { type: 'stat', label: 'C', value: '3' },
+        { type: 'stat', label: 'D', value: '4' },
+      ],
+    };
+    expect(classifySectionWidth(section)).toBe('wide');
+  });
+
+  it('classifies section with 4+ progress as wide', () => {
+    const section: InfographicSection = {
+      items: [
+        { type: 'progress', label: 'A', value: 10 },
+        { type: 'progress', label: 'B', value: 20 },
+        { type: 'progress', label: 'C', value: 30 },
+        { type: 'progress', label: 'D', value: 40 },
+      ],
+    };
+    expect(classifySectionWidth(section)).toBe('wide');
+  });
+
+  it('classifies section with 3+ pies as wide', () => {
+    const section: InfographicSection = {
+      items: [
+        { type: 'pie', slices: [{ label: 'A', value: 50 }] },
+        { type: 'pie', slices: [{ label: 'B', value: 50 }] },
+        { type: 'pie', slices: [{ label: 'C', value: 50 }] },
+      ],
+    };
+    expect(classifySectionWidth(section)).toBe('wide');
+  });
+
+  it('classifies section with ratings and facts as narrow', () => {
+    const section: InfographicSection = {
+      items: [
+        { type: 'rating', label: 'R', value: 4 },
+        { type: 'fact', text: 'A fact' },
+      ],
+    };
+    expect(classifySectionWidth(section)).toBe('narrow');
   });
 });

@@ -458,6 +458,45 @@ export const FullDashboard: Story = {
   ),
 };
 
+// ─── GridLayout ──────────────────────────────────────────────
+
+export const GridLayout: Story = {
+  args: mockProps<InfographicData>(
+    {
+      title: 'Auto-Grid Demo',
+      sections: [
+        {
+          heading: 'Narrow Section A',
+          items: [
+            { type: 'stat', label: 'Revenue', value: '$5M' },
+            { type: 'stat', label: 'Users', value: '12K' },
+          ],
+        },
+        {
+          heading: 'Narrow Section B',
+          items: [
+            { type: 'rating', label: 'Satisfaction', value: 4.5 },
+            { type: 'fact', icon: '\u2713', text: 'On track for Q1' },
+          ],
+        },
+        {
+          heading: 'Wide Section (has text)',
+          items: [
+            { type: 'progress', label: 'Sprint', value: 72 },
+            { type: 'progress', label: 'Coverage', value: 88 },
+            {
+              type: 'text',
+              content:
+                'This section spans the full width because it contains a text paragraph that needs horizontal reading space.',
+            },
+          ],
+        },
+      ],
+    },
+    { block: mockBlock({ id: 'infographic-grid', type: 'ui:infographic' }) },
+  ),
+};
+
 // ─── PieWithStats ────────────────────────────────────────────
 
 export const PieWithStats: Story = {

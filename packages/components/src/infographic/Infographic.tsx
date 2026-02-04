@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import type { ReactElement } from 'react';
 import type { GlyphComponentProps } from '@glyphjs/types';
 
@@ -92,6 +93,44 @@ function groupConsecutiveItems(items: InfographicItem[]): ItemGroup[] {
     }
   }
   return groups;
+}
+
+export function classifySectionWidth(section: InfographicSection): 'narrow' | 'wide' {
+  let textCount = 0;
+  let progressCount = 0;
+  let pieCount = 0;
+  let statCount = 0;
+
+  for (const item of section.items) {
+    switch (item.type) {
+      case 'text':
+        textCount++;
+        break;
+      case 'progress':
+        progressCount++;
+        break;
+      case 'pie':
+        pieCount++;
+        break;
+      case 'stat':
+        statCount++;
+        break;
+    }
+  }
+
+  if (textCount > 0) return 'wide';
+  if (progressCount >= 4) return 'wide';
+  if (pieCount >= 3) return 'wide';
+  if (statCount >= 4) return 'wide';
+
+  return 'narrow';
+}
+
+function computeSectionLayout(sections: InfographicSection[]): (string | undefined)[] {
+  return sections.map((section) => {
+    const width = classifySectionWidth(section);
+    return width === 'wide' ? '1 / -1' : undefined;
+  });
 }
 
 const PROGRESS_COLORS = [
@@ -540,6 +579,9 @@ export function Infographic({ data, block }: GlyphComponentProps<InfographicData
   const { title, sections } = data;
   const baseId = `glyph-infographic-${block.id}`;
 
+  const useGrid = sections.length >= 2;
+  const sectionLayouts = useMemo(() => computeSectionLayout(sections), [sections]);
+
   const containerStyle: React.CSSProperties = {
     fontFamily: 'var(--glyph-font-body, system-ui, sans-serif)',
     color: 'var(--glyph-text, #1a2035)',
@@ -558,12 +600,26 @@ export function Infographic({ data, block }: GlyphComponentProps<InfographicData
     paddingBottom: 'var(--glyph-spacing-sm, 0.5rem)',
     marginBottom: 'var(--glyph-spacing-md, 1rem)',
     borderBottom: '2px solid var(--glyph-infographic-accent, #3b82f6)',
+    ...(useGrid ? { gridColumn: '1 / -1' } : {}),
   };
 
   const sectionDividerStyle: React.CSSProperties = {
     borderTop: '1px solid var(--glyph-infographic-section-divider, #d0d8e4)',
     paddingTop: 'var(--glyph-spacing-md, 1rem)',
     marginTop: 'var(--glyph-spacing-md, 1rem)',
+  };
+
+  const sectionsGridStyle: React.CSSProperties = {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(2, 1fr)',
+    gap: 'var(--glyph-spacing-md, 1rem)',
+    alignItems: 'start',
+  };
+
+  const sectionCardStyle: React.CSSProperties = {
+    background: 'var(--glyph-infographic-section-bg, rgba(255, 255, 255, 0.5))',
+    borderRadius: 'var(--glyph-radius-sm, 0.375rem)',
+    padding: 'var(--glyph-spacing-sm, 0.5rem)',
   };
 
   const headingStyle: React.CSSProperties = {
@@ -575,54 +631,68 @@ export function Infographic({ data, block }: GlyphComponentProps<InfographicData
     paddingLeft: 'var(--glyph-spacing-sm, 0.5rem)',
   };
 
+  const printCss = useGrid
+    ? `@media print { #${CSS.escape(baseId)} [data-layout="grid"] { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; } #${CSS.escape(baseId)} [data-layout="grid"] > div { break-inside: avoid; } }`
+    : '';
+
   let progressColorOffset = 0;
 
   return (
     <div id={baseId} role="region" aria-label={title ?? 'Infographic'} style={containerStyle}>
-      {title && <div style={titleStyle}>{title}</div>}
-      {sections.map((section, si) => {
-        const groups = groupConsecutiveItems(section.items);
+      {printCss && <style>{printCss}</style>}
+      <div data-layout={useGrid ? 'grid' : 'stack'} style={useGrid ? sectionsGridStyle : undefined}>
+        {title && <div style={titleStyle}>{title}</div>}
+        {sections.map((section, si) => {
+          const groups = groupConsecutiveItems(section.items);
+          const gridColumn = sectionLayouts[si];
 
-        return (
-          <div key={si} style={si > 0 ? sectionDividerStyle : undefined}>
-            {section.heading && <div style={headingStyle}>{section.heading}</div>}
-            {groups.map((group, gi) => {
-              const key = `s${String(si)}-g${String(gi)}`;
-              switch (group.type) {
-                case 'stat':
-                  return renderStatGroup(group.items as StatItem[], key);
-                case 'progress': {
-                  const el = renderProgressGroup(
-                    group.items as ProgressItem[],
-                    key,
-                    progressColorOffset,
-                  );
-                  progressColorOffset += group.items.length;
-                  return el;
+          const sectionStyle: React.CSSProperties = {
+            ...(useGrid ? sectionCardStyle : {}),
+            ...(gridColumn ? { gridColumn } : {}),
+            ...(!useGrid && si > 0 ? sectionDividerStyle : {}),
+          };
+
+          return (
+            <div key={si} style={Object.keys(sectionStyle).length > 0 ? sectionStyle : undefined}>
+              {section.heading && <div style={headingStyle}>{section.heading}</div>}
+              {groups.map((group, gi) => {
+                const key = `s${String(si)}-g${String(gi)}`;
+                switch (group.type) {
+                  case 'stat':
+                    return renderStatGroup(group.items as StatItem[], key);
+                  case 'progress': {
+                    const el = renderProgressGroup(
+                      group.items as ProgressItem[],
+                      key,
+                      progressColorOffset,
+                    );
+                    progressColorOffset += group.items.length;
+                    return el;
+                  }
+                  case 'fact':
+                    return renderFactGroup(group.items as FactItem[], key);
+                  case 'text':
+                    return renderTextGroup(group.items as TextItem[], key);
+                  case 'pie': {
+                    const el = renderPieGroup(group.items as PieItem[], key, progressColorOffset);
+                    progressColorOffset += (group.items as PieItem[]).reduce(
+                      (sum, item) => sum + item.slices.length,
+                      0,
+                    );
+                    return el;
+                  }
+                  case 'divider':
+                    return renderDividerGroup(group.items as DividerItem[], key);
+                  case 'rating':
+                    return renderRatingGroup(group.items as RatingItem[], key);
+                  default:
+                    return null;
                 }
-                case 'fact':
-                  return renderFactGroup(group.items as FactItem[], key);
-                case 'text':
-                  return renderTextGroup(group.items as TextItem[], key);
-                case 'pie': {
-                  const el = renderPieGroup(group.items as PieItem[], key, progressColorOffset);
-                  progressColorOffset += (group.items as PieItem[]).reduce(
-                    (sum, item) => sum + item.slices.length,
-                    0,
-                  );
-                  return el;
-                }
-                case 'divider':
-                  return renderDividerGroup(group.items as DividerItem[], key);
-                case 'rating':
-                  return renderRatingGroup(group.items as RatingItem[], key);
-                default:
-                  return null;
-              }
-            })}
-          </div>
-        );
-      })}
+              })}
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }

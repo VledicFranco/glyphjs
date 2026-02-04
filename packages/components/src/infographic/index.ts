@@ -9,7 +9,7 @@ export const infographicDefinition: GlyphComponentDefinition<InfographicData> = 
   render: Infographic,
 };
 
-export { Infographic };
+export { Infographic, classifySectionWidth } from './Infographic.js';
 export type {
   InfographicData,
   InfographicSection,
