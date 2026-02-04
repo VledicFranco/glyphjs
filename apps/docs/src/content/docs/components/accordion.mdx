@@ -1,0 +1,167 @@
+---
+title: Accordion
+description: Collapsible progressive-disclosure sections built on native HTML details/summary elements.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Accordion** component (`ui:accordion`) renders collapsible sections for progressive disclosure. Each section has a clickable header that expands or collapses its content. Built on native `<details>`/`<summary>` elements for maximum accessibility.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:accordion
+title: Frequently Asked Questions
+defaultOpen:
+  - 0
+sections:
+  - title: What is GlyphJS?
+    content: >
+      GlyphJS is a Markdown-to-interactive-UI rendering engine.
+      It compiles enhanced Markdown into React components.
+  - title: How does theming work?
+    content: >
+      All components use CSS custom properties. Set variables
+      on a wrapper element to change the theme.
+  - title: Can I create custom components?
+    content: >
+      Yes. Create a Zod schema, a React component, and register
+      it with the runtime via registerComponent().
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:accordion
+title: Frequently Asked Questions
+defaultOpen:
+  - 0
+sections:
+  - title: What is GlyphJS?
+    content: >
+      GlyphJS is a Markdown-to-interactive-UI rendering engine.
+      It compiles enhanced Markdown into React components.
+  - title: How does theming work?
+    content: >
+      All components use CSS custom properties. Set variables
+      on a wrapper element to change the theme.
+  - title: Can I create custom components?
+    content: >
+      Yes. Create a Zod schema, a React component, and register
+      it with the runtime via registerComponent().
+```
+````
+
+</details>
+
+### Exclusive mode
+
+When `multiple: false`, only one section can be open at a time. Opening a new section automatically closes any previously open section.
+
+export const exclusiveExample = `\`\`\`ui:accordion
+title: API Reference
+multiple: false
+defaultOpen:
+  - 0
+sections:
+  - title: compile(source)
+    content: >
+      Compiles a Markdown string into a GlyphIR document.
+      Returns a CompilationResult with ir, diagnostics, and hasErrors.
+  - title: createGlyphRuntime(options)
+    content: >
+      Creates a runtime instance with theme and component registrations.
+      Returns an object with GlyphDocument and a plugin registry.
+  - title: registerComponent(definition)
+    content: >
+      Registers a custom component definition with the runtime.
+      The definition must include type, schema, and render function.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={exclusiveExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:accordion
+title: API Reference
+multiple: false
+defaultOpen:
+  - 0
+sections:
+  - title: compile(source)
+    content: >
+      Compiles a Markdown string into a GlyphIR document.
+      Returns a CompilationResult with ir, diagnostics, and hasErrors.
+  - title: createGlyphRuntime(options)
+    content: >
+      Creates a runtime instance with theme and component registrations.
+      Returns an object with GlyphDocument and a plugin registry.
+  - title: registerComponent(definition)
+    content: >
+      Registers a custom component definition with the runtime.
+      The definition must include type, schema, and render function.
+```
+````
+
+</details>
+
+### All collapsed
+
+By default, all sections start collapsed when `defaultOpen` is omitted.
+
+export const collapsedExample = `\`\`\`ui:accordion
+sections:
+  - title: Getting Started
+    content: Install the packages and create a runtime instance.
+  - title: Writing Markdown
+    content: Use standard Markdown with embedded ui: fenced code blocks.
+  - title: Deploying
+    content: Build your app and serve the static output.
+\`\`\``;
+
+<GlyphPreview client:only="react" source={collapsedExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:accordion
+sections:
+  - title: Getting Started
+    content: Install the packages and create a runtime instance.
+  - title: Writing Markdown
+    content: Use standard Markdown with embedded ui: fenced code blocks.
+  - title: Deploying
+    content: Build your app and serve the static output.
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading displayed above the accordion sections. |
+| `sections` | `AccordionSection[]` | Yes | -- | Array of collapsible sections (at least 1). |
+| `defaultOpen` | `number[]` | No | `[]` | 0-based indices of sections that start expanded. |
+| `multiple` | `boolean` | No | `true` | When `false`, only one section can be open at a time (exclusive mode). |
+
+### AccordionSection
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `title` | `string` | Yes | Header text displayed in the clickable summary. |
+| `content` | `string` | Yes | Body text revealed when the section is expanded. |
+
+## Accessibility
+
+- Built on native `<details>`/`<summary>` HTML elements, providing built-in keyboard navigation and screen reader support.
+- Each section header is focusable and can be toggled with Enter or Space.
+- The container uses `role="region"` with `aria-label` set to the `title` (or "Accordion" if no title).
+- Chevron indicators (▸/▾) are marked `aria-hidden="true"` since `<details>` already communicates expanded/collapsed state natively.
+- In exclusive mode (`multiple: false`), JavaScript enforces single-open behavior while preserving native element semantics.

@@ -13,6 +13,7 @@ import {
   timelineDefinition,
   architectureDefinition,
   kpiDefinition,
+  accordionDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -26,6 +27,7 @@ const allComponents = [
   timelineDefinition,
   architectureDefinition,
   kpiDefinition,
+  accordionDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {

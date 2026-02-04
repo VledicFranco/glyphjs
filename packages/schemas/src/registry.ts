@@ -11,6 +11,7 @@ import { tabsSchema } from './tabs.js';
 import { stepsSchema } from './steps.js';
 import { architectureSchema } from './architecture.js';
 import { kpiSchema } from './kpi.js';
+import { accordionSchema } from './accordion.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -25,6 +26,7 @@ const entries: [string, z.ZodType][] = [
   ['steps', stepsSchema],
   ['architecture', architectureSchema],
   ['kpi', kpiSchema],
+  ['accordion', accordionSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);

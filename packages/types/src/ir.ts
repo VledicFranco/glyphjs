@@ -30,6 +30,7 @@ export type BlockType =
   | 'ui:tabs'
   | 'ui:steps'
   | 'ui:kpi'
+  | 'ui:accordion'
   // Extensible
   | `ui:${string}`;
 

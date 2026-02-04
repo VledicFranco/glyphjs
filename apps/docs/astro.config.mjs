@@ -39,6 +39,7 @@ export default defineConfig({
           { label: 'Timeline', slug: 'components/timeline' },
           { label: 'Architecture', slug: 'components/architecture' },
           { label: 'KPI', slug: 'components/kpi' },
+          { label: 'Accordion', slug: 'components/accordion' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

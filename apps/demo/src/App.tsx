@@ -11,6 +11,7 @@ import {
   tabsDefinition,
   timelineDefinition,
   kpiDefinition,
+  accordionDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -137,6 +138,7 @@ export function App() {
         tabsDefinition,
         timelineDefinition,
         kpiDefinition,
+        accordionDefinition,
       ],
     });
     return rt;

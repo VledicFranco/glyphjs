@@ -12,6 +12,7 @@ import {
   timelineDefinition,
   architectureDefinition,
   kpiDefinition,
+  accordionDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -58,6 +59,7 @@ const allComponents = [
   timelineDefinition,
   architectureDefinition,
   kpiDefinition,
+  accordionDefinition,
 ];
 
 export default function Playground() {

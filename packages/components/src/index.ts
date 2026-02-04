@@ -17,6 +17,8 @@ export { relationDefinition, Relation } from './relation/index.js';
 export type { RelationData } from './relation/index.js';
 export { kpiDefinition, Kpi } from './kpi/index.js';
 export type { KpiData, KpiMetric } from './kpi/index.js';
+export { accordionDefinition, Accordion } from './accordion/index.js';
+export type { AccordionData, AccordionSection } from './accordion/index.js';
 export {
   architectureDefinition,
   Architecture,

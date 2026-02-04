@@ -11,6 +11,7 @@ export { tabsSchema } from './tabs.js';
 export { stepsSchema } from './steps.js';
 export { architectureSchema } from './architecture.js';
 export { kpiSchema } from './kpi.js';
+export { accordionSchema } from './accordion.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';
