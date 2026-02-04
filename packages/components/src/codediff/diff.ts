@@ -9,6 +9,18 @@ export interface DiffLine {
   newLineNo?: number;
 }
 
+/** Safe accessor for the 2D DP table. */
+function dpGet(dp: number[][], i: number, j: number): number {
+  const row = dp[i];
+  if (!row) return 0;
+  return row[j] ?? 0;
+}
+
+/** Safe accessor for a string array. */
+function lineAt(arr: string[], i: number): string {
+  return arr[i] ?? '';
+}
+
 /**
  * Computes a line-based diff between two strings.
  * Uses a longest common subsequence (LCS) approach via dynamic programming.
@@ -25,10 +37,12 @@ export function computeDiff(before: string, after: string): DiffLine[] {
 
   for (let i = 1; i <= n; i++) {
     for (let j = 1; j <= m; j++) {
-      if (a[i - 1] === b[j - 1]) {
-        dp[i][j] = dp[i - 1][j - 1] + 1;
+      const row = dp[i];
+      if (!row) continue;
+      if (lineAt(a, i - 1) === lineAt(b, j - 1)) {
+        row[j] = dpGet(dp, i - 1, j - 1) + 1;
       } else {
-        dp[i][j] = Math.max(dp[i - 1][j], dp[i][j - 1]);
+        row[j] = Math.max(dpGet(dp, i - 1, j), dpGet(dp, i, j - 1));
       }
     }
   }
@@ -39,15 +53,15 @@ export function computeDiff(before: string, after: string): DiffLine[] {
   let j = m;
 
   while (i > 0 || j > 0) {
-    if (i > 0 && j > 0 && a[i - 1] === b[j - 1]) {
-      edits.unshift({ kind: 'eq', text: a[i - 1], oldLineNo: i, newLineNo: j });
+    if (i > 0 && j > 0 && lineAt(a, i - 1) === lineAt(b, j - 1)) {
+      edits.unshift({ kind: 'eq', text: lineAt(a, i - 1), oldLineNo: i, newLineNo: j });
       i--;
       j--;
-    } else if (j > 0 && (i === 0 || dp[i][j - 1] >= dp[i - 1][j])) {
-      edits.unshift({ kind: 'add', text: b[j - 1], newLineNo: j });
+    } else if (j > 0 && (i === 0 || dpGet(dp, i, j - 1) >= dpGet(dp, i - 1, j))) {
+      edits.unshift({ kind: 'add', text: lineAt(b, j - 1), newLineNo: j });
       j--;
     } else {
-      edits.unshift({ kind: 'del', text: a[i - 1], oldLineNo: i });
+      edits.unshift({ kind: 'del', text: lineAt(a, i - 1), oldLineNo: i });
       i--;
     }
   }

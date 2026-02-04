@@ -23,6 +23,8 @@ export { comparisonDefinition, Comparison } from './comparison/index.js';
 export type { ComparisonData, ComparisonOption, ComparisonFeature } from './comparison/index.js';
 export { codeDiffDefinition, CodeDiff, computeDiff } from './codediff/index.js';
 export type { CodeDiffData, DiffLine, DiffLineKind } from './codediff/index.js';
+export { flowchartDefinition, Flowchart } from './flowchart/index.js';
+export type { FlowchartData } from './flowchart/index.js';
 export {
   architectureDefinition,
   Architecture,

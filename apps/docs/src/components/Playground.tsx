@@ -15,6 +15,7 @@ import {
   accordionDefinition,
   comparisonDefinition,
   codeDiffDefinition,
+  flowchartDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -64,6 +65,7 @@ const allComponents = [
   accordionDefinition,
   comparisonDefinition,
   codeDiffDefinition,
+  flowchartDefinition,
 ];
 
 export default function Playground() {

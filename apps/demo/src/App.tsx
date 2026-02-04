@@ -14,6 +14,7 @@ import {
   accordionDefinition,
   comparisonDefinition,
   codeDiffDefinition,
+  flowchartDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -143,6 +144,7 @@ export function App() {
         accordionDefinition,
         comparisonDefinition,
         codeDiffDefinition,
+        flowchartDefinition,
       ],
     });
     return rt;

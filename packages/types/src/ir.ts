@@ -33,6 +33,7 @@ export type BlockType =
   | 'ui:accordion'
   | 'ui:comparison'
   | 'ui:codediff'
+  | 'ui:flowchart'
   // Extensible
   | `ui:${string}`;
 

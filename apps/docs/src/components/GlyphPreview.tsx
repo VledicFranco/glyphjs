@@ -16,6 +16,7 @@ import {
   accordionDefinition,
   comparisonDefinition,
   codeDiffDefinition,
+  flowchartDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -32,6 +33,7 @@ const allComponents = [
   accordionDefinition,
   comparisonDefinition,
   codeDiffDefinition,
+  flowchartDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {

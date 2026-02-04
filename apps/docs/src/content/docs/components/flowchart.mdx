@@ -1,0 +1,187 @@
+---
+title: Flowchart
+description: Directed graph for decision trees and process flows with typed nodes and labeled edges.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Flowchart** component renders directed graphs for decision trees and process flows. Nodes are typed (start, end, process, decision) with distinct shapes, and edges support labels for branch conditions.
+
+## Basic example
+
+export const basicExample = `
+\`\`\`ui:flowchart
+title: Order Processing
+direction: top-down
+nodes:
+  - id: start
+    type: start
+    label: Order Received
+  - id: validate
+    type: process
+    label: Validate Payment
+  - id: check
+    type: decision
+    label: Payment Valid?
+  - id: fulfill
+    type: process
+    label: Fulfill Order
+  - id: reject
+    type: end
+    label: Reject Order
+  - id: done
+    type: end
+    label: Complete
+edges:
+  - from: start
+    to: validate
+  - from: validate
+    to: check
+  - from: check
+    to: fulfill
+    label: "Yes"
+  - from: check
+    to: reject
+    label: "No"
+  - from: fulfill
+    to: done
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={basicExample} />
+
+## Left-to-right layout
+
+Use `direction: left-right` for horizontal flows like CI/CD pipelines.
+
+export const lrExample = `
+\`\`\`ui:flowchart
+title: CI/CD Pipeline
+direction: left-right
+nodes:
+  - id: commit
+    type: start
+    label: Commit
+  - id: build
+    type: process
+    label: Build
+  - id: test
+    type: process
+    label: Run Tests
+  - id: gate
+    type: decision
+    label: Tests Pass?
+  - id: deploy
+    type: end
+    label: Deploy
+  - id: fix
+    type: process
+    label: Fix Issues
+edges:
+  - from: commit
+    to: build
+  - from: build
+    to: test
+  - from: test
+    to: gate
+  - from: gate
+    to: deploy
+    label: "Yes"
+  - from: gate
+    to: fix
+    label: "No"
+  - from: fix
+    to: build
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={lrExample} />
+
+## Complex branching
+
+Multiple decision nodes create rich branching logic.
+
+export const branchExample = `
+\`\`\`ui:flowchart
+title: Error Handling
+direction: top-down
+nodes:
+  - id: start
+    type: start
+    label: Request Received
+  - id: auth
+    type: decision
+    label: Authenticated?
+  - id: valid
+    type: decision
+    label: Input Valid?
+  - id: process
+    type: process
+    label: Process Request
+  - id: err401
+    type: end
+    label: 401 Unauthorized
+  - id: err400
+    type: end
+    label: 400 Bad Request
+  - id: ok
+    type: end
+    label: 200 OK
+edges:
+  - from: start
+    to: auth
+  - from: auth
+    to: err401
+    label: "No"
+  - from: auth
+    to: valid
+    label: "Yes"
+  - from: valid
+    to: err400
+    label: "No"
+  - from: valid
+    to: process
+    label: "Yes"
+  - from: process
+    to: ok
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={branchExample} />
+
+## Properties
+
+| Property    | Type                        | Default      | Description                            |
+| ----------- | --------------------------- | ------------ | -------------------------------------- |
+| `title`     | `string`                    | —            | Optional title displayed above the chart |
+| `nodes`     | `FlowchartNode[]`           | *(required)* | Array of nodes (min 2)                 |
+| `edges`     | `FlowchartEdge[]`           | *(required)* | Array of directed edges (min 1)        |
+| `direction` | `'top-down' \| 'left-right'` | `'top-down'` | Layout direction                       |
+
+### FlowchartNode
+
+| Property | Type                                       | Default     | Description        |
+| -------- | ------------------------------------------ | ----------- | ------------------ |
+| `id`     | `string`                                   | *(required)* | Unique identifier  |
+| `type`   | `'start' \| 'end' \| 'process' \| 'decision'` | `'process'` | Node shape type    |
+| `label`  | `string`                                   | *(required)* | Display label      |
+
+### FlowchartEdge
+
+| Property | Type     | Default      | Description                  |
+| -------- | -------- | ------------ | ---------------------------- |
+| `from`   | `string` | *(required)* | Source node ID               |
+| `to`     | `string` | *(required)* | Target node ID               |
+| `label`  | `string` | —            | Optional label (e.g. Yes/No) |
+
+### Node shapes
+
+- **start / end** — Rounded rectangle (stadium shape) with accent coloring
+- **process** — Standard rectangle with surface coloring
+- **decision** — Diamond shape with accent border
+
+## Accessibility
+
+- SVG has `role="img"` with an `aria-label` describing the flowchart title and node/edge counts.
+- A hidden data table lists all nodes, their types, and connections for screen reader users.
+- Edge labels are included in the accessible table as relationship descriptions.
