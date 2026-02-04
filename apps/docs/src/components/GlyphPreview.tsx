@@ -19,6 +19,7 @@ import {
   flowchartDefinition,
   fileTreeDefinition,
   sequenceDefinition,
+  mindMapDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -38,6 +39,7 @@ const allComponents = [
   flowchartDefinition,
   fileTreeDefinition,
   sequenceDefinition,
+  mindMapDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {

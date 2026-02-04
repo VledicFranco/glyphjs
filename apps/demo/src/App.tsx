@@ -17,6 +17,7 @@ import {
   flowchartDefinition,
   fileTreeDefinition,
   sequenceDefinition,
+  mindMapDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -149,6 +150,7 @@ export function App() {
         flowchartDefinition,
         fileTreeDefinition,
         sequenceDefinition,
+        mindMapDefinition,
       ],
     });
     return rt;

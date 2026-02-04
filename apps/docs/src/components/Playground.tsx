@@ -18,6 +18,7 @@ import {
   flowchartDefinition,
   fileTreeDefinition,
   sequenceDefinition,
+  mindMapDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -70,6 +71,7 @@ const allComponents = [
   flowchartDefinition,
   fileTreeDefinition,
   sequenceDefinition,
+  mindMapDefinition,
 ];
 
 export default function Playground() {

@@ -1,0 +1,98 @@
+---
+title: MindMap
+description: Radial or tree-layout mind maps for brainstorming and hierarchical topic visualization.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **MindMap** component renders interactive mind maps with a central root node and branching children. Choose between a radial layout (root at center, children fanning outward) or a tree layout (root at top, children branching downward).
+
+## Basic example
+
+export const basicExample = `
+\`\`\`ui:mindmap
+root: JavaScript
+children:
+  - label: Frontend
+    children:
+      - label: React
+      - label: Vue
+      - label: Angular
+  - label: Backend
+    children:
+      - label: Node.js
+      - label: Deno
+  - label: Tooling
+    children:
+      - label: Vite
+      - label: Webpack
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={basicExample} />
+
+## Tree layout
+
+Use `layout: tree` for a top-down hierarchical view.
+
+export const treeExample = `
+\`\`\`ui:mindmap
+root: Computer Science
+layout: tree
+children:
+  - label: Algorithms
+    children:
+      - label: Sorting
+      - label: Searching
+  - label: Data Structures
+    children:
+      - label: Trees
+      - label: Hash Maps
+  - label: Languages
+    children:
+      - label: TypeScript
+      - label: Rust
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={treeExample} />
+
+## Many branches
+
+Mind maps handle many top-level branches by distributing them evenly around the root.
+
+export const manyExample = `
+\`\`\`ui:mindmap
+root: Central Idea
+children:
+  - label: Branch 1
+  - label: Branch 2
+  - label: Branch 3
+  - label: Branch 4
+  - label: Branch 5
+  - label: Branch 6
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={manyExample} />
+
+## Properties
+
+| Property   | Type             | Default      | Description                                  |
+| ---------- | ---------------- | ------------ | -------------------------------------------- |
+| `root`     | `string`         | *(required)* | Label for the central root node              |
+| `children` | `MindMapNode[]`  | *(required)* | Array of child nodes (min 1)                 |
+| `layout`   | `'radial' \| 'tree'` | `'radial'` | Layout algorithm                            |
+
+### MindMapNode
+
+| Property   | Type             | Default  | Description                    |
+| ---------- | ---------------- | -------- | ------------------------------ |
+| `label`    | `string`         | *(required)* | Display text for the node  |
+| `children` | `MindMapNode[]`  | —        | Optional nested child nodes    |
+
+## Accessibility
+
+- The SVG element has `role="img"` with an `aria-label` describing the root name and total node count.
+- A hidden nested `<ul>` list replicates the full mind map tree structure for screen readers.
+- Nodes beyond 4 levels of depth are hidden visually and shown as a "+N more" badge, but remain accessible in the screen-reader list.

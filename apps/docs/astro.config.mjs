@@ -45,6 +45,7 @@ export default defineConfig({
           { label: 'Flowchart', slug: 'components/flowchart' },
           { label: 'FileTree', slug: 'components/filetree' },
           { label: 'Sequence', slug: 'components/sequence' },
+          { label: 'MindMap', slug: 'components/mindmap' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

@@ -41,3 +41,5 @@ export type {
   PositionedZone,
   PositionedArchEdge,
 } from './architecture/index.js';
+export { mindMapDefinition, MindMap } from './mindmap/index.js';
+export type { MindMapData } from './mindmap/index.js';

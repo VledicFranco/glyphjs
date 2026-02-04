@@ -36,6 +36,7 @@ export type BlockType =
   | 'ui:flowchart'
   | 'ui:filetree'
   | 'ui:sequence'
+  | 'ui:mindmap'
   // Extensible
   | `ui:${string}`;
 

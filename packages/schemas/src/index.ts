@@ -17,6 +17,7 @@ export { codediffSchema } from './codediff.js';
 export { flowchartSchema } from './flowchart.js';
 export { filetreeSchema } from './filetree.js';
 export { sequenceSchema } from './sequence.js';
+export { mindmapSchema } from './mindmap.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';

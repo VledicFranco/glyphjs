@@ -17,6 +17,7 @@ import { codediffSchema } from './codediff.js';
 import { flowchartSchema } from './flowchart.js';
 import { filetreeSchema } from './filetree.js';
 import { sequenceSchema } from './sequence.js';
+import { mindmapSchema } from './mindmap.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -37,6 +38,7 @@ const entries: [string, z.ZodType][] = [
   ['flowchart', flowchartSchema],
   ['filetree', filetreeSchema],
   ['sequence', sequenceSchema],
+  ['mindmap', mindmapSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);
