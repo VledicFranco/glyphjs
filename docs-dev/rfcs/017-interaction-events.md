@@ -72,13 +72,13 @@ questions:
 ```
 ````
 
-````
+The parser strips `interactive` from the component data (same pattern as `glyph-id` and `refs`) and stores it on the AST node. The compiler propagates it to the IR block's `metadata.interactive` field.
 
-The parser strips `interactive` from the component data (same pattern as `glyph-id` and `refs`) and stores it on the AST node. The compiler propagates it to the IR block's `metadata`.
+**Gating rule:** The runtime checks `block.metadata?.interactive === true` before passing `onInteraction` to a component. If the runtime config has `onInteraction` set but a block does not have `interactive: true`, that block does not receive the `onInteraction` prop and behaves identically to today. The gating happens in the runtime, not in individual components.
 
 ### 3.2 InteractionEvent type
 
-A typed union discriminated by component type. Each variant carries exactly the fields an LLM needs to understand what happened:
+A typed union discriminated by `kind`. Each variant carries exactly the fields an LLM needs to understand what happened:
 
 ```typescript
 // packages/types/src/interaction.ts
@@ -90,19 +90,21 @@ export interface InteractionEventBase {
   blockId: string;
   /** Component type, e.g. 'ui:quiz' */
   blockType: BlockType;
-  /** Document ID */
+  /**
+   * Document ID (from GlyphIR.id).
+   * Injected by the runtime — components do not set this field.
+   */
   documentId: string;
 }
 
-export interface QuizSubmitEvent extends InteractionEventBase {
-  kind: 'quiz-submit';
-  payload: {
-    questionIndex: number;
-    question: string;
-    selected: string[];
-    correct: boolean;
-    score?: { correct: number; total: number };
-  };
+// ─── Table ──────────────────────────────────────────────────
+
+/** Snapshot of the Table component's full interactive state. */
+export interface TableState {
+  sort: { column: string; direction: 'asc' | 'desc' } | null;
+  filters: Record<string, string>;
+  visibleRowCount: number;
+  totalRowCount: number;
 }
 
 export interface TableSortEvent extends InteractionEventBase {
@@ -111,12 +113,7 @@ export interface TableSortEvent extends InteractionEventBase {
     column: string;
     direction: 'asc' | 'desc' | 'none';
     /** Full component state so LLMs don't need to track history */
-    state: {
-      sort: { column: string; direction: 'asc' | 'desc' | 'none' } | null;
-      filters: Record<string, string>;
-      visibleRowCount: number;
-      totalRowCount: number;
-    };
+    state: TableState;
   };
 }
 
@@ -126,14 +123,24 @@ export interface TableFilterEvent extends InteractionEventBase {
     column: string;
     value: string;
     /** Full component state so LLMs don't need to track history */
-    state: {
-      sort: { column: string; direction: 'asc' | 'desc' | 'none' } | null;
-      filters: Record<string, string>;
-      visibleRowCount: number;
-      totalRowCount: number;
-    };
+    state: TableState;
   };
 }
+
+// ─── Quiz ───────────────────────────────────────────────────
+
+export interface QuizSubmitEvent extends InteractionEventBase {
+  kind: 'quiz-submit';
+  payload: {
+    questionIndex: number;
+    question: string;
+    selected: string[];
+    correct: boolean;
+    score: { correct: number; total: number };
+  };
+}
+
+// ─── Tabs ───────────────────────────────────────────────────
 
 export interface TabSelectEvent extends InteractionEventBase {
   kind: 'tab-select';
@@ -142,6 +149,8 @@ export interface TabSelectEvent extends InteractionEventBase {
     tabLabel: string;
   };
 }
+
+// ─── Accordion ──────────────────────────────────────────────
 
 export interface AccordionToggleEvent extends InteractionEventBase {
   kind: 'accordion-toggle';
@@ -152,6 +161,8 @@ export interface AccordionToggleEvent extends InteractionEventBase {
   };
 }
 
+// ─── FileTree ───────────────────────────────────────────────
+
 export interface FileTreeSelectEvent extends InteractionEventBase {
   kind: 'filetree-select';
   payload: {
@@ -161,6 +172,8 @@ export interface FileTreeSelectEvent extends InteractionEventBase {
   };
 }
 
+// ─── Graph (Phase 3) ────────────────────────────────────────
+
 export interface GraphNodeClickEvent extends InteractionEventBase {
   kind: 'graph-node-click';
   payload: {
@@ -168,6 +181,8 @@ export interface GraphNodeClickEvent extends InteractionEventBase {
     nodeLabel?: string;
   };
 }
+
+// ─── Chart (Phase 3) ────────────────────────────────────────
 
 export interface ChartSelectEvent extends InteractionEventBase {
   kind: 'chart-select';
@@ -179,6 +194,8 @@ export interface ChartSelectEvent extends InteractionEventBase {
   };
 }
 
+// ─── Comparison (Phase 3) ───────────────────────────────────
+
 export interface ComparisonSelectEvent extends InteractionEventBase {
   kind: 'comparison-select';
   payload: {
@@ -187,11 +204,15 @@ export interface ComparisonSelectEvent extends InteractionEventBase {
   };
 }
 
+// ─── Custom (plugin extensibility) ──────────────────────────
+
 /** Extensibility for plugin-authored components (mirrors ReferenceType pattern) */
 export interface CustomInteractionEvent extends InteractionEventBase {
   kind: `custom:${string}`;
   payload: Record<string, unknown>;
 }
+
+// ─── Union ──────────────────────────────────────────────────
 
 export type InteractionEvent =
   | QuizSubmitEvent
@@ -207,9 +228,9 @@ export type InteractionEvent =
 
 /** Discriminant values for exhaustive switch */
 export type InteractionKind = InteractionEvent['kind'];
-````
+```
 
-This is a **closed union today**, extensible via plugin-authored custom events in the future (a `custom:${string}` kind pattern, mirroring `ReferenceType`).
+The built-in kinds are a closed set. Plugins extend the union via `CustomInteractionEvent` with `kind: 'custom:${string}'`, mirroring the existing `ReferenceType` and `BlockType` extensibility patterns.
 
 ### 3.3 New prop on GlyphComponentProps
 
@@ -222,14 +243,16 @@ export interface GlyphComponentProps<T = unknown> {
   outgoingRefs: Reference[];
   incomingRefs: Reference[];
   onNavigate: (ref: Reference) => void;
-  onInteraction?: (event: InteractionEvent) => void; // NEW
+  onInteraction?: (event: Omit<InteractionEvent, 'documentId'>) => void; // NEW
   theme: GlyphThemeContext;
   layout: LayoutHints;
   container: ContainerContext;
 }
 ```
 
-The prop is optional. Components check `if (props.onInteraction)` before emitting. The runtime only passes it to blocks where `interactive: true` is set in the IR metadata.
+The prop is optional — only present on blocks with `interactive: true` (see gating rule in 3.1).
+
+Components emit events without `documentId`. The runtime wraps the component's `onInteraction` to inject `documentId` from the IR root before forwarding to the config-level callback. This keeps components decoupled from the document context.
 
 ### 3.4 Runtime callback
 
@@ -247,11 +270,19 @@ export interface GlyphRuntimeConfig {
 }
 ```
 
-The runtime aggregates events from all interactive blocks and calls `onInteraction` on the config. This is the single point where the host app receives all user interactions.
+The runtime aggregates events from all interactive blocks, injects `documentId`, and calls `onInteraction` on the config. This is the single point where the host app receives all user interactions.
 
-### 3.5 `onNavigate` becomes a special case
+### 3.5 Relationship with `onNavigate`
 
-Today `onNavigate` is the only way a component signals the runtime. With this RFC, Graph's node-click behavior can be expressed as an `InteractionEvent` with `kind: 'graph-node-click'`. The existing `onNavigate` callback remains for backwards compatibility and for reference-based navigation, but new interactive behaviors go through `onInteraction`.
+`onNavigate` and `onInteraction` serve different purposes:
+
+- **`onNavigate`** is for **reference-based navigation**. A Graph node click that follows a `Reference` triggers `onNavigate(ref, targetBlock)`. The runtime resolves the target block and the host app can scroll to it, route to it, etc. This is a structural concern.
+
+- **`onInteraction`** is for **reporting user activity to the host app**. A Graph node click on an interactive block emits a `graph-node-click` event so the host app (or LLM) knows what the user clicked.
+
+When a Graph block has both `interactive: true` and outgoing references, a node click fires **both** callbacks — `onNavigate` for the navigation behavior and `onInteraction` for the event report. They are complementary, not competing.
+
+`onNavigate` is unchanged by this RFC. No existing behavior is modified.
 
 ---
 
@@ -274,7 +305,6 @@ questions:
     type: true-false
     answer: true
 ```
-````
 
 ```ui:table
 interactive: true
@@ -287,7 +317,6 @@ rows:
 filterable: true
 sortable: true
 ```
-
 ````
 
 ### 4.2 Host app wires up the event stream
@@ -310,7 +339,7 @@ const runtime = createGlyphRuntime({
     });
   },
 });
-````
+```
 
 ### 4.3 LLM receives structured event
 
@@ -347,8 +376,6 @@ content: Since you rated "Good" rather than "Excellent", could you tell us what 
 ```
 ````
 
-````
-
 ### 4.5 Host app applies the update
 
 ```typescript
@@ -356,7 +383,7 @@ const { ir: newIR } = compile(updatedMarkdown);
 const patch = diffIR(currentIR, newIR);
 const patchedIR = applyPatch(currentIR, patch);
 // Re-render with patchedIR — only changed blocks update
-````
+```
 
 ---
 
@@ -369,7 +396,8 @@ const patchedIR = applyPatch(currentIR, patch);
 1. Add `InteractionEvent` types to `@glyphjs/types`
 2. Parser: extract `interactive` reserved key (same pattern as `glyph-id`)
 3. Compiler: propagate `interactive: true` to block `metadata`
-4. Runtime: add `onInteraction` to config, pass `onInteraction` prop to interactive blocks
+4. Runtime: add `onInteraction` to config, gate on `metadata.interactive`, inject `documentId`
+5. Runtime: export `debounceInteractions` utility helper
 
 **Files touched:**
 
@@ -377,10 +405,11 @@ const patchedIR = applyPatch(currentIR, patch);
 - `packages/types/src/index.ts` (re-export)
 - `packages/types/src/plugin.ts` (add `onInteraction` to props)
 - `packages/types/src/runtime.ts` (add `onInteraction` to config)
-- `packages/parser/src/plugin.ts` (extract `interactive` key)
 - `packages/types/src/ast.ts` (add `interactive` to AST node)
+- `packages/parser/src/plugin.ts` (extract `interactive` key)
 - `packages/compiler/src/ast-to-ir.ts` (propagate to metadata)
-- `packages/runtime/src/` (wire through to components)
+- `packages/runtime/src/` (wire through to components, gating logic, `documentId` injection)
+- `packages/runtime/src/debounce.ts` (new — `debounceInteractions` helper)
 
 ### Phase 2: Stateful components emit events
 
@@ -396,23 +425,26 @@ Instrument the 5 stateful components to emit events when `onInteraction` is prov
 | Accordion | `accordion-toggle` on section expand/collapse                |
 | FileTree  | `filetree-select` on node click                              |
 
-Each component checks `if (props.onInteraction)` and emits the appropriate typed event alongside its existing local state update. No behavioral changes to components without `interactive: true`.
+Each component calls `props.onInteraction?.({ kind, blockId, blockType, timestamp, payload })` alongside its existing local state update. Components never check `metadata.interactive` themselves — they simply check if the `onInteraction` prop is present, since the runtime only passes it to interactive blocks.
 
 ### Phase 3: Visualization components (stretch)
 
 Add click/select events to visualization components:
 
-| Component  | Events                                                  |
-| ---------- | ------------------------------------------------------- |
-| Graph      | `graph-node-click` (replaces custom `onNavigate` usage) |
-| Chart      | `chart-select` on data point click                      |
-| Comparison | `comparison-select` on option selection                 |
+| Component  | Events                                            |
+| ---------- | ------------------------------------------------- |
+| Graph      | `graph-node-click` on node click                  |
+| Chart      | `chart-select` on data point click                |
+| Comparison | `comparison-select` on option highlight/selection |
+
+For Graph, both `onNavigate` (for reference resolution) and `onInteraction` (for event reporting) fire on the same click when applicable. See section 3.5.
 
 ### Phase 4: Documentation and examples
 
-- Document the `interactive` key in the authoring guide
-- Add an LLM integration example to the docs
-- Update the component docs pages for interactive components
+- Document the `interactive` reserved key in the authoring guide (alongside `glyph-id` and `refs`)
+- Document the `debounceInteractions` helper in the runtime API reference
+- Add an LLM integration example to the docs showing the full closed loop
+- Update the component docs pages for each interactive component with event schemas
 
 ---
 
@@ -478,7 +510,7 @@ Event payloads are self-contained. An LLM receiving a single event should unders
 In practice this means:
 
 - **Table**: sort and filter events include a `state` object with the full sort column, all active filters, and visible/total row counts. The LLM sees "the table is sorted by Status ascending, filtered to 'dark' on Feature, showing 1 of 3 rows" in one event.
-- **Quiz**: the submit event already carries the selected answer, correctness, and score — it _is_ the full state.
+- **Quiz**: the submit event carries the selected answer, correctness, and score — it _is_ the full state.
 - **Tabs**: `tabIndex` and `tabLabel` _are_ the full state. No extra fields needed.
 - **Accordion**: `sectionIndex`, `sectionTitle`, and `expanded` are the full state.
 
