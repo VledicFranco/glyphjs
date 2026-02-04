@@ -19,6 +19,7 @@ import {
   fileTreeDefinition,
   sequenceDefinition,
   mindMapDefinition,
+  equationDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -72,6 +73,7 @@ const allComponents = [
   fileTreeDefinition,
   sequenceDefinition,
   mindMapDefinition,
+  equationDefinition,
 ];
 
 export default function Playground() {

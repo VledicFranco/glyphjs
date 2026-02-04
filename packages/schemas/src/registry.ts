@@ -18,6 +18,7 @@ import { flowchartSchema } from './flowchart.js';
 import { filetreeSchema } from './filetree.js';
 import { sequenceSchema } from './sequence.js';
 import { mindmapSchema } from './mindmap.js';
+import { equationSchema } from './equation.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -39,6 +40,7 @@ const entries: [string, z.ZodType][] = [
   ['filetree', filetreeSchema],
   ['sequence', sequenceSchema],
   ['mindmap', mindmapSchema],
+  ['equation', equationSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);

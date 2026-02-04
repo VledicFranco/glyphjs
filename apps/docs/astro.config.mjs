@@ -46,6 +46,7 @@ export default defineConfig({
           { label: 'FileTree', slug: 'components/filetree' },
           { label: 'Sequence', slug: 'components/sequence' },
           { label: 'MindMap', slug: 'components/mindmap' },
+          { label: 'Equation', slug: 'components/equation' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

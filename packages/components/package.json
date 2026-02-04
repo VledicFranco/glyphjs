@@ -38,7 +38,8 @@
     "@glyphjs/types": "workspace:*",
     "d3": "^7.9.0",
     "dagre": "^0.8.5",
-    "elkjs": "^0.11.0"
+    "elkjs": "^0.11.0",
+    "katex": "^0.16.28"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0",
@@ -77,6 +78,7 @@
     "@testing-library/user-event": "^14.6.1",
     "@types/d3": "^7.4.3",
     "@types/dagre": "^0.7.53",
+    "@types/katex": "^0.16.8",
     "@types/react": "^19.2.10",
     "@types/react-dom": "^19.2.3",
     "jsdom": "^27.4.0",

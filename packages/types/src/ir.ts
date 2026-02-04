@@ -37,6 +37,7 @@ export type BlockType =
   | 'ui:filetree'
   | 'ui:sequence'
   | 'ui:mindmap'
+  | 'ui:equation'
   // Extensible
   | `ui:${string}`;
 

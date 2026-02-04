@@ -18,6 +18,7 @@ import {
   fileTreeDefinition,
   sequenceDefinition,
   mindMapDefinition,
+  equationDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -151,6 +152,7 @@ export function App() {
         fileTreeDefinition,
         sequenceDefinition,
         mindMapDefinition,
+        equationDefinition,
       ],
     });
     return rt;

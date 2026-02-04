@@ -1,0 +1,77 @@
+---
+title: Equation
+description: Render LaTeX math expressions and step-by-step derivations using KaTeX.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Equation** component renders LaTeX math expressions using KaTeX. It supports both single display-mode equations with optional labels and multi-step derivations with annotations.
+
+## Basic expression
+
+A single centered equation with a label underneath.
+
+export const basicExample = `
+\`\`\`ui:equation
+expression: E = mc^2
+label: Mass-energy equivalence
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={basicExample} />
+
+## Step-by-step derivation
+
+Use `steps` to show a multi-line derivation. Each step can have an optional `annotation` displayed to the right.
+
+export const stepsExample = `
+\`\`\`ui:equation
+steps:
+  - expression: "f(x) = x^2 + 2x + 1"
+    annotation: Original function
+  - expression: "f'(x) = 2x + 2"
+    annotation: Differentiate
+  - expression: "f'(0) = 2"
+    annotation: Evaluate at x = 0
+label: Derivative evaluation
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={stepsExample} />
+
+## Complex formula
+
+LaTeX commands like `\frac`, `\int`, and `\sqrt` are fully supported. In YAML, backslashes in expressions should be quoted if they contain special characters.
+
+export const complexExample = `
+\`\`\`ui:equation
+expression: "\\\\frac{-b \\\\pm \\\\sqrt{b^2 - 4ac}}{2a}"
+label: Quadratic formula
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={complexExample} />
+
+## Properties
+
+| Property     | Type              | Default      | Description                                       |
+| ------------ | ----------------- | ------------ | ------------------------------------------------- |
+| `expression` | `string`          | —            | LaTeX expression to render (single expression mode)|
+| `label`      | `string`          | —            | Optional label displayed below the equation        |
+| `steps`      | `EquationStep[]`  | —            | Array of derivation steps (steps mode)             |
+
+Either `expression` or `steps` must be provided.
+
+### EquationStep
+
+| Property     | Type     | Default      | Description                                  |
+| ------------ | -------- | ------------ | -------------------------------------------- |
+| `expression` | `string` | *(required)* | LaTeX expression for this step               |
+| `annotation` | `string` | —            | Optional annotation displayed to the right   |
+
+## Accessibility
+
+- The component container has `role="math"` and an `aria-label` containing the raw LaTeX source expression(s).
+- For single expressions, the aria-label reads "Equation: \{expression\}".
+- For step derivations, the aria-label reads "Equation steps: \{expr1\}; \{expr2\}; ...".
+- If KaTeX fails to parse an expression, the raw LaTeX is shown in a monospace code fallback so content is never silently lost.

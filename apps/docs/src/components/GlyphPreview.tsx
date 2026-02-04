@@ -20,6 +20,7 @@ import {
   fileTreeDefinition,
   sequenceDefinition,
   mindMapDefinition,
+  equationDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -40,6 +41,7 @@ const allComponents = [
   fileTreeDefinition,
   sequenceDefinition,
   mindMapDefinition,
+  equationDefinition,
 ];
 
 function useStarlightTheme(): 'light' | 'dark' {
