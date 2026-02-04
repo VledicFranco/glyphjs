@@ -1,6 +1,6 @@
 # RFC-015: Container-Adaptive Layout System
 
-- **Status:** Accepted
+- **Status:** Implemented
 - **Related:** [RFC-013: Card](./013-card.md), [RFC-006: KPI](./006-kpi.md)
 
 ---
