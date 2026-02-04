@@ -71,6 +71,42 @@ function sortIndicator(direction: SortDirection): string {
   return '';
 }
 
+// ─── Sub-components ─────────────────────────────────────────────
+
+function TableAggregationFooter({
+  columns,
+  aggMap,
+  rows,
+}: {
+  columns: TableColumn[];
+  aggMap: Map<string, { fn: 'sum' | 'avg' | 'count' | 'min' | 'max' }>;
+  rows: Record<string, unknown>[];
+}): ReactElement {
+  return (
+    <tfoot>
+      <tr>
+        {columns.map((col) => {
+          const agg = aggMap.get(col.key);
+          return (
+            <td
+              key={col.key}
+              style={{
+                padding: 'var(--glyph-table-cell-padding, 8px 12px)',
+                borderTop: '2px solid var(--glyph-table-border, #d0d8e4)',
+                fontWeight: 'bold',
+                background: 'var(--glyph-table-footer-bg, #e8ecf3)',
+                color: 'var(--glyph-table-footer-color, inherit)',
+              }}
+            >
+              {agg ? computeAggregation(rows, col.key, agg.fn) : ''}
+            </td>
+          );
+        })}
+      </tr>
+    </tfoot>
+  );
+}
+
 // ─── Component ─────────────────────────────────────────────────
 
 /**
@@ -265,27 +301,7 @@ export function Table({ data, container }: GlyphComponentProps<TableData>): Reac
         ))}
       </tbody>
       {aggMap && aggMap.size > 0 && (
-        <tfoot>
-          <tr>
-            {columns.map((col) => {
-              const agg = aggMap.get(col.key);
-              return (
-                <td
-                  key={col.key}
-                  style={{
-                    padding: 'var(--glyph-table-cell-padding, 8px 12px)',
-                    borderTop: '2px solid var(--glyph-table-border, #d0d8e4)',
-                    fontWeight: 'bold',
-                    background: 'var(--glyph-table-footer-bg, #e8ecf3)',
-                    color: 'var(--glyph-table-footer-color, inherit)',
-                  }}
-                >
-                  {agg ? computeAggregation(sortedRows, col.key, agg.fn) : ''}
-                </td>
-              );
-            })}
-          </tr>
-        </tfoot>
+        <TableAggregationFooter columns={columns} aggMap={aggMap} rows={sortedRows} />
       )}
     </table>
   );
