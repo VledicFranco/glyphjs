@@ -63,12 +63,31 @@ The YAML inside the block is parsed and validated by `@glyphjs/compiler` against
 
 ## Reserved YAML keys
 
-Two top-level YAML keys are reserved and processed by the compiler before schema validation:
+Three top-level YAML keys are reserved and processed by the compiler before schema validation:
 
 - **`glyph-id`** -- An explicit, user-assigned block ID that overrides the auto-generated ID. Enables stable cross-block references.
 - **`refs`** -- An array of reference objects (`{ target, type, label }`) that declare relationships between blocks.
+- **`interactive`** -- When set to `true`, enables interaction event emission for this block. The runtime injects an `onInteraction` callback that the component calls when the user interacts (clicks, sorts, selects, etc.).
 
 These keys are stripped from the component data before it reaches the component schema.
+
+## Interaction events
+
+Components marked with `interactive: true` can emit events when users interact with them. The following components support interaction events:
+
+| Component | Event kind | Payload |
+|---|---|---|
+| Quiz | `quiz-submit` | `questionIndex`, `question`, `selected`, `correct`, `score` |
+| Table | `table-sort` | `state` (sort column, direction, filters, visible rows) |
+| Table | `table-filter` | `state` (sort column, direction, filters, visible rows) |
+| Tabs | `tab-select` | `tabIndex`, `tabLabel` |
+| Accordion | `accordion-toggle` | `sectionIndex`, `sectionTitle`, `expanded` |
+| FileTree | `filetree-select` | `path`, `type` (file/directory), `expanded` |
+| Graph | `graph-node-click` | `nodeId`, `nodeLabel` |
+| Chart | `chart-select` | `seriesIndex`, `dataIndex`, `label`, `value` |
+| Comparison | `comparison-select` | `optionIndex`, `optionName` |
+
+See the [Authoring Guide](/glyphjs/authoring-guide/#interaction-events) for usage details and the [Plugin API](/glyphjs/reference/plugin-api/#interaction-events) for the TypeScript types.
 
 ## Container components
 

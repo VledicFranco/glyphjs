@@ -76,6 +76,7 @@ export function Comparison({
   data,
   block,
   container,
+  onInteraction,
 }: GlyphComponentProps<ComparisonData>): ReactElement {
   const { title, options, features } = data;
   const baseId = `glyph-comparison-${block.id}`;
@@ -151,7 +152,30 @@ export function Comparison({
                 Feature
               </th>
               {options.map((option, i) => (
-                <th key={i} style={thStyle} scope="col">
+                <th
+                  key={i}
+                  style={{
+                    ...thStyle,
+                    ...(onInteraction ? { cursor: 'pointer' } : {}),
+                  }}
+                  scope="col"
+                  onClick={
+                    onInteraction
+                      ? () => {
+                          onInteraction({
+                            kind: 'comparison-select',
+                            timestamp: new Date().toISOString(),
+                            blockId: block.id,
+                            blockType: block.type,
+                            payload: {
+                              optionIndex: i,
+                              optionName: option.name,
+                            },
+                          });
+                        }
+                      : undefined
+                  }
+                >
                   <div>{option.name}</div>
                   {option.description && (
                     <div

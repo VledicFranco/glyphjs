@@ -89,6 +89,7 @@ function renderGraph(
   groupIndex: Map<string, number>,
   outgoingRefs: Reference[],
   onNavigate: (ref: Reference) => void,
+  onNodeClick?: (nodeId: string, nodeLabel: string) => void,
 ): void {
   const svg = d3.select(svgElement);
   svg.selectAll('*').remove();
@@ -233,12 +234,15 @@ function renderGraph(
       .attr('pointer-events', 'none')
       .text(node.label);
 
-    // Navigation cursor + click handler
-    if (isNavigable) {
+    // Click handler: navigation (for ref-linked nodes) + interaction event (for all nodes)
+    if (isNavigable || onNodeClick) {
       nodeG.attr('cursor', 'pointer');
       nodeG.on('click', () => {
-        const ref = refByAnchor.get(node.id);
-        if (ref) onNavigate(ref);
+        if (isNavigable) {
+          const ref = refByAnchor.get(node.id);
+          if (ref) onNavigate(ref);
+        }
+        onNodeClick?.(node.id, node.label);
       });
     }
   }
@@ -248,8 +252,10 @@ function renderGraph(
 
 export function Graph({
   data,
+  block,
   outgoingRefs,
   onNavigate,
+  onInteraction,
   container,
 }: GlyphComponentProps<GraphData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -263,10 +269,30 @@ export function Graph({
     return computeDagreLayout(data.nodes, data.edges, direction);
   }, [data]);
 
+  const handleNodeClick = useMemo(() => {
+    if (!onInteraction) return undefined;
+    return (nodeId: string, nodeLabel: string) => {
+      onInteraction({
+        kind: 'graph-node-click',
+        timestamp: new Date().toISOString(),
+        blockId: block.id,
+        blockType: block.type,
+        payload: { nodeId, nodeLabel },
+      });
+    };
+  }, [onInteraction, block.id, block.type]);
+
   useEffect(() => {
     if (!svgRef.current) return;
-    renderGraph(svgRef.current, layoutResult, groupIndex.current, outgoingRefs, onNavigate);
-  }, [layoutResult, outgoingRefs, onNavigate]);
+    renderGraph(
+      svgRef.current,
+      layoutResult,
+      groupIndex.current,
+      outgoingRefs,
+      onNavigate,
+      handleNodeClick,
+    );
+  }, [layoutResult, outgoingRefs, onNavigate, handleNodeClick]);
 
   // Build an accessible description
   const ariaLabel = `${data.type} graph with ${data.nodes.length} nodes and ${data.edges.length} edges`;

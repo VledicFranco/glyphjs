@@ -71,8 +71,10 @@ interface GlyphComponentProps<T = unknown> {
   outgoingRefs: Reference[];
   incomingRefs: Reference[];
   onNavigate: (ref: Reference) => void;
+  onInteraction?: (event: Omit<InteractionEvent, 'documentId'>) => void;
   theme: GlyphThemeContext;
   layout: LayoutHints;
+  container: ContainerContext;
 }
 ```
 
@@ -83,8 +85,10 @@ interface GlyphComponentProps<T = unknown> {
 | `outgoingRefs` | `Reference[]` | References originating from this block. |
 | `incomingRefs` | `Reference[]` | References targeting this block. |
 | `onNavigate` | `(ref: Reference) => void` | Callback to trigger navigation along a reference. |
+| `onInteraction` | `(event) => void` | Optional callback for interaction events. Only present when `interactive: true` is set on the block. Components emit events without `documentId`; the runtime injects it automatically. |
 | `theme` | `GlyphThemeContext` | Current theme context with `resolveVar`, `isDark`, and `name`. |
 | `layout` | `LayoutHints` | Global layout configuration (mode, columns, spacing). |
+| `container` | `ContainerContext` | Container tier and sizing context for adaptive rendering. |
 ---
 
 ## Registration via PluginRegistry
@@ -160,3 +164,100 @@ Optional `dependencies` field declares other `ui:*` types this component needs.
 ## Runtime integration
 
 `createGlyphRuntime({ components })` auto-registers plugins. `runtime.registerComponent(def)` adds after creation. Unknown types render a fallback.
+
+---
+
+## Interaction Events
+
+Components can emit **interaction events** when the block has `interactive: true` set in its YAML. The runtime gates the `onInteraction` prop — components only receive it when `block.metadata.interactive === true`.
+
+### Configuring the callback
+
+Pass `onInteraction` to the runtime config:
+
+```typescript
+import { createGlyphRuntime, debounceInteractions } from '@glyphjs/runtime';
+import type { InteractionEvent } from '@glyphjs/types';
+
+const runtime = createGlyphRuntime({
+  ir: compiledDocument,
+  components: builtinComponents,
+  onInteraction: (event: InteractionEvent) => {
+    console.log(`[${event.kind}] block=${event.blockId}`, event.payload);
+  },
+});
+```
+
+### debounceInteractions
+
+A per-stream debounce helper that groups events by `blockId` + `kind`. Rapid repeated interactions (e.g., clicking sort headers) only fire the callback once after the delay:
+
+```typescript
+import { debounceInteractions } from '@glyphjs/runtime';
+
+const handler = debounceInteractions((event) => {
+  sendToAnalytics(event);
+}, 300); // 300ms debounce per (blockId, kind) pair
+```
+
+### InteractionEvent types
+
+All event types are exported from `@glyphjs/types`:
+
+```typescript
+import type {
+  InteractionEvent,
+  InteractionKind,
+  QuizSubmitEvent,
+  TableSortEvent,
+  TableFilterEvent,
+  TabSelectEvent,
+  AccordionToggleEvent,
+  FileTreeSelectEvent,
+  GraphNodeClickEvent,
+  ChartSelectEvent,
+  ComparisonSelectEvent,
+  CustomInteractionEvent,
+} from '@glyphjs/types';
+```
+
+The `InteractionEvent` union is discriminated by the `kind` field. Use a `switch` on `event.kind` for exhaustive handling:
+
+```typescript
+function handleEvent(event: InteractionEvent): void {
+  switch (event.kind) {
+    case 'chart-select':
+      console.log('Chart data point:', event.payload.label, event.payload.value);
+      break;
+    case 'quiz-submit':
+      console.log('Score:', event.payload.score.correct, '/', event.payload.score.total);
+      break;
+    case 'table-sort':
+      console.log('Sorted by:', event.payload.state.sortColumn, event.payload.state.sortDirection);
+      break;
+    // ... handle other event kinds
+  }
+}
+```
+
+### Emitting events from custom plugins
+
+If you build a custom `ui:*` component, check for `onInteraction` in your props and call it with your event:
+
+```typescript
+function MyWidget({ data, block, onInteraction }: GlyphComponentProps<MyData>) {
+  const handleClick = (item: string) => {
+    onInteraction?.({
+      kind: 'custom',
+      timestamp: new Date().toISOString(),
+      blockId: block.id,
+      blockType: block.type,
+      payload: { action: 'item-click', detail: item },
+    });
+  };
+
+  return <div onClick={() => handleClick('example')}>...</div>;
+}
+```
+
+Custom plugins should use `kind: 'custom'` and place their event-specific data in `payload`.

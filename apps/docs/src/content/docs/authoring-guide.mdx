@@ -142,15 +142,16 @@ handles only syntax.
 
 ### Reserved YAML keys
 
-Two top-level YAML keys have special meaning and are stripped from the component
+Three top-level YAML keys have special meaning and are stripped from the component
 data before schema validation:
 
 | Key | Purpose |
 |---|---|
 | `glyph-id` | Assigns a stable, user-defined block ID for cross-block references. |
 | `refs` | Declares outgoing references to other blocks (see [Cross-block References](#cross-block-references)). |
+| `interactive` | When set to `true`, enables interaction event emission for this block (see [Interaction Events](#interaction-events)). |
 
-All other keys are passed through as the component’s data payload.
+All other keys are passed through as the component's data payload.
 
 ---
 
@@ -752,6 +753,90 @@ layout:
 
 ---
 
+## Interaction Events
+
+Glyph JS components can emit **interaction events** when users interact with
+them — clicking chart data points, sorting tables, answering quiz questions,
+expanding file tree nodes, and more. This enables host applications to react to
+user behavior, log analytics, or feed interactions back into an LLM conversation.
+
+### Enabling interaction events
+
+Add the reserved `interactive: true` key to any `ui:` block's YAML payload:
+
+````markdown
+```ui:chart
+interactive: true
+type: bar
+series:
+  - name: Revenue
+    data:
+      - { month: Jan, value: 4200 }
+      - { month: Feb, value: 5100 }
+xAxis:
+  key: month
+yAxis:
+  key: value
+```
+````
+
+The `interactive` key is stripped before schema validation, just like `glyph-id`
+and `refs`. When `interactive` is `true`, the runtime injects an `onInteraction`
+callback into the component's props.
+
+### Supported events by component
+
+| Component | Event kind | Trigger |
+|---|---|---|
+| `ui:quiz` | `quiz-submit` | User submits an answer. |
+| `ui:table` | `table-sort` | User clicks a sortable column header. |
+| `ui:table` | `table-filter` | User changes a column filter. |
+| `ui:tabs` | `tab-select` | User switches tabs. |
+| `ui:accordion` | `accordion-toggle` | User expands or collapses a section. |
+| `ui:filetree` | `filetree-select` | User clicks a file or directory. |
+| `ui:graph` | `graph-node-click` | User clicks a graph node. |
+| `ui:chart` | `chart-select` | User clicks a data point or bar. |
+| `ui:comparison` | `comparison-select` | User clicks an option column header. |
+
+### Consuming events in host applications
+
+Register an `onInteraction` callback when creating the runtime:
+
+```typescript
+import { createGlyphRuntime, debounceInteractions } from '@glyphjs/runtime';
+
+const runtime = createGlyphRuntime({
+  ir: compiledDocument,
+  components: builtinComponents,
+  onInteraction: debounceInteractions((event) => {
+    console.log(event.kind, event.payload);
+    // Send to analytics, update app state, or feed back to an LLM
+  }, 300),
+});
+```
+
+The `debounceInteractions` helper debounces events per-stream (keyed by
+`blockId` + `kind`), so rapid interactions like repeated sorting do not flood
+your callback.
+
+### Event structure
+
+Every interaction event includes:
+
+| Field | Type | Description |
+|---|---|---|
+| `kind` | `string` | Discriminant identifying the event type (e.g., `"chart-select"`). |
+| `timestamp` | `string` | ISO 8601 timestamp of the interaction. |
+| `documentId` | `string` | The Glyph IR document ID (injected by the runtime). |
+| `blockId` | `string` | The block's unique ID. |
+| `blockType` | `string` | The block's component type (e.g., `"ui:chart"`). |
+| `payload` | `object` | Event-specific data (varies by `kind`). |
+
+All event types are exported from `@glyphjs/types` for use in TypeScript
+applications.
+
+---
+
 ## Best Practices
 
 ### Write for both humans and machines
@@ -999,6 +1084,114 @@ events:
 orientation: vertical
 ```
 ````
+
+### Interactive document with LLM feedback loop
+
+Use `interactive: true` to enable interaction events, then feed those events
+back into an LLM conversation for adaptive responses.
+
+````markdown
+---
+title: Architecture Review
+glyph-id: arch-review
+---
+
+# Architecture Review
+
+```ui:graph
+glyph-id: system-graph
+interactive: true
+type: dag
+nodes:
+  - id: api
+    label: API Gateway
+    group: backend
+  - id: auth
+    label: Auth Service
+    group: backend
+  - id: cache
+    label: Redis Cache
+    group: infra
+  - id: db
+    label: PostgreSQL
+    group: infra
+edges:
+  - from: api
+    to: auth
+    label: authenticates
+  - from: api
+    to: cache
+    label: caches
+  - from: auth
+    to: db
+    label: queries
+layout: top-down
+```
+
+Click any node above to learn more about that service.
+
+```ui:table
+glyph-id: service-metrics
+interactive: true
+columns:
+  - key: service
+    label: Service
+    sortable: true
+  - key: latency
+    label: P99 Latency (ms)
+    sortable: true
+    type: number
+  - key: uptime
+    label: Uptime %
+    sortable: true
+    type: number
+rows:
+  - service: API Gateway
+    latency: 45
+    uptime: 99.9
+  - service: Auth Service
+    latency: 120
+    uptime: 99.7
+  - service: Redis Cache
+    latency: 2
+    uptime: 99.99
+  - service: PostgreSQL
+    latency: 15
+    uptime: 99.8
+```
+````
+
+In the host application, wire `onInteraction` to your LLM API:
+
+```typescript
+import { createGlyphRuntime, debounceInteractions } from '@glyphjs/runtime';
+
+const runtime = createGlyphRuntime({
+  ir: compiledDocument,
+  components: builtinComponents,
+  onInteraction: debounceInteractions(async (event) => {
+    // Feed the interaction into the LLM conversation
+    const response = await fetch('/api/chat', {
+      method: 'POST',
+      body: JSON.stringify({
+        role: 'user',
+        content: `The user interacted with the document: ${JSON.stringify(event)}`,
+      }),
+    });
+    // The LLM can respond with new Glyph Markdown to render
+    const { markdown } = await response.json();
+    if (markdown) {
+      // Re-compile and update the runtime with the LLM's response
+      const newIr = compile(markdown);
+      runtime.update(newIr);
+    }
+  }, 500),
+});
+```
+
+This pattern enables documents that respond to user exploration — clicking a
+graph node could prompt the LLM to generate a detailed breakdown of that
+service, sorting a table could trigger a summary of the sorted data.
 
 ---
 

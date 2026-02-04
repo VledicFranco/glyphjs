@@ -94,7 +94,9 @@ function computeScales(
  */
 export function Chart({
   data,
+  block,
   container: containerCtx,
+  onInteraction,
 }: GlyphComponentProps<ChartData>): ReactElement {
   const containerRef = useRef<HTMLDivElement>(null);
   const svgRef = useRef<SVGSVGElement>(null);
@@ -234,6 +236,31 @@ export function Chart({
       }
     });
 
+    // Attach click handlers for interaction events on data point elements
+    if (onInteraction) {
+      series.forEach((s: ChartData['series'][number], seriesIdx: number) => {
+        const className = type === 'bar' ? `bar-${String(seriesIdx)}` : `dot-${String(seriesIdx)}`;
+        g.selectAll<SVGElement, DataRecord>(`.${className}`).on(
+          'click',
+          (_event: MouseEvent, d: DataRecord) => {
+            const dataIdx = s.data.indexOf(d);
+            onInteraction({
+              kind: 'chart-select',
+              timestamp: new Date().toISOString(),
+              blockId: block.id,
+              blockType: block.type,
+              payload: {
+                seriesIndex: seriesIdx,
+                dataIndex: dataIdx >= 0 ? dataIdx : 0,
+                label: String(d[xKey] ?? ''),
+                value: getNumericValue(d, yKey),
+              },
+            });
+          },
+        );
+      });
+    }
+
     if (legend) {
       renderLegend(sel, series, margin.left, margin.top, isCompact ? '10px' : undefined);
     }
@@ -250,6 +277,8 @@ export function Chart({
     isCompact,
     showTooltip,
     hideTooltip,
+    onInteraction,
+    block,
   ]);
 
   const ariaLabel = `${type} chart with ${String(series.length)} series: ${series.map((s: ChartData['series'][number]) => s.name).join(', ')}`;
