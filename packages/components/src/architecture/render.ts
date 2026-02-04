@@ -25,6 +25,12 @@ function zoneBackground(depth: number): string {
   return `rgba(0,212,170,${alpha})`;
 }
 
+// ─── Theme Variable Helper ──────────────────────────────────
+
+function getThemeVar(container: Element, varName: string, fallback: string): string {
+  return getComputedStyle(container).getPropertyValue(varName).trim() || fallback;
+}
+
 // ─── Arrow Marker ID ────────────────────────────────────────
 
 const ARROW_MARKER_ID = 'glyph-arch-arrowhead';
@@ -53,7 +59,14 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
-    .attr('fill', '#6b7a94');
+    .attr('fill', 'var(--glyph-edge-color, #6b7a94)');
+
+  // Read theme variables from the SVG's parent container for attrs that
+  // don't support CSS var() (rx, ry, opacity).
+  const container = svgElement.parentElement ?? svgElement;
+  const nodeRadius = getThemeVar(container, '--glyph-node-radius', '3');
+  const nodeStrokeWidth = getThemeVar(container, '--glyph-node-stroke-width', '1.5');
+  const nodeFillOpacity = getThemeVar(container, '--glyph-node-fill-opacity', '0.85');
 
   // Root group for zoom/pan
   const root = svg.append('g').attr('class', 'glyph-architecture-root');
@@ -82,8 +95,8 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
       .attr('y', zone.y)
       .attr('width', zone.width)
       .attr('height', zone.height)
-      .attr('rx', 3)
-      .attr('ry', 3)
+      .attr('rx', nodeRadius)
+      .attr('ry', nodeRadius)
       .attr('fill', zoneBackground(zone.depth))
       .attr('stroke', 'var(--glyph-accent-muted, #1a4a3a)')
       .attr('stroke-width', 1)
@@ -121,7 +134,7 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
       .append('path')
       .attr('d', lineGen(edge.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', edge.style?.['stroke'] ?? '#6b7a94')
+      .attr('stroke', edge.style?.['stroke'] ?? 'var(--glyph-edge-color, #6b7a94)')
       .attr('stroke-width', edge.style?.['stroke-width'] ?? String(strokeWidth))
       .attr('marker-end', `url(#${ARROW_MARKER_ID})`)
       .attr('stroke-dasharray', dashArray);
@@ -183,18 +196,21 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
     const color = NODE_PALETTE[nodeIdx % NODE_PALETTE.length] ?? '#00d4aa';
 
     // Node rect
+    const defaultStroke =
+      d3.color(color)?.darker(0.5)?.toString() ?? 'var(--glyph-edge-color, #6b7a94)';
+
     nodeG
       .append('rect')
       .attr('x', node.x)
       .attr('y', node.y)
       .attr('width', node.width)
       .attr('height', node.height)
-      .attr('rx', 3)
-      .attr('ry', 3)
+      .attr('rx', nodeRadius)
+      .attr('ry', nodeRadius)
       .attr('fill', color)
-      .attr('stroke', d3.color(color)?.darker(0.5)?.toString() ?? '#333')
-      .attr('stroke-width', 1.5)
-      .attr('opacity', 0.85);
+      .attr('stroke', defaultStroke)
+      .attr('stroke-width', nodeStrokeWidth)
+      .attr('opacity', nodeFillOpacity);
 
     if (node.icon) {
       // Icon in upper portion
@@ -207,7 +223,7 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
         .attr('text-anchor', 'middle')
         .attr('font-size', '11px')
         .attr('font-family', 'Inter, system-ui, sans-serif')
-        .attr('fill', '#fff')
+        .attr('fill', 'var(--glyph-node-label-color, #fff)')
         .attr('pointer-events', 'none')
         .text(node.label);
     } else {
@@ -220,7 +236,7 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
         .attr('text-anchor', 'middle')
         .attr('font-size', '13px')
         .attr('font-family', 'Inter, system-ui, sans-serif')
-        .attr('fill', '#fff')
+        .attr('fill', 'var(--glyph-node-label-color, #fff)')
         .attr('pointer-events', 'none')
         .text(node.label);
     }

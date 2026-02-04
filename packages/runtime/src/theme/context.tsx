@@ -1,5 +1,5 @@
 import { createContext, useContext, useMemo } from 'react';
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 import type { GlyphTheme, GlyphThemeContext } from '@glyphjs/types';
 import { resolveTheme, createResolveVar, isDarkTheme } from './resolve.js';
 
@@ -12,6 +12,10 @@ const ThemeContext = createContext<GlyphThemeContext | null>(null);
 export interface ThemeProviderProps {
   /** A theme shortcut string or a full GlyphTheme object. */
   theme?: 'light' | 'dark' | GlyphTheme;
+  /** Optional CSS class name applied to the theme wrapper div. */
+  className?: string;
+  /** Optional inline styles merged with (and overriding) theme CSS variables. */
+  style?: CSSProperties;
   children: ReactNode;
 }
 
@@ -24,6 +28,8 @@ export interface ThemeProviderProps {
  */
 export function ThemeProvider({
   theme,
+  className,
+  style: consumerStyle,
   children,
 }: ThemeProviderProps): ReactNode {
   const resolved = useMemo(() => resolveTheme(theme), [theme]);
@@ -38,15 +44,15 @@ export function ThemeProvider({
   );
 
   // Build the inline style object from the theme variables.
-  // React expects a Record<string, string> for `style`.
+  // Consumer style wins over theme variables for intentional overrides.
   const style = useMemo<Record<string, string>>(
-    () => ({ ...resolved.variables }),
-    [resolved],
+    () => ({ ...resolved.variables, ...(consumerStyle as Record<string, string>) }),
+    [resolved, consumerStyle],
   );
 
   return (
     <ThemeContext value={themeContext}>
-      <div data-glyph-theme={resolved.name} style={style}>
+      <div data-glyph-theme={resolved.name} className={className} style={style}>
         {children}
       </div>
     </ThemeContext>

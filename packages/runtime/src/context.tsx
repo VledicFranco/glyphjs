@@ -1,12 +1,6 @@
 import { createContext, useContext, useMemo } from 'react';
-import type { ReactNode } from 'react';
-import type {
-  Block,
-  Reference,
-  GlyphTheme,
-  GlyphThemeContext,
-  Diagnostic,
-} from '@glyphjs/types';
+import type { CSSProperties, ReactNode } from 'react';
+import type { Block, Reference, GlyphTheme, GlyphThemeContext, Diagnostic } from '@glyphjs/types';
 import type { ComponentRegistry } from './registry.js';
 import {
   resolveTheme as resolveThemeObject,
@@ -36,6 +30,10 @@ export interface RuntimeProviderProps {
   registry: ComponentRegistry;
   references: Reference[];
   theme: 'light' | 'dark' | GlyphTheme | undefined;
+  /** Optional CSS class name applied to the runtime wrapper div. */
+  className?: string;
+  /** Optional inline styles merged with (and overriding) theme CSS variables. */
+  style?: CSSProperties;
   onDiagnostic?: (diagnostic: Diagnostic) => void;
   onNavigate?: (ref: Reference, targetBlock: Block) => void;
   children: ReactNode;
@@ -45,6 +43,8 @@ export function RuntimeProvider({
   registry,
   references,
   theme,
+  className,
+  style: consumerStyle,
   onDiagnostic,
   onNavigate,
   children,
@@ -71,16 +71,17 @@ export function RuntimeProvider({
     [registry, references, resolvedTheme, onDiagnostic, onNavigate],
   );
 
-  // Build inline style object from the resolved theme's CSS variables
+  // Build inline style object from the resolved theme's CSS variables.
+  // Consumer style wins over theme variables for intentional overrides.
   const style = useMemo<Record<string, string>>(
-    () => ({ ...resolvedThemeObject.variables }),
-    [resolvedThemeObject],
+    () => ({ ...resolvedThemeObject.variables, ...(consumerStyle as Record<string, string>) }),
+    [resolvedThemeObject, consumerStyle],
   );
 
   return (
     <RuntimeContext value={value}>
       <ThemeContext value={resolvedTheme}>
-        <div data-glyph-theme={resolvedThemeObject.name} style={style}>
+        <div data-glyph-theme={resolvedThemeObject.name} className={className} style={style}>
           {children}
         </div>
       </ThemeContext>

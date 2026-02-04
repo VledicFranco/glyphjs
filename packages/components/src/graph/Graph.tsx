@@ -73,6 +73,12 @@ function resolveLayout(data: GraphData): LayoutDirection {
   return TYPE_LAYOUT_DEFAULTS[data.type] ?? 'top-down';
 }
 
+// ─── Theme Variable Helper ───────────────────────────────────
+
+function getThemeVar(container: Element, varName: string, fallback: string): string {
+  return getComputedStyle(container).getPropertyValue(varName).trim() || fallback;
+}
+
 // ─── SVG Rendering ──────────────────────────────────────────
 
 const ARROW_MARKER_ID = 'glyph-graph-arrowhead';
@@ -105,7 +111,14 @@ function renderGraph(
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
-    .attr('fill', '#6b7a94');
+    .attr('fill', 'var(--glyph-edge-color, #6b7a94)');
+
+  // Read theme variables from the SVG's parent container for attrs that
+  // don't support CSS var() (rx, ry, opacity).
+  const container = svgElement.parentElement ?? svgElement;
+  const nodeRadius = getThemeVar(container, '--glyph-node-radius', '3');
+  const nodeStrokeWidth = getThemeVar(container, '--glyph-node-stroke-width', '1.5');
+  const nodeFillOpacity = getThemeVar(container, '--glyph-node-fill-opacity', '0.85');
 
   // Root group for zoom/pan
   const root = svg.append('g').attr('class', 'glyph-graph-root');
@@ -147,8 +160,8 @@ function renderGraph(
       .append('path')
       .attr('d', lineGen(edge.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', edge.style?.['stroke'] ?? '#6b7a94')
-      .attr('stroke-width', edge.style?.['stroke-width'] ?? '1.5')
+      .attr('stroke', edge.style?.['stroke'] ?? 'var(--glyph-edge-color, #6b7a94)')
+      .attr('stroke-width', edge.style?.['stroke-width'] ?? nodeStrokeWidth)
       .attr('marker-end', `url(#${ARROW_MARKER_ID})`)
       .attr('stroke-dasharray', edge.type === 'dashed' ? '5,5' : null);
 
@@ -161,7 +174,7 @@ function renderGraph(
           .attr('y', mid.y - 8)
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
-          .attr('fill', '#6b7a94')
+          .attr('fill', 'var(--glyph-edge-color, #6b7a94)')
           .text(edge.label);
       }
     }
@@ -179,6 +192,9 @@ function renderGraph(
     const nodeY = node.y - node.height / 2;
 
     // Shape: circle for 'entity' type, rounded rect otherwise
+    const defaultStroke =
+      d3.color(color)?.darker(0.5)?.toString() ?? 'var(--glyph-edge-color, #6b7a94)';
+
     if (node.type === 'circle') {
       nodeG
         .append('circle')
@@ -186,12 +202,9 @@ function renderGraph(
         .attr('cy', node.y)
         .attr('r', Math.min(node.width, node.height) / 2)
         .attr('fill', node.style?.['fill'] ?? color)
-        .attr(
-          'stroke',
-          node.style?.['stroke'] ?? d3.color(color)?.darker(0.5)?.toString() ?? '#333',
-        )
-        .attr('stroke-width', node.style?.['stroke-width'] ?? '1.5')
-        .attr('opacity', 0.85);
+        .attr('stroke', node.style?.['stroke'] ?? defaultStroke)
+        .attr('stroke-width', node.style?.['stroke-width'] ?? nodeStrokeWidth)
+        .attr('opacity', nodeFillOpacity);
     } else {
       nodeG
         .append('rect')
@@ -199,15 +212,12 @@ function renderGraph(
         .attr('y', nodeY)
         .attr('width', node.width)
         .attr('height', node.height)
-        .attr('rx', 3)
-        .attr('ry', 3)
+        .attr('rx', nodeRadius)
+        .attr('ry', nodeRadius)
         .attr('fill', node.style?.['fill'] ?? color)
-        .attr(
-          'stroke',
-          node.style?.['stroke'] ?? d3.color(color)?.darker(0.5)?.toString() ?? '#333',
-        )
-        .attr('stroke-width', node.style?.['stroke-width'] ?? '1.5')
-        .attr('opacity', 0.85);
+        .attr('stroke', node.style?.['stroke'] ?? defaultStroke)
+        .attr('stroke-width', node.style?.['stroke-width'] ?? nodeStrokeWidth)
+        .attr('opacity', nodeFillOpacity);
     }
 
     // Label
@@ -219,7 +229,7 @@ function renderGraph(
       .attr('text-anchor', 'middle')
       .attr('font-size', '13px')
       .attr('font-family', 'Inter, system-ui, sans-serif')
-      .attr('fill', '#fff')
+      .attr('fill', 'var(--glyph-node-label-color, #fff)')
       .attr('pointer-events', 'none')
       .text(node.label);
 

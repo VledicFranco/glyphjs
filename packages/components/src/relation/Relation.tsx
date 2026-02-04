@@ -194,7 +194,7 @@ function drawCrowsFoot(
       .attr('x2', cx)
       .attr('y2', cy)
       .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
-      .attr('stroke-width', 1.5);
+      .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
 
     // Left fork
     const lx = x + Math.cos(angle + spread) * len;
@@ -205,7 +205,7 @@ function drawCrowsFoot(
       .attr('x2', lx)
       .attr('y2', ly)
       .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
-      .attr('stroke-width', 1.5);
+      .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
 
     // Right fork
     const rx = x + Math.cos(angle - spread) * len;
@@ -216,7 +216,7 @@ function drawCrowsFoot(
       .attr('x2', rx)
       .attr('y2', ry)
       .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
-      .attr('stroke-width', 1.5);
+      .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
   } else {
     // Single line perpendicular to the edge for "1"
     const perpAngle = angle + Math.PI / 2;
@@ -229,7 +229,7 @@ function drawCrowsFoot(
       .attr('x2', tx + Math.cos(perpAngle) * halfLen)
       .attr('y2', ty + Math.sin(perpAngle) * halfLen)
       .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
-      .attr('stroke-width', 1.5);
+      .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
   }
 }
 
@@ -281,7 +281,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
       .attr('d', lineGen(rel.points) ?? '')
       .attr('fill', 'none')
       .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
-      .attr('stroke-width', 1.5);
+      .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
 
     // Cardinality notation
     const { fromSymbol, toSymbol } = parseCardinality(rel.cardinality);
@@ -373,7 +373,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
       .attr('ry', 4)
       .attr('fill', 'var(--glyph-relation-entity-bg, #f4f6fa)')
       .attr('stroke', 'var(--glyph-relation-entity-border, #a8b5c8)')
-      .attr('stroke-width', 1.5);
+      .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
 
     // Header background
     const headerHeight = ENTITY_HEADER_HEIGHT;

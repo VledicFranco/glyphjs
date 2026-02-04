@@ -52,8 +52,8 @@ export function renderIcon(
     .append('path')
     .attr('d', d)
     .attr('fill', 'none')
-    .attr('stroke', '#fff')
-    .attr('stroke-width', 1.5)
+    .attr('stroke', 'var(--glyph-icon-stroke, #fff)')
+    .attr('stroke-width', 'var(--glyph-icon-stroke-width, 1.5)')
     .attr('stroke-linecap', 'round')
     .attr('stroke-linejoin', 'round');
 }

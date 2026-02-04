@@ -333,7 +333,7 @@ export function renderLegend(
     .attr('transform', `translate(${String(marginLeft + 8)},${String(marginTop)})`);
 
   series.forEach((s: ChartData['series'][number], i: number) => {
-    const color = COLOR_SCHEME[i % COLOR_SCHEME.length] ?? '#333';
+    const color = COLOR_SCHEME[i % COLOR_SCHEME.length] ?? 'var(--glyph-text, #1a2035)';
     const row = legendG.append('g').attr('transform', `translate(0,${String(i * 20)})`);
 
     row.append('rect').attr('width', 14).attr('height', 14).attr('fill', color).attr('rx', 2);
