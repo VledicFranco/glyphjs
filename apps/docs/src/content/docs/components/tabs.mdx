@@ -10,6 +10,7 @@ The **Tabs** component (`ui:tabs`) organizes content into multiple switchable pa
 ## Example
 
 export const tabsExample = `\`\`\`ui:tabs
+interactive: true
 tabs:
   - label: Overview
     content: |
@@ -27,7 +28,7 @@ tabs:
       Edit \\\`glyph.config.ts\\\` to set up your theme and plugins.
 \`\`\``;
 
-<GlyphPreview client:only="react" source={tabsExample} />
+<GlyphPreview client:only="react" source={tabsExample} interactive />
 
 <details>
 <summary>View Glyph Markdown source</summary>

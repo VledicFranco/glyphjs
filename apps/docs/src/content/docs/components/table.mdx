@@ -10,6 +10,7 @@ The **Table** component (`ui:table`) renders structured data as an interactive, 
 ## Example
 
 export const tableExample = `\`\`\`ui:table
+interactive: true
 columns:
   - key: name
     label: Employee
@@ -44,7 +45,7 @@ aggregation:
     function: count
 \`\`\``;
 
-<GlyphPreview client:only="react" source={tableExample} />
+<GlyphPreview client:only="react" source={tableExample} interactive />
 
 <details>
 <summary>View Glyph Markdown source</summary>

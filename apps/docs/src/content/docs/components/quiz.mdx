@@ -10,6 +10,7 @@ The **Quiz** component (`ui:quiz`) renders interactive assessments with per-ques
 ## Examples
 
 export const defaultExample = `\`\`\`ui:quiz
+interactive: true
 title: JavaScript Fundamentals
 questions:
   - type: multiple-choice
@@ -40,7 +41,7 @@ questions:
     explanation: string, number, and boolean are primitives. object and array are reference types.
 \`\`\``;
 
-<GlyphPreview client:only="react" source={defaultExample} />
+<GlyphPreview client:only="react" source={defaultExample} interactive />
 
 <details>
 <summary>View Glyph Markdown source</summary>

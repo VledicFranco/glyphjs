@@ -10,6 +10,7 @@ The **Graph** component (`ui:graph`) renders node-and-edge diagrams with automat
 ## Examples
 
 export const dagExample = `\`\`\`ui:graph
+interactive: true
 type: dag
 nodes:
   - id: api
@@ -37,7 +38,7 @@ edges:
 layout: top-down
 \`\`\``;
 
-<GlyphPreview client:only="react" source={dagExample} />
+<GlyphPreview client:only="react" source={dagExample} interactive />
 
 <details>
 <summary>View Glyph Markdown source</summary>

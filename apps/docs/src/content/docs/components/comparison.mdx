@@ -10,6 +10,7 @@ The **Comparison** component (`ui:comparison`) renders a feature comparison tabl
 ## Examples
 
 export const defaultExample = `\`\`\`ui:comparison
+interactive: true
 title: Frontend Frameworks
 options:
   - name: React
@@ -31,7 +32,7 @@ features:
     values: [very large, large, growing]
 \`\`\``;
 
-<GlyphPreview client:only="react" source={defaultExample} />
+<GlyphPreview client:only="react" source={defaultExample} interactive />
 
 <details>
 <summary>View Glyph Markdown source</summary>

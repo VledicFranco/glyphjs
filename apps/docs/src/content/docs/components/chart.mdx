@@ -12,6 +12,7 @@ The **Chart** component (`ui:chart`) renders data visualizations using D3. It su
 ### Line chart
 
 export const lineChartExample = `\`\`\`ui:chart
+interactive: true
 type: line
 series:
   - name: Revenue
@@ -43,7 +44,7 @@ yAxis:
 legend: true
 \`\`\``;
 
-<GlyphPreview client:only="react" source={lineChartExample} />
+<GlyphPreview client:only="react" source={lineChartExample} interactive />
 
 <details>
 <summary>View Glyph Markdown source</summary>

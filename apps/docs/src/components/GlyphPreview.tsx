@@ -1,7 +1,9 @@
-import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { compile } from '@glyphjs/compiler';
 import { createGlyphRuntime } from '@glyphjs/runtime';
-import type { GlyphTheme } from '@glyphjs/types';
+import type { GlyphTheme, InteractionEvent } from '@glyphjs/types';
+import { useInteractionLog } from './useInteractionLog.js';
+import EventLog from './EventLog.js';
 import {
   calloutDefinition,
   chartDefinition,
@@ -78,18 +80,32 @@ function useStarlightTheme(): 'light' | 'dark' {
 interface GlyphPreviewProps {
   source: string;
   theme?: GlyphTheme;
+  interactive?: boolean;
 }
 
-export default function GlyphPreview({ source, theme: customTheme }: GlyphPreviewProps) {
+export default function GlyphPreview({
+  source,
+  theme: customTheme,
+  interactive,
+}: GlyphPreviewProps) {
   const starlightTheme = useStarlightTheme();
+  const { events, addEvent, clearEvents } = useInteractionLog();
+
+  const onInteractionRef = useRef<(event: InteractionEvent) => void>(addEvent);
+  onInteractionRef.current = addEvent;
+
+  const stableOnInteraction = useCallback((event: InteractionEvent) => {
+    onInteractionRef.current(event);
+  }, []);
 
   const runtime = useMemo(
     () =>
       createGlyphRuntime({
         theme: customTheme ?? starlightTheme,
         components: allComponents,
+        ...(interactive ? { onInteraction: stableOnInteraction } : {}),
       }),
-    [customTheme, starlightTheme],
+    [customTheme, starlightTheme, interactive, stableOnInteraction],
   );
 
   const { ir, error } = useMemo(() => {
@@ -118,6 +134,7 @@ export default function GlyphPreview({ source, theme: customTheme }: GlyphPrevie
       ) : ir ? (
         <GlyphDocument ir={ir} />
       ) : null}
+      {interactive && <EventLog events={events} onClear={clearEvents} />}
     </div>
   );
 }

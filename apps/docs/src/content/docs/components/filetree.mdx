@@ -11,6 +11,7 @@ The **FileTree** component renders interactive hierarchical file trees with coll
 
 export const basicExample = `
 \`\`\`ui:filetree
+interactive: true
 root: my-project
 defaultExpanded: true
 tree:
@@ -29,7 +30,7 @@ tree:
 \`\`\`
 `;
 
-<GlyphPreview client:only="react" source={basicExample} />
+<GlyphPreview client:only="react" source={basicExample} interactive />
 
 ## Collapsed by default
 
