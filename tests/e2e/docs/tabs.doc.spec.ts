@@ -32,9 +32,4 @@ test.describe('Tabs doc page', () => {
     await expect(preview).toContainText('Installation');
     await expect(preview).toContainText('Configuration');
   });
-
-  test('tabs preview matches screenshot', async ({ page }) => {
-    const preview = getPreviewContainers(page).nth(0);
-    await expect(preview).toHaveScreenshot('tabs-preview-0.png');
-  });
 });

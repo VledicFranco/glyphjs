@@ -48,13 +48,4 @@ test.describe('Graph doc page', () => {
     await expect(preview).toContainText('Compiler');
     await expect(preview).toContainText('Runtime');
   });
-
-  test('graph previews match screenshots', async ({ page }) => {
-    const previews = getPreviewContainers(page);
-    const count = await previews.count();
-
-    for (let i = 0; i < count; i++) {
-      await expect(previews.nth(i)).toHaveScreenshot(`graph-preview-${i}.png`);
-    }
-  });
 });

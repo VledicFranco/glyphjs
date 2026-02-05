@@ -41,10 +41,10 @@ test.describe('Accordion', () => {
 
   test('all open story has every section expanded', async ({ page }) => {
     await page.goto(storyUrl('components-accordion--all-open'));
+    await expect(page.locator('[role="region"]')).toBeVisible();
     const details = page.locator('details');
-    const count = await details.count();
-    expect(count).toBe(3);
-    for (let i = 0; i < count; i++) {
+    await expect(details).toHaveCount(3);
+    for (let i = 0; i < 3; i++) {
       await expect(details.nth(i)).toHaveAttribute('open', '');
     }
   });

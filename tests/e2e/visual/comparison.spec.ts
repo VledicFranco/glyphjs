@@ -13,8 +13,10 @@ test.describe('Comparison', () => {
 
   test('two options story renders a table with two columns', async ({ page }) => {
     await page.goto(storyUrl('components-comparison--two-options'));
-    await expect(page.locator('text=SQL')).toBeVisible();
-    await expect(page.locator('text=NoSQL')).toBeVisible();
+    await expect(page.locator('[role="region"]')).toBeVisible();
+    // Check that the grid has 2 option column headers (plus Feature header = 3 total)
+    const colHeaders = page.locator('th[scope="col"]');
+    await expect(colHeaders).toHaveCount(3);
     const grid = page.locator('[role="grid"]');
     await expect(grid).toBeVisible();
   });

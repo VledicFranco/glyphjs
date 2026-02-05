@@ -282,7 +282,7 @@ export function App() {
         </div>
 
         {/* Preview pane */}
-        <div style={styles.previewPane(dark)}>
+        <div style={styles.previewPane(dark)} data-testid="rendered-output">
           <div style={{ ...styles.paneLabel(dark), margin: '-16px -16px 16px -16px' }}>
             Rendered Output
           </div>

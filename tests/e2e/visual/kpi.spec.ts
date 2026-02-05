@@ -45,7 +45,9 @@ test.describe('Kpi', () => {
 
   test('trend arrows are hidden from assistive technology', async ({ page }) => {
     await page.goto(storyUrl('components-kpi--default'));
+    await expect(page.locator('[role="region"]')).toBeVisible();
     const hiddenArrows = page.locator('[role="group"] [aria-hidden="true"]');
+    await expect(hiddenArrows.first()).toBeVisible();
     const count = await hiddenArrows.count();
     expect(count).toBeGreaterThan(0);
   });

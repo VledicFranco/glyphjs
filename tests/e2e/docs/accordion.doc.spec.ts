@@ -25,7 +25,9 @@ test.describe('Accordion doc page', () => {
     const preview = getPreviewContainers(page).nth(0);
     await expect(preview).toContainText('Frequently Asked Questions');
     await expect(preview).toContainText('What is GlyphJS?');
-    const details = preview.locator('details');
+    // Find details elements within the accordion region (not the page's <details> for source code)
+    const accordion = preview.locator('[role="region"]');
+    const details = accordion.locator('details');
     await expect(details).toHaveCount(3);
   });
 

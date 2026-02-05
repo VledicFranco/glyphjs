@@ -9,7 +9,7 @@ import {
 test.describe('Card docs page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('card'));
-    await waitForAllPreviews(page, 3);
+    await waitForAllPreviews(page, 4);
   });
 
   test('loads card documentation', async ({ page }) => {

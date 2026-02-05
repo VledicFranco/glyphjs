@@ -10,9 +10,10 @@ test.describe('Card component', () => {
 
   test('default story renders card titles', async ({ page }) => {
     await page.goto(storyUrl('components-card--default'));
-    await expect(page.locator('text=Installation')).toBeVisible();
-    await expect(page.locator('text=Configuration')).toBeVisible();
-    await expect(page.locator('text=Deployment')).toBeVisible();
+    await expect(page.locator('[role="region"]')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Installation' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Configuration' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Deployment' })).toBeVisible();
   });
 
   test('outlined story renders with outlined variant', async ({ page }) => {

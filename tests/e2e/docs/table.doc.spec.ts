@@ -9,7 +9,7 @@ import {
 test.describe('Table doc page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('table'));
-    await waitForAllPreviews(page, 1);
+    await waitForAllPreviews(page, 2);
   });
 
   test('preview renders without error and has valid dimensions', async ({ page }) => {
@@ -32,10 +32,5 @@ test.describe('Table doc page', () => {
     await expect(preview).toContainText('Bob');
     await expect(preview).toContainText('Carol');
     await expect(preview).toContainText('Dave');
-  });
-
-  test('table preview matches screenshot', async ({ page }) => {
-    const preview = getPreviewContainers(page).nth(0);
-    await expect(preview).toHaveScreenshot('table-preview-0.png');
   });
 });

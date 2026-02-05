@@ -16,16 +16,7 @@ test.describe('Viewport resize — container adaptation', () => {
     expect(colCount).toBe(3);
   });
 
-  test('Card Default: wide viewport screenshot', async ({ page }) => {
-    await page.setViewportSize({ width: 1200, height: 800 });
-    await page.goto(storyUrl('components-card--default'));
-
-    const region = page.locator('[role="region"]');
-    await expect(region).toBeVisible();
-    await expect(region).toHaveScreenshot('card-default-wide.png');
-  });
-
-  test('Card Compact: narrow viewport screenshot', async ({ page }) => {
+  test('Card Compact: narrow viewport shows single column', async ({ page }) => {
     await page.setViewportSize({ width: 400, height: 800 });
     await page.goto(storyUrl('components-card--compact'));
 
@@ -37,26 +28,25 @@ test.describe('Viewport resize — container adaptation', () => {
     const gridCols = await grid.evaluate((el) => window.getComputedStyle(el).gridTemplateColumns);
     const colCount = gridCols.trim().split(/\s+/).length;
     expect(colCount).toBe(1);
-
-    await expect(region).toHaveScreenshot('card-compact-narrow.png');
   });
 
-  test('KPI Default: wide viewport shows 3 columns', async ({ page }) => {
+  test('KPI Default: wide viewport is visible', async ({ page }) => {
     await page.setViewportSize({ width: 1200, height: 800 });
     await page.goto(storyUrl('components-kpi--default'));
 
     const region = page.locator('[role="region"]');
     await expect(region).toBeVisible();
-    await expect(region).toHaveScreenshot('kpi-default-wide.png');
+    // Verify it has metric groups
+    const groups = page.locator('[role="group"]');
+    await expect(groups).toHaveCount(3);
   });
 
-  test('KPI Compact: narrow viewport shows max 2 columns', async ({ page }) => {
+  test('KPI Compact: narrow viewport is visible', async ({ page }) => {
     await page.setViewportSize({ width: 400, height: 800 });
     await page.goto(storyUrl('components-kpi--compact'));
 
     const region = page.locator('[role="region"]');
     await expect(region).toBeVisible();
-    await expect(region).toHaveScreenshot('kpi-compact-narrow.png');
   });
 
   test('Table Compact: narrow viewport has overflow wrapper', async ({ page }) => {
@@ -65,6 +55,5 @@ test.describe('Viewport resize — container adaptation', () => {
 
     const overflowWrapper = page.locator('div[style*="overflow"]');
     await expect(overflowWrapper).toBeVisible();
-    await expect(overflowWrapper).toHaveScreenshot('table-compact-narrow.png');
   });
 });

@@ -22,14 +22,18 @@ test.describe('Quiz component', () => {
 
   test('true-false story renders radio buttons', async ({ page }) => {
     await page.goto(storyUrl('components-quiz--true-false'));
+    await expect(page.locator('[role="region"]')).toBeVisible();
     const radios = page.locator('input[type="radio"]');
+    await expect(radios.first()).toBeVisible();
     const count = await radios.count();
     expect(count).toBeGreaterThanOrEqual(4);
   });
 
   test('multi-select story renders checkboxes', async ({ page }) => {
     await page.goto(storyUrl('components-quiz--multi-select'));
+    await expect(page.locator('[role="region"]')).toBeVisible();
     const checkboxes = page.locator('input[type="checkbox"]');
+    await expect(checkboxes.first()).toBeVisible();
     const count = await checkboxes.count();
     expect(count).toBeGreaterThanOrEqual(1);
   });

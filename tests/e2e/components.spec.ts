@@ -98,10 +98,10 @@ test.describe('Component Presets', () => {
   test('timeline preset renders timeline events', async ({ page }) => {
     await selectPreset(page, 'timeline');
 
-    const preview = page.locator('text=Rendered Output').locator('..');
-    // Verify timeline event content appears
-    await expect(preview.locator('text=Project Kickoff')).toBeVisible({ timeout: 5000 });
-    await expect(preview.locator('text=Parser & Compiler')).toBeVisible();
+    const preview = page.locator('[data-testid="rendered-output"]');
+    // Verify timeline event content appears - use first() to handle potential duplicates
+    await expect(preview.locator('text=Project Kickoff').first()).toBeVisible({ timeout: 5000 });
+    await expect(preview.locator('text=Parser & Compiler').first()).toBeVisible();
   });
 
   test('kitchenSink preset renders multiple component types', async ({ page }) => {

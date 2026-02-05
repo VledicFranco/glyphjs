@@ -9,7 +9,7 @@ import {
 test.describe('KPI doc page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('kpi'));
-    await waitForAllPreviews(page, 3);
+    await waitForAllPreviews(page, 4);
   });
 
   test('each preview renders without error and has valid dimensions', async ({ page }) => {

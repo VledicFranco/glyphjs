@@ -12,22 +12,29 @@ test.describe('CodeDiff', () => {
 
   test('additions only story shows added lines', async ({ page }) => {
     await page.goto(storyUrl('components-codediff--additions-only'));
+    await expect(page.locator('[role="region"]')).toBeVisible();
     const addedRows = page.locator('tr[aria-label="added"]');
+    await expect(addedRows.first()).toBeVisible();
     const count = await addedRows.count();
     expect(count).toBeGreaterThan(0);
   });
 
   test('deletions only story shows removed lines', async ({ page }) => {
     await page.goto(storyUrl('components-codediff--deletions-only'));
+    await expect(page.locator('[role="region"]')).toBeVisible();
     const removedRows = page.locator('tr[aria-label="removed"]');
+    await expect(removedRows.first()).toBeVisible();
     const count = await removedRows.count();
     expect(count).toBeGreaterThan(0);
   });
 
   test('mixed changes story shows both added and removed', async ({ page }) => {
     await page.goto(storyUrl('components-codediff--mixed-changes'));
+    await expect(page.locator('[role="region"]')).toBeVisible();
     const addedRows = page.locator('tr[aria-label="added"]');
     const removedRows = page.locator('tr[aria-label="removed"]');
+    await expect(addedRows.first()).toBeVisible();
+    await expect(removedRows.first()).toBeVisible();
     expect(await addedRows.count()).toBeGreaterThan(0);
     expect(await removedRows.count()).toBeGreaterThan(0);
   });
