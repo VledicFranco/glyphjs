@@ -1,8 +1,7 @@
 import { describe, it, expect } from 'vitest';
 import Ajv from 'ajv';
 import { readFileSync, readdirSync } from 'node:fs';
-import { join } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { join, resolve } from 'node:path';
 
 import {
   graphSchema,
@@ -39,8 +38,7 @@ import {
 
 // ─── Setup ───────────────────────────────────────────────────
 
-const __dirname = fileURLToPath(new URL('.', import.meta.url));
-const fixturesDir = join(__dirname, 'fixtures');
+const fixturesDir = resolve(process.cwd(), 'packages/schemas/src/__tests__/fixtures');
 
 const ajv = new Ajv({ strict: false });
 
