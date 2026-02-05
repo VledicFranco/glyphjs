@@ -1,0 +1,7 @@
+{
+  "question": "Which framework do you prefer?",
+  "options": ["React", "Vue", "Angular", "Svelte"],
+  "multiple": false,
+  "showResults": true,
+  "title": "Framework Poll"
+}

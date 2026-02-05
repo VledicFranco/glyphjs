@@ -1,0 +1,10 @@
+{
+  "title": "Code Review",
+  "labels": [
+    { "name": "Bug", "color": "#dc2626" },
+    { "name": "Unclear", "color": "#f59e0b" },
+    { "name": "Good", "color": "#16a34a" }
+  ],
+  "text": "function processData(input) {\n  var result = input.split(',');\n  eval(result[0]);\n  return result;\n}",
+  "annotations": [{ "start": 62, "end": 78, "label": "Bug", "note": "eval() is dangerous" }]
+}

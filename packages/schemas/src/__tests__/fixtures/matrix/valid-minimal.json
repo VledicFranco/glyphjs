@@ -1,0 +1,4 @@
+{
+  "columns": [{ "id": "c1", "label": "Criterion" }],
+  "rows": [{ "id": "r1", "label": "Option" }]
+}

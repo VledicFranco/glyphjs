@@ -1,0 +1,3 @@
+{
+  "fields": [{ "type": "text", "id": "name", "label": "Name" }]
+}

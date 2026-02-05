@@ -8,6 +8,14 @@ import {
   chartSchema,
   relationSchema,
   timelineSchema,
+  pollSchema,
+  ratingSchema,
+  rankerSchema,
+  sliderSchema,
+  matrixSchema,
+  formSchema,
+  kanbanSchema,
+  annotateSchema,
 } from '../index.js';
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -15,7 +23,10 @@ import {
 /**
  * Assert that safeParse fails for the given schema and data.
  */
-function expectFailure(schema: { safeParse: (data: unknown) => { success: boolean } }, data: unknown) {
+function expectFailure(
+  schema: { safeParse: (data: unknown) => { success: boolean } },
+  data: unknown,
+) {
   const result = schema.safeParse(data);
   expect(result.success).toBe(false);
 }
@@ -23,7 +34,10 @@ function expectFailure(schema: { safeParse: (data: unknown) => { success: boolea
 /**
  * Assert that safeParse succeeds for the given schema and data.
  */
-function expectSuccess(schema: { safeParse: (data: unknown) => { success: boolean } }, data: unknown) {
+function expectSuccess(
+  schema: { safeParse: (data: unknown) => { success: boolean } },
+  data: unknown,
+) {
   const result = schema.safeParse(data);
   expect(result.success).toBe(true);
 }
@@ -738,5 +752,423 @@ describe('timelineSchema negative tests', () => {
 
   it('rejects an array as input', () => {
     expectFailure(timelineSchema, [{ events: [] }]);
+  });
+});
+
+// ─── Poll Schema Negative Tests ────────────────────────────
+
+describe('pollSchema negative tests', () => {
+  it('rejects an empty object', () => {
+    expectFailure(pollSchema, {});
+  });
+
+  it('rejects when "question" is missing', () => {
+    expectFailure(pollSchema, { options: ['A', 'B'] });
+  });
+
+  it('rejects when "options" is missing', () => {
+    expectFailure(pollSchema, { question: 'Pick one' });
+  });
+
+  it('rejects when "options" has fewer than 2 items', () => {
+    expectFailure(pollSchema, { question: 'Pick one', options: ['Only'] });
+  });
+
+  it('rejects when "options" has more than 10 items', () => {
+    expectFailure(pollSchema, {
+      question: 'Pick one',
+      options: ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11'],
+    });
+  });
+
+  it('rejects when "question" is a number', () => {
+    expectFailure(pollSchema, { question: 42, options: ['A', 'B'] });
+  });
+
+  it('rejects when "options" contains non-strings', () => {
+    expectFailure(pollSchema, { question: 'Pick one', options: [1, 2] });
+  });
+
+  it('rejects when "multiple" is a string', () => {
+    expectFailure(pollSchema, { question: 'Pick one', options: ['A', 'B'], multiple: 'yes' });
+  });
+
+  it('rejects null as input', () => {
+    expectFailure(pollSchema, null);
+  });
+
+  it('accepts valid input with defaults', () => {
+    expectSuccess(pollSchema, { question: 'Pick one', options: ['A', 'B'] });
+  });
+});
+
+// ─── Rating Schema Negative Tests ──────────────────────────
+
+describe('ratingSchema negative tests', () => {
+  it('rejects an empty object', () => {
+    expectFailure(ratingSchema, {});
+  });
+
+  it('rejects when "items" is missing', () => {
+    expectFailure(ratingSchema, { title: 'Rate', scale: 5 });
+  });
+
+  it('rejects when "items" is empty', () => {
+    expectFailure(ratingSchema, { items: [] });
+  });
+
+  it('rejects when "scale" is below minimum (2)', () => {
+    expectFailure(ratingSchema, { items: [{ label: 'A' }], scale: 1 });
+  });
+
+  it('rejects when "scale" is above maximum (10)', () => {
+    expectFailure(ratingSchema, { items: [{ label: 'A' }], scale: 11 });
+  });
+
+  it('rejects an invalid "mode" value', () => {
+    expectFailure(ratingSchema, { items: [{ label: 'A' }], mode: 'emoji' });
+  });
+
+  it('rejects when items are missing "label"', () => {
+    expectFailure(ratingSchema, { items: [{ description: 'desc' }] });
+  });
+
+  it('rejects null as input', () => {
+    expectFailure(ratingSchema, null);
+  });
+
+  it('accepts valid minimal input', () => {
+    expectSuccess(ratingSchema, { items: [{ label: 'Quality' }] });
+  });
+});
+
+// ─── Ranker Schema Negative Tests ──────────────────────────
+
+describe('rankerSchema negative tests', () => {
+  it('rejects an empty object', () => {
+    expectFailure(rankerSchema, {});
+  });
+
+  it('rejects when "items" is missing', () => {
+    expectFailure(rankerSchema, { title: 'Rank' });
+  });
+
+  it('rejects when "items" has fewer than 2 entries', () => {
+    expectFailure(rankerSchema, { items: [{ id: 'a', label: 'A' }] });
+  });
+
+  it('rejects items missing "id"', () => {
+    expectFailure(rankerSchema, {
+      items: [{ label: 'A' }, { id: 'b', label: 'B' }],
+    });
+  });
+
+  it('rejects items missing "label"', () => {
+    expectFailure(rankerSchema, {
+      items: [{ id: 'a' }, { id: 'b', label: 'B' }],
+    });
+  });
+
+  it('rejects null as input', () => {
+    expectFailure(rankerSchema, null);
+  });
+
+  it('accepts valid input with 2 items', () => {
+    expectSuccess(rankerSchema, {
+      items: [
+        { id: 'a', label: 'A' },
+        { id: 'b', label: 'B' },
+      ],
+    });
+  });
+});
+
+// ─── Slider Schema Negative Tests ──────────────────────────
+
+describe('sliderSchema negative tests', () => {
+  it('rejects an empty object', () => {
+    expectFailure(sliderSchema, {});
+  });
+
+  it('rejects when "parameters" is missing', () => {
+    expectFailure(sliderSchema, { title: 'Slider' });
+  });
+
+  it('rejects when "parameters" is empty', () => {
+    expectFailure(sliderSchema, { parameters: [] });
+  });
+
+  it('rejects parameters missing "id"', () => {
+    expectFailure(sliderSchema, { parameters: [{ label: 'Volume' }] });
+  });
+
+  it('rejects parameters missing "label"', () => {
+    expectFailure(sliderSchema, { parameters: [{ id: 'vol' }] });
+  });
+
+  it('rejects an invalid "layout" value', () => {
+    expectFailure(sliderSchema, {
+      parameters: [{ id: 'vol', label: 'Volume' }],
+      layout: 'diagonal',
+    });
+  });
+
+  it('rejects when "step" is zero or negative', () => {
+    expectFailure(sliderSchema, {
+      parameters: [{ id: 'vol', label: 'Volume', step: 0 }],
+    });
+  });
+
+  it('rejects null as input', () => {
+    expectFailure(sliderSchema, null);
+  });
+
+  it('accepts valid minimal input', () => {
+    expectSuccess(sliderSchema, { parameters: [{ id: 'vol', label: 'Volume' }] });
+  });
+});
+
+// ─── Matrix Schema Negative Tests ──────────────────────────
+
+describe('matrixSchema negative tests', () => {
+  it('rejects an empty object', () => {
+    expectFailure(matrixSchema, {});
+  });
+
+  it('rejects when "columns" is missing', () => {
+    expectFailure(matrixSchema, { rows: [{ id: 'r1', label: 'Row' }] });
+  });
+
+  it('rejects when "rows" is missing', () => {
+    expectFailure(matrixSchema, { columns: [{ id: 'c1', label: 'Col' }] });
+  });
+
+  it('rejects when "columns" is empty', () => {
+    expectFailure(matrixSchema, {
+      columns: [],
+      rows: [{ id: 'r1', label: 'Row' }],
+    });
+  });
+
+  it('rejects when "rows" is empty', () => {
+    expectFailure(matrixSchema, {
+      columns: [{ id: 'c1', label: 'Col' }],
+      rows: [],
+    });
+  });
+
+  it('rejects when "scale" is below minimum (2)', () => {
+    expectFailure(matrixSchema, {
+      columns: [{ id: 'c1', label: 'Col' }],
+      rows: [{ id: 'r1', label: 'Row' }],
+      scale: 1,
+    });
+  });
+
+  it('rejects when "scale" is above maximum (10)', () => {
+    expectFailure(matrixSchema, {
+      columns: [{ id: 'c1', label: 'Col' }],
+      rows: [{ id: 'r1', label: 'Row' }],
+      scale: 11,
+    });
+  });
+
+  it('rejects columns with zero weight', () => {
+    expectFailure(matrixSchema, {
+      columns: [{ id: 'c1', label: 'Col', weight: 0 }],
+      rows: [{ id: 'r1', label: 'Row' }],
+    });
+  });
+
+  it('rejects null as input', () => {
+    expectFailure(matrixSchema, null);
+  });
+
+  it('accepts valid minimal input', () => {
+    expectSuccess(matrixSchema, {
+      columns: [{ id: 'c1', label: 'Col' }],
+      rows: [{ id: 'r1', label: 'Row' }],
+    });
+  });
+});
+
+// ─── Form Schema Negative Tests ────────────────────────────
+
+describe('formSchema negative tests', () => {
+  it('rejects an empty object', () => {
+    expectFailure(formSchema, {});
+  });
+
+  it('rejects when "fields" is missing', () => {
+    expectFailure(formSchema, { title: 'Form' });
+  });
+
+  it('rejects when "fields" is empty', () => {
+    expectFailure(formSchema, { fields: [] });
+  });
+
+  it('rejects fields with invalid "type"', () => {
+    expectFailure(formSchema, {
+      fields: [{ type: 'date', id: 'dob', label: 'Date of Birth' }],
+    });
+  });
+
+  it('rejects text fields missing "id"', () => {
+    expectFailure(formSchema, {
+      fields: [{ type: 'text', label: 'Name' }],
+    });
+  });
+
+  it('rejects text fields missing "label"', () => {
+    expectFailure(formSchema, {
+      fields: [{ type: 'text', id: 'name' }],
+    });
+  });
+
+  it('rejects select fields missing "options"', () => {
+    expectFailure(formSchema, {
+      fields: [{ type: 'select', id: 'choice', label: 'Choice' }],
+    });
+  });
+
+  it('rejects textarea fields with rows > 20', () => {
+    expectFailure(formSchema, {
+      fields: [{ type: 'textarea', id: 'notes', label: 'Notes', rows: 25 }],
+    });
+  });
+
+  it('rejects null as input', () => {
+    expectFailure(formSchema, null);
+  });
+
+  it('accepts valid minimal input', () => {
+    expectSuccess(formSchema, {
+      fields: [{ type: 'text', id: 'name', label: 'Name' }],
+    });
+  });
+});
+
+// ─── Kanban Schema Negative Tests ──────────────────────────
+
+describe('kanbanSchema negative tests', () => {
+  it('rejects an empty object', () => {
+    expectFailure(kanbanSchema, {});
+  });
+
+  it('rejects when "columns" is missing', () => {
+    expectFailure(kanbanSchema, { title: 'Board' });
+  });
+
+  it('rejects when "columns" is empty', () => {
+    expectFailure(kanbanSchema, { columns: [] });
+  });
+
+  it('rejects columns missing "id"', () => {
+    expectFailure(kanbanSchema, {
+      columns: [{ title: 'To Do' }],
+    });
+  });
+
+  it('rejects columns missing "title"', () => {
+    expectFailure(kanbanSchema, {
+      columns: [{ id: 'todo' }],
+    });
+  });
+
+  it('rejects cards missing "id"', () => {
+    expectFailure(kanbanSchema, {
+      columns: [{ id: 'todo', title: 'To Do', cards: [{ title: 'Task' }] }],
+    });
+  });
+
+  it('rejects cards missing "title"', () => {
+    expectFailure(kanbanSchema, {
+      columns: [{ id: 'todo', title: 'To Do', cards: [{ id: 'task1' }] }],
+    });
+  });
+
+  it('rejects an invalid card "priority" value', () => {
+    expectFailure(kanbanSchema, {
+      columns: [
+        {
+          id: 'todo',
+          title: 'To Do',
+          cards: [{ id: 'task1', title: 'Task', priority: 'critical' }],
+        },
+      ],
+    });
+  });
+
+  it('rejects null as input', () => {
+    expectFailure(kanbanSchema, null);
+  });
+
+  it('accepts valid column with no cards', () => {
+    expectSuccess(kanbanSchema, {
+      columns: [{ id: 'todo', title: 'To Do' }],
+    });
+  });
+});
+
+// ─── Annotate Schema Negative Tests ────────────────────────
+
+describe('annotateSchema negative tests', () => {
+  it('rejects an empty object', () => {
+    expectFailure(annotateSchema, {});
+  });
+
+  it('rejects when "text" is missing', () => {
+    expectFailure(annotateSchema, {
+      labels: [{ name: 'Bug', color: '#dc2626' }],
+    });
+  });
+
+  it('rejects when "labels" is missing', () => {
+    expectFailure(annotateSchema, { text: 'Some text' });
+  });
+
+  it('rejects when "labels" is empty', () => {
+    expectFailure(annotateSchema, { text: 'Some text', labels: [] });
+  });
+
+  it('rejects labels missing "name"', () => {
+    expectFailure(annotateSchema, {
+      text: 'Some text',
+      labels: [{ color: '#dc2626' }],
+    });
+  });
+
+  it('rejects labels missing "color"', () => {
+    expectFailure(annotateSchema, {
+      text: 'Some text',
+      labels: [{ name: 'Bug' }],
+    });
+  });
+
+  it('rejects annotations with negative "start"', () => {
+    expectFailure(annotateSchema, {
+      text: 'Some text',
+      labels: [{ name: 'Bug', color: '#dc2626' }],
+      annotations: [{ start: -1, end: 5, label: 'Bug' }],
+    });
+  });
+
+  it('rejects annotations missing "label"', () => {
+    expectFailure(annotateSchema, {
+      text: 'Some text',
+      labels: [{ name: 'Bug', color: '#dc2626' }],
+      annotations: [{ start: 0, end: 5 }],
+    });
+  });
+
+  it('rejects null as input', () => {
+    expectFailure(annotateSchema, null);
+  });
+
+  it('accepts valid minimal input', () => {
+    expectSuccess(annotateSchema, {
+      text: 'Some text',
+      labels: [{ name: 'Note', color: '#3b82f6' }],
+    });
   });
 });

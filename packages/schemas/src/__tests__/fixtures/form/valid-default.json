@@ -1,0 +1,25 @@
+{
+  "title": "Project Setup",
+  "description": "Tell us about your project",
+  "submitLabel": "Create Project",
+  "fields": [
+    { "type": "text", "id": "name", "label": "Project Name", "required": true },
+    {
+      "type": "select",
+      "id": "framework",
+      "label": "Framework",
+      "options": ["React", "Vue", "Angular"]
+    },
+    {
+      "type": "range",
+      "id": "budget",
+      "label": "Budget",
+      "min": 0,
+      "max": 50000,
+      "step": 1000,
+      "unit": "$"
+    },
+    { "type": "checkbox", "id": "typescript", "label": "Use TypeScript", "default": true },
+    { "type": "textarea", "id": "description", "label": "Description", "rows": 4 }
+  ]
+}

@@ -77,33 +77,41 @@ export function Matrix({
   const handleChange = useCallback(
     (rowId: string, columnId: string, value: number): void => {
       const clamped = Math.max(0, Math.min(scale, value));
-      const newValues = { ...values };
-      if (!newValues[rowId]) newValues[rowId] = {};
-      newValues[rowId] = { ...newValues[rowId], [columnId]: clamped };
-      setValues(newValues);
+      setValues((prevValues) => {
+        const newValues = Object.fromEntries(
+          Object.entries(prevValues).map(([k, v]) => [k, { ...v }]),
+        );
+        if (!newValues[rowId]) newValues[rowId] = {};
+        newValues[rowId] = { ...newValues[rowId], [columnId]: clamped };
 
-      const row = rows.find((r) => r.id === rowId);
-      const col = columns.find((c) => c.id === columnId);
+        const row = rows.find((r) => r.id === rowId);
+        const col = columns.find((c) => c.id === columnId);
 
-      if (onInteraction && row && col) {
-        onInteraction({
-          kind: 'matrix-change',
-          timestamp: new Date().toISOString(),
-          blockId: block.id,
-          blockType: block.type,
-          payload: {
-            rowId,
-            rowLabel: row.label,
-            columnId,
-            columnLabel: col.label,
-            value: clamped,
-            allValues: newValues,
-            weightedTotals: computeWeightedTotals(rows, columns, newValues),
-          },
-        });
-      }
+        if (onInteraction && row && col) {
+          const payloadValues = Object.fromEntries(
+            Object.entries(newValues).map(([k, v]) => [k, { ...v }]),
+          );
+          onInteraction({
+            kind: 'matrix-change',
+            timestamp: new Date().toISOString(),
+            blockId: block.id,
+            blockType: block.type,
+            payload: {
+              rowId,
+              rowLabel: row.label,
+              columnId,
+              columnLabel: col.label,
+              value: clamped,
+              allValues: payloadValues,
+              weightedTotals: computeWeightedTotals(rows, columns, newValues),
+            },
+          });
+        }
+
+        return newValues;
+      });
     },
-    [values, scale, rows, columns, block.id, block.type, onInteraction],
+    [scale, rows, columns, block.id, block.type, onInteraction],
   );
 
   const totals = computeWeightedTotals(rows, columns, values);

@@ -1,0 +1,9 @@
+{
+  "title": "Rank by importance",
+  "items": [
+    { "id": "auth", "label": "Authentication", "description": "User login and session management" },
+    { "id": "dashboard", "label": "Dashboard" },
+    { "id": "api", "label": "API Layer" },
+    { "id": "docs", "label": "Documentation" }
+  ]
+}

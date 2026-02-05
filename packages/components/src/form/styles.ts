@@ -39,7 +39,7 @@ export const labelStyle: CSSProperties = {
 };
 
 export const requiredStyle: CSSProperties = {
-  color: '#dc2626',
+  color: 'var(--glyph-form-error, #dc2626)',
   marginLeft: '0.25rem',
 };
 
@@ -91,6 +91,6 @@ export const submitButtonStyle: CSSProperties = {
 export function invalidStyle(isInvalid: boolean): CSSProperties {
   if (!isInvalid) return {};
   return {
-    borderColor: '#dc2626',
+    borderColor: 'var(--glyph-form-error, #dc2626)',
   };
 }

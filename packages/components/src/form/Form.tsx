@@ -302,7 +302,7 @@ export function Form({ data, block, onInteraction }: GlyphComponentProps<FormDat
             id: f.id,
             label: f.label,
             type: f.type,
-            value: values[f.id] ?? '',
+            value: values[f.id] !== undefined ? values[f.id] : '',
           })),
         },
       });

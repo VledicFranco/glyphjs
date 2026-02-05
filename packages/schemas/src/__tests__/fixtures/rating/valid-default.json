@@ -1,0 +1,14 @@
+{
+  "title": "Rate these features",
+  "scale": 5,
+  "mode": "star",
+  "labels": {
+    "low": "Poor",
+    "high": "Excellent"
+  },
+  "items": [
+    { "label": "Performance", "description": "Response time and throughput" },
+    { "label": "Security" },
+    { "label": "Developer Experience" }
+  ]
+}

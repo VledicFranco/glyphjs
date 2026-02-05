@@ -1,0 +1,30 @@
+{
+  "title": "Sprint Board",
+  "columns": [
+    {
+      "id": "todo",
+      "title": "To Do",
+      "cards": [
+        {
+          "id": "auth",
+          "title": "Implement Auth",
+          "description": "OAuth2 + JWT tokens",
+          "priority": "high",
+          "tags": ["backend", "security"]
+        },
+        { "id": "dashboard", "title": "Build Dashboard", "priority": "medium" }
+      ]
+    },
+    {
+      "id": "progress",
+      "title": "In Progress",
+      "limit": 3,
+      "cards": [{ "id": "api", "title": "API Layer", "priority": "high" }]
+    },
+    {
+      "id": "done",
+      "title": "Done",
+      "cards": [{ "id": "setup", "title": "Project Setup", "priority": "low" }]
+    }
+  ]
+}

@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "id": "a", "label": "Option A" },
+    { "id": "b", "label": "Option B" }
+  ]
+}

@@ -99,6 +99,7 @@ const LIGHT_THEME_VARS: Record<string, string> = {
   '--glyph-annotate-highlight-opacity': '0.3',
   '--glyph-annotate-label-bg': '#f4f6fa',
   '--glyph-annotate-sidebar-bg': '#e8ecf3',
+  '--glyph-form-error': '#dc2626',
 };
 
 const DARK_THEME_VARS: Record<string, string> = {
@@ -204,6 +205,7 @@ const DARK_THEME_VARS: Record<string, string> = {
   '--glyph-annotate-highlight-opacity': '0.3',
   '--glyph-annotate-label-bg': '#162038',
   '--glyph-annotate-sidebar-bg': '#0f1526',
+  '--glyph-form-error': '#f87171',
 };
 
 function ThemeWrapper({ children, theme }: { children: React.ReactNode; theme: 'light' | 'dark' }) {

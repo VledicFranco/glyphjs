@@ -171,15 +171,15 @@ export function Kanban({
               </span>
             </div>
 
-            <div role="listbox" aria-label={col.title}>
+            <div role="list" aria-label={col.title}>
               {col.cards.map((card, cardIndex) => {
                 const isGrabbed = grabbed !== null && grabbed.cardId === card.id;
 
                 return (
                   <div
                     key={card.id}
-                    role="option"
-                    aria-selected={isGrabbed}
+                    role="listitem"
+                    aria-grabbed={isGrabbed}
                     aria-label={`${card.title}${card.priority ? `, ${card.priority} priority` : ''}`}
                     tabIndex={0}
                     style={cardStyle(isGrabbed, card.priority)}

@@ -45,13 +45,13 @@ describe('Kanban', () => {
     expect(screen.getByText('backend')).toBeInTheDocument();
   });
 
-  it('ARIA: listbox columns, option cards', () => {
+  it('ARIA: list columns, listitem cards', () => {
     const props = createMockProps<KanbanData>(defaultData, 'ui:kanban');
     render(<Kanban {...props} />);
-    const listboxes = screen.getAllByRole('listbox');
-    expect(listboxes).toHaveLength(3);
-    const options = screen.getAllByRole('option');
-    expect(options).toHaveLength(2);
+    const lists = screen.getAllByRole('list');
+    expect(lists).toHaveLength(3);
+    const listitems = screen.getAllByRole('listitem');
+    expect(listitems).toHaveLength(2);
   });
 
   it('keyboard: Space grabs, ArrowRight moves to next column', () => {
@@ -59,7 +59,7 @@ describe('Kanban', () => {
     const props = createMockProps<KanbanData>(defaultData, 'ui:kanban');
     render(<Kanban {...props} onInteraction={onInteraction} />);
 
-    const cards = screen.getAllByRole('option');
+    const cards = screen.getAllByRole('listitem');
     // Grab first card
     fireEvent.keyDown(cards[0], { key: ' ' });
     // Move right to "In Progress"
@@ -89,7 +89,7 @@ describe('Kanban', () => {
   it('works without onInteraction', () => {
     const props = createMockProps<KanbanData>(defaultData, 'ui:kanban');
     render(<Kanban {...props} />);
-    const cards = screen.getAllByRole('option');
+    const cards = screen.getAllByRole('listitem');
     fireEvent.keyDown(cards[0], { key: ' ' });
     expect(() => fireEvent.keyDown(cards[0], { key: 'ArrowRight' })).not.toThrow();
   });

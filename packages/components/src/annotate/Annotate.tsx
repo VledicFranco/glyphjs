@@ -102,11 +102,11 @@ export function Annotate({
     const selectedText = selection.toString();
     if (!selectedText.trim()) return;
 
-    // Find the text offset by walking through the text node
-    const fullText = text;
-    const startOffset = fullText.indexOf(selectedText);
-    if (startOffset === -1) return;
-
+    // Compute the actual offset from the text container using the Range API
+    const preCaretRange = document.createRange();
+    preCaretRange.selectNodeContents(textRef.current);
+    preCaretRange.setEnd(range.startContainer, range.startOffset);
+    const startOffset = preCaretRange.toString().length;
     const endOffset = startOffset + selectedText.length;
 
     const rect = range.getBoundingClientRect();
@@ -117,7 +117,7 @@ export function Annotate({
       x: rect.left - containerRect.left,
       y: rect.bottom - containerRect.top + 4,
     });
-  }, [text]);
+  }, []);
 
   const selectLabel = (labelName: string): void => {
     if (!pendingSelection) return;

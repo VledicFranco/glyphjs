@@ -1,0 +1,17 @@
+{
+  "title": "Configure preferences",
+  "layout": "vertical",
+  "parameters": [
+    {
+      "id": "performance",
+      "label": "Performance",
+      "min": 0,
+      "max": 100,
+      "step": 5,
+      "value": 50,
+      "unit": "%"
+    },
+    { "id": "cost", "label": "Budget", "min": 0, "max": 10000, "step": 100, "unit": "$" },
+    { "id": "quality", "label": "Quality", "min": 1, "max": 10, "step": 1, "value": 7 }
+  ]
+}

@@ -29,12 +29,12 @@ describe('Ranker', () => {
     expect(screen.getByText('First item')).toBeInTheDocument();
   });
 
-  it('has listbox and option ARIA roles', () => {
+  it('has list and listitem ARIA roles', () => {
     const props = createMockProps<RankerData>({ items: defaultItems }, 'ui:ranker');
     render(<Ranker {...props} />);
-    expect(screen.getByRole('listbox')).toBeInTheDocument();
-    const options = screen.getAllByRole('option');
-    expect(options).toHaveLength(3);
+    expect(screen.getByRole('list', { name: 'Rank items' })).toBeInTheDocument();
+    const listitems = screen.getAllByRole('listitem');
+    expect(listitems).toHaveLength(3);
   });
 
   it('keyboard: Space grabs, ArrowDown moves, Space drops', () => {
@@ -42,11 +42,11 @@ describe('Ranker', () => {
     const props = createMockProps<RankerData>({ items: defaultItems }, 'ui:ranker');
     render(<Ranker {...props} onInteraction={onInteraction} />);
 
-    const options = screen.getAllByRole('option');
+    const listitems = screen.getAllByRole('listitem');
     // Grab first item
-    fireEvent.keyDown(options[0], { key: ' ' });
+    fireEvent.keyDown(listitems[0], { key: ' ' });
     // Move down
-    fireEvent.keyDown(options[0], { key: 'ArrowDown' });
+    fireEvent.keyDown(listitems[0], { key: 'ArrowDown' });
 
     expect(onInteraction).toHaveBeenCalledOnce();
     const event = onInteraction.mock.calls[0][0];
@@ -59,11 +59,11 @@ describe('Ranker', () => {
   it('Escape cancels grab', () => {
     const props = createMockProps<RankerData>({ items: defaultItems }, 'ui:ranker');
     render(<Ranker {...props} />);
-    const options = screen.getAllByRole('option');
-    fireEvent.keyDown(options[0], { key: ' ' });
-    expect(options[0]).toHaveAttribute('aria-selected', 'true');
-    fireEvent.keyDown(options[0], { key: 'Escape' });
-    expect(options[0]).toHaveAttribute('aria-selected', 'false');
+    const listitems = screen.getAllByRole('listitem');
+    fireEvent.keyDown(listitems[0], { key: ' ' });
+    expect(listitems[0]).toHaveAttribute('aria-grabbed', 'true');
+    fireEvent.keyDown(listitems[0], { key: 'Escape' });
+    expect(listitems[0]).toHaveAttribute('aria-grabbed', 'false');
   });
 
   it('renders title when provided', () => {
@@ -79,8 +79,8 @@ describe('Ranker', () => {
   it('works without onInteraction', () => {
     const props = createMockProps<RankerData>({ items: defaultItems }, 'ui:ranker');
     render(<Ranker {...props} />);
-    const options = screen.getAllByRole('option');
-    fireEvent.keyDown(options[0], { key: ' ' });
-    expect(() => fireEvent.keyDown(options[0], { key: 'ArrowDown' })).not.toThrow();
+    const listitems = screen.getAllByRole('listitem');
+    fireEvent.keyDown(listitems[0], { key: ' ' });
+    expect(() => fireEvent.keyDown(listitems[0], { key: 'ArrowDown' })).not.toThrow();
   });
 });

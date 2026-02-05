@@ -26,6 +26,14 @@ import {
   quizSchema,
   cardSchema,
   infographicSchema,
+  pollSchema,
+  ratingSchema,
+  rankerSchema,
+  sliderSchema,
+  matrixSchema,
+  formSchema,
+  kanbanSchema,
+  annotateSchema,
   getJsonSchema,
 } from '../index.js';
 
@@ -59,6 +67,14 @@ const zodSchemas: Record<string, typeof calloutSchema> = {
   quiz: quizSchema,
   card: cardSchema,
   infographic: infographicSchema,
+  poll: pollSchema,
+  rating: ratingSchema,
+  ranker: rankerSchema,
+  slider: sliderSchema,
+  matrix: matrixSchema,
+  form: formSchema,
+  kanban: kanbanSchema,
+  annotate: annotateSchema,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -98,6 +114,14 @@ const components = [
   'quiz',
   'card',
   'infographic',
+  'poll',
+  'rating',
+  'ranker',
+  'slider',
+  'matrix',
+  'form',
+  'kanban',
+  'annotate',
 ] as const;
 
 describe('Schema dual validation conformance', () => {

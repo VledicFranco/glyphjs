@@ -1,0 +1,15 @@
+{
+  "title": "Framework Evaluation",
+  "scale": 5,
+  "showTotals": true,
+  "columns": [
+    { "id": "perf", "label": "Performance", "weight": 2 },
+    { "id": "dx", "label": "DX", "weight": 1.5 },
+    { "id": "eco", "label": "Ecosystem", "weight": 1 }
+  ],
+  "rows": [
+    { "id": "react", "label": "React" },
+    { "id": "vue", "label": "Vue" },
+    { "id": "svelte", "label": "Svelte" }
+  ]
+}

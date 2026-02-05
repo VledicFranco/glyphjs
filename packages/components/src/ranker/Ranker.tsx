@@ -41,35 +41,38 @@ export function Ranker({
   const moveItem = useCallback(
     (fromIndex: number, toIndex: number): void => {
       if (fromIndex === toIndex) return;
-      const newItems = [...items];
-      const [moved] = newItems.splice(fromIndex, 1);
-      if (!moved) return;
-      newItems.splice(toIndex, 0, moved);
-      setItems(newItems);
+      setItems((prevItems) => {
+        const newItems = [...prevItems];
+        const [moved] = newItems.splice(fromIndex, 1);
+        if (!moved) return prevItems;
+        newItems.splice(toIndex, 0, moved);
 
-      if (onInteraction) {
-        onInteraction({
-          kind: 'ranker-reorder',
-          timestamp: new Date().toISOString(),
-          blockId: block.id,
-          blockType: block.type,
-          payload: {
-            orderedItems: newItems.map((item, i) => ({
-              id: item.id,
-              label: item.label,
-              rank: i + 1,
-            })),
-            movedItem: {
-              id: moved.id,
-              label: moved.label,
-              fromRank: fromIndex + 1,
-              toRank: toIndex + 1,
+        if (onInteraction) {
+          onInteraction({
+            kind: 'ranker-reorder',
+            timestamp: new Date().toISOString(),
+            blockId: block.id,
+            blockType: block.type,
+            payload: {
+              orderedItems: newItems.map((item, i) => ({
+                id: item.id,
+                label: item.label,
+                rank: i + 1,
+              })),
+              movedItem: {
+                id: moved.id,
+                label: moved.label,
+                fromRank: fromIndex + 1,
+                toRank: toIndex + 1,
+              },
             },
-          },
-        });
-      }
+          });
+        }
+
+        return newItems;
+      });
     },
-    [items, block.id, block.type, onInteraction],
+    [block.id, block.type, onInteraction],
   );
 
   const handleKeyDown = (e: KeyboardEvent<HTMLLIElement>, index: number): void => {
@@ -101,12 +104,12 @@ export function Ranker({
     <div id={baseId} role="region" aria-label={title ?? 'Ranker'} style={containerStyle}>
       {title && <div style={headerStyle}>{title}</div>}
 
-      <ul role="listbox" aria-label={title ?? 'Rank items'} style={listStyle}>
+      <ul role="list" aria-label={title ?? 'Rank items'} style={listStyle}>
         {items.map((item, index) => (
           <li
             key={item.id}
-            role="option"
-            aria-selected={grabbedIndex === index}
+            role="listitem"
+            aria-grabbed={grabbedIndex === index}
             aria-label={`${item.label}, rank ${String(index + 1)}`}
             tabIndex={0}
             style={itemStyle(false, grabbedIndex === index)}
