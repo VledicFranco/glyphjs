@@ -80,6 +80,28 @@ Supported content inside tabs:
 
 Nested `ui:` components inside tab content are **not supported in v1** and are deferred to v2.
 
+## Interaction events
+
+When `interactive: true` is set, the tabs component emits a `tab-select` event each time the user switches tabs (via click or keyboard).
+
+````markdown
+```ui:tabs
+interactive: true
+tabs:
+  - label: Overview
+    content: Overview content here.
+  - label: Details
+    content: Detailed content here.
+```
+````
+
+**Event kind:** `tab-select`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `tabIndex` | `number` | 0-based index of the selected tab. |
+| `tabLabel` | `string` | The label text of the selected tab. |
+
 ## Accessibility
 
 - Tabs implement the WAI-ARIA Tabs pattern (`role="tablist"`, `role="tab"`, `role="tabpanel"`).

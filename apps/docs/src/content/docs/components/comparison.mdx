@@ -197,6 +197,32 @@ features:
 
 Value matching is case-insensitive (`Yes` = `yes` = `YES`).
 
+## Interaction events
+
+When `interactive: true` is set, the comparison table emits a `comparison-select` event when the user clicks an option column header.
+
+````markdown
+```ui:comparison
+interactive: true
+title: SQL vs NoSQL
+options:
+  - name: SQL
+  - name: NoSQL
+features:
+  - name: Schema
+    values: [yes, no]
+  - name: Scaling
+    values: [partial, yes]
+```
+````
+
+**Event kind:** `comparison-select`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `optionIndex` | `number` | 0-based index of the clicked option column. |
+| `optionName` | `string` | The name of the clicked option. |
+
 ## Accessibility
 
 - Rendered as a `<table>` with `role="grid"` for structured data navigation.

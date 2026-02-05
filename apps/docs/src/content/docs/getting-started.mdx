@@ -178,12 +178,31 @@ const runtime = createGlyphRuntime({
 runtime.setTheme("light");
 ```
 
+## Handling Interaction Events
+
+Components can emit events when users interact with them — clicking chart data points, sorting tables, answering quiz questions, and more. Enable this by adding `interactive: true` to a block's YAML and providing an `onInteraction` callback:
+
+```typescript
+import { createGlyphRuntime, debounceInteractions } from "@glyphjs/runtime";
+
+const runtime = createGlyphRuntime({
+  components: defaultComponents,
+  theme: "light",
+  onInteraction: debounceInteractions((event) => {
+    console.log(event.kind, event.blockId, event.payload);
+  }, 300),
+});
+```
+
+See the [Authoring Guide](/glyphjs/authoring-guide/#interaction-events) for the full list of supported events and payload structures.
+
 ## Next Steps
 
 Now that you have a working Glyph JS setup, explore the rest of the documentation:
 
 - [**Markdown Syntax**](/glyphjs/authoring-guide) — Learn about all supported Markdown features and the `ui:` block authoring syntax.
 - [**Components**](/glyphjs/components) — Browse all 21 built-in components for content, data, diagrams, and interactivity.
+- [**Interaction Events**](/glyphjs/authoring-guide/#interaction-events) — Enable event emission from interactive blocks for analytics or LLM integration.
 - [**IR Spec**](/glyphjs/reference/ir-spec) — Understand the structure of the compiled Intermediate Representation.
 - [**Plugin API**](/glyphjs/reference/plugin-api) — Register custom components and extend the runtime.
 - [**Theming**](/glyphjs/reference/theming) — Customize colors, typography, and spacing across your documents.

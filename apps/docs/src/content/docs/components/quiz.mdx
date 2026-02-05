@@ -203,6 +203,34 @@ questions:
 | `answer` | `number[]` | Yes | Array of 0-based indices of correct options. |
 | `explanation` | `string` | No | Explanation shown after submitting. |
 
+## Interaction events
+
+When `interactive: true` is set, the quiz emits a `quiz-submit` event each time the user submits an answer.
+
+````markdown
+```ui:quiz
+interactive: true
+title: Quick Check
+questions:
+  - type: multiple-choice
+    question: What does HTML stand for?
+    options:
+      - Hyper Text Markup Language
+      - High Tech Modern Language
+    answer: 0
+```
+````
+
+**Event kind:** `quiz-submit`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `questionIndex` | `number` | 0-based index of the submitted question. |
+| `question` | `string` | The question text. |
+| `selected` | `string[]` | Human-readable selected answer(s). |
+| `correct` | `boolean` | Whether the answer was correct. |
+| `score` | `{ correct: number; total: number }` | Cumulative score snapshot at submit time. |
+
 ## Accessibility
 
 - Each question group uses `role="group"` with an `aria-label` indicating the question number.

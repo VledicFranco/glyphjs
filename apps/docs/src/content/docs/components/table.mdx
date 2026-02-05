@@ -161,6 +161,45 @@ Aggregation functions are displayed in a summary row at the bottom of the table:
 - **count** -- Number of rows (works with any column type).
 - **min** / **max** -- Minimum or maximum value.
 
+## Interaction events
+
+When `interactive: true` is set, the table emits events when users sort or filter data.
+
+````markdown
+```ui:table
+interactive: true
+columns:
+  - key: name
+    label: Name
+    sortable: true
+    filterable: true
+  - key: role
+    label: Role
+rows:
+  - name: Alice
+    role: Engineer
+  - name: Bob
+    role: Designer
+```
+````
+
+**Event kind:** `table-sort` — emitted when a sortable column header is clicked.
+
+**Event kind:** `table-filter` — emitted when a filter input value changes.
+
+Both events share the same payload structure:
+
+| Payload field | Type | Description |
+|---|---|---|
+| `state.sortColumn` | `string \| null` | Column key currently sorted by. |
+| `state.sortDirection` | `"asc" \| "desc" \| null` | Current sort direction. |
+| `state.filters` | `Record<string, string>` | Active filter values keyed by column. |
+| `state.visibleRowCount` | `number` | Number of rows visible after filtering. |
+
+:::tip
+Table filter events can fire rapidly as the user types. Use `debounceInteractions` from `@glyphjs/runtime` to batch them.
+:::
+
 ## Accessibility
 
 - The table renders as a semantic `<table>` element with `<thead>`, `<tbody>`, and `<tfoot>` sections.

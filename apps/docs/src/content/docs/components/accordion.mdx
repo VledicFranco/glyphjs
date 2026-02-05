@@ -158,6 +158,29 @@ sections:
 | `title` | `string` | Yes | Header text displayed in the clickable summary. |
 | `content` | `string` | Yes | Body text revealed when the section is expanded. |
 
+## Interaction events
+
+When `interactive: true` is set, the accordion emits an `accordion-toggle` event each time a section is expanded or collapsed.
+
+````markdown
+```ui:accordion
+interactive: true
+sections:
+  - title: First Section
+    content: Content for the first section.
+  - title: Second Section
+    content: Content for the second section.
+```
+````
+
+**Event kind:** `accordion-toggle`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `sectionIndex` | `number` | 0-based index of the toggled section. |
+| `sectionTitle` | `string` | Title of the toggled section. |
+| `expanded` | `boolean` | Whether the section is now expanded (`true`) or collapsed (`false`). |
+
 ## Accessibility
 
 - Built on native `<details>`/`<summary>` HTML elements, providing built-in keyboard navigation and screen reader support.

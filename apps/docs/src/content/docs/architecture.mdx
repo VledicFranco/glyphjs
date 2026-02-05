@@ -15,7 +15,7 @@ Markdown → Parser → AST → Compiler → IR → Runtime → React Components
 
 ### 1. Parse Phase (`@glyphjs/parser`)
 
-The parser extends [remark](https://github.com/remarkjs/remark) with a custom plugin that recognizes `ui:*` fenced code blocks. Standard Markdown is parsed normally; fenced blocks with the `ui:` prefix are extracted as `GlyphUIBlock` AST nodes with their YAML payload preserved.
+The parser extends [remark](https://github.com/remarkjs/remark) with a custom plugin that recognizes `ui:*` fenced code blocks. Standard Markdown is parsed normally; fenced blocks with the `ui:` prefix are extracted as `GlyphUIBlock` AST nodes with their YAML payload preserved. Reserved keys (`glyph-id`, `refs`, `interactive`) are extracted and stripped before the data reaches component schemas.
 
 ### 2. Compile Phase (`@glyphjs/compiler`)
 
@@ -36,7 +36,7 @@ The compiler walks the AST and produces the **Glyph IR** (Intermediate Represent
 13. Build the final IR document
 14. Return `CompilationResult` with IR, diagnostics, and `hasErrors` flag
 
-The compiler uses a **collect-all-errors** strategy: IR is always produced, even when errors exist.
+The compiler uses a **collect-all-errors** strategy: IR is always produced, even when errors exist. When a block has `interactive: true`, the compiler propagates this into `block.metadata.interactive`.
 
 ### 3. Render Phase (`@glyphjs/runtime`)
 
@@ -51,6 +51,8 @@ The runtime receives the IR and renders it as React components:
   4. Fallback renderer (unknown types)
 
 Each block is wrapped in an `ErrorBoundary` for fault isolation.
+
+**Interaction events:** When `onInteraction` is provided in the runtime config, the `BlockRenderer` checks each block's `metadata.interactive` flag. Blocks with `interactive: true` receive an `onInteraction` callback prop that components use to emit structured events (clicks, selections, submissions). The runtime automatically injects the `documentId` into each event before forwarding it to the consumer callback.
 
 ## IR Format
 

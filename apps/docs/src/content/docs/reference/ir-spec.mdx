@@ -59,7 +59,15 @@ interface Block {
 | `position` | `SourcePosition` | Yes | Location in the original Markdown source. |
 | `children` | `Block[]` | No | Nested blocks for container components like `ui:tabs` and `ui:steps`. |
 | `diagnostics` | `Diagnostic[]` | No | Errors or warnings attached to this block during compilation. |
-| `metadata` | `Record<string, unknown>` | No | Arbitrary extensible metadata. |
+| `metadata` | `Record<string, unknown>` | No | Extensible metadata. See below for known fields. |
+
+### Block metadata
+
+The `metadata` field is an open-ended record. The compiler sets the following known field:
+
+| Key | Type | Set when | Description |
+|---|---|---|---|
+| `interactive` | `boolean` | `interactive: true` in YAML | Signals the runtime to inject the `onInteraction` callback prop. The runtime gates on `metadata.interactive === true` — blocks without this flag do not receive the callback. |
 ---
 
 ## Block types

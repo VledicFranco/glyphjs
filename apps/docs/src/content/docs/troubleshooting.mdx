@@ -67,6 +67,49 @@ const runtime = createGlyphRuntime({
 
 **Fix:** This has been resolved. The runtime now uses a `typeof` guard that works in all environments.
 
+### Interaction events not firing
+
+**Symptom:** You added `onInteraction` to the runtime config, but clicking on components does not trigger the callback.
+
+**Cause:** The block is missing `interactive: true` in its YAML payload. The runtime only injects the `onInteraction` prop into components whose block has `metadata.interactive === true`.
+
+**Fix:** Add `interactive: true` to the `ui:` block's YAML:
+
+````markdown
+```ui:chart
+interactive: true
+type: bar
+series:
+  - name: Sales
+    data:
+      - month: Jan
+        value: 100
+xAxis:
+  key: month
+yAxis:
+  key: value
+```
+````
+
+The `interactive` key is a reserved YAML key (like `glyph-id` and `refs`) and is stripped before schema validation.
+
+### Interaction events firing too frequently
+
+**Symptom:** Rapid interactions (typing in table filters, clicking sort headers repeatedly) flood your callback.
+
+**Fix:** Wrap your callback with `debounceInteractions` from `@glyphjs/runtime`:
+
+```typescript
+import { debounceInteractions } from '@glyphjs/runtime';
+
+const runtime = createGlyphRuntime({
+  onInteraction: debounceInteractions((event) => {
+    // Only fires once per (blockId, kind) after 300ms of quiet
+    sendToAnalytics(event);
+  }, 300),
+});
+```
+
 ## Debugging Tips
 
 - Check `result.diagnostics` after calling `compile()` — it contains all warnings and errors

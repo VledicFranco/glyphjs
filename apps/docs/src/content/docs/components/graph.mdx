@@ -185,6 +185,36 @@ The `layout` property overrides the default layout direction for the chosen grap
 
 The Graph and [Relation](/glyphjs/components/relation/) components share a unified relational abstraction. Both use nodes and edges, but `ui:relation` constrains the model by requiring `cardinality` on edges and treating nodes as entities with typed attributes.
 
+## Interaction events
+
+When `interactive: true` is set, the graph emits a `graph-node-click` event when the user clicks any node.
+
+````markdown
+```ui:graph
+interactive: true
+type: dag
+nodes:
+  - id: api
+    label: API Gateway
+  - id: db
+    label: Database
+edges:
+  - from: api
+    to: db
+```
+````
+
+**Event kind:** `graph-node-click`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `nodeId` | `string` | The `id` of the clicked node. |
+| `nodeLabel` | `string` | The display label of the clicked node. |
+
+:::note
+When a graph has both `interactive: true` and cross-block `refs`, clicking a navigable node fires **both** the `onNavigate` callback (for reference resolution) and the `onInteraction` callback (for event reporting). They do not conflict.
+:::
+
 ## Accessibility
 
 - The graph is rendered inside an SVG with `role="img"` and a descriptive `aria-label` summarizing the graph structure.

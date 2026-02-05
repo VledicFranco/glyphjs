@@ -94,6 +94,32 @@ tree:
 | `annotation` | `string`     | —       | Optional badge text (e.g. "new")      |
 | `children`   | `FileNode[]` | —       | Child nodes (presence = directory)    |
 
+## Interaction events
+
+When `interactive: true` is set, the file tree emits a `filetree-select` event when the user clicks a file or directory.
+
+````markdown
+```ui:filetree
+interactive: true
+root: project
+defaultExpanded: true
+tree:
+  - name: src
+    children:
+      - name: index.ts
+      - name: utils.ts
+  - name: package.json
+```
+````
+
+**Event kind:** `filetree-select`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `path` | `string` | Full path from root (e.g., `project/src/index.ts`). |
+| `type` | `"file" \| "directory"` | Whether the clicked item is a file or directory. |
+| `expanded` | `boolean \| undefined` | For directories, whether it was expanded or collapsed. Not present for files. |
+
 ## Accessibility
 
 - The tree uses `role="tree"` on the root `<ul>` and `role="treeitem"` on each node.

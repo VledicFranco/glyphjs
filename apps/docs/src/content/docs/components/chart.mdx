@@ -168,6 +168,41 @@ yAxis:
 - **area** -- Like a line chart but with a filled region beneath the line. Emphasizes volume.
 - **ohlc** -- Open-high-low-close candlestick chart for financial data. Each data point must include `open`, `high`, `low`, and `close` keys.
 
+## Interaction events
+
+When `interactive: true` is set, the chart emits a `chart-select` event when the user clicks a data point (line/area charts) or a bar (bar charts).
+
+````markdown
+```ui:chart
+interactive: true
+type: bar
+series:
+  - name: Downloads
+    data:
+      - package: runtime
+        count: 12400
+      - package: compiler
+        count: 7200
+xAxis:
+  key: package
+yAxis:
+  key: count
+```
+````
+
+**Event kind:** `chart-select`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `seriesIndex` | `number` | 0-based index of the series the data point belongs to. |
+| `dataIndex` | `number` | 0-based index of the data point within its series. |
+| `label` | `string` | The x-axis label of the clicked data point. |
+| `value` | `number` | The y-axis value of the clicked data point. |
+
+:::note
+OHLC (candlestick) charts do not currently emit click events on individual candles. This is planned for a future release.
+:::
+
 ## Accessibility
 
 - Charts render inside an SVG with `role="img"` and a descriptive `aria-label` summarizing the chart type and series names.
