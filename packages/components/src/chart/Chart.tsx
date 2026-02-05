@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import type { ReactElement } from 'react';
 import * as d3 from 'd3';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { Block, GlyphComponentProps, InteractionEvent } from '@glyphjs/types';
 import {
   DEFAULT_WIDTH,
   DEFAULT_HEIGHT,
@@ -86,6 +86,120 @@ function computeScales(
   return { xScale, xScalePoint, yScale, innerWidth, innerHeight };
 }
 
+// ─── D3 series rendering ──────────────────────────────────────
+
+function renderAllSeries(
+  g: d3.Selection<SVGGElement, unknown, null, undefined>,
+  type: ChartData['type'],
+  series: ChartData['series'],
+  scales: ChartScales,
+  xKey: string,
+  yKey: string,
+  showTooltip: (event: MouseEvent, text: string) => void,
+  hideTooltip: () => void,
+): void {
+  const { xScale, xScalePoint, yScale, innerHeight } = scales;
+  series.forEach((s: ChartData['series'][number], i: number) => {
+    const color = COLOR_SCHEME[i % COLOR_SCHEME.length] ?? '#333';
+    switch (type) {
+      case 'line':
+        renderLineSeries(
+          g,
+          s.data,
+          xScalePoint,
+          yScale,
+          yKey,
+          xKey,
+          color,
+          i,
+          s.name,
+          showTooltip,
+          hideTooltip,
+        );
+        break;
+      case 'area':
+        renderAreaSeries(
+          g,
+          s.data,
+          xScalePoint,
+          yScale,
+          yKey,
+          xKey,
+          innerHeight,
+          color,
+          i,
+          s.name,
+          showTooltip,
+          hideTooltip,
+        );
+        break;
+      case 'bar':
+        renderBarSeries(
+          g,
+          s.data,
+          xScale,
+          yScale,
+          yKey,
+          xKey,
+          color,
+          i,
+          series.length,
+          innerHeight,
+          s.name,
+          showTooltip,
+          hideTooltip,
+        );
+        break;
+      case 'ohlc':
+        renderOHLCSeries(
+          g,
+          s.data,
+          xScale,
+          xScalePoint,
+          yScale,
+          scales.innerWidth,
+          s.name,
+          showTooltip,
+          hideTooltip,
+        );
+        break;
+    }
+  });
+}
+
+function attachChartInteraction(
+  g: d3.Selection<SVGGElement, unknown, null, undefined>,
+  type: ChartData['type'],
+  series: ChartData['series'],
+  xKey: string,
+  yKey: string,
+  block: Pick<Block, 'id' | 'type'>,
+  onInteraction: ((event: Omit<InteractionEvent, 'documentId'>) => void) | undefined,
+): void {
+  if (!onInteraction) return;
+  series.forEach((s: ChartData['series'][number], seriesIdx: number) => {
+    const className = type === 'bar' ? `bar-${String(seriesIdx)}` : `dot-${String(seriesIdx)}`;
+    g.selectAll<SVGElement, DataRecord>(`.${className}`).on(
+      'click',
+      (_event: MouseEvent, d: DataRecord) => {
+        const dataIdx = s.data.indexOf(d);
+        onInteraction({
+          kind: 'chart-select',
+          timestamp: new Date().toISOString(),
+          blockId: block.id,
+          blockType: block.type,
+          payload: {
+            seriesIndex: seriesIdx,
+            dataIndex: dataIdx >= 0 ? dataIdx : 0,
+            label: String(d[xKey] ?? ''),
+            value: getNumericValue(d, yKey),
+          },
+        });
+      },
+    );
+  });
+}
+
 // ─── Component ─────────────────────────────────────────────────
 
 /**
@@ -161,105 +275,22 @@ export function Chart({
     const sel = d3.select(svg);
     sel.selectAll('*').remove();
 
-    const { xScale, xScalePoint, yScale, innerWidth, innerHeight } = scales;
-
     const g = sel
       .append('g')
       .attr('transform', `translate(${String(margin.left)},${String(margin.top)})`);
 
-    renderAxes(g, xScale, yScale, xAxis, yAxis, innerWidth, innerHeight);
-    renderGridLines(g, yScale, innerWidth);
-    series.forEach((s: ChartData['series'][number], i: number) => {
-      const color = COLOR_SCHEME[i % COLOR_SCHEME.length] ?? '#333';
-      switch (type) {
-        case 'line':
-          renderLineSeries(
-            g,
-            s.data,
-            xScalePoint,
-            yScale,
-            yKey,
-            xKey,
-            color,
-            i,
-            s.name,
-            showTooltip,
-            hideTooltip,
-          );
-          break;
-        case 'area':
-          renderAreaSeries(
-            g,
-            s.data,
-            xScalePoint,
-            yScale,
-            yKey,
-            xKey,
-            innerHeight,
-            color,
-            i,
-            s.name,
-            showTooltip,
-            hideTooltip,
-          );
-          break;
-        case 'bar':
-          renderBarSeries(
-            g,
-            s.data,
-            xScale,
-            yScale,
-            yKey,
-            xKey,
-            color,
-            i,
-            series.length,
-            innerHeight,
-            s.name,
-            showTooltip,
-            hideTooltip,
-          );
-          break;
-        case 'ohlc':
-          renderOHLCSeries(
-            g,
-            s.data,
-            xScale,
-            xScalePoint,
-            yScale,
-            innerWidth,
-            s.name,
-            showTooltip,
-            hideTooltip,
-          );
-          break;
-      }
-    });
-
-    // Attach click handlers for interaction events on data point elements
-    if (onInteraction) {
-      series.forEach((s: ChartData['series'][number], seriesIdx: number) => {
-        const className = type === 'bar' ? `bar-${String(seriesIdx)}` : `dot-${String(seriesIdx)}`;
-        g.selectAll<SVGElement, DataRecord>(`.${className}`).on(
-          'click',
-          (_event: MouseEvent, d: DataRecord) => {
-            const dataIdx = s.data.indexOf(d);
-            onInteraction({
-              kind: 'chart-select',
-              timestamp: new Date().toISOString(),
-              blockId: block.id,
-              blockType: block.type,
-              payload: {
-                seriesIndex: seriesIdx,
-                dataIndex: dataIdx >= 0 ? dataIdx : 0,
-                label: String(d[xKey] ?? ''),
-                value: getNumericValue(d, yKey),
-              },
-            });
-          },
-        );
-      });
-    }
+    renderAxes(
+      g,
+      scales.xScale,
+      scales.yScale,
+      xAxis,
+      yAxis,
+      scales.innerWidth,
+      scales.innerHeight,
+    );
+    renderGridLines(g, scales.yScale, scales.innerWidth);
+    renderAllSeries(g, type, series, scales, xKey, yKey, showTooltip, hideTooltip);
+    attachChartInteraction(g, type, series, xKey, yKey, block, onInteraction);
 
     if (legend) {
       renderLegend(sel, series, margin.left, margin.top, isCompact ? '10px' : undefined);

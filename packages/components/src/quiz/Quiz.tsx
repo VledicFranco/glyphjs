@@ -71,6 +71,145 @@ function isCorrect(question: QuizQuestion, selected: number | number[] | boolean
   }
 }
 
+// ─── Render helpers ──────────────────────────────────────────
+
+type StateUpdater = (index: number, patch: Partial<QuestionState>) => void;
+
+function renderMultipleChoice(
+  question: QuizMultipleChoice,
+  qIndex: number,
+  state: QuestionState,
+  updateState: StateUpdater,
+  baseId: string,
+): ReactElement {
+  const selected = typeof state.selected === 'number' ? state.selected : null;
+
+  return (
+    <div role="radiogroup" aria-label={question.question}>
+      {question.options.map((option, oIndex) => {
+        const isSelected = selected === oIndex;
+        const isCorrectOption = state.submitted && oIndex === question.answer;
+        const isIncorrectSelection = state.submitted && isSelected && oIndex !== question.answer;
+
+        return (
+          <label
+            key={oIndex}
+            style={optionLabelStyle(
+              isSelected,
+              state.submitted,
+              isCorrectOption,
+              isIncorrectSelection,
+            )}
+          >
+            <input
+              type="radio"
+              role="radio"
+              name={`${baseId}-q${String(qIndex)}`}
+              checked={isSelected}
+              disabled={state.submitted}
+              onChange={() => updateState(qIndex, { selected: oIndex })}
+              aria-checked={isSelected}
+            />
+            {option}
+          </label>
+        );
+      })}
+    </div>
+  );
+}
+
+function renderTrueFalse(
+  question: QuizTrueFalse,
+  qIndex: number,
+  state: QuestionState,
+  updateState: StateUpdater,
+  baseId: string,
+): ReactElement {
+  const selected = typeof state.selected === 'boolean' ? state.selected : null;
+
+  return (
+    <div role="radiogroup" aria-label={question.question}>
+      {[true, false].map((value) => {
+        const isSelected = selected === value;
+        const isCorrectOption = state.submitted && value === question.answer;
+        const isIncorrectSelection = state.submitted && isSelected && value !== question.answer;
+
+        return (
+          <label
+            key={String(value)}
+            style={optionLabelStyle(
+              isSelected,
+              state.submitted,
+              isCorrectOption,
+              isIncorrectSelection,
+            )}
+          >
+            <input
+              type="radio"
+              role="radio"
+              name={`${baseId}-q${String(qIndex)}`}
+              checked={isSelected}
+              disabled={state.submitted}
+              onChange={() => updateState(qIndex, { selected: value })}
+              aria-checked={isSelected}
+            />
+            {value ? 'True' : 'False'}
+          </label>
+        );
+      })}
+    </div>
+  );
+}
+
+function renderMultiSelect(
+  question: QuizMultiSelect,
+  qIndex: number,
+  state: QuestionState,
+  updateState: StateUpdater,
+): ReactElement {
+  const selected = Array.isArray(state.selected) ? state.selected : [];
+
+  const toggleOption = (oIndex: number): void => {
+    const next = selected.includes(oIndex)
+      ? selected.filter((v) => v !== oIndex)
+      : [...selected, oIndex];
+    updateState(qIndex, { selected: next });
+  };
+
+  return (
+    <div>
+      {question.options.map((option, oIndex) => {
+        const isSelected = selected.includes(oIndex);
+        const isCorrectOption = state.submitted && question.answer.includes(oIndex);
+        const isIncorrectSelection =
+          state.submitted && isSelected && !question.answer.includes(oIndex);
+
+        return (
+          <label
+            key={oIndex}
+            style={optionLabelStyle(
+              isSelected,
+              state.submitted,
+              isCorrectOption,
+              isIncorrectSelection,
+            )}
+          >
+            <input
+              type="checkbox"
+              role="checkbox"
+              checked={isSelected}
+              disabled={state.submitted}
+              onChange={() => toggleOption(oIndex)}
+              aria-checked={isSelected}
+            />
+            {option}
+          </label>
+        );
+      })}
+    </div>
+  );
+}
+
 // ─── Component ─────────────────────────────────────────────────
 
 export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizData>): ReactElement {
@@ -84,7 +223,7 @@ export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizDat
     })),
   );
 
-  const updateState = (index: number, patch: Partial<QuestionState>): void => {
+  const updateState: StateUpdater = (index, patch) => {
     setStates((prev) => prev.map((s, i) => (i === index ? { ...s, ...patch } : s)));
   };
 
@@ -94,138 +233,6 @@ export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizDat
     return acc + (isCorrect(q, s.selected) ? 1 : 0);
   }, 0);
   const submittedCount = states.filter((s) => s.submitted).length;
-
-  // ─── Render helpers ────────────────────────────────────────
-
-  function renderMultipleChoice(
-    question: QuizMultipleChoice,
-    qIndex: number,
-    state: QuestionState,
-  ): ReactElement {
-    const selected = typeof state.selected === 'number' ? state.selected : null;
-
-    return (
-      <div role="radiogroup" aria-label={question.question}>
-        {question.options.map((option, oIndex) => {
-          const isSelected = selected === oIndex;
-          const isCorrectOption = state.submitted && oIndex === question.answer;
-          const isIncorrectSelection = state.submitted && isSelected && oIndex !== question.answer;
-
-          return (
-            <label
-              key={oIndex}
-              style={optionLabelStyle(
-                isSelected,
-                state.submitted,
-                isCorrectOption,
-                isIncorrectSelection,
-              )}
-            >
-              <input
-                type="radio"
-                role="radio"
-                name={`${baseId}-q${String(qIndex)}`}
-                checked={isSelected}
-                disabled={state.submitted}
-                onChange={() => updateState(qIndex, { selected: oIndex })}
-                aria-checked={isSelected}
-              />
-              {option}
-            </label>
-          );
-        })}
-      </div>
-    );
-  }
-
-  function renderTrueFalse(
-    question: QuizTrueFalse,
-    qIndex: number,
-    state: QuestionState,
-  ): ReactElement {
-    const selected = typeof state.selected === 'boolean' ? state.selected : null;
-
-    return (
-      <div role="radiogroup" aria-label={question.question}>
-        {[true, false].map((value) => {
-          const isSelected = selected === value;
-          const isCorrectOption = state.submitted && value === question.answer;
-          const isIncorrectSelection = state.submitted && isSelected && value !== question.answer;
-
-          return (
-            <label
-              key={String(value)}
-              style={optionLabelStyle(
-                isSelected,
-                state.submitted,
-                isCorrectOption,
-                isIncorrectSelection,
-              )}
-            >
-              <input
-                type="radio"
-                role="radio"
-                name={`${baseId}-q${String(qIndex)}`}
-                checked={isSelected}
-                disabled={state.submitted}
-                onChange={() => updateState(qIndex, { selected: value })}
-                aria-checked={isSelected}
-              />
-              {value ? 'True' : 'False'}
-            </label>
-          );
-        })}
-      </div>
-    );
-  }
-
-  function renderMultiSelect(
-    question: QuizMultiSelect,
-    qIndex: number,
-    state: QuestionState,
-  ): ReactElement {
-    const selected = Array.isArray(state.selected) ? state.selected : [];
-
-    const toggleOption = (oIndex: number): void => {
-      const next = selected.includes(oIndex)
-        ? selected.filter((v) => v !== oIndex)
-        : [...selected, oIndex];
-      updateState(qIndex, { selected: next });
-    };
-
-    return (
-      <div>
-        {question.options.map((option, oIndex) => {
-          const isSelected = selected.includes(oIndex);
-          const isCorrectOption = state.submitted && question.answer.includes(oIndex);
-          const isIncorrectSelection =
-            state.submitted && isSelected && !question.answer.includes(oIndex);
-
-          return (
-            <label
-              key={oIndex}
-              style={optionLabelStyle(
-                isSelected,
-                state.submitted,
-                isCorrectOption,
-                isIncorrectSelection,
-              )}
-            >
-              <input
-                type="checkbox"
-                role="checkbox"
-                checked={isSelected}
-                disabled={state.submitted}
-                onChange={() => toggleOption(oIndex)}
-                aria-checked={isSelected}
-              />
-              {option}
-            </label>
-          );
-        })}
-      </div>
-    );
-  }
 
   function renderQuestion(question: QuizQuestion, qIndex: number): ReactElement {
     const state: QuestionState = states[qIndex] ?? { selected: null, submitted: false };
@@ -250,9 +257,12 @@ export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizDat
           {question.question}
         </div>
 
-        {question.type === 'multiple-choice' && renderMultipleChoice(question, qIndex, state)}
-        {question.type === 'true-false' && renderTrueFalse(question, qIndex, state)}
-        {question.type === 'multi-select' && renderMultiSelect(question, qIndex, state)}
+        {question.type === 'multiple-choice' &&
+          renderMultipleChoice(question, qIndex, state, updateState, baseId)}
+        {question.type === 'true-false' &&
+          renderTrueFalse(question, qIndex, state, updateState, baseId)}
+        {question.type === 'multi-select' &&
+          renderMultiSelect(question, qIndex, state, updateState)}
 
         {!state.submitted && (
           <button

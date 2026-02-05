@@ -1,3 +1,4 @@
+import type React from 'react';
 import type { ReactElement } from 'react';
 import { useMemo, useState } from 'react';
 import type { GlyphComponentProps } from '@glyphjs/types';
@@ -104,6 +105,103 @@ function TableAggregationFooter({
         })}
       </tr>
     </tfoot>
+  );
+}
+
+function TableHead({
+  columns,
+  sort,
+  hasFilters,
+  filters,
+  onSort,
+  onHeaderKeyDown,
+  onFilterChange,
+}: {
+  columns: TableColumn[];
+  sort: SortState;
+  hasFilters: boolean;
+  filters: Record<string, string>;
+  onSort: (columnKey: string) => void;
+  onHeaderKeyDown: (e: React.KeyboardEvent, columnKey: string) => void;
+  onFilterChange: (columnKey: string, value: string) => void;
+}): ReactElement {
+  return (
+    <thead>
+      <tr>
+        {columns.map((col) => {
+          const isSorted = sort.column === col.key;
+          const direction = isSorted ? sort.direction : 'none';
+          return (
+            <th
+              key={col.key}
+              scope="col"
+              aria-sort={col.sortable ? direction : undefined}
+              tabIndex={col.sortable ? 0 : undefined}
+              role={col.sortable ? 'columnheader' : undefined}
+              onClick={col.sortable ? () => onSort(col.key) : undefined}
+              onKeyDown={col.sortable ? (e) => onHeaderKeyDown(e, col.key) : undefined}
+              style={{
+                padding: 'var(--glyph-table-cell-padding, 8px 12px)',
+                textAlign: 'left',
+                borderBottom: '2px solid var(--glyph-table-border, #d0d8e4)',
+                background: 'var(--glyph-table-header-bg, #e8ecf3)',
+                color: 'var(--glyph-table-header-color, inherit)',
+                cursor: col.sortable ? 'pointer' : 'default',
+                userSelect: col.sortable ? 'none' : undefined,
+                whiteSpace: 'nowrap',
+              }}
+            >
+              {col.label}
+              {col.sortable ? sortIndicator(direction) : ''}
+            </th>
+          );
+        })}
+      </tr>
+      {hasFilters && (
+        <tr>
+          {columns.map((col) => (
+            <th
+              key={`filter-${col.key}`}
+              scope="col"
+              style={{ padding: '4px 8px', fontWeight: 'normal' }}
+            >
+              {col.filterable ? (
+                <input
+                  type="text"
+                  aria-label={`Filter ${col.label}`}
+                  placeholder={`Filter ${col.label}...`}
+                  value={filters[col.key] ?? ''}
+                  onChange={(e) => onFilterChange(col.key, e.target.value)}
+                  style={{
+                    width: '100%',
+                    padding: '4px 6px',
+                    border: '1px solid var(--glyph-table-border, #d0d8e4)',
+                    borderRadius: '3px',
+                    fontSize: 'inherit',
+                    boxSizing: 'border-box',
+                    background: 'var(--glyph-surface, #e8ecf3)',
+                    color: 'var(--glyph-text, inherit)',
+                  }}
+                />
+              ) : (
+                <span
+                  style={{
+                    position: 'absolute',
+                    width: '1px',
+                    height: '1px',
+                    overflow: 'hidden',
+                    clip: 'rect(0,0,0,0)',
+                    whiteSpace: 'nowrap',
+                  }}
+                >
+                  {`No filter for ${col.label}`}
+                </span>
+              )}
+            </th>
+          ))}
+        </tr>
+      )}
+    </thead>
   );
 }
 
@@ -263,82 +361,15 @@ export function Table({
         fontSize: isCompact ? '0.8125rem' : 'var(--glyph-table-font-size, 0.9rem)',
       }}
     >
-      <thead>
-        <tr>
-          {columns.map((col) => {
-            const isSorted = sort.column === col.key;
-            const direction = isSorted ? sort.direction : 'none';
-            return (
-              <th
-                key={col.key}
-                scope="col"
-                aria-sort={col.sortable ? direction : undefined}
-                tabIndex={col.sortable ? 0 : undefined}
-                role={col.sortable ? 'columnheader' : undefined}
-                onClick={col.sortable ? () => handleSort(col.key) : undefined}
-                onKeyDown={col.sortable ? (e) => handleHeaderKeyDown(e, col.key) : undefined}
-                style={{
-                  padding: 'var(--glyph-table-cell-padding, 8px 12px)',
-                  textAlign: 'left',
-                  borderBottom: '2px solid var(--glyph-table-border, #d0d8e4)',
-                  background: 'var(--glyph-table-header-bg, #e8ecf3)',
-                  color: 'var(--glyph-table-header-color, inherit)',
-                  cursor: col.sortable ? 'pointer' : 'default',
-                  userSelect: col.sortable ? 'none' : undefined,
-                  whiteSpace: 'nowrap',
-                }}
-              >
-                {col.label}
-                {col.sortable ? sortIndicator(direction) : ''}
-              </th>
-            );
-          })}
-        </tr>
-        {hasFilters && (
-          <tr>
-            {columns.map((col) => (
-              <th
-                key={`filter-${col.key}`}
-                scope="col"
-                style={{ padding: '4px 8px', fontWeight: 'normal' }}
-              >
-                {col.filterable ? (
-                  <input
-                    type="text"
-                    aria-label={`Filter ${col.label}`}
-                    placeholder={`Filter ${col.label}...`}
-                    value={filters[col.key] ?? ''}
-                    onChange={(e) => handleFilterChange(col.key, e.target.value)}
-                    style={{
-                      width: '100%',
-                      padding: '4px 6px',
-                      border: '1px solid var(--glyph-table-border, #d0d8e4)',
-                      borderRadius: '3px',
-                      fontSize: 'inherit',
-                      boxSizing: 'border-box',
-                      background: 'var(--glyph-surface, #e8ecf3)',
-                      color: 'var(--glyph-text, inherit)',
-                    }}
-                  />
-                ) : (
-                  <span
-                    style={{
-                      position: 'absolute',
-                      width: '1px',
-                      height: '1px',
-                      overflow: 'hidden',
-                      clip: 'rect(0,0,0,0)',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
-                    {`No filter for ${col.label}`}
-                  </span>
-                )}
-              </th>
-            ))}
-          </tr>
-        )}
-      </thead>
+      <TableHead
+        columns={columns}
+        sort={sort}
+        hasFilters={hasFilters}
+        filters={filters}
+        onSort={handleSort}
+        onHeaderKeyDown={handleHeaderKeyDown}
+        onFilterChange={handleFilterChange}
+      />
       <tbody>
         {sortedRows.map((row, rowIdx) => (
           <tr
