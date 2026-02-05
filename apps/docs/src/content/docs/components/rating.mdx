@@ -1,0 +1,108 @@
+---
+title: Rating
+description: Multi-item star or number rating scale component.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Rating** component (`ui:rating`) renders a multi-item rating scale with star or number modes. Each item can be rated independently.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:rating
+interactive: true
+title: Rate these features
+scale: 5
+mode: star
+labels:
+  low: Poor
+  high: Excellent
+items:
+  - label: Performance
+    description: Response time and throughput
+  - label: Security
+  - label: Developer Experience
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} interactive />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:rating
+title: Rate these features
+scale: 5
+mode: star
+labels:
+  low: Poor
+  high: Excellent
+items:
+  - label: Performance
+    description: Response time and throughput
+  - label: Security
+  - label: Developer Experience
+```
+````
+
+</details>
+
+### Number mode
+
+Use `mode: number` for a numeric scale.
+
+export const numberExample = `\`\`\`ui:rating
+title: Number Rating
+scale: 10
+mode: number
+items:
+  - label: Overall satisfaction
+  - label: Ease of use
+\`\`\``;
+
+<GlyphPreview client:only="react" source={numberExample} />
+
+### Minimal
+
+A single-item rating with no title.
+
+export const minimalExample = `\`\`\`ui:rating
+items:
+  - label: How was your experience?
+\`\`\``;
+
+<GlyphPreview client:only="react" source={minimalExample} />
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading. |
+| `scale` | `number` | No | `5` | Number of rating points (2–10). |
+| `mode` | `"star" \| "number"` | No | `"star"` | Visual mode. |
+| `labels` | `{ low: string; high: string }` | No | -- | Scale endpoint labels. |
+| `items` | `RatingItem[]` | Yes | -- | Items to rate (min 1). |
+
+### RatingItem
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `label` | `string` | Yes | Item name. |
+| `description` | `string` | No | Optional description text. |
+
+## Interaction events
+
+**Event kind:** `rating-change`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `itemIndex` | `number` | 0-based index of the rated item. |
+| `itemLabel` | `string` | Label of the rated item. |
+| `value` | `number` | The rating value. |
+| `allRatings` | `Array<{ label, value }>` | Full state snapshot. |
+
+## Accessibility
+
+- Each item uses `role="radiogroup"` with individual `role="radio"` buttons.
+- Arrow keys navigate the star scale.
+- `aria-live="polite"` announces rating changes.

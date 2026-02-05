@@ -22,6 +22,14 @@ export { equationSchema } from './equation.js';
 export { quizSchema } from './quiz.js';
 export { cardSchema } from './card.js';
 export { infographicSchema } from './infographic.js';
+export { pollSchema } from './poll.js';
+export { ratingSchema } from './rating.js';
+export { rankerSchema } from './ranker.js';
+export { sliderSchema } from './slider.js';
+export { matrixSchema } from './matrix.js';
+export { formSchema } from './form.js';
+export { kanbanSchema } from './kanban.js';
+export { annotateSchema } from './annotate.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';

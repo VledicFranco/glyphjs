@@ -1,0 +1,99 @@
+---
+title: Ranker
+description: Drag-to-reorder list for ranking preferences.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Ranker** component (`ui:ranker`) renders an orderable list for ranking items by preference. Supports keyboard-driven reordering.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:ranker
+interactive: true
+title: Rank by importance
+items:
+  - id: auth
+    label: Authentication
+    description: User login and session management
+  - id: dashboard
+    label: Dashboard
+  - id: api
+    label: API Layer
+  - id: docs
+    label: Documentation
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} interactive />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:ranker
+title: Rank by importance
+items:
+  - id: auth
+    label: Authentication
+    description: User login and session management
+  - id: dashboard
+    label: Dashboard
+  - id: api
+    label: API Layer
+  - id: docs
+    label: Documentation
+```
+````
+
+</details>
+
+### Long list
+
+export const longExample = `\`\`\`ui:ranker
+title: Priority Features
+items:
+  - id: perf
+    label: Performance
+  - id: sec
+    label: Security
+  - id: ux
+    label: UX Polish
+  - id: a11y
+    label: Accessibility
+  - id: i18n
+    label: Internationalization
+  - id: test
+    label: Test Coverage
+\`\`\``;
+
+<GlyphPreview client:only="react" source={longExample} />
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading. |
+| `items` | `RankerItem[]` | Yes | -- | Items to rank (min 2). |
+
+### RankerItem
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `id` | `string` | Yes | Unique item identifier. |
+| `label` | `string` | Yes | Display label. |
+| `description` | `string` | No | Optional description. |
+
+## Interaction events
+
+**Event kind:** `ranker-reorder`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `orderedItems` | `Array<{ id, label, rank }>` | Full ordered state. |
+| `movedItem` | `{ id, label, fromRank, toRank }` | The item that moved. |
+
+## Accessibility
+
+- Container uses `role="listbox"`, items use `role="option"`.
+- Keyboard: Space to grab, Arrow Up/Down to move, Escape to cancel, Space to drop.
+- `aria-live="assertive"` announces grab/drop state.

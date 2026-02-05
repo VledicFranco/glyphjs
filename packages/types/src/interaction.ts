@@ -121,6 +121,104 @@ export interface ComparisonSelectEvent extends InteractionEventBase {
   };
 }
 
+// ─── Poll ───────────────────────────────────────────────────
+
+export interface PollVoteEvent extends InteractionEventBase {
+  kind: 'poll-vote';
+  payload: {
+    selectedOptions: string[];
+    selectedIndices: number[];
+  };
+}
+
+// ─── Rating ─────────────────────────────────────────────────
+
+export interface RatingChangeEvent extends InteractionEventBase {
+  kind: 'rating-change';
+  payload: {
+    itemIndex: number;
+    itemLabel: string;
+    value: number;
+    allRatings: { label: string; value: number | null }[];
+  };
+}
+
+// ─── Ranker ─────────────────────────────────────────────────
+
+export interface RankerReorderEvent extends InteractionEventBase {
+  kind: 'ranker-reorder';
+  payload: {
+    orderedItems: { id: string; label: string; rank: number }[];
+    movedItem: { id: string; label: string; fromRank: number; toRank: number };
+  };
+}
+
+// ─── Slider ─────────────────────────────────────────────────
+
+export interface SliderChangeEvent extends InteractionEventBase {
+  kind: 'slider-change';
+  payload: {
+    parameterId: string;
+    parameterLabel: string;
+    value: number;
+    allValues: { id: string; label: string; value: number }[];
+  };
+}
+
+// ─── Matrix ─────────────────────────────────────────────────
+
+export interface MatrixChangeEvent extends InteractionEventBase {
+  kind: 'matrix-change';
+  payload: {
+    rowId: string;
+    rowLabel: string;
+    columnId: string;
+    columnLabel: string;
+    value: number;
+    allValues: Record<string, Record<string, number>>;
+    weightedTotals: { rowId: string; rowLabel: string; total: number }[];
+  };
+}
+
+// ─── Form ───────────────────────────────────────────────────
+
+export interface FormSubmitEvent extends InteractionEventBase {
+  kind: 'form-submit';
+  payload: {
+    values: Record<string, string | number | boolean>;
+    fields: { id: string; label: string; type: string; value: string | number | boolean }[];
+  };
+}
+
+// ─── Kanban ─────────────────────────────────────────────────
+
+export interface KanbanMoveEvent extends InteractionEventBase {
+  kind: 'kanban-move';
+  payload: {
+    cardId: string;
+    cardTitle: string;
+    sourceColumnId: string;
+    sourceColumnTitle: string;
+    destinationColumnId: string;
+    destinationColumnTitle: string;
+    position: number;
+    allColumns: { id: string; title: string; cardIds: string[] }[];
+  };
+}
+
+// ─── Annotate ───────────────────────────────────────────────
+
+export interface AnnotateCreateEvent extends InteractionEventBase {
+  kind: 'annotate-create';
+  payload: {
+    start: number;
+    end: number;
+    selectedText: string;
+    label: string;
+    allAnnotations: { start: number; end: number; text: string; label: string }[];
+  };
+}
+
 // ─── Custom (plugin extensibility) ──────────────────────────
 
 /** Extensibility for plugin-authored components (mirrors ReferenceType pattern) */
@@ -141,6 +239,14 @@ export type InteractionEvent =
   | GraphNodeClickEvent
   | ChartSelectEvent
   | ComparisonSelectEvent
+  | PollVoteEvent
+  | RatingChangeEvent
+  | RankerReorderEvent
+  | SliderChangeEvent
+  | MatrixChangeEvent
+  | FormSubmitEvent
+  | KanbanMoveEvent
+  | AnnotateCreateEvent
   | CustomInteractionEvent;
 
 /** Discriminant values for exhaustive switch */

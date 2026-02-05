@@ -1,0 +1,107 @@
+---
+title: Matrix
+description: Decision matrix for scoring options against weighted criteria.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Matrix** component (`ui:matrix`) renders a decision matrix where users score options against weighted criteria. Weighted totals are computed automatically.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:matrix
+interactive: true
+title: Framework Evaluation
+scale: 5
+showTotals: true
+columns:
+  - id: perf
+    label: Performance
+    weight: 2
+  - id: dx
+    label: DX
+    weight: 1.5
+  - id: eco
+    label: Ecosystem
+    weight: 1
+rows:
+  - id: react
+    label: React
+  - id: vue
+    label: Vue
+  - id: svelte
+    label: Svelte
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} interactive />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:matrix
+title: Framework Evaluation
+scale: 5
+columns:
+  - id: perf
+    label: Performance
+    weight: 2
+  - id: dx
+    label: DX
+    weight: 1.5
+rows:
+  - id: react
+    label: React
+  - id: vue
+    label: Vue
+```
+````
+
+</details>
+
+### No totals
+
+export const noTotalsExample = `\`\`\`ui:matrix
+title: Simple Scoring
+showTotals: false
+scale: 3
+columns:
+  - id: ease
+    label: Ease of Use
+  - id: power
+    label: Power
+rows:
+  - id: a
+    label: Option A
+  - id: b
+    label: Option B
+\`\`\``;
+
+<GlyphPreview client:only="react" source={noTotalsExample} />
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading. |
+| `scale` | `number` | No | `5` | Max score per cell (2–10). |
+| `showTotals` | `boolean` | No | `true` | Show weighted total column. |
+| `columns` | `MatrixColumn[]` | Yes | -- | Criteria columns. |
+| `rows` | `MatrixRow[]` | Yes | -- | Options to evaluate. |
+
+## Interaction events
+
+**Event kind:** `matrix-change`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `rowId` | `string` | Row that changed. |
+| `columnId` | `string` | Column that changed. |
+| `value` | `number` | New cell value. |
+| `allValues` | `Record<string, Record<string, number>>` | Full matrix state. |
+| `weightedTotals` | `Array<{ rowId, rowLabel, total }>` | Computed totals. |
+
+## Accessibility
+
+- Uses `role="grid"` with `<th>` headers.
+- Cells use `<input type="number">` with `aria-label="Score for {row} on {column}"`.

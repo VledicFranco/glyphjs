@@ -22,6 +22,14 @@ import { equationSchema } from './equation.js';
 import { quizSchema } from './quiz.js';
 import { cardSchema } from './card.js';
 import { infographicSchema } from './infographic.js';
+import { pollSchema } from './poll.js';
+import { ratingSchema } from './rating.js';
+import { rankerSchema } from './ranker.js';
+import { sliderSchema } from './slider.js';
+import { matrixSchema } from './matrix.js';
+import { formSchema } from './form.js';
+import { kanbanSchema } from './kanban.js';
+import { annotateSchema } from './annotate.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -47,6 +55,14 @@ const entries: [string, z.ZodType][] = [
   ['quiz', quizSchema],
   ['card', cardSchema],
   ['infographic', infographicSchema],
+  ['poll', pollSchema],
+  ['rating', ratingSchema],
+  ['ranker', rankerSchema],
+  ['slider', sliderSchema],
+  ['matrix', matrixSchema],
+  ['form', formSchema],
+  ['kanban', kanbanSchema],
+  ['annotate', annotateSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);

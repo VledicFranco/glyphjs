@@ -41,6 +41,14 @@ export type BlockType =
   | 'ui:quiz'
   | 'ui:card'
   | 'ui:infographic'
+  | 'ui:poll'
+  | 'ui:rating'
+  | 'ui:ranker'
+  | 'ui:slider'
+  | 'ui:matrix'
+  | 'ui:form'
+  | 'ui:kanban'
+  | 'ui:annotate'
   // Extensible
   | `ui:${string}`;
 

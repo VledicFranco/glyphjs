@@ -1,0 +1,116 @@
+---
+title: Poll
+description: Multi-option voting component with visual result bars.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Poll** component (`ui:poll`) renders a voting interface with visual result bars. Supports single and multiple selection modes.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:poll
+interactive: true
+title: Framework Poll
+question: Which framework do you prefer?
+options:
+  - React
+  - Vue
+  - Angular
+  - Svelte
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} interactive />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:poll
+title: Framework Poll
+question: Which framework do you prefer?
+options:
+  - React
+  - Vue
+  - Angular
+  - Svelte
+```
+````
+
+</details>
+
+### Multiple selection
+
+Set `multiple: true` to allow selecting more than one option.
+
+export const multipleExample = `\`\`\`ui:poll
+question: Which languages do you use? (select all)
+options:
+  - TypeScript
+  - JavaScript
+  - Python
+  - Rust
+  - Go
+multiple: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={multipleExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:poll
+question: Which languages do you use? (select all)
+options:
+  - TypeScript
+  - JavaScript
+  - Python
+  - Rust
+  - Go
+multiple: true
+```
+````
+
+</details>
+
+### Hidden results
+
+Set `showResults: false` to hide the result bars after voting.
+
+export const noResultsExample = `\`\`\`ui:poll
+question: What is your favorite color?
+options:
+  - Red
+  - Blue
+  - Green
+showResults: false
+\`\`\``;
+
+<GlyphPreview client:only="react" source={noResultsExample} />
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `question` | `string` | Yes | -- | The poll question. |
+| `options` | `string[]` | Yes | -- | 2 to 10 answer options. |
+| `multiple` | `boolean` | No | `false` | Allow multiple selections (checkboxes). |
+| `showResults` | `boolean` | No | `true` | Show result bars after voting. |
+| `title` | `string` | No | -- | Optional heading above the poll. |
+
+## Interaction events
+
+**Event kind:** `poll-vote`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `selectedOptions` | `string[]` | The text of selected options. |
+| `selectedIndices` | `number[]` | 0-based indices of selected options. |
+
+## Accessibility
+
+- Options use `role="group"` with radio buttons (single) or checkboxes (multiple).
+- Result bars use `role="progressbar"` with `aria-valuenow`.
+- Results area uses `aria-live="polite"` for screen reader announcements.
+- The outer container uses `role="region"` with `aria-label`.

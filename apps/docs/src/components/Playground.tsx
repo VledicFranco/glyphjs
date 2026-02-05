@@ -27,6 +27,14 @@ import {
   quizDefinition,
   cardDefinition,
   infographicDefinition,
+  pollDefinition,
+  ratingDefinition,
+  rankerDefinition,
+  sliderDefinition,
+  matrixDefinition,
+  formDefinition,
+  kanbanDefinition,
+  annotateDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -84,6 +92,14 @@ const allComponents = [
   quizDefinition,
   cardDefinition,
   infographicDefinition,
+  pollDefinition,
+  ratingDefinition,
+  rankerDefinition,
+  sliderDefinition,
+  matrixDefinition,
+  formDefinition,
+  kanbanDefinition,
+  annotateDefinition,
 ];
 
 export default function Playground() {

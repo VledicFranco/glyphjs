@@ -27,6 +27,14 @@ import {
   quizDefinition,
   cardDefinition,
   infographicDefinition,
+  pollDefinition,
+  ratingDefinition,
+  rankerDefinition,
+  sliderDefinition,
+  matrixDefinition,
+  formDefinition,
+  kanbanDefinition,
+  annotateDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -51,6 +59,14 @@ const allComponents = [
   quizDefinition,
   cardDefinition,
   infographicDefinition,
+  pollDefinition,
+  ratingDefinition,
+  rankerDefinition,
+  sliderDefinition,
+  matrixDefinition,
+  formDefinition,
+  kanbanDefinition,
+  annotateDefinition,
 ];
 
 interface GlyphPreviewProps {

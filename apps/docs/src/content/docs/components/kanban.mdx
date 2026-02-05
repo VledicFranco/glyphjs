@@ -1,0 +1,132 @@
+---
+title: Kanban
+description: Column-based card board with drag between columns.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Kanban** component (`ui:kanban`) renders a column-based board where cards can be moved between columns using keyboard controls.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:kanban
+interactive: true
+title: Sprint Board
+columns:
+  - id: todo
+    title: To Do
+    cards:
+      - id: auth
+        title: Implement Auth
+        description: OAuth2 + JWT tokens
+        priority: high
+        tags:
+          - backend
+          - security
+      - id: dashboard
+        title: Build Dashboard
+        priority: medium
+  - id: progress
+    title: In Progress
+    limit: 3
+    cards:
+      - id: api
+        title: API Layer
+        priority: high
+  - id: done
+    title: Done
+    cards:
+      - id: setup
+        title: Project Setup
+        priority: low
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} interactive />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kanban
+title: Sprint Board
+columns:
+  - id: todo
+    title: To Do
+    cards:
+      - id: auth
+        title: Implement Auth
+        description: OAuth2 + JWT tokens
+        priority: high
+        tags: [backend, security]
+      - id: dashboard
+        title: Build Dashboard
+        priority: medium
+  - id: progress
+    title: In Progress
+    limit: 3
+  - id: done
+    title: Done
+```
+````
+
+</details>
+
+### Empty board
+
+export const emptyExample = `\`\`\`ui:kanban
+title: New Board
+columns:
+  - id: backlog
+    title: Backlog
+  - id: todo
+    title: To Do
+  - id: done
+    title: Done
+\`\`\``;
+
+<GlyphPreview client:only="react" source={emptyExample} />
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading. |
+| `columns` | `KanbanColumn[]` | Yes | -- | Board columns (min 1). |
+
+### KanbanColumn
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `id` | `string` | Yes | -- | Column identifier. |
+| `title` | `string` | Yes | -- | Column heading. |
+| `cards` | `KanbanCard[]` | No | `[]` | Cards in this column. |
+| `limit` | `number` | No | -- | WIP limit indicator. |
+
+### KanbanCard
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `id` | `string` | Yes | Card identifier. |
+| `title` | `string` | Yes | Card title. |
+| `description` | `string` | No | Card description. |
+| `priority` | `"high" \| "medium" \| "low"` | No | Priority indicator. |
+| `tags` | `string[]` | No | Card tags. |
+
+## Interaction events
+
+**Event kind:** `kanban-move`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `cardId` | `string` | Moved card ID. |
+| `cardTitle` | `string` | Moved card title. |
+| `sourceColumnId` | `string` | Original column. |
+| `destinationColumnId` | `string` | Target column. |
+| `position` | `number` | Position in target column. |
+| `allColumns` | `Array<{ id, title, cardIds }>` | Full board state. |
+
+## Accessibility
+
+- Columns use `role="listbox"`, cards use `role="option"`.
+- Keyboard: Space to grab, Arrow Left/Right between columns, Up/Down within, Escape to cancel.
+- `aria-live="assertive"` during drag operations.

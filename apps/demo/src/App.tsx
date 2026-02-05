@@ -22,6 +22,14 @@ import {
   quizDefinition,
   cardDefinition,
   infographicDefinition,
+  pollDefinition,
+  ratingDefinition,
+  rankerDefinition,
+  sliderDefinition,
+  matrixDefinition,
+  formDefinition,
+  kanbanDefinition,
+  annotateDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -159,6 +167,14 @@ export function App() {
         quizDefinition,
         cardDefinition,
         infographicDefinition,
+        pollDefinition,
+        ratingDefinition,
+        rankerDefinition,
+        sliderDefinition,
+        matrixDefinition,
+        formDefinition,
+        kanbanDefinition,
+        annotateDefinition,
       ],
     });
     return rt;

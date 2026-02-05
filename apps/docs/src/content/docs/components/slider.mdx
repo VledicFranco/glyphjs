@@ -1,0 +1,114 @@
+---
+title: Slider
+description: Multi-parameter slider panel for trade-off exploration.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Slider** component (`ui:slider`) renders a panel of range sliders for adjusting multiple parameters simultaneously.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:slider
+interactive: true
+title: Configure preferences
+parameters:
+  - id: performance
+    label: Performance
+    min: 0
+    max: 100
+    step: 5
+    value: 50
+    unit: "%"
+  - id: cost
+    label: Budget
+    min: 0
+    max: 10000
+    step: 100
+    unit: "$"
+  - id: quality
+    label: Quality
+    min: 1
+    max: 10
+    step: 1
+    value: 7
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} interactive />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:slider
+title: Configure preferences
+parameters:
+  - id: performance
+    label: Performance
+    min: 0
+    max: 100
+    step: 5
+    value: 50
+    unit: "%"
+  - id: cost
+    label: Budget
+    min: 0
+    max: 10000
+    step: 100
+    unit: "$"
+```
+````
+
+</details>
+
+### Single parameter
+
+export const singleExample = `\`\`\`ui:slider
+title: Confidence Level
+parameters:
+  - id: confidence
+    label: How confident are you?
+    min: 0
+    max: 100
+    step: 1
+    value: 50
+    unit: "%"
+\`\`\``;
+
+<GlyphPreview client:only="react" source={singleExample} />
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading. |
+| `layout` | `"vertical" \| "horizontal"` | No | `"vertical"` | Layout direction. |
+| `parameters` | `SliderParameter[]` | Yes | -- | Parameters to adjust (min 1). |
+
+### SliderParameter
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `id` | `string` | Yes | -- | Unique parameter identifier. |
+| `label` | `string` | Yes | -- | Display label. |
+| `min` | `number` | No | `0` | Minimum value. |
+| `max` | `number` | No | `100` | Maximum value. |
+| `step` | `number` | No | `1` | Step increment. |
+| `value` | `number` | No | `min` | Initial value. |
+| `unit` | `string` | No | -- | Unit suffix (e.g., "%", "$"). |
+
+## Interaction events
+
+**Event kind:** `slider-change`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `parameterId` | `string` | ID of the changed parameter. |
+| `parameterLabel` | `string` | Label of the changed parameter. |
+| `value` | `number` | The new value. |
+| `allValues` | `Array<{ id, label, value }>` | Full state snapshot. |
+
+## Accessibility
+
+- Uses native `<input type="range">` with `aria-valuemin`, `aria-valuemax`, `aria-valuenow`, and `aria-valuetext`.
+- Arrow keys adjust by step, Home/End for min/max.

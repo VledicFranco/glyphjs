@@ -1,0 +1,127 @@
+---
+title: Annotate
+description: Text annotation with highlight ranges and labels.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Annotate** component (`ui:annotate`) renders a text area with highlight annotations. Users can select text and assign labels to create new annotations.
+
+## Examples
+
+export const defaultExample = `\`\`\`ui:annotate
+interactive: true
+title: Code Review
+labels:
+  - name: Bug
+    color: "#dc2626"
+  - name: Unclear
+    color: "#f59e0b"
+  - name: Good
+    color: "#16a34a"
+text: |
+  function processData(input) {
+    var result = input.split(',');
+    eval(result[0]);
+    return result;
+  }
+annotations:
+  - start: 62
+    end: 78
+    label: Bug
+    note: eval() is dangerous
+\`\`\``;
+
+<GlyphPreview client:only="react" source={defaultExample} interactive />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:annotate
+title: Code Review
+labels:
+  - name: Bug
+    color: "#dc2626"
+  - name: Unclear
+    color: "#f59e0b"
+  - name: Good
+    color: "#16a34a"
+text: |
+  function processData(input) {
+    var result = input.split(',');
+    eval(result[0]);
+    return result;
+  }
+annotations:
+  - start: 62
+    end: 78
+    label: Bug
+    note: eval() is dangerous
+```
+````
+
+</details>
+
+### Prose text
+
+export const proseExample = `\`\`\`ui:annotate
+title: Document Review
+labels:
+  - name: Important
+    color: "#3b82f6"
+  - name: Question
+    color: "#f59e0b"
+text: |
+  The system shall process all incoming requests within 200ms. Authentication tokens expire after 24 hours. Rate limiting is applied at 100 requests per minute per user.
+annotations:
+  - start: 0
+    end: 55
+    label: Important
+\`\`\``;
+
+<GlyphPreview client:only="react" source={proseExample} />
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `title` | `string` | No | -- | Optional heading. |
+| `labels` | `AnnotateLabel[]` | Yes | -- | Available label categories. |
+| `text` | `string` | Yes | -- | The text content to annotate. |
+| `annotations` | `Annotation[]` | No | `[]` | Pre-existing annotations. |
+
+### AnnotateLabel
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `name` | `string` | Yes | Label name. |
+| `color` | `string` | Yes | CSS color for the label. |
+
+### Annotation
+
+| Property | Type | Required | Description |
+|---|---|---|---|
+| `start` | `number` | Yes | Start character offset. |
+| `end` | `number` | Yes | End character offset. |
+| `label` | `string` | Yes | Label name. |
+| `note` | `string` | No | Annotation note. |
+
+## Interaction events
+
+**Event kind:** `annotate-create`
+
+| Payload field | Type | Description |
+|---|---|---|
+| `start` | `number` | Start offset. |
+| `end` | `number` | End offset. |
+| `selectedText` | `string` | The annotated text. |
+| `label` | `string` | Assigned label. |
+| `allAnnotations` | `Array<{ start, end, text, label }>` | Full annotations state. |
+
+## Accessibility
+
+- Text area uses `role="document"`.
+- Annotations rendered as `<mark>` elements.
+- Label picker uses `role="menu"` with `role="menuitem"`.
+- Sidebar uses `role="complementary"` with a `role="list"` for annotations.
