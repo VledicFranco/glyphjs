@@ -124,6 +124,223 @@ metrics:
 
 </details>
 
+### KPI with units
+
+Use the `unit` field to show units separately from values for better formatting.
+
+export const unitsExample = `\`\`\`ui:kpi
+title: Server Performance
+columns: 4
+metrics:
+  - label: Response Time
+    value: "42"
+    unit: ms
+    delta: "-8ms"
+    trend: down
+    sentiment: positive
+  - label: Throughput
+    value: "1,250"
+    unit: req/s
+    delta: "+150"
+    trend: up
+  - label: Error Rate
+    value: "0.02"
+    unit: "%"
+    delta: "-0.01%"
+    trend: down
+    sentiment: positive
+  - label: Uptime
+    value: "99.97"
+    unit: "%"
+    trend: flat
+\`\`\``;
+
+<GlyphPreview client:only="react" source={unitsExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi
+title: Server Performance
+columns: 4
+metrics:
+  - label: Response Time
+    value: "42"
+    unit: ms
+    delta: "-8ms"
+    trend: down
+    sentiment: positive
+  - label: Throughput
+    value: "1,250"
+    unit: req/s
+    delta: "+150"
+    trend: up
+  - label: Error Rate
+    value: "0.02"
+    unit: "%"
+    delta: "-0.01%"
+    trend: down
+    sentiment: positive
+  - label: Uptime
+    value: "99.97"
+    unit: "%"
+    trend: flat
+```
+````
+
+</details>
+
+### Negative trends with positive sentiment
+
+When a metric decreasing is good news (like churn, errors, or costs), use `sentiment: positive` with `trend: down` to show a green color even though the arrow points down.
+
+export const positiveSentimentExample = `\`\`\`ui:kpi
+title: Operational Improvements
+columns: 3
+metrics:
+  - label: Customer Churn
+    value: "1.8%"
+    delta: "-0.5%"
+    trend: down
+    sentiment: positive
+  - label: Support Tickets
+    value: "142"
+    delta: "-38"
+    trend: down
+    sentiment: positive
+  - label: Avg Resolution Time
+    value: "2.1"
+    unit: hours
+    delta: "-45min"
+    trend: down
+    sentiment: positive
+\`\`\``;
+
+<GlyphPreview client:only="react" source={positiveSentimentExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi
+title: Operational Improvements
+columns: 3
+metrics:
+  - label: Customer Churn
+    value: "1.8%"
+    delta: "-0.5%"
+    trend: down
+    sentiment: positive
+  - label: Support Tickets
+    value: "142"
+    delta: "-38"
+    trend: down
+    sentiment: positive
+  - label: Avg Resolution Time
+    value: "2.1"
+    unit: hours
+    delta: "-45min"
+    trend: down
+    sentiment: positive
+```
+````
+
+</details>
+
+### Large metric grid (8 metrics)
+
+Display up to 8 metrics in a comprehensive dashboard view. The grid automatically wraps based on the `columns` setting.
+
+export const largeGridExample = `\`\`\`ui:kpi
+title: Q4 Business Dashboard
+columns: 4
+metrics:
+  - label: Revenue
+    value: "$4.2M"
+    delta: "+18%"
+    trend: up
+  - label: Gross Margin
+    value: "68%"
+    delta: "+3%"
+    trend: up
+  - label: Active Users
+    value: "52,400"
+    delta: "+4,200"
+    trend: up
+  - label: DAU/MAU Ratio
+    value: "42%"
+    delta: "+5%"
+    trend: up
+  - label: Churn Rate
+    value: "2.1%"
+    delta: "-0.4%"
+    trend: down
+    sentiment: positive
+  - label: NPS Score
+    value: "74"
+    delta: "+6"
+    trend: up
+  - label: Support CSAT
+    value: "4.6"
+    unit: "/5"
+    delta: "+0.2"
+    trend: up
+  - label: Avg Order Value
+    value: "$127"
+    delta: "+$12"
+    trend: up
+\`\`\``;
+
+<GlyphPreview client:only="react" source={largeGridExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi
+title: Q4 Business Dashboard
+columns: 4
+metrics:
+  - label: Revenue
+    value: "$4.2M"
+    delta: "+18%"
+    trend: up
+  - label: Gross Margin
+    value: "68%"
+    delta: "+3%"
+    trend: up
+  - label: Active Users
+    value: "52,400"
+    delta: "+4,200"
+    trend: up
+  - label: DAU/MAU Ratio
+    value: "42%"
+    delta: "+5%"
+    trend: up
+  - label: Churn Rate
+    value: "2.1%"
+    delta: "-0.4%"
+    trend: down
+    sentiment: positive
+  - label: NPS Score
+    value: "74"
+    delta: "+6"
+    trend: up
+  - label: Support CSAT
+    value: "4.6"
+    unit: "/5"
+    delta: "+0.2"
+    trend: up
+  - label: Avg Order Value
+    value: "$127"
+    delta: "+$12"
+    trend: up
+```
+````
+
+</details>
+
 ## Responsive behavior
 
 KPI metrics adapt to narrow containers. Below 500px, the grid reduces to at most 2 columns so metric values stay readable without horizontal overflow.

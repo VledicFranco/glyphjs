@@ -1,0 +1,875 @@
+---
+title: Custom Components
+description: Build your own Glyph UI components to extend the rendering pipeline with custom visualizations and interactive elements.
+---
+
+import { Tabs, TabItem } from '@astrojs/starlight/components';
+
+## Overview
+
+GlyphJS ships with a rich library of built-in components for callouts, charts, tables, diagrams, and more. However, you may need custom components for domain-specific visualizations, branded UI elements, or specialized interactions that are not covered by the defaults.
+
+Custom components integrate seamlessly into the Glyph pipeline:
+
+1. Authors write `ui:yourcomponent` fenced code blocks in Markdown with YAML data
+2. The compiler validates the YAML against your Zod schema
+3. The runtime renders your React component with the validated data
+
+This guide walks through creating a complete custom component from scratch.
+
+## When to Create a Custom Component
+
+Create a custom component when you need:
+
+- **Domain-specific visualizations** — metric dashboards, industry-specific diagrams, custom chart types
+- **Branded elements** — company-specific callouts, themed cards, custom navigation
+- **Interactive widgets** — surveys, configurators, specialized forms
+- **Integration components** — embed third-party libraries or services
+
+Before building a custom component, check if an existing component can be configured or styled to meet your needs. The built-in components are highly themeable via CSS custom properties.
+
+## Schema Definition
+
+Every Glyph component starts with a **Zod schema** that defines the shape of data authors write in YAML. The schema serves multiple purposes:
+
+- **Validation** — The compiler rejects malformed data with clear error messages
+- **TypeScript types** — Infer types directly from the schema for type-safe components
+- **Documentation** — The schema is the source of truth for what fields are available
+
+### Creating a Schema
+
+Here is a schema for a simple "metric card" component that displays a label, value, and optional trend indicator:
+
+```typescript
+// metric-card-schema.ts
+import { z } from 'zod';
+
+export const metricCardSchema = z.object({
+  // Required fields
+  label: z.string().describe('Display label for the metric'),
+  value: z.union([z.string(), z.number()]).describe('The metric value'),
+
+  // Optional fields with defaults
+  trend: z.enum(['up', 'down', 'neutral']).optional(),
+  unit: z.string().optional(),
+  precision: z.number().int().min(0).max(6).default(0),
+});
+
+// Infer TypeScript type from the schema
+export type MetricCardData = z.infer<typeof metricCardSchema>;
+```
+
+### Schema Best Practices
+
+**Required vs Optional Fields**
+
+- Mark fields as required only if the component cannot render without them
+- Use `.optional()` for fields with sensible defaults
+- Use `.default()` to specify default values that will be applied during parsing
+
+```typescript
+z.object({
+  title: z.string(),                          // Required
+  subtitle: z.string().optional(),            // Optional, may be undefined
+  maxItems: z.number().default(10),           // Optional with default
+});
+```
+
+**Validation Rules**
+
+Add constraints to catch authoring errors early:
+
+```typescript
+z.object({
+  // Constrained string
+  id: z.string().min(1).max(50).regex(/^[a-z0-9-]+$/),
+
+  // Number ranges
+  percentage: z.number().min(0).max(100),
+
+  // Enum for known values
+  size: z.enum(['sm', 'md', 'lg']),
+
+  // Union types
+  value: z.union([z.string(), z.number()]),
+
+  // Arrays with constraints
+  tags: z.array(z.string()).min(1).max(10),
+
+  // Nested objects
+  author: z.object({
+    name: z.string(),
+    avatar: z.string().url().optional(),
+  }).optional(),
+});
+```
+
+**Descriptions**
+
+Add `.describe()` calls to document fields. These descriptions can be extracted for documentation generation:
+
+```typescript
+z.object({
+  label: z.string().describe('Display label shown above the value'),
+  value: z.number().describe('Numeric value to display'),
+});
+```
+
+## Component Implementation
+
+With the schema defined, implement the React component that renders the data.
+
+### Props Interface
+
+All Glyph components receive props via the `GlyphComponentProps<T>` interface:
+
+```typescript
+interface GlyphComponentProps<T> {
+  data: T;                    // Validated data from the schema
+  block: Block;               // Block metadata (id, type, source position)
+  outgoingRefs: Reference[];  // References from this block to others
+  incomingRefs: Reference[];  // References from other blocks to this one
+  onNavigate: (ref: Reference) => void;  // Navigate to a reference
+  onInteraction?: (event) => void;       // Emit interaction events
+  theme: GlyphThemeContext;   // Theme information
+  layout: LayoutHints;        // Layout hints from the IR
+  container: ContainerContext; // Container measurement context
+}
+```
+
+Most components only need `data` and `block`. Destructure only what you use.
+
+### Basic Component
+
+Here is the MetricCard component implementation:
+
+```tsx
+// MetricCard.tsx
+import type { ReactElement } from 'react';
+import type { GlyphComponentProps } from '@glyphjs/types';
+import type { MetricCardData } from './metric-card-schema';
+
+const TREND_ICONS: Record<string, string> = {
+  up: '\u2191',      // Up arrow
+  down: '\u2193',    // Down arrow
+  neutral: '\u2192', // Right arrow
+};
+
+const TREND_COLORS: Record<string, string> = {
+  up: 'var(--glyph-success, #22c55e)',
+  down: 'var(--glyph-error, #ef4444)',
+  neutral: 'var(--glyph-text-muted, #64748b)',
+};
+
+export function MetricCard({
+  data,
+  block,
+}: GlyphComponentProps<MetricCardData>): ReactElement {
+  const { label, value, trend, unit, precision } = data;
+
+  // Format numeric values with precision
+  const displayValue = typeof value === 'number'
+    ? value.toFixed(precision)
+    : value;
+
+  // Generate unique ID for accessibility
+  const labelId = `glyph-metric-${block.id}-label`;
+
+  return (
+    <div
+      role="figure"
+      aria-labelledby={labelId}
+      style={{
+        fontFamily: 'var(--glyph-font-body, inherit)',
+        color: 'var(--glyph-text, #1a2035)',
+        backgroundColor: 'var(--glyph-surface, #ffffff)',
+        border: '1px solid var(--glyph-border, #d0d8e4)',
+        borderRadius: 'var(--glyph-radius-md, 0.5rem)',
+        padding: 'var(--glyph-spacing-md, 1rem)',
+        display: 'inline-block',
+        minWidth: '150px',
+      }}
+    >
+      <div
+        id={labelId}
+        style={{
+          fontSize: '0.875em',
+          color: 'var(--glyph-text-muted, #64748b)',
+          marginBottom: 'var(--glyph-spacing-xs, 0.25rem)',
+        }}
+      >
+        {label}
+      </div>
+
+      <div
+        style={{
+          fontSize: '1.5em',
+          fontWeight: 700,
+          display: 'flex',
+          alignItems: 'baseline',
+          gap: 'var(--glyph-spacing-xs, 0.25rem)',
+        }}
+      >
+        <span>{displayValue}</span>
+        {unit && (
+          <span style={{ fontSize: '0.6em', fontWeight: 400 }}>
+            {unit}
+          </span>
+        )}
+        {trend && (
+          <span
+            style={{
+              fontSize: '0.75em',
+              color: TREND_COLORS[trend],
+              marginLeft: 'var(--glyph-spacing-xs, 0.25rem)',
+            }}
+            aria-label={`Trend: ${trend}`}
+          >
+            {TREND_ICONS[trend]}
+          </span>
+        )}
+      </div>
+    </div>
+  );
+}
+```
+
+### Theming with CSS Variables
+
+All styling should use CSS custom properties (`var(--glyph-*, fallback)`) for theming:
+
+```tsx
+// Good - uses CSS variables with fallbacks
+style={{
+  color: 'var(--glyph-text, #1a2035)',
+  backgroundColor: 'var(--glyph-surface, #ffffff)',
+  borderRadius: 'var(--glyph-radius-md, 0.5rem)',
+}}
+
+// Bad - hardcoded colors
+style={{
+  color: '#1a2035',
+  backgroundColor: '#ffffff',
+}}
+```
+
+**Key theming rules:**
+
+1. **Always provide fallbacks** — The second argument to `var()` ensures the component renders correctly even without a theme wrapper
+2. **Use global variables first** — Check existing variables (`--glyph-text`, `--glyph-bg`, `--glyph-border`, etc.) before creating component-specific ones
+3. **Never use `theme.isDark`** — CSS variables automatically adapt to light/dark themes
+
+Available global CSS variables include:
+
+| Category | Variables |
+|----------|-----------|
+| Colors | `--glyph-bg`, `--glyph-text`, `--glyph-text-muted`, `--glyph-border`, `--glyph-surface` |
+| Accent | `--glyph-accent`, `--glyph-accent-hover`, `--glyph-accent-subtle` |
+| Status | `--glyph-success`, `--glyph-warning`, `--glyph-error`, `--glyph-info` |
+| Spacing | `--glyph-spacing-xs`, `--glyph-spacing-sm`, `--glyph-spacing-md`, `--glyph-spacing-lg` |
+| Typography | `--glyph-font-body`, `--glyph-font-mono`, `--glyph-font-heading` |
+| Radius | `--glyph-radius-sm`, `--glyph-radius-md`, `--glyph-radius-lg` |
+| Effects | `--glyph-shadow-sm`, `--glyph-shadow-md`, `--glyph-transition` |
+
+### Handling Interactions
+
+For interactive components, use the `onInteraction` callback to emit events:
+
+```tsx
+import type { GlyphComponentProps } from '@glyphjs/types';
+
+export function InteractiveWidget({
+  data,
+  block,
+  onInteraction,
+}: GlyphComponentProps<WidgetData>): ReactElement {
+  const handleClick = (itemId: string) => {
+    onInteraction?.({
+      kind: 'custom',
+      blockId: block.id,
+      blockType: block.type,
+      payload: {
+        action: 'item-selected',
+        itemId,
+      },
+    });
+  };
+
+  return (
+    <div>
+      {data.items.map((item) => (
+        <button
+          key={item.id}
+          onClick={() => handleClick(item.id)}
+        >
+          {item.label}
+        </button>
+      ))}
+    </div>
+  );
+}
+```
+
+The `onInteraction` callback is only available when the runtime is configured with an interaction handler. Always check if it exists before calling (`onInteraction?.(...)`).
+
+### Accessibility
+
+Follow these accessibility guidelines:
+
+1. **Use semantic HTML** — Choose appropriate elements (`button`, `nav`, `article`, etc.)
+2. **Generate unique IDs** — Use `block.id` as a prefix: `glyph-${componentName}-${block.id}`
+3. **Add ARIA attributes** — Include `role`, `aria-label`, `aria-labelledby` as needed
+4. **Support keyboard navigation** — Interactive elements should be keyboard-accessible
+
+```tsx
+// Example: accessible expandable section
+<div
+  role="region"
+  aria-labelledby={`glyph-section-${block.id}-title`}
+>
+  <button
+    id={`glyph-section-${block.id}-title`}
+    aria-expanded={isOpen}
+    aria-controls={`glyph-section-${block.id}-content`}
+    onClick={() => setIsOpen(!isOpen)}
+  >
+    {title}
+  </button>
+  <div
+    id={`glyph-section-${block.id}-content`}
+    hidden={!isOpen}
+  >
+    {content}
+  </div>
+</div>
+```
+
+## Component Definition
+
+The component definition connects the schema and renderer, and registers metadata about the component.
+
+```typescript
+// metric-card/index.ts
+import type { GlyphComponentDefinition } from '@glyphjs/types';
+import { metricCardSchema } from './metric-card-schema';
+import { MetricCard } from './MetricCard';
+import type { MetricCardData } from './metric-card-schema';
+
+export const metricCardDefinition: GlyphComponentDefinition<MetricCardData> = {
+  // Block type (matches ui:metric-card in Markdown)
+  type: 'ui:metric-card',
+
+  // Zod schema for validation
+  schema: metricCardSchema,
+
+  // React component to render
+  render: MetricCard,
+
+  // Optional: default theme variables for this component
+  themeDefaults: {
+    '--glyph-metric-card-value-size': '1.5rem',
+  },
+
+  // Optional: declare dependencies on other block types
+  dependencies: [],
+};
+
+// Re-export for consumers
+export { MetricCard };
+export type { MetricCardData };
+```
+
+### Definition Fields
+
+| Field | Required | Description |
+|-------|----------|-------------|
+| `type` | Yes | Block type identifier, must start with `ui:` |
+| `schema` | Yes | Zod schema with `parse()` and `safeParse()` methods |
+| `render` | Yes | React component that receives `GlyphComponentProps<T>` |
+| `themeDefaults` | No | Default CSS variable values for the component |
+| `dependencies` | No | Array of other block types this component depends on |
+
+## Registration
+
+Register your component with the runtime to make it available for rendering.
+
+### Using createGlyphRuntime
+
+The simplest approach is to include your component in the `components` array when creating the runtime:
+
+```tsx
+import { createGlyphRuntime } from '@glyphjs/runtime';
+import { defaultComponents } from '@glyphjs/components';
+import { metricCardDefinition } from './metric-card';
+
+const runtime = createGlyphRuntime({
+  components: [
+    ...defaultComponents,
+    metricCardDefinition,
+  ],
+  theme: 'light',
+});
+
+// Now ui:metric-card blocks will render using your component
+root.render(<runtime.GlyphDocument ir={ir} />);
+```
+
+### Dynamic Registration
+
+For plugins or lazy-loaded components, register dynamically after runtime creation:
+
+```tsx
+const runtime = createGlyphRuntime({
+  components: defaultComponents,
+  theme: 'light',
+});
+
+// Register later
+runtime.registerComponent(metricCardDefinition);
+```
+
+### Using the Registry Directly
+
+For advanced use cases, you can work with the `PluginRegistry` directly:
+
+```tsx
+import { PluginRegistry } from '@glyphjs/runtime';
+
+const registry = new PluginRegistry();
+
+// Register a single component
+registry.registerComponent(metricCardDefinition);
+
+// Register multiple components
+registry.registerAll([
+  metricCardDefinition,
+  anotherDefinition,
+]);
+
+// Check if a component is registered
+if (registry.has('ui:metric-card')) {
+  const definition = registry.getRenderer('ui:metric-card');
+}
+
+// Get all registered types
+const types = registry.getRegisteredTypes();
+// ['ui:callout', 'ui:metric-card', ...]
+```
+
+## Testing
+
+Thorough testing ensures your component works correctly across different data, themes, and interactions.
+
+### Unit Testing with React Testing Library
+
+Create unit tests for your component:
+
+```tsx
+// MetricCard.test.tsx
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { MetricCard } from './MetricCard';
+import type { MetricCardData } from './metric-card-schema';
+import type { GlyphComponentProps, Block } from '@glyphjs/types';
+
+// Helper to create mock props
+function createMockProps<T>(
+  data: T,
+  blockType: string,
+): GlyphComponentProps<T> {
+  const block: Block = {
+    id: 'test-block-1',
+    type: blockType as Block['type'],
+    data,
+  };
+
+  return {
+    data,
+    block,
+    outgoingRefs: [],
+    incomingRefs: [],
+    onNavigate: () => {},
+    onInteraction: undefined,
+    theme: { isDark: false, resolveVar: (v) => v },
+    layout: {},
+    container: { tier: 'md', width: 800 },
+  };
+}
+
+describe('MetricCard', () => {
+  it('renders label and value', () => {
+    const props = createMockProps<MetricCardData>(
+      { label: 'Revenue', value: 50000, precision: 0 },
+      'ui:metric-card',
+    );
+
+    render(<MetricCard {...props} />);
+
+    expect(screen.getByText('Revenue')).toBeInTheDocument();
+    expect(screen.getByText('50000')).toBeInTheDocument();
+  });
+
+  it('displays unit when provided', () => {
+    const props = createMockProps<MetricCardData>(
+      { label: 'Growth', value: 12.5, unit: '%', precision: 1 },
+      'ui:metric-card',
+    );
+
+    render(<MetricCard {...props} />);
+
+    expect(screen.getByText('%')).toBeInTheDocument();
+  });
+
+  it('shows trend indicator', () => {
+    const props = createMockProps<MetricCardData>(
+      { label: 'Users', value: 1000, trend: 'up', precision: 0 },
+      'ui:metric-card',
+    );
+
+    render(<MetricCard {...props} />);
+
+    expect(screen.getByLabelText('Trend: up')).toBeInTheDocument();
+  });
+
+  it('has correct accessibility attributes', () => {
+    const props = createMockProps<MetricCardData>(
+      { label: 'Score', value: 85, precision: 0 },
+      'ui:metric-card',
+    );
+
+    render(<MetricCard {...props} />);
+
+    const figure = screen.getByRole('figure');
+    expect(figure).toHaveAttribute('aria-labelledby');
+  });
+
+  it('formats numbers with precision', () => {
+    const props = createMockProps<MetricCardData>(
+      { label: 'Rate', value: 0.12345, precision: 2 },
+      'ui:metric-card',
+    );
+
+    render(<MetricCard {...props} />);
+
+    expect(screen.getByText('0.12')).toBeInTheDocument();
+  });
+});
+```
+
+### Storybook Stories
+
+Create Storybook stories to visualize all component variants:
+
+```tsx
+// MetricCard.stories.tsx
+import type { Meta, StoryObj } from '@storybook/react';
+import { MetricCard } from './MetricCard';
+import type { MetricCardData } from './metric-card-schema';
+import type { GlyphComponentProps, Block } from '@glyphjs/types';
+
+// Helper to create story props
+function mockProps<T>(
+  data: T,
+  overrides?: { block?: Partial<Block> },
+): GlyphComponentProps<T> {
+  const block: Block = {
+    id: overrides?.block?.id ?? 'story-block',
+    type: (overrides?.block?.type ?? 'ui:metric-card') as Block['type'],
+    data,
+  };
+
+  return {
+    data,
+    block,
+    outgoingRefs: [],
+    incomingRefs: [],
+    onNavigate: () => {},
+    onInteraction: undefined,
+    theme: { isDark: false, resolveVar: (v) => v },
+    layout: {},
+    container: { tier: 'md', width: 800 },
+  };
+}
+
+const meta: Meta<typeof MetricCard> = {
+  component: MetricCard,
+  title: 'Components/MetricCard',
+  parameters: {
+    layout: 'centered',
+  },
+};
+
+export default meta;
+type Story = StoryObj<typeof MetricCard>;
+
+export const Default: Story = {
+  args: mockProps<MetricCardData>({
+    label: 'Monthly Revenue',
+    value: 52400,
+    precision: 0,
+  }),
+};
+
+export const WithUnit: Story = {
+  args: mockProps<MetricCardData>({
+    label: 'Conversion Rate',
+    value: 3.24,
+    unit: '%',
+    precision: 2,
+  }),
+};
+
+export const TrendUp: Story = {
+  args: mockProps<MetricCardData>({
+    label: 'Active Users',
+    value: 12543,
+    trend: 'up',
+    precision: 0,
+  }),
+};
+
+export const TrendDown: Story = {
+  args: mockProps<MetricCardData>({
+    label: 'Bounce Rate',
+    value: 45.2,
+    unit: '%',
+    trend: 'down',
+    precision: 1,
+  }),
+};
+
+export const StringValue: Story = {
+  args: mockProps<MetricCardData>({
+    label: 'Status',
+    value: 'Healthy',
+    trend: 'neutral',
+    precision: 0,
+  }),
+};
+```
+
+### Accessibility Testing
+
+Use the Storybook a11y addon or run axe-core tests:
+
+```tsx
+import { axe, toHaveNoViolations } from 'jest-axe';
+import { render } from '@testing-library/react';
+
+expect.extend(toHaveNoViolations);
+
+it('has no accessibility violations', async () => {
+  const props = createMockProps<MetricCardData>(
+    { label: 'Test', value: 100, precision: 0 },
+    'ui:metric-card',
+  );
+
+  const { container } = render(<MetricCard {...props} />);
+  const results = await axe(container);
+
+  expect(results).toHaveNoViolations();
+});
+```
+
+## Complete Example
+
+Let us walk through creating a complete "Progress Bar" component from start to finish.
+
+### Step 1: Define the Schema
+
+```typescript
+// progress-bar/schema.ts
+import { z } from 'zod';
+
+export const progressBarSchema = z.object({
+  label: z.string().describe('Accessible label for the progress bar'),
+  value: z.number().min(0).max(100).describe('Current progress (0-100)'),
+  showValue: z.boolean().default(true).describe('Show percentage text'),
+  color: z.enum(['primary', 'success', 'warning', 'error']).default('primary'),
+});
+
+export type ProgressBarData = z.infer<typeof progressBarSchema>;
+```
+
+### Step 2: Implement the Component
+
+```tsx
+// progress-bar/ProgressBar.tsx
+import type { ReactElement } from 'react';
+import type { GlyphComponentProps } from '@glyphjs/types';
+import type { ProgressBarData } from './schema';
+
+const COLOR_MAP: Record<string, string> = {
+  primary: 'var(--glyph-accent, #3b82f6)',
+  success: 'var(--glyph-success, #22c55e)',
+  warning: 'var(--glyph-warning, #f59e0b)',
+  error: 'var(--glyph-error, #ef4444)',
+};
+
+export function ProgressBar({
+  data,
+  block,
+}: GlyphComponentProps<ProgressBarData>): ReactElement {
+  const { label, value, showValue, color } = data;
+  const barId = `glyph-progress-${block.id}`;
+  const labelId = `${barId}-label`;
+
+  return (
+    <div
+      style={{
+        fontFamily: 'var(--glyph-font-body, inherit)',
+        width: '100%',
+      }}
+    >
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          marginBottom: 'var(--glyph-spacing-xs, 0.25rem)',
+          fontSize: '0.875em',
+          color: 'var(--glyph-text, #1a2035)',
+        }}
+      >
+        <span id={labelId}>{label}</span>
+        {showValue && <span>{value}%</span>}
+      </div>
+
+      <div
+        role="progressbar"
+        aria-valuenow={value}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-labelledby={labelId}
+        style={{
+          height: '8px',
+          backgroundColor: 'var(--glyph-border, #e2e8f0)',
+          borderRadius: 'var(--glyph-radius-sm, 0.25rem)',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          style={{
+            height: '100%',
+            width: `${value}%`,
+            backgroundColor: COLOR_MAP[color],
+            borderRadius: 'var(--glyph-radius-sm, 0.25rem)',
+            transition: 'width 0.3s ease',
+          }}
+        />
+      </div>
+    </div>
+  );
+}
+```
+
+### Step 3: Create the Definition
+
+```typescript
+// progress-bar/index.ts
+import type { GlyphComponentDefinition } from '@glyphjs/types';
+import { progressBarSchema, type ProgressBarData } from './schema';
+import { ProgressBar } from './ProgressBar';
+
+export const progressBarDefinition: GlyphComponentDefinition<ProgressBarData> = {
+  type: 'ui:progress-bar',
+  schema: progressBarSchema,
+  render: ProgressBar,
+};
+
+export { ProgressBar };
+export type { ProgressBarData };
+```
+
+### Step 4: Register and Use
+
+```tsx
+// app.tsx
+import { compile } from '@glyphjs/compiler';
+import { createGlyphRuntime } from '@glyphjs/runtime';
+import { defaultComponents } from '@glyphjs/components';
+import { progressBarDefinition } from './progress-bar';
+
+const markdown = `
+# Project Status
+
+Current progress on the migration:
+
+\`\`\`ui:progress-bar
+label: Database Migration
+value: 75
+color: primary
+\`\`\`
+
+\`\`\`ui:progress-bar
+label: API Updates
+value: 100
+color: success
+showValue: true
+\`\`\`
+
+\`\`\`ui:progress-bar
+label: Documentation
+value: 30
+color: warning
+\`\`\`
+`;
+
+const { ir } = compile(markdown);
+
+const runtime = createGlyphRuntime({
+  components: [...defaultComponents, progressBarDefinition],
+  theme: 'light',
+});
+
+root.render(<runtime.GlyphDocument ir={ir} />);
+```
+
+### Step 5: Write Tests
+
+```tsx
+// progress-bar/ProgressBar.test.tsx
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
+import { ProgressBar } from './ProgressBar';
+
+describe('ProgressBar', () => {
+  const mockProps = (data: Partial<ProgressBarData>) => ({
+    data: { label: 'Test', value: 50, showValue: true, color: 'primary' as const, ...data },
+    block: { id: 'test-1', type: 'ui:progress-bar' as const, data: {} },
+    outgoingRefs: [],
+    incomingRefs: [],
+    onNavigate: () => {},
+    theme: { isDark: false, resolveVar: (v: string) => v },
+    layout: {},
+    container: { tier: 'md' as const, width: 800 },
+  });
+
+  it('renders with correct aria attributes', () => {
+    render(<ProgressBar {...mockProps({ value: 75 })} />);
+
+    const progressbar = screen.getByRole('progressbar');
+    expect(progressbar).toHaveAttribute('aria-valuenow', '75');
+    expect(progressbar).toHaveAttribute('aria-valuemin', '0');
+    expect(progressbar).toHaveAttribute('aria-valuemax', '100');
+  });
+
+  it('displays percentage when showValue is true', () => {
+    render(<ProgressBar {...mockProps({ value: 42, showValue: true })} />);
+    expect(screen.getByText('42%')).toBeInTheDocument();
+  });
+
+  it('hides percentage when showValue is false', () => {
+    render(<ProgressBar {...mockProps({ value: 42, showValue: false })} />);
+    expect(screen.queryByText('42%')).not.toBeInTheDocument();
+  });
+});
+```
+
+## Next Steps
+
+Now that you know how to create custom components:
+
+- Browse the [built-in components](/glyphjs/components) for implementation patterns
+- Learn about [theming](/glyphjs/reference/theming) to customize colors and styles
+- Explore the [Plugin API](/glyphjs/reference/plugin-api) for advanced registration options
+- Check the [IR Spec](/glyphjs/reference/ir-spec) to understand block structure

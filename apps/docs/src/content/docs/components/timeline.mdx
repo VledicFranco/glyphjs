@@ -107,6 +107,251 @@ orientation: horizontal
 
 </details>
 
+### Timeline with varied event types
+
+Use different `type` values to color-code events by category. This helps readers quickly scan for specific types of events.
+
+export const typedEventsExample = `\`\`\`ui:timeline
+events:
+  - date: "2025-03-01"
+    title: v1.0 Release
+    description: Initial stable release with core API.
+    type: release
+  - date: "2025-04-15"
+    title: v1.1 Release
+    description: Added new chart components and themes.
+    type: release
+  - date: "2025-05-01"
+    title: Performance milestone
+    description: Achieved sub-100ms render time for complex diagrams.
+    type: milestone
+  - date: "2025-06-01"
+    title: Deprecated legacy API
+    description: Old render() function marked deprecated.
+    type: deprecation
+  - date: "2025-07-01"
+    title: v2.0 Breaking Changes
+    description: New component API, removed legacy render function.
+    type: breaking-change
+  - date: "2025-08-15"
+    title: Community event
+    description: First GlyphJS community meetup.
+    type: event
+orientation: vertical
+\`\`\``;
+
+<GlyphPreview client:only="react" source={typedEventsExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:timeline
+events:
+  - date: "2025-03-01"
+    title: v1.0 Release
+    description: Initial stable release with core API.
+    type: release
+  - date: "2025-04-15"
+    title: v1.1 Release
+    description: Added new chart components and themes.
+    type: release
+  - date: "2025-05-01"
+    title: Performance milestone
+    description: Achieved sub-100ms render time for complex diagrams.
+    type: milestone
+  - date: "2025-06-01"
+    title: Deprecated legacy API
+    description: Old render() function marked deprecated.
+    type: deprecation
+  - date: "2025-07-01"
+    title: v2.0 Breaking Changes
+    description: New component API, removed legacy render function.
+    type: breaking-change
+  - date: "2025-08-15"
+    title: Community event
+    description: First GlyphJS community meetup.
+    type: event
+orientation: vertical
+```
+````
+
+</details>
+
+### Horizontal roadmap timeline
+
+Horizontal timelines work well for high-level roadmaps with fewer events.
+
+export const roadmapExample = `\`\`\`ui:timeline
+events:
+  - date: Q1 2026
+    title: Research
+    description: User research and technical feasibility.
+    type: milestone
+  - date: Q2 2026
+    title: Alpha
+    description: Internal testing with core features.
+    type: release
+  - date: Q3 2026
+    title: Beta
+    description: Public beta with documentation.
+    type: release
+  - date: Q4 2026
+    title: GA Release
+    description: General availability with SLA.
+    type: milestone
+orientation: horizontal
+\`\`\``;
+
+<GlyphPreview client:only="react" source={roadmapExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:timeline
+events:
+  - date: Q1 2026
+    title: Research
+    description: User research and technical feasibility.
+    type: milestone
+  - date: Q2 2026
+    title: Alpha
+    description: Internal testing with core features.
+    type: release
+  - date: Q3 2026
+    title: Beta
+    description: Public beta with documentation.
+    type: release
+  - date: Q4 2026
+    title: GA Release
+    description: General availability with SLA.
+    type: milestone
+orientation: horizontal
+```
+````
+
+</details>
+
+### Extended project history (12 events)
+
+Long timelines benefit from the vertical orientation to maintain readability.
+
+export const longTimelineExample = `\`\`\`ui:timeline
+events:
+  - date: "2024-01-10"
+    title: Project inception
+    description: Initial idea documented in internal RFC.
+    type: milestone
+  - date: "2024-02-15"
+    title: Team formed
+    description: Core team of 3 engineers assembled.
+    type: event
+  - date: "2024-03-20"
+    title: Tech stack decided
+    description: Chose React, TypeScript, and Zod for validation.
+    type: milestone
+  - date: "2024-05-01"
+    title: v0.1 Internal alpha
+    description: First working prototype with basic components.
+    type: release
+  - date: "2024-06-15"
+    title: Schema validation added
+    description: Zod schemas for all component props.
+    type: release
+  - date: "2024-08-01"
+    title: v0.5 Feature complete
+    description: All 8 core components implemented.
+    type: release
+  - date: "2024-09-10"
+    title: Accessibility audit
+    description: WCAG 2.1 AA compliance verified.
+    type: milestone
+  - date: "2024-10-01"
+    title: v0.9 Release candidate
+    description: Final API freeze before 1.0.
+    type: release
+  - date: "2024-11-15"
+    title: Documentation complete
+    description: Full API reference and tutorials.
+    type: milestone
+  - date: "2024-12-01"
+    title: v1.0 GA
+    description: First stable release to production.
+    type: milestone
+  - date: "2025-02-01"
+    title: v1.1 Themes
+    description: Dark mode and custom theming support.
+    type: release
+  - date: "2025-04-01"
+    title: 10k npm downloads
+    description: Community adoption milestone.
+    type: event
+orientation: vertical
+\`\`\``;
+
+<GlyphPreview client:only="react" source={longTimelineExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:timeline
+events:
+  - date: "2024-01-10"
+    title: Project inception
+    description: Initial idea documented in internal RFC.
+    type: milestone
+  - date: "2024-02-15"
+    title: Team formed
+    description: Core team of 3 engineers assembled.
+    type: event
+  - date: "2024-03-20"
+    title: Tech stack decided
+    description: Chose React, TypeScript, and Zod for validation.
+    type: milestone
+  - date: "2024-05-01"
+    title: v0.1 Internal alpha
+    description: First working prototype with basic components.
+    type: release
+  - date: "2024-06-15"
+    title: Schema validation added
+    description: Zod schemas for all component props.
+    type: release
+  - date: "2024-08-01"
+    title: v0.5 Feature complete
+    description: All 8 core components implemented.
+    type: release
+  - date: "2024-09-10"
+    title: Accessibility audit
+    description: WCAG 2.1 AA compliance verified.
+    type: milestone
+  - date: "2024-10-01"
+    title: v0.9 Release candidate
+    description: Final API freeze before 1.0.
+    type: release
+  - date: "2024-11-15"
+    title: Documentation complete
+    description: Full API reference and tutorials.
+    type: milestone
+  - date: "2024-12-01"
+    title: v1.0 GA
+    description: First stable release to production.
+    type: milestone
+  - date: "2025-02-01"
+    title: v1.1 Themes
+    description: Dark mode and custom theming support.
+    type: release
+  - date: "2025-04-01"
+    title: 10k npm downloads
+    description: Community adoption milestone.
+    type: event
+orientation: vertical
+```
+````
+
+</details>
+
 ## Properties
 
 | Property | Type | Required | Default | Description |

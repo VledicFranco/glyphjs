@@ -1,0 +1,447 @@
+---
+title: Theme Variables Reference
+description: Complete reference for all --glyph-* CSS custom properties used in GlyphJS components.
+---
+
+This page documents all CSS custom properties (variables) available in the GlyphJS theming system. Variables are organized by category and include light/dark theme defaults, descriptions, and which components use them.
+
+For an overview of how theming works, see the [Theming guide](/glyphjs/reference/theming/).
+
+---
+
+## Global Variables
+
+These variables are used across multiple components and form the foundation of the GlyphJS visual design.
+
+### Core Colors
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-bg` | `#f4f6fa` | `#0a0e1a` | Primary background color |
+| `--glyph-text` | `#1a2035` | `#d4dae3` | Primary text color |
+| `--glyph-text-muted` | `#6b7a94` | `#6b7a94` | Secondary/muted text color |
+| `--glyph-heading` | `#0a0e1a` | `#edf0f5` | Heading text color |
+| `--glyph-link` | `#0a9d7c` | `#00d4aa` | Link color |
+| `--glyph-link-hover` | `#088a6c` | `#33e0be` | Link hover color |
+
+**Used by:** All components
+
+### Border Colors
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-border` | `#d0d8e4` | `#1a2035` | Default border color |
+| `--glyph-border-strong` | `#a8b5c8` | `#2a3550` | Emphasized border color |
+
+**Used by:** Accordion, Annotate, Card, Callout, CodeDiff, Comparison, Equation, FileTree, Flowchart, Form, Infographic, Kanban, Matrix, MindMap, Poll, Quiz, Ranker, Rating, Sequence, Slider, Tabs, Table, Timeline
+
+### Surface Colors
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-surface` | `#e8ecf3` | `#0f1526` | Surface/card background |
+| `--glyph-surface-raised` | `#f4f6fa` | `#162038` | Elevated surface background |
+
+**Used by:** Accordion, Annotate, Card, Equation, FileTree, Flowchart, Infographic, Kanban, MindMap, Poll, Quiz, Ranker, Sequence, Tabs
+
+### Accent Colors
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-accent` | `#0a9d7c` | `#00d4aa` | Primary accent color |
+| `--glyph-accent-hover` | `#088a6c` | `#33e0be` | Accent hover state |
+| `--glyph-accent-subtle` | `#e6f6f2` | `#0a1a1a` | Subtle accent background |
+| `--glyph-accent-muted` | `#b0ddd0` | `#1a4a3a` | Muted accent color |
+
+**Used by:** Architecture, Card, FileTree, Flowchart, Form, Kanban, MindMap, Ranker, Rating, Slider, Tabs
+
+---
+
+## Typography
+
+| Variable | Value | Description |
+|---|---|---|
+| `--glyph-font-body` | `"Inter", "Helvetica Neue", system-ui, sans-serif` | Body text font stack |
+| `--glyph-font-heading` | `"Inter", "Helvetica Neue", system-ui, sans-serif` | Heading font stack |
+| `--glyph-font-mono` | `ui-monospace, "Cascadia Code", "Fira Code", monospace` | Monospace font stack |
+
+**Used by:** All components
+
+---
+
+## Spacing
+
+| Variable | Value | Description |
+|---|---|---|
+| `--glyph-spacing-xs` | `0.25rem` | Extra small spacing (4px) |
+| `--glyph-spacing-sm` | `0.5rem` | Small spacing (8px) |
+| `--glyph-spacing-md` | `1rem` | Medium spacing (16px) |
+| `--glyph-spacing-lg` | `1.5rem` | Large spacing (24px) |
+| `--glyph-spacing-xl` | `2rem` | Extra large spacing (32px) |
+
+**Used by:** All components
+
+---
+
+## Border Radius
+
+| Variable | Value | Description |
+|---|---|---|
+| `--glyph-radius-sm` | `0.375rem` | Small radius (6px) |
+| `--glyph-radius-md` | `0.5rem` | Medium radius (8px) |
+| `--glyph-radius-lg` | `0.75rem` | Large radius (12px) |
+
+**Used by:** All components
+
+---
+
+## Effects
+
+### Shadows
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-shadow-sm` | `0 1px 3px rgba(0,0,0,0.1)` | `0 1px 3px rgba(0,0,0,0.4)` | Subtle shadow |
+| `--glyph-shadow-md` | `0 4px 12px rgba(0,0,0,0.15)` | `0 4px 12px rgba(0,0,0,0.5)` | Medium shadow |
+| `--glyph-shadow-lg` | `0 8px 30px rgba(0,0,0,0.2)` | `0 8px 30px rgba(0,0,0,0.6)` | Large shadow |
+| `--glyph-shadow-glow` | `none` | `0 0 15px rgba(0,212,170,0.3)` | Accent glow effect |
+
+**Used by:** Annotate, Card, Kanban
+
+### Other Effects
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-text-shadow` | `none` | `none` | Text shadow |
+| `--glyph-backdrop` | `none` | `none` | Backdrop filter value |
+| `--glyph-gradient-accent` | `linear-gradient(135deg, #0a9d7c, #22c55e)` | `linear-gradient(135deg, #00d4aa, #00e5ff)` | Accent gradient |
+| `--glyph-transition` | `0.2s ease` | `0.2s ease` | Default transition timing |
+| `--glyph-opacity-muted` | `0.7` | `0.7` | Muted element opacity |
+| `--glyph-opacity-disabled` | `0.4` | `0.4` | Disabled element opacity |
+| `--glyph-focus-ring` | `0 0 0 2px #0a9d7c` | `0 0 0 2px #00d4aa` | Focus ring box-shadow |
+
+---
+
+## Component-Specific Variables
+
+### Callout
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-callout-info-bg` | `#e6f2fa` | `#0a1526` | Info callout background |
+| `--glyph-callout-info-border` | `#38bdf8` | `#38bdf8` | Info callout border |
+| `--glyph-callout-warning-bg` | `#fef3e2` | `#1a1608` | Warning callout background |
+| `--glyph-callout-warning-border` | `#fb923c` | `#fb923c` | Warning callout border |
+| `--glyph-callout-error-bg` | `#fde8e8` | `#1f0e0e` | Error callout background |
+| `--glyph-callout-error-border` | `#f87171` | `#f87171` | Error callout border |
+| `--glyph-callout-tip-bg` | `#e6f6f0` | `#0a1a14` | Tip callout background |
+| `--glyph-callout-tip-border` | `#22c55e` | `#22c55e` | Tip callout border |
+
+### Table
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-table-border` | `#d0d8e4` | `#1a2035` | Table border color |
+| `--glyph-table-header-bg` | `#e8ecf3` | `#0f1526` | Table header background |
+| `--glyph-table-header-color` | (inherit) | `#d4dae3` | Table header text color |
+| `--glyph-table-row-bg` | `transparent` | `transparent` | Even row background |
+| `--glyph-table-row-alt-bg` | (transparent) | `#121a2c` | Odd row background (striping) |
+| `--glyph-table-cell-color` | (inherit) | `#d4dae3` | Table cell text color |
+| `--glyph-table-cell-padding` | `8px 12px` | `8px 12px` | Table cell padding |
+| `--glyph-table-font-size` | `0.9rem` | `0.9rem` | Table font size |
+| `--glyph-table-footer-bg` | `#e8ecf3` | `#0f1526` | Table footer background |
+| `--glyph-table-footer-color` | (inherit) | `#d4dae3` | Table footer text color |
+
+**Also used by:** Comparison, Matrix
+
+### Chart
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-grid` | `#d0d8e4` | `#1a2035` | Chart grid line color |
+| `--glyph-tooltip-bg` | `rgba(10, 14, 26, 0.9)` | `rgba(0, 0, 0, 0.9)` | Tooltip background |
+| `--glyph-tooltip-text` | `#f4f6fa` | `#d4dae3` | Tooltip text color |
+| `--glyph-chart-bullish` | `#22c55e` | `#22c55e` | Bullish/positive candlestick |
+| `--glyph-chart-bearish` | `#f87171` | `#f87171` | Bearish/negative candlestick |
+
+### Graph / Architecture / Flowchart
+
+SVG-based visualization components share these variables:
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-node-fill-opacity` | `0.85` | `0.85` | Node fill opacity |
+| `--glyph-node-radius` | `3` | `3` | Node corner radius (rx/ry) |
+| `--glyph-node-stroke-width` | `1.5` | `1.5` | Node/edge stroke width |
+| `--glyph-node-label-color` | `#fff` | `#fff` | Node label text color |
+| `--glyph-edge-color` | `#a8b5c8` | `#6b7a94` | Edge/arrow stroke color |
+| `--glyph-icon-stroke` | `#fff` | `#fff` | Architecture icon stroke |
+| `--glyph-icon-stroke-width` | `1.5` | `1.5` | Architecture icon stroke width |
+
+### Relation (ERD)
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-relation-line` | `#6b7a94` | `#6b7a94` | Relationship line color |
+| `--glyph-relation-label` | `#6b7a94` | `#6b7a94` | Relationship label color |
+| `--glyph-relation-cardinality` | `#6b7a94` | `#6b7a94` | Cardinality text color |
+| `--glyph-relation-entity-bg` | `#f4f6fa` | `#f4f6fa` | Entity box background |
+| `--glyph-relation-entity-border` | `#a8b5c8` | `#a8b5c8` | Entity box border |
+| `--glyph-relation-header-bg` | `#00d4aa` | `#00d4aa` | Entity header background |
+| `--glyph-relation-header-text` | `#fff` | `#fff` | Entity header text |
+| `--glyph-relation-attr-text` | `#1a2035` | `#1a2035` | Attribute text color |
+| `--glyph-relation-attr-type` | `#6b7a94` | `#6b7a94` | Attribute type color |
+
+### Timeline
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-timeline-line` | `#d0d8e4` | `#2a3550` | Timeline connector line |
+| `--glyph-timeline-marker-border` | (uses `--glyph-bg`) | (uses `--glyph-bg`) | Marker border color |
+| `--glyph-timeline-date-size` | `0.75rem` | `0.75rem` | Date font size |
+| `--glyph-timeline-date-color` | `#7a8599` | `#7a8599` | Date text color |
+| `--glyph-timeline-title-size` | `0.9rem` | `0.9rem` | Title font size |
+| `--glyph-timeline-desc-size` | `0.8rem` | `0.8rem` | Description font size |
+| `--glyph-timeline-desc-color` | `#7a8599` | `#7a8599` | Description text color |
+| `--glyph-timeline-color-1` | `#00d4aa` | `#00d4aa` | Timeline color 1 |
+| `--glyph-timeline-color-2` | `#b44dff` | `#b44dff` | Timeline color 2 |
+| `--glyph-timeline-color-3` | `#22c55e` | `#22c55e` | Timeline color 3 |
+| `--glyph-timeline-color-4` | `#e040fb` | `#e040fb` | Timeline color 4 |
+| `--glyph-timeline-color-5` | `#00e5ff` | `#00e5ff` | Timeline color 5 |
+| `--glyph-timeline-color-6` | `#84cc16` | `#84cc16` | Timeline color 6 |
+| `--glyph-timeline-color-7` | `#f472b6` | `#f472b6` | Timeline color 7 |
+| `--glyph-timeline-color-8` | `#fb923c` | `#fb923c` | Timeline color 8 |
+
+### Steps
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-steps-pending-color` | `#7a8599` | `#7a8599` | Pending step color |
+| `--glyph-steps-active-color` | `#00d4aa` | `#00d4aa` | Active step color |
+| `--glyph-steps-completed-color` | `#22c55e` | `#22c55e` | Completed step color |
+| `--glyph-steps-connector-color` | `#d0d8e4` | `#d0d8e4` | Connector line color |
+
+### KPI
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-kpi-positive` | `#16a34a` | `#22c55e` | Positive change indicator |
+| `--glyph-kpi-negative` | `#dc2626` | `#f87171` | Negative change indicator |
+| `--glyph-kpi-neutral` | `#6b7a94` | `#6b7a94` | Neutral change indicator |
+
+### Comparison
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-comparison-yes` | `#16a34a` | `#22c55e` | "Yes" checkmark color |
+| `--glyph-comparison-no` | `#dc2626` | `#f87171` | "No" X mark color |
+| `--glyph-comparison-partial` | `#d97706` | `#fbbf24` | "Partial" indicator color |
+
+### CodeDiff
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-codediff-add-bg` | `rgba(22, 163, 106, 0.1)` | `rgba(34, 197, 94, 0.15)` | Added line background |
+| `--glyph-codediff-add-color` | `#166534` | `#86efac` | Added line text color |
+| `--glyph-codediff-del-bg` | `rgba(220, 38, 38, 0.1)` | `rgba(248, 113, 113, 0.15)` | Deleted line background |
+| `--glyph-codediff-del-color` | `#991b1b` | `#fca5a5` | Deleted line text color |
+| `--glyph-codediff-gutter-bg` | `#e8ecf3` | `#0f1526` | Line number gutter background |
+
+### Infographic
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-infographic-track` | `#e0e4ea` | `#2a3550` | Progress bar track color |
+| `--glyph-infographic-color-1` | `#3b82f6` | `#60a5fa` | Data color 1 |
+| `--glyph-infographic-color-2` | `#22c55e` | `#4ade80` | Data color 2 |
+| `--glyph-infographic-color-3` | `#f59e0b` | `#fbbf24` | Data color 3 |
+| `--glyph-infographic-color-4` | `#ef4444` | `#f87171` | Data color 4 |
+| `--glyph-infographic-section-divider` | `#d0d8e4` | `#1a2035` | Section divider color |
+| `--glyph-infographic-star` | `#f59e0b` | `#fbbf24` | Star/rating fill color |
+| `--glyph-infographic-accent` | `#3b82f6` | `#60a5fa` | Accent highlight color |
+| `--glyph-infographic-value-color` | `#1d4ed8` | `#93c5fd` | Value text color |
+| `--glyph-infographic-heading-color` | `#1e293b` | `#e2e8f0` | Section heading color |
+| `--glyph-infographic-label-color` | `#475569` | `#94a3b8` | Label text color |
+| `--glyph-infographic-desc-color` | `#64748b` | `#64748b` | Description text color |
+| `--glyph-infographic-section-bg` | `rgba(255, 255, 255, 0.5)` | `rgba(255, 255, 255, 0.03)` | Section background |
+
+### Poll
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-poll-bar-bg` | `#e8ecf3` | `#1a2035` | Poll bar track background |
+| `--glyph-poll-bar-fill` | `#0a9d7c` | `#00d4aa` | Poll bar fill color |
+
+### Rating
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-rating-star-fill` | `#f59e0b` | `#fbbf24` | Filled star color |
+| `--glyph-rating-star-empty` | `#d0d8e4` | `#2a3550` | Empty star color |
+| `--glyph-rating-hover` | `#fbbf24` | `#fcd34d` | Star hover color |
+
+### Slider
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-slider-track` | `#d0d8e4` | `#1a2035` | Slider track color |
+| `--glyph-slider-fill` | `#0a9d7c` | `#00d4aa` | Slider fill color |
+| `--glyph-slider-thumb` | `#0a9d7c` | `#00d4aa` | Slider thumb color |
+
+### Kanban
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-kanban-column-bg` | `#e8ecf3` | `#0f1526` | Column background |
+| `--glyph-kanban-card-bg` | `#f4f6fa` | `#162038` | Card background |
+| `--glyph-kanban-card-border` | `#d0d8e4` | `#1a2035` | Card border color |
+| `--glyph-kanban-drag-shadow` | `0 4px 12px rgba(0,0,0,0.15)` | `0 4px 12px rgba(0,0,0,0.5)` | Card drag shadow |
+| `--glyph-kanban-priority-high` | `#dc2626` | `#f87171` | High priority color |
+| `--glyph-kanban-priority-medium` | `#f59e0b` | `#fbbf24` | Medium priority color |
+| `--glyph-kanban-priority-low` | `#22c55e` | `#4ade80` | Low priority color |
+
+### Quiz
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-quiz-correct` | `#16a34a` | `#16a34a` | Correct answer text color |
+| `--glyph-quiz-correct-bg` | `#dcfce7` | `#dcfce7` | Correct answer background |
+| `--glyph-quiz-incorrect` | `#dc2626` | `#dc2626` | Incorrect answer text color |
+| `--glyph-quiz-incorrect-bg` | `#fee2e2` | `#fee2e2` | Incorrect answer background |
+
+### Form
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-form-error` | `#dc2626` | `#f87171` | Form error/required color |
+
+### Annotate
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-annotate-highlight-opacity` | `0.3` | `0.3` | Highlight overlay opacity |
+| `--glyph-annotate-label-bg` | `#f4f6fa` | `#162038` | Annotation label background |
+| `--glyph-annotate-sidebar-bg` | `#e8ecf3` | `#0f1526` | Sidebar background |
+
+### MindMap
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-text-on-accent` | `#ffffff` | `#ffffff` | Text color on accent backgrounds |
+
+---
+
+## Examples
+
+### Customizing Theme Globally
+
+Set CSS variables on a wrapper element or use the `ThemeProvider` with a custom theme object:
+
+```tsx
+import { ThemeProvider } from '@glyphjs/runtime';
+
+const myTheme = {
+  name: 'corporate',
+  variables: {
+    '--glyph-bg': '#ffffff',
+    '--glyph-text': '#333333',
+    '--glyph-accent': '#0066cc',
+    '--glyph-accent-hover': '#0052a3',
+    '--glyph-border': '#e0e0e0',
+    '--glyph-surface': '#f5f5f5',
+    // ... other variables
+  },
+};
+
+function App() {
+  return (
+    <ThemeProvider theme={myTheme}>
+      {/* All GlyphJS components will use these variables */}
+    </ThemeProvider>
+  );
+}
+```
+
+### Customizing Individual Components
+
+Override specific variables using CSS selectors:
+
+```css
+/* Make all tables use a different header color */
+.my-app {
+  --glyph-table-header-bg: #1e3a5f;
+  --glyph-table-header-color: #ffffff;
+}
+
+/* Style callouts differently */
+.my-app {
+  --glyph-callout-info-bg: #e3f2fd;
+  --glyph-callout-info-border: #2196f3;
+}
+```
+
+Or target specific theme contexts:
+
+```css
+[data-glyph-theme="corporate"] {
+  --glyph-accent: #0066cc;
+  --glyph-kanban-priority-high: #c62828;
+}
+```
+
+### Dark Mode Setup
+
+Use the built-in dark theme or create a custom dark variant:
+
+```tsx
+import { ThemeProvider, darkTheme } from '@glyphjs/runtime';
+
+// Option 1: Use built-in dark theme
+<ThemeProvider theme="dark">
+  {children}
+</ThemeProvider>
+
+// Option 2: Extend dark theme
+const customDark = {
+  name: 'custom-dark',
+  variables: {
+    ...darkTheme.variables,
+    '--glyph-accent': '#ff6b6b',
+    '--glyph-accent-hover': '#ff8787',
+  },
+};
+
+<ThemeProvider theme={customDark}>
+  {children}
+</ThemeProvider>
+```
+
+### Scoped Component Styling
+
+Apply variables to specific instances using inline styles:
+
+```tsx
+<div style={{
+  '--glyph-callout-info-bg': '#fff3cd',
+  '--glyph-callout-info-border': '#ffc107',
+} as React.CSSProperties}>
+  <Callout type="info" title="Note">
+    This callout has custom colors.
+  </Callout>
+</div>
+```
+
+---
+
+## Variable Naming Conventions
+
+GlyphJS CSS variables follow these naming patterns:
+
+| Pattern | Example | Usage |
+|---|---|---|
+| `--glyph-{property}` | `--glyph-bg`, `--glyph-text` | Global design tokens |
+| `--glyph-{component}-{property}` | `--glyph-table-border` | Component-specific styling |
+| `--glyph-{component}-{variant}-{property}` | `--glyph-callout-info-bg` | Component variant styling |
+| `--glyph-{property}-{modifier}` | `--glyph-accent-hover` | State variations |
+
+All variables include sensible fallback values, ensuring components render correctly even without a theme provider.

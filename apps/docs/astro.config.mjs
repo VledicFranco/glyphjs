@@ -27,6 +27,9 @@ export default defineConfig({
         { label: 'Authoring Guide', items: [
           { label: 'Markdown Syntax', slug: 'authoring-guide' },
         ]},
+        { label: 'Guides', items: [
+          { label: 'Custom Components', slug: 'guides/custom-components' },
+        ]},
         { label: 'Components', items: [
           { label: 'Overview', slug: 'components' },
           { label: 'Callout', slug: 'components/callout' },
@@ -61,8 +64,11 @@ export default defineConfig({
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },
+          { label: 'Compiler API', slug: 'reference/compiler-api' },
+          { label: 'Runtime API', slug: 'reference/runtime-api' },
           { label: 'Plugin API', slug: 'reference/plugin-api' },
           { label: 'Theming', slug: 'reference/theming' },
+          { label: 'Theme Variables', slug: 'reference/theme-variables' },
         ]},
         { label: 'Internals', items: [
           { label: 'Architecture', slug: 'architecture' },

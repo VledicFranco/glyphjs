@@ -122,6 +122,459 @@ layout: left-right
 
 </details>
 
+### Many-to-many relationships
+
+Use `N:M` cardinality to show many-to-many relationships. Junction tables are typically used to implement these in databases.
+
+export const manyToManyExample = `\`\`\`ui:relation
+entities:
+  - id: students
+    label: Students
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: varchar
+      - name: email
+        type: varchar
+  - id: enrollments
+    label: Enrollments
+    attributes:
+      - name: student_id
+        type: uuid
+        primaryKey: true
+      - name: course_id
+        type: uuid
+        primaryKey: true
+      - name: enrolled_at
+        type: timestamp
+      - name: grade
+        type: varchar
+  - id: courses
+    label: Courses
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: title
+        type: varchar
+      - name: credits
+        type: integer
+relationships:
+  - from: students
+    to: enrollments
+    label: enrolls
+    cardinality: "1:N"
+  - from: courses
+    to: enrollments
+    label: has
+    cardinality: "1:N"
+layout: left-right
+\`\`\``;
+
+<GlyphPreview client:only="react" source={manyToManyExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:relation
+entities:
+  - id: students
+    label: Students
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: varchar
+      - name: email
+        type: varchar
+  - id: enrollments
+    label: Enrollments
+    attributes:
+      - name: student_id
+        type: uuid
+        primaryKey: true
+      - name: course_id
+        type: uuid
+        primaryKey: true
+      - name: enrolled_at
+        type: timestamp
+      - name: grade
+        type: varchar
+  - id: courses
+    label: Courses
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: title
+        type: varchar
+      - name: credits
+        type: integer
+relationships:
+  - from: students
+    to: enrollments
+    label: enrolls
+    cardinality: "1:N"
+  - from: courses
+    to: enrollments
+    label: has
+    cardinality: "1:N"
+layout: left-right
+```
+````
+
+</details>
+
+### Self-referential relationships
+
+Entities can reference themselves, useful for hierarchical data like organizational structures or nested categories.
+
+export const selfReferentialExample = `\`\`\`ui:relation
+entities:
+  - id: employees
+    label: Employees
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: varchar
+      - name: title
+        type: varchar
+      - name: manager_id
+        type: uuid
+      - name: department_id
+        type: uuid
+  - id: departments
+    label: Departments
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: varchar
+      - name: parent_id
+        type: uuid
+      - name: head_id
+        type: uuid
+relationships:
+  - from: employees
+    to: employees
+    label: reports to
+    cardinality: "N:1"
+  - from: departments
+    to: departments
+    label: parent of
+    cardinality: "1:N"
+  - from: employees
+    to: departments
+    label: belongs to
+    cardinality: "N:1"
+  - from: departments
+    to: employees
+    label: headed by
+    cardinality: "1:1"
+layout: top-down
+\`\`\``;
+
+<GlyphPreview client:only="react" source={selfReferentialExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:relation
+entities:
+  - id: employees
+    label: Employees
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: varchar
+      - name: title
+        type: varchar
+      - name: manager_id
+        type: uuid
+      - name: department_id
+        type: uuid
+  - id: departments
+    label: Departments
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: varchar
+      - name: parent_id
+        type: uuid
+      - name: head_id
+        type: uuid
+relationships:
+  - from: employees
+    to: employees
+    label: reports to
+    cardinality: "N:1"
+  - from: departments
+    to: departments
+    label: parent of
+    cardinality: "1:N"
+  - from: employees
+    to: departments
+    label: belongs to
+    cardinality: "N:1"
+  - from: departments
+    to: employees
+    label: headed by
+    cardinality: "1:1"
+layout: top-down
+```
+````
+
+</details>
+
+### Complex ERD with multiple entities
+
+A comprehensive e-commerce database schema with 6 entities and various relationship types.
+
+export const complexErdExample = `\`\`\`ui:relation
+entities:
+  - id: customers
+    label: Customers
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: email
+        type: varchar
+      - name: name
+        type: varchar
+      - name: created_at
+        type: timestamp
+  - id: orders
+    label: Orders
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: customer_id
+        type: uuid
+      - name: status
+        type: varchar
+      - name: total
+        type: decimal
+      - name: placed_at
+        type: timestamp
+  - id: order_items
+    label: Order Items
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: order_id
+        type: uuid
+      - name: product_id
+        type: uuid
+      - name: quantity
+        type: integer
+      - name: unit_price
+        type: decimal
+  - id: products
+    label: Products
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: sku
+        type: varchar
+      - name: name
+        type: varchar
+      - name: price
+        type: decimal
+      - name: category_id
+        type: uuid
+  - id: categories
+    label: Categories
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: varchar
+      - name: parent_id
+        type: uuid
+  - id: reviews
+    label: Reviews
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: product_id
+        type: uuid
+      - name: customer_id
+        type: uuid
+      - name: rating
+        type: integer
+      - name: comment
+        type: text
+relationships:
+  - from: customers
+    to: orders
+    label: places
+    cardinality: "1:N"
+  - from: orders
+    to: order_items
+    label: contains
+    cardinality: "1:N"
+  - from: products
+    to: order_items
+    label: included in
+    cardinality: "1:N"
+  - from: categories
+    to: products
+    label: contains
+    cardinality: "1:N"
+  - from: categories
+    to: categories
+    label: parent of
+    cardinality: "1:N"
+  - from: customers
+    to: reviews
+    label: writes
+    cardinality: "1:N"
+  - from: products
+    to: reviews
+    label: has
+    cardinality: "1:N"
+layout: left-right
+\`\`\``;
+
+<GlyphPreview client:only="react" source={complexErdExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:relation
+entities:
+  - id: customers
+    label: Customers
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: email
+        type: varchar
+      - name: name
+        type: varchar
+      - name: created_at
+        type: timestamp
+  - id: orders
+    label: Orders
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: customer_id
+        type: uuid
+      - name: status
+        type: varchar
+      - name: total
+        type: decimal
+      - name: placed_at
+        type: timestamp
+  - id: order_items
+    label: Order Items
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: order_id
+        type: uuid
+      - name: product_id
+        type: uuid
+      - name: quantity
+        type: integer
+      - name: unit_price
+        type: decimal
+  - id: products
+    label: Products
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: sku
+        type: varchar
+      - name: name
+        type: varchar
+      - name: price
+        type: decimal
+      - name: category_id
+        type: uuid
+  - id: categories
+    label: Categories
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: varchar
+      - name: parent_id
+        type: uuid
+  - id: reviews
+    label: Reviews
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: product_id
+        type: uuid
+      - name: customer_id
+        type: uuid
+      - name: rating
+        type: integer
+      - name: comment
+        type: text
+relationships:
+  - from: customers
+    to: orders
+    label: places
+    cardinality: "1:N"
+  - from: orders
+    to: order_items
+    label: contains
+    cardinality: "1:N"
+  - from: products
+    to: order_items
+    label: included in
+    cardinality: "1:N"
+  - from: categories
+    to: products
+    label: contains
+    cardinality: "1:N"
+  - from: categories
+    to: categories
+    label: parent of
+    cardinality: "1:N"
+  - from: customers
+    to: reviews
+    label: writes
+    cardinality: "1:N"
+  - from: products
+    to: reviews
+    label: has
+    cardinality: "1:N"
+layout: left-right
+```
+````
+
+</details>
+
 ## Properties
 
 | Property | Type | Required | Default | Description |

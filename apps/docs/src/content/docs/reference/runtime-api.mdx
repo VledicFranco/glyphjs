@@ -1,0 +1,677 @@
+---
+title: Runtime API
+description: API reference for the @glyphjs/runtime package.
+---
+
+The `@glyphjs/runtime` package provides the React rendering engine for GlyphJS. It takes compiled IR (Intermediate Representation) and renders it as interactive UI components with theming, layout, and animation support.
+
+## Installation
+
+```bash
+pnpm add @glyphjs/runtime
+```
+
+---
+
+## createGlyphRuntime(config)
+
+The primary factory function for creating a configured runtime instance. Returns a `GlyphRuntime` object with a pre-wired React component and runtime controls.
+
+```typescript
+import { createGlyphRuntime } from '@glyphjs/runtime';
+import { builtinComponents } from '@glyphjs/components';
+
+const runtime = createGlyphRuntime({
+  components: builtinComponents,
+  theme: 'dark',
+  animation: { enabled: true, duration: 300 },
+  onDiagnostic: (diagnostic) => console.warn(diagnostic),
+  onNavigate: (ref, targetBlock) => {
+    document.getElementById(targetBlock.id)?.scrollIntoView();
+  },
+  onInteraction: (event) => {
+    console.log('Interaction:', event.kind, event.payload);
+  },
+});
+```
+
+### GlyphRuntimeConfig
+
+| Property | Type | Required | Description |
+|----------|------|----------|-------------|
+| `components` | `GlyphComponentDefinition[]` | No | Array of component definitions to register. |
+| `overrides` | `Record<string, ComponentType>` | No | Override renderers for specific block types. |
+| `theme` | `'light' \| 'dark' \| GlyphTheme` | No | Initial theme. Defaults to `'light'`. |
+| `animation` | `AnimationConfig` | No | Animation configuration for block entry effects. |
+| `onDiagnostic` | `(diagnostic: Diagnostic) => void` | No | Callback for compilation/validation diagnostics. |
+| `onNavigate` | `(ref: Reference, targetBlock: Block) => void` | No | Callback when a reference link is activated. |
+| `onInteraction` | `(event: InteractionEvent) => void` | No | Callback for user interaction events (requires `interactive: true` on blocks). |
+
+### GlyphRuntime
+
+The returned runtime instance provides:
+
+```typescript
+interface GlyphRuntime {
+  GlyphDocument: ComponentType<{ ir: GlyphIR; className?: string }>;
+  registerComponent(definition: GlyphComponentDefinition): void;
+  setTheme(theme: 'light' | 'dark' | GlyphTheme): void;
+}
+```
+
+| Property | Description |
+|----------|-------------|
+| `GlyphDocument` | React component that renders IR documents. Pre-wired with the runtime config. |
+| `registerComponent(def)` | Dynamically register additional component definitions after creation. |
+| `setTheme(theme)` | Change the active theme at runtime. Triggers a re-render. |
+
+### Basic Usage
+
+```tsx
+import { createGlyphRuntime } from '@glyphjs/runtime';
+import { builtinComponents } from '@glyphjs/components';
+import { compile } from '@glyphjs/compiler';
+
+// Compile markdown to IR
+const { ir } = await compile(markdownSource);
+
+// Create runtime
+const runtime = createGlyphRuntime({
+  components: builtinComponents,
+  theme: 'light',
+});
+
+// Render in your app
+function App() {
+  return <runtime.GlyphDocument ir={ir} className="my-document" />;
+}
+```
+
+---
+
+## GlyphDocument
+
+The core rendering component. Renders a complete GlyphIR document with the appropriate layout mode.
+
+```typescript
+interface GlyphDocumentProps {
+  ir: GlyphIR;
+  className?: string;
+  animation?: AnimationConfig;
+  diagnostics?: Diagnostic[];
+}
+```
+
+| Prop | Type | Required | Description |
+|------|------|----------|-------------|
+| `ir` | `GlyphIR` | Yes | The compiled intermediate representation to render. |
+| `className` | `string` | No | CSS class name applied to the document wrapper. |
+| `animation` | `AnimationConfig` | No | Override animation settings for this document. |
+| `diagnostics` | `Diagnostic[]` | No | Diagnostics to display in an overlay. |
+
+**Note:** When using `createGlyphRuntime()`, prefer the returned `runtime.GlyphDocument` component, which is pre-wired with the runtime context. The standalone `GlyphDocument` export is for advanced use cases where you manage the `RuntimeProvider` manually.
+
+### Advanced Usage (Manual Provider)
+
+```tsx
+import { GlyphDocument, RuntimeProvider, ComponentRegistry } from '@glyphjs/runtime';
+
+function CustomSetup({ ir }: { ir: GlyphIR }) {
+  const registry = new ComponentRegistry();
+  // ... configure registry
+
+  return (
+    <RuntimeProvider
+      registry={registry}
+      references={ir.references}
+      documentId={ir.id}
+      theme="dark"
+    >
+      <GlyphDocument ir={ir} />
+    </RuntimeProvider>
+  );
+}
+```
+
+---
+
+## Hooks
+
+### useRuntime()
+
+Access the full runtime context. Must be used within a `RuntimeProvider` or a component tree rendered by `createGlyphRuntime()`.
+
+```typescript
+function useRuntime(): RuntimeContextValue;
+
+interface RuntimeContextValue {
+  registry: ComponentRegistry;
+  references: Reference[];
+  documentId: string;
+  theme: GlyphThemeContext;
+  onDiagnostic: (diagnostic: Diagnostic) => void;
+  onNavigate: (ref: Reference, targetBlock: Block) => void;
+  onInteraction?: (event: InteractionEvent) => void;
+}
+```
+
+**Example:**
+
+```tsx
+import { useRuntime } from '@glyphjs/runtime';
+
+function MyComponent() {
+  const { theme, documentId } = useRuntime();
+
+  return (
+    <div style={{ color: theme.isDark ? '#fff' : '#000' }}>
+      Document: {documentId}
+    </div>
+  );
+}
+```
+
+### useReferences(blockId)
+
+Get incoming and outgoing references for a specific block.
+
+```typescript
+function useReferences(blockId: string): {
+  incomingRefs: Reference[];
+  outgoingRefs: Reference[];
+};
+```
+
+**Example:**
+
+```tsx
+import { useReferences } from '@glyphjs/runtime';
+
+function BlockWithRefs({ blockId }: { blockId: string }) {
+  const { incomingRefs, outgoingRefs } = useReferences(blockId);
+
+  return (
+    <div>
+      <span>Incoming: {incomingRefs.length}</span>
+      <span>Outgoing: {outgoingRefs.length}</span>
+    </div>
+  );
+}
+```
+
+### useLayout()
+
+Access the current layout hints from the nearest `LayoutProvider`.
+
+```typescript
+function useLayout(): LayoutHints;
+
+interface LayoutHints {
+  mode: 'document' | 'dashboard' | 'presentation';
+  columns?: number;
+  maxWidth?: string;
+  spacing?: 'compact' | 'normal' | 'relaxed';
+  blockLayout?: Record<string, BlockLayoutOverride>;
+}
+```
+
+**Example:**
+
+```tsx
+import { useLayout } from '@glyphjs/runtime';
+
+function AdaptiveBlock() {
+  const layout = useLayout();
+
+  if (layout.mode === 'presentation') {
+    return <FullScreenView />;
+  }
+
+  return <StandardView spacing={layout.spacing} />;
+}
+```
+
+### useAnimation()
+
+Access the current animation configuration.
+
+```typescript
+function useAnimation(): AnimationState;
+
+interface AnimationState {
+  enabled: boolean;
+  duration: number;
+  easing: string;
+  staggerDelay: number;
+}
+```
+
+**Example:**
+
+```tsx
+import { useAnimation } from '@glyphjs/runtime';
+
+function AnimatedBlock({ index }: { index: number }) {
+  const { enabled, duration, easing, staggerDelay } = useAnimation();
+
+  const style = enabled ? {
+    transition: `opacity ${duration}ms ${easing} ${index * staggerDelay}ms`,
+  } : {};
+
+  return <div style={style}>Content</div>;
+}
+```
+
+### useBlockAnimation(index)
+
+Per-block entry animation powered by Intersection Observer. Returns a ref, inline styles, and visibility state.
+
+```typescript
+function useBlockAnimation(index: number): BlockAnimationResult;
+
+interface BlockAnimationResult {
+  ref: RefObject<HTMLDivElement | null>;
+  style: CSSProperties;
+  isVisible: boolean;
+}
+```
+
+Animations are automatically disabled when:
+- The animation config has `enabled: false`
+- The user has `prefers-reduced-motion: reduce` set
+
+**Example:**
+
+```tsx
+import { useBlockAnimation } from '@glyphjs/runtime';
+
+function FadeInBlock({ index }: { index: number }) {
+  const { ref, style, isVisible } = useBlockAnimation(index);
+
+  return (
+    <div ref={ref} style={style}>
+      {isVisible && <ExpensiveContent />}
+    </div>
+  );
+}
+```
+
+---
+
+## Layout System
+
+The runtime includes three layout modes that control how blocks are arranged.
+
+### LayoutProvider
+
+Provides layout hints to the component tree.
+
+```tsx
+import { LayoutProvider } from '@glyphjs/runtime';
+
+<LayoutProvider layout={{ mode: 'document', spacing: 'relaxed' }}>
+  {children}
+</LayoutProvider>
+```
+
+### DocumentLayout
+
+Single-column vertical flow layout. The default mode.
+
+| Property | Description |
+|----------|-------------|
+| `spacing` | Gap between blocks: `'compact'` (0.5rem), `'normal'` (1rem), `'relaxed'` (2rem) |
+| `maxWidth` | Maximum width constraint for the content column |
+
+```yaml
+# In IR frontmatter
+layout:
+  mode: document
+  spacing: relaxed
+  maxWidth: 48rem
+```
+
+### DashboardLayout
+
+CSS Grid layout with configurable columns.
+
+| Property | Description |
+|----------|-------------|
+| `columns` | Number of grid columns (default: 2) |
+| `blockLayout` | Per-block grid placement overrides |
+
+```yaml
+layout:
+  mode: dashboard
+  columns: 3
+  blockLayout:
+    hero-block:
+      span: 3
+    sidebar:
+      gridColumn: "3"
+      gridRow: "2 / 4"
+```
+
+### PresentationLayout
+
+Full-viewport slide mode with keyboard navigation.
+
+| Key | Action |
+|-----|--------|
+| `Right Arrow` / `Down Arrow` / `Space` | Next slide |
+| `Left Arrow` / `Up Arrow` | Previous slide |
+
+Each block becomes a slide. A slide indicator appears in the bottom-right corner.
+
+```yaml
+layout:
+  mode: presentation
+```
+
+---
+
+## Theme Utilities
+
+### Built-in Themes
+
+```typescript
+import { lightTheme, darkTheme } from '@glyphjs/runtime';
+```
+
+Both themes provide all `--glyph-*` CSS variables. See the [Theming reference](/reference/theming) for the complete variable list.
+
+### resolveTheme(theme)
+
+Resolves a theme shortcut or object to a concrete `GlyphTheme`.
+
+```typescript
+function resolveTheme(
+  theme: 'light' | 'dark' | GlyphTheme | undefined
+): GlyphTheme;
+```
+
+**Example:**
+
+```typescript
+import { resolveTheme, lightTheme } from '@glyphjs/runtime';
+
+resolveTheme('light');     // Returns lightTheme
+resolveTheme('dark');      // Returns darkTheme
+resolveTheme(undefined);   // Returns lightTheme (default)
+resolveTheme(customTheme); // Returns customTheme as-is
+```
+
+### mergeThemeDefaults(theme, defaults)
+
+Merges component-specific defaults into a theme. Existing theme variables take precedence.
+
+```typescript
+function mergeThemeDefaults(
+  theme: GlyphTheme,
+  defaults: Record<string, string>
+): GlyphTheme;
+```
+
+**Example:**
+
+```typescript
+import { mergeThemeDefaults, lightTheme } from '@glyphjs/runtime';
+
+const enhanced = mergeThemeDefaults(lightTheme, {
+  '--my-component-bg': '#f0f0f0',
+  '--my-component-border': '#ccc',
+});
+```
+
+### createResolveVar(theme)
+
+Creates a function to look up CSS variable values from a theme.
+
+```typescript
+function createResolveVar(theme: GlyphTheme): (varName: string) => string;
+```
+
+**Example:**
+
+```typescript
+import { createResolveVar, darkTheme } from '@glyphjs/runtime';
+
+const resolveVar = createResolveVar(darkTheme);
+const bgColor = resolveVar('--glyph-bg'); // '#0a0e1a'
+```
+
+### isDarkTheme(theme)
+
+Heuristic check for whether a theme is "dark". Inspects the `--glyph-bg` luminance or falls back to name matching.
+
+```typescript
+function isDarkTheme(theme: GlyphTheme): boolean;
+```
+
+**Example:**
+
+```typescript
+import { isDarkTheme, darkTheme, lightTheme } from '@glyphjs/runtime';
+
+isDarkTheme(darkTheme);  // true
+isDarkTheme(lightTheme); // false
+```
+
+### ThemeProvider
+
+Standalone theme provider for cases where you need theming without the full runtime.
+
+```tsx
+import { ThemeProvider, useGlyphTheme } from '@glyphjs/runtime';
+
+function App() {
+  return (
+    <ThemeProvider theme="dark" className="my-app">
+      <ThemedContent />
+    </ThemeProvider>
+  );
+}
+
+function ThemedContent() {
+  const { name, isDark, resolveVar } = useGlyphTheme();
+
+  return (
+    <div style={{ background: resolveVar('--glyph-bg') }}>
+      Theme: {name} ({isDark ? 'dark' : 'light'})
+    </div>
+  );
+}
+```
+
+### Custom Theming Example
+
+```typescript
+import { createGlyphRuntime } from '@glyphjs/runtime';
+import type { GlyphTheme } from '@glyphjs/types';
+
+const customTheme: GlyphTheme = {
+  name: 'brand',
+  variables: {
+    '--glyph-bg': '#1a1a2e',
+    '--glyph-text': '#eaeaea',
+    '--glyph-accent': '#e94560',
+    '--glyph-accent-hover': '#ff6b6b',
+    '--glyph-border': '#2a2a4a',
+    // ... other variables
+  },
+};
+
+const runtime = createGlyphRuntime({
+  components: builtinComponents,
+  theme: customTheme,
+});
+
+// Change theme dynamically
+runtime.setTheme('light');
+runtime.setTheme(customTheme);
+```
+
+---
+
+## SSR Support
+
+The runtime provides utilities for server-side rendering compatibility.
+
+### useIsClient()
+
+Returns `true` once the component has mounted on the client. During SSR and initial hydration, returns `false`.
+
+```typescript
+function useIsClient(): boolean;
+```
+
+**Example:**
+
+```tsx
+import { useIsClient } from '@glyphjs/runtime';
+
+function BrowserOnlyFeature() {
+  const isClient = useIsClient();
+
+  if (!isClient) {
+    return <div>Loading...</div>;
+  }
+
+  // Safe to use browser APIs
+  return <D3Chart data={chartData} />;
+}
+```
+
+### SSRPlaceholder
+
+Renders a placeholder during SSR that is replaced with children after hydration. Useful for components that require browser APIs.
+
+```typescript
+interface SSRPlaceholderProps {
+  width?: string | number;   // Default: '100%'
+  height?: string | number;  // Default: 300
+  className?: string;
+  children: ReactNode;
+}
+```
+
+**Example:**
+
+```tsx
+import { SSRPlaceholder } from '@glyphjs/runtime';
+
+function MyPage() {
+  return (
+    <SSRPlaceholder width="100%" height={400} className="chart-container">
+      <InteractiveChart data={data} />
+    </SSRPlaceholder>
+  );
+}
+```
+
+The placeholder renders a `<div>` with the specified dimensions and a subtle background color (`var(--glyph-ssr-placeholder-bg, #f0f0f0)`), ensuring layout stability during SSR.
+
+---
+
+## AnimationConfig
+
+Configuration for block entry animations.
+
+```typescript
+interface AnimationConfig {
+  enabled?: boolean;      // Default: true
+  duration?: number;      // Default: 300 (ms)
+  easing?: string;        // Default: 'ease-out'
+  staggerDelay?: number;  // Default: 50 (ms)
+}
+```
+
+| Property | Type | Default | Description |
+|----------|------|---------|-------------|
+| `enabled` | `boolean` | `true` | Whether animations are enabled. |
+| `duration` | `number` | `300` | Base animation duration in milliseconds. |
+| `easing` | `string` | `'ease-out'` | CSS easing function. |
+| `staggerDelay` | `number` | `50` | Delay between consecutive blocks in milliseconds. |
+
+**Example:**
+
+```typescript
+const runtime = createGlyphRuntime({
+  components: builtinComponents,
+  animation: {
+    enabled: true,
+    duration: 400,
+    easing: 'cubic-bezier(0.4, 0, 0.2, 1)',
+    staggerDelay: 75,
+  },
+});
+```
+
+Animations are automatically disabled when the user has `prefers-reduced-motion: reduce` set in their system preferences.
+
+---
+
+## Additional Exports
+
+### BlockRenderer
+
+Internal component that renders individual blocks. Typically not used directly.
+
+### ErrorBoundary
+
+React error boundary for catching render errors in blocks.
+
+### FallbackRenderer
+
+Renders a placeholder for unknown block types.
+
+### ComponentRegistry
+
+Class for managing component registrations. Used internally by `createGlyphRuntime()`.
+
+### Built-in Renderers
+
+Standard Markdown block renderers:
+
+```typescript
+import {
+  GlyphHeading,
+  GlyphParagraph,
+  GlyphList,
+  GlyphCodeBlock,
+  GlyphBlockquote,
+  GlyphImage,
+  GlyphThematicBreak,
+  GlyphRawHtml,
+  InlineRenderer,
+  builtInRenderers,
+} from '@glyphjs/runtime';
+```
+
+### Navigation
+
+```typescript
+import { ReferenceIndicator, useNavigation } from '@glyphjs/runtime';
+```
+
+### Container Measurement
+
+```typescript
+import { resolveTier, ContainerMeasure } from '@glyphjs/runtime';
+```
+
+### Diagnostics
+
+```typescript
+import { DiagnosticsOverlay, BlockDiagnosticIndicator } from '@glyphjs/runtime';
+```
+
+### Interaction Debouncing
+
+```typescript
+import { debounceInteractions } from '@glyphjs/runtime';
+
+const handler = debounceInteractions((event) => {
+  sendToAnalytics(event);
+}, 300); // 300ms debounce per (blockId, kind) pair
+```

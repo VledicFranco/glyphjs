@@ -1,0 +1,637 @@
+---
+title: Compiler API
+description: API reference for the @glyphjs/compiler package.
+---
+
+The `@glyphjs/compiler` package transforms Glyph Markdown into the intermediate representation (IR) consumed by the runtime. It handles parsing, schema validation, reference resolution, and diagnostic collection. All exports are available from the package root.
+
+```typescript
+import { compile, createDiagnostic, extractAllInlineReferences } from '@glyphjs/compiler';
+```
+
+---
+
+## compile(source, options?)
+
+The main entry point for compiling Glyph Markdown into IR.
+
+```typescript
+function compile(markdown: string, options?: CompileOptions): CompilationResult;
+```
+
+### Parameters
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `markdown` | `string` | Yes | The Markdown source text to compile. |
+| `options` | `CompileOptions` | No | Optional configuration for compilation. |
+
+### CompileOptions
+
+```typescript
+interface CompileOptions {
+  /** Source file path, used for document ID generation. */
+  filePath?: string;
+  /** Explicit document ID override. */
+  documentId?: string;
+}
+```
+
+| Option | Type | Description |
+|---|---|---|
+| `filePath` | `string` | Path to the source file. Used for deterministic document ID generation and populates `metadata.sourceFile`. |
+| `documentId` | `string` | Explicit document ID override. Takes precedence over file path and content hash. |
+
+### CompilationResult
+
+```typescript
+interface CompilationResult {
+  ir: GlyphIR;
+  diagnostics: Diagnostic[];
+  hasErrors: boolean;
+}
+```
+
+| Field | Type | Description |
+|---|---|---|
+| `ir` | `GlyphIR` | The compiled intermediate representation. Always produced, even when errors exist. |
+| `diagnostics` | `Diagnostic[]` | Array of errors, warnings, and info messages from compilation. |
+| `hasErrors` | `boolean` | `true` if any diagnostic has severity `'error'`. |
+
+### Compilation pipeline
+
+The `compile` function executes a 14-step pipeline:
+
+1. Parse the Markdown via `parseGlyphMarkdown` (from `@glyphjs/parser`)
+2. Extract frontmatter metadata and layout hints
+3. Walk the AST and translate each node to IR blocks
+4. Validate `ui:` blocks against Zod schemas
+5. Compile container blocks (`ui:tabs`, `ui:steps`) -- recursively parse content
+6. Validate container block data
+7. Generate content-addressed block IDs
+8. Generate the document ID
+9. Resolve block ID collisions
+10. Validate `glyph-id` uniqueness
+11. Extract inline references from `[text](#glyph:block-id)` links
+12. Resolve all references (from `refs` arrays and inline links)
+13. Infer metadata from content if not in frontmatter
+14. Return `CompilationResult` with IR, diagnostics, and `hasErrors` flag
+
+The compiler uses a **collect-all-errors** strategy: IR is always produced, even when errors exist. This enables partial rendering and incremental error feedback.
+
+### Example usage
+
+```typescript
+import { compile } from '@glyphjs/compiler';
+
+const markdown = `---
+title: My Document
+glyph-id: my-doc
+---
+
+# Introduction
+
+This is a paragraph.
+
+\`\`\`ui:callout
+variant: info
+title: Note
+content: Important information here.
+\`\`\`
+`;
+
+const result = compile(markdown, { filePath: 'docs/intro.md' });
+
+if (result.hasErrors) {
+  for (const diag of result.diagnostics) {
+    console.error(`[${diag.severity}] ${diag.code}: ${diag.message}`);
+  }
+}
+
+// result.ir contains the compiled GlyphIR
+console.log('Document ID:', result.ir.id);
+console.log('Block count:', result.ir.blocks.length);
+```
+
+### Handling diagnostics
+
+```typescript
+import { compile } from '@glyphjs/compiler';
+
+const result = compile(source);
+
+// Filter by severity
+const errors = result.diagnostics.filter(d => d.severity === 'error');
+const warnings = result.diagnostics.filter(d => d.severity === 'warning');
+
+// Filter by source
+const schemaErrors = result.diagnostics.filter(d => d.source === 'schema');
+const parserErrors = result.diagnostics.filter(d => d.source === 'parser');
+
+// Check specific codes
+const yamlErrors = result.diagnostics.filter(d => d.code === 'YAML_PARSE_ERROR');
+```
+
+---
+
+## Diagnostic Utilities
+
+The compiler exports helper functions for creating standardized `Diagnostic` objects. These are useful when building custom compilation steps or plugins.
+
+### Diagnostic interface
+
+```typescript
+interface Diagnostic {
+  severity: 'error' | 'warning' | 'info';
+  code: string;
+  message: string;
+  position?: SourcePosition;
+  source: DiagnosticSource;
+  details?: unknown;
+}
+
+type DiagnosticSource = 'parser' | 'compiler' | 'schema' | 'runtime' | 'plugin';
+```
+
+### createDiagnostic
+
+Create a diagnostic with the given source, severity, message, and optional position.
+
+```typescript
+function createDiagnostic(
+  source: DiagnosticSource,
+  severity: 'error' | 'warning' | 'info',
+  code: string,
+  message: string,
+  position?: SourcePosition,
+  details?: unknown,
+): Diagnostic;
+```
+
+| Parameter | Type | Required | Description |
+|---|---|---|---|
+| `source` | `DiagnosticSource` | Yes | The subsystem that produced the diagnostic. |
+| `severity` | `'error' \| 'warning' \| 'info'` | Yes | Severity level. |
+| `code` | `string` | Yes | Machine-readable diagnostic code (e.g., `'YAML_PARSE_ERROR'`). |
+| `message` | `string` | Yes | Human-readable description of the issue. |
+| `position` | `SourcePosition` | No | Source position where the issue was detected. |
+| `details` | `unknown` | No | Structured details (e.g., Zod issue objects). |
+
+```typescript
+import { createDiagnostic } from '@glyphjs/compiler';
+
+const diag = createDiagnostic(
+  'plugin',
+  'warning',
+  'CUSTOM_VALIDATION',
+  'Value exceeds recommended maximum',
+  { start: { line: 10, column: 1 }, end: { line: 10, column: 20 } },
+);
+```
+
+### createSchemaError
+
+Create a schema validation error diagnostic.
+
+```typescript
+function createSchemaError(
+  componentType: string,
+  message: string,
+  position?: SourcePosition,
+  details?: unknown,
+): Diagnostic;
+```
+
+Returns a `Diagnostic` with:
+- `severity: 'error'`
+- `code: 'SCHEMA_VALIDATION_FAILED'`
+- `source: 'schema'`
+- Message prefixed with `"Schema validation failed for ui:{componentType}:"`
+
+```typescript
+import { createSchemaError } from '@glyphjs/compiler';
+
+const diag = createSchemaError(
+  'chart',
+  'data.values must have at least one element',
+  block.position,
+  zodIssues,
+);
+// Message: "Schema validation failed for ui:chart: data.values must have at least one element"
+```
+
+### createUnknownComponentInfo
+
+Create an info diagnostic for unknown component types.
+
+```typescript
+function createUnknownComponentInfo(
+  componentType: string,
+  position?: SourcePosition,
+): Diagnostic;
+```
+
+Returns a `Diagnostic` with:
+- `severity: 'info'`
+- `code: 'UNKNOWN_COMPONENT_TYPE'`
+- `source: 'compiler'`
+- Message: `"Unknown component type "ui:{componentType}". Block preserved as-is."`
+
+Unknown components are preserved in the IR (never dropped) and render a fallback placeholder at runtime.
+
+```typescript
+import { createUnknownComponentInfo } from '@glyphjs/compiler';
+
+const diag = createUnknownComponentInfo('custom-widget', block.position);
+```
+
+### createYamlError
+
+Create a diagnostic for YAML parse errors on `ui:` blocks.
+
+```typescript
+function createYamlError(
+  componentType: string,
+  yamlError: string,
+  position?: SourcePosition,
+): Diagnostic;
+```
+
+Returns a `Diagnostic` with:
+- `severity: 'error'`
+- `code: 'YAML_PARSE_ERROR'`
+- `source: 'parser'`
+- Message: `"YAML parse error in ui:{componentType}: {yamlError}"`
+
+```typescript
+import { createYamlError } from '@glyphjs/compiler';
+
+const diag = createYamlError(
+  'table',
+  'Unexpected token at line 3',
+  block.position,
+);
+```
+
+### Common diagnostic codes
+
+| Code | Severity | Source | Description |
+|---|---|---|---|
+| `YAML_PARSE_ERROR` | error | parser | YAML syntax error in a `ui:` block. |
+| `SCHEMA_VALIDATION_FAILED` | error | schema | Block data failed Zod schema validation. |
+| `UNKNOWN_COMPONENT_TYPE` | info | compiler | Unrecognized `ui:*` type (block preserved). |
+| `UNRESOLVED_REFERENCE` | warning | compiler | Reference target block ID not found. |
+| `DUPLICATE_GLYPH_ID` | error | compiler | Multiple blocks share the same `glyph-id`. |
+| `NESTED_UI_COMPONENT` | warning | compiler | `ui:` block inside `ui:tabs` or `ui:steps` content. |
+| `MISSING_TAB_LABEL` | warning | compiler | A tab is missing its `label` field. |
+| `MISSING_STEP_TITLE` | warning | compiler | A step is missing its `title` field. |
+| `FRONTMATTER_PARSE_ERROR` | error | parser | Frontmatter YAML failed to parse. |
+
+---
+
+## Reference Resolution
+
+The compiler provides utilities for extracting and resolving cross-block references. References enable navigation and semantic relationships between blocks.
+
+### How refs work in the IR
+
+References are created from two sources:
+
+1. **Inline links** -- Markdown links with the `#glyph:` prefix: `[link text](#glyph:target-block-id)`
+2. **YAML refs arrays** -- Explicit `refs` arrays in `ui:` block YAML (handled during AST translation)
+
+All references are collected into the `references` array in the compiled `GlyphIR`. During compilation, the compiler validates that `targetBlockId` exists and marks unresolvable references with `unresolved: true`.
+
+### extractInlineReferences
+
+Scan a single block's inline content for `[text](#glyph:block-id)` links.
+
+```typescript
+function extractInlineReferences(
+  block: Block,
+  documentId: string,
+): Reference[];
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `block` | `Block` | The block to scan for glyph links. |
+| `documentId` | `string` | Document ID used to generate deterministic reference IDs. |
+
+Returns an array of newly created (unresolved) `Reference` objects with:
+- `type: 'navigates-to'`
+- `sourceBlockId`: the scanned block's ID
+- `targetBlockId`: the ID after `#glyph:`
+- `label`: the link text (if present)
+- `unresolved: true` (until resolved)
+
+```typescript
+import { extractInlineReferences } from '@glyphjs/compiler';
+
+const refs = extractInlineReferences(paragraphBlock, 'doc-abc123');
+// Returns references for any [text](#glyph:...) links in the paragraph
+```
+
+### extractAllInlineReferences
+
+Recursively scan all blocks (including nested children) for inline glyph links.
+
+```typescript
+function extractAllInlineReferences(
+  blocks: Block[],
+  documentId: string,
+): Reference[];
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `blocks` | `Block[]` | Top-level block array to scan recursively. |
+| `documentId` | `string` | Document ID for reference ID generation. |
+
+This function recursively traverses `block.children` for container blocks (`ui:tabs`, `ui:steps`).
+
+```typescript
+import { extractAllInlineReferences } from '@glyphjs/compiler';
+
+const allRefs = extractAllInlineReferences(ir.blocks, ir.id);
+```
+
+### resolveReferences
+
+Resolve references by checking if target block IDs exist in the document.
+
+```typescript
+function resolveReferences(
+  references: Reference[],
+  blocks: Block[],
+  diagnostics: Diagnostic[],
+): void;
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `references` | `Reference[]` | Reference array to resolve in-place (mutates `unresolved` flag). |
+| `blocks` | `Block[]` | All blocks in the document (used to build the known-ID set). |
+| `diagnostics` | `Diagnostic[]` | Accumulator for `'UNRESOLVED_REFERENCE'` warnings. |
+
+This function:
+1. Collects all block IDs (including nested children)
+2. For each reference, checks if `targetBlockId` exists
+3. Sets `unresolved: false` if found, `true` if not
+4. Adds a warning diagnostic for unresolved references
+
+```typescript
+import { resolveReferences } from '@glyphjs/compiler';
+
+const diagnostics: Diagnostic[] = [];
+resolveReferences(references, blocks, diagnostics);
+
+// References are mutated in-place
+// diagnostics may contain UNRESOLVED_REFERENCE warnings
+```
+
+### validateGlyphIdUniqueness
+
+Validate that all user-assigned `glyph-id` values are unique within the document.
+
+```typescript
+function validateGlyphIdUniqueness(
+  blockIdMap: Map<string, string>,
+  blocks: Block[],
+  diagnostics: Diagnostic[],
+): void;
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `blockIdMap` | `Map<string, string>` | Map of user-assigned `glyph-id` to resolved block ID (from translation). |
+| `blocks` | `Block[]` | All blocks in the document. |
+| `diagnostics` | `Diagnostic[]` | Accumulator for `'DUPLICATE_GLYPH_ID'` error diagnostics. |
+
+Emits an error diagnostic for each `glyph-id` that appears on multiple blocks.
+
+### Example: Custom reference validation
+
+```typescript
+import { compile, resolveReferences } from '@glyphjs/compiler';
+
+const result = compile(markdown);
+
+// Find unresolved references
+const unresolved = result.ir.references.filter(r => r.unresolved);
+if (unresolved.length > 0) {
+  console.warn('Broken links:', unresolved.map(r => r.targetBlockId));
+}
+
+// Find references to a specific block
+const refsToIntro = result.ir.references.filter(
+  r => r.targetBlockId === 'intro-section'
+);
+```
+
+---
+
+## Container Block Compilation
+
+Container blocks (`ui:tabs` and `ui:steps`) can contain nested Markdown in their `content` fields. The compiler recursively parses this content into child blocks.
+
+### compileContainerBlocks
+
+Process container blocks by recursively parsing their `content` fields as Markdown.
+
+```typescript
+function compileContainerBlocks(
+  blocks: Block[],
+  ctx: TranslationContext,
+): void;
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `blocks` | `Block[]` | Top-level block array to scan for container blocks. |
+| `ctx` | `TranslationContext` | Translation context used for recursive compilation. |
+
+This function mutates blocks in-place:
+- Populates the `children` field with parsed child blocks
+- Emits `'NESTED_UI_COMPONENT'` warnings if nested `ui:` blocks are found
+
+**Note**: Nested `ui:` components inside `ui:tabs` or `ui:steps` are not supported in v1 and are skipped with a warning.
+
+### hasNestedUiBlocks
+
+Quick heuristic check for nested `ui:` blocks in content.
+
+```typescript
+function hasNestedUiBlocks(content: string): boolean;
+```
+
+Returns `true` if the content matches the `` ```ui: `` pattern. This is a fast check before full parsing.
+
+```typescript
+import { hasNestedUiBlocks } from '@glyphjs/compiler';
+
+const content = `
+Some markdown text.
+
+\`\`\`ui:callout
+variant: warning
+\`\`\`
+`;
+
+if (hasNestedUiBlocks(content)) {
+  console.warn('Content contains nested ui: blocks');
+}
+```
+
+### validateContainerBlocks
+
+Post-process container blocks to ensure data consistency.
+
+```typescript
+function validateContainerBlocks(
+  blocks: Block[],
+  diagnostics: Diagnostic[],
+): void;
+```
+
+| Parameter | Type | Description |
+|---|---|---|
+| `blocks` | `Block[]` | The compiled block array to validate. |
+| `diagnostics` | `Diagnostic[]` | Accumulator for warning diagnostics. |
+
+Validates:
+- **`ui:tabs`**: Each tab should have a `label` field
+- **`ui:steps`**: Each step should have a `title` field
+
+Missing labels/titles produce warning diagnostics but do not fail compilation.
+
+### Container block structure
+
+After compilation, container blocks have this structure:
+
+```typescript
+// ui:tabs block
+{
+  id: 'b-abc123',
+  type: 'ui:tabs',
+  data: {
+    tabs: [
+      { label: 'Tab 1', content: '...' },
+      { label: 'Tab 2', content: '...' },
+    ]
+  },
+  children: [
+    // Parsed blocks from Tab 1 content
+    // Parsed blocks from Tab 2 content
+  ],
+  position: { ... }
+}
+
+// ui:steps block
+{
+  id: 'b-def456',
+  type: 'ui:steps',
+  data: {
+    steps: [
+      { title: 'Step 1', status: 'complete', content: '...' },
+      { title: 'Step 2', status: 'current', content: '...' },
+    ]
+  },
+  children: [
+    // Parsed blocks from Step 1 content
+    // Parsed blocks from Step 2 content
+  ],
+  position: { ... }
+}
+```
+
+---
+
+## Additional Exports
+
+### convertPhrasingContent
+
+Convert mdast phrasing content to Glyph `InlineNode[]`.
+
+```typescript
+import { convertPhrasingContent } from '@glyphjs/compiler';
+```
+
+Used internally to transform inline Markdown (bold, italic, links, code, etc.) into the IR inline node format.
+
+### translateNode
+
+Translate a single mdast node to a Glyph `Block`.
+
+```typescript
+import { translateNode } from '@glyphjs/compiler';
+import type { TranslationContext } from '@glyphjs/compiler';
+```
+
+The `TranslationContext` interface:
+
+```typescript
+interface TranslationContext {
+  documentId: string;
+  diagnostics: Diagnostic[];
+  references: Reference[];
+  blockIdMap: Map<string, string>;
+}
+```
+
+Used internally during AST-to-IR translation. Exposed for advanced use cases like custom AST transformations.
+
+---
+
+## Error handling patterns
+
+### Graceful degradation
+
+The compiler always produces IR, even with errors:
+
+```typescript
+const result = compile(brokenMarkdown);
+
+// IR is still available for partial rendering
+render(result.ir);
+
+// Show errors to the user
+if (result.hasErrors) {
+  showErrorPanel(result.diagnostics);
+}
+```
+
+### Strict mode wrapper
+
+For build pipelines that should fail on any error:
+
+```typescript
+function compileStrict(markdown: string, options?: CompileOptions): GlyphIR {
+  const result = compile(markdown, options);
+
+  if (result.hasErrors) {
+    const errors = result.diagnostics
+      .filter(d => d.severity === 'error')
+      .map(d => `${d.code}: ${d.message}`)
+      .join('\n');
+    throw new Error(`Compilation failed:\n${errors}`);
+  }
+
+  return result.ir;
+}
+```
+
+### Diagnostic formatting
+
+```typescript
+function formatDiagnostic(d: Diagnostic): string {
+  const pos = d.position
+    ? ` at ${d.position.start.line}:${d.position.start.column}`
+    : '';
+  return `[${d.severity.toUpperCase()}] ${d.code}${pos}: ${d.message}`;
+}
+
+for (const diag of result.diagnostics) {
+  console.log(formatDiagnostic(diag));
+}
+```

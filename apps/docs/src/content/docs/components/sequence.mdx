@@ -114,6 +114,487 @@ messages:
 
 <GlyphPreview client:only="react" source={multiExample} />
 
+## Complex multi-participant flow
+
+A sequence diagram with 5 actors showing a complete e-commerce checkout flow.
+
+export const complexExample = `
+\`\`\`ui:sequence
+title: E-Commerce Checkout Flow
+actors:
+  - id: customer
+    label: Customer
+  - id: web
+    label: Web App
+  - id: cart
+    label: Cart Service
+  - id: inventory
+    label: Inventory
+  - id: payment
+    label: Payment Gateway
+  - id: fulfillment
+    label: Fulfillment
+messages:
+  - from: customer
+    to: web
+    label: Click checkout
+  - from: web
+    to: cart
+    label: GET /cart
+  - from: cart
+    to: web
+    label: Cart items
+    type: reply
+  - from: web
+    to: inventory
+    label: Check availability
+  - from: inventory
+    to: inventory
+    label: Reserve items
+    type: self
+  - from: inventory
+    to: web
+    label: Items reserved
+    type: reply
+  - from: web
+    to: customer
+    label: Show payment form
+    type: reply
+  - from: customer
+    to: web
+    label: Submit payment
+  - from: web
+    to: payment
+    label: Charge card
+  - from: payment
+    to: payment
+    label: Validate & process
+    type: self
+  - from: payment
+    to: web
+    label: Payment confirmed
+    type: reply
+  - from: web
+    to: cart
+    label: Clear cart
+  - from: web
+    to: fulfillment
+    label: Create shipment
+  - from: fulfillment
+    to: web
+    label: Tracking number
+    type: reply
+  - from: web
+    to: customer
+    label: Order confirmation
+    type: reply
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={complexExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:sequence
+title: E-Commerce Checkout Flow
+actors:
+  - id: customer
+    label: Customer
+  - id: web
+    label: Web App
+  - id: cart
+    label: Cart Service
+  - id: inventory
+    label: Inventory
+  - id: payment
+    label: Payment Gateway
+  - id: fulfillment
+    label: Fulfillment
+messages:
+  - from: customer
+    to: web
+    label: Click checkout
+  - from: web
+    to: cart
+    label: GET /cart
+  - from: cart
+    to: web
+    label: Cart items
+    type: reply
+  - from: web
+    to: inventory
+    label: Check availability
+  - from: inventory
+    to: inventory
+    label: Reserve items
+    type: self
+  - from: inventory
+    to: web
+    label: Items reserved
+    type: reply
+  - from: web
+    to: customer
+    label: Show payment form
+    type: reply
+  - from: customer
+    to: web
+    label: Submit payment
+  - from: web
+    to: payment
+    label: Charge card
+  - from: payment
+    to: payment
+    label: Validate & process
+    type: self
+  - from: payment
+    to: web
+    label: Payment confirmed
+    type: reply
+  - from: web
+    to: cart
+    label: Clear cart
+  - from: web
+    to: fulfillment
+    label: Create shipment
+  - from: fulfillment
+    to: web
+    label: Tracking number
+    type: reply
+  - from: web
+    to: customer
+    label: Order confirmation
+    type: reply
+```
+````
+
+</details>
+
+## REST API request/response pattern
+
+A common pattern showing HTTP methods, status codes, and error handling.
+
+export const restApiExample = `
+\`\`\`ui:sequence
+title: REST API CRUD Operations
+actors:
+  - id: client
+    label: Client App
+  - id: api
+    label: REST API
+  - id: db
+    label: Database
+  - id: cache
+    label: Redis Cache
+messages:
+  - from: client
+    to: api
+    label: GET /users/123
+  - from: api
+    to: cache
+    label: Check cache
+  - from: cache
+    to: api
+    label: Cache miss
+    type: reply
+  - from: api
+    to: db
+    label: SELECT * FROM users
+  - from: db
+    to: api
+    label: User record
+    type: reply
+  - from: api
+    to: cache
+    label: Store in cache
+  - from: api
+    to: client
+    label: "200 OK { user }"
+    type: reply
+  - from: client
+    to: api
+    label: "PUT /users/123 { name }"
+  - from: api
+    to: api
+    label: Validate payload
+    type: self
+  - from: api
+    to: db
+    label: UPDATE users SET...
+  - from: db
+    to: api
+    label: 1 row affected
+    type: reply
+  - from: api
+    to: cache
+    label: Invalidate cache
+  - from: api
+    to: client
+    label: "200 OK { updated }"
+    type: reply
+  - from: client
+    to: api
+    label: DELETE /users/123
+  - from: api
+    to: db
+    label: DELETE FROM users
+  - from: db
+    to: api
+    label: 1 row deleted
+    type: reply
+  - from: api
+    to: cache
+    label: Remove from cache
+  - from: api
+    to: client
+    label: 204 No Content
+    type: reply
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={restApiExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:sequence
+title: REST API CRUD Operations
+actors:
+  - id: client
+    label: Client App
+  - id: api
+    label: REST API
+  - id: db
+    label: Database
+  - id: cache
+    label: Redis Cache
+messages:
+  - from: client
+    to: api
+    label: GET /users/123
+  - from: api
+    to: cache
+    label: Check cache
+  - from: cache
+    to: api
+    label: Cache miss
+    type: reply
+  - from: api
+    to: db
+    label: SELECT * FROM users
+  - from: db
+    to: api
+    label: User record
+    type: reply
+  - from: api
+    to: cache
+    label: Store in cache
+  - from: api
+    to: client
+    label: "200 OK { user }"
+    type: reply
+  - from: client
+    to: api
+    label: "PUT /users/123 { name }"
+  - from: api
+    to: api
+    label: Validate payload
+    type: self
+  - from: api
+    to: db
+    label: UPDATE users SET...
+  - from: db
+    to: api
+    label: 1 row affected
+    type: reply
+  - from: api
+    to: cache
+    label: Invalidate cache
+  - from: api
+    to: client
+    label: "200 OK { updated }"
+    type: reply
+  - from: client
+    to: api
+    label: DELETE /users/123
+  - from: api
+    to: db
+    label: DELETE FROM users
+  - from: db
+    to: api
+    label: 1 row deleted
+    type: reply
+  - from: api
+    to: cache
+    label: Remove from cache
+  - from: api
+    to: client
+    label: 204 No Content
+    type: reply
+```
+````
+
+</details>
+
+## OAuth 2.0 authorization flow
+
+A detailed sequence showing the OAuth 2.0 authorization code flow with token refresh.
+
+export const oauthExample = `
+\`\`\`ui:sequence
+title: OAuth 2.0 Authorization Code Flow
+actors:
+  - id: user
+    label: User
+  - id: app
+    label: Client App
+  - id: auth
+    label: Auth Server
+  - id: api
+    label: Resource API
+messages:
+  - from: user
+    to: app
+    label: Click "Login with OAuth"
+  - from: app
+    to: auth
+    label: "Redirect to /authorize"
+  - from: auth
+    to: user
+    label: Show login page
+    type: reply
+  - from: user
+    to: auth
+    label: Enter credentials
+  - from: auth
+    to: auth
+    label: Validate user
+    type: self
+  - from: auth
+    to: user
+    label: Show consent screen
+    type: reply
+  - from: user
+    to: auth
+    label: Grant permission
+  - from: auth
+    to: app
+    label: "Redirect with ?code=abc"
+    type: reply
+  - from: app
+    to: auth
+    label: "POST /token { code, secret }"
+  - from: auth
+    to: auth
+    label: Validate code & client
+    type: self
+  - from: auth
+    to: app
+    label: "{ access_token, refresh_token }"
+    type: reply
+  - from: app
+    to: api
+    label: "GET /data (Bearer token)"
+  - from: api
+    to: auth
+    label: Validate token
+  - from: auth
+    to: api
+    label: Token valid
+    type: reply
+  - from: api
+    to: app
+    label: Protected data
+    type: reply
+  - from: app
+    to: user
+    label: Display dashboard
+    type: reply
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={oauthExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:sequence
+title: OAuth 2.0 Authorization Code Flow
+actors:
+  - id: user
+    label: User
+  - id: app
+    label: Client App
+  - id: auth
+    label: Auth Server
+  - id: api
+    label: Resource API
+messages:
+  - from: user
+    to: app
+    label: Click "Login with OAuth"
+  - from: app
+    to: auth
+    label: "Redirect to /authorize"
+  - from: auth
+    to: user
+    label: Show login page
+    type: reply
+  - from: user
+    to: auth
+    label: Enter credentials
+  - from: auth
+    to: auth
+    label: Validate user
+    type: self
+  - from: auth
+    to: user
+    label: Show consent screen
+    type: reply
+  - from: user
+    to: auth
+    label: Grant permission
+  - from: auth
+    to: app
+    label: "Redirect with ?code=abc"
+    type: reply
+  - from: app
+    to: auth
+    label: "POST /token { code, secret }"
+  - from: auth
+    to: auth
+    label: Validate code & client
+    type: self
+  - from: auth
+    to: app
+    label: "{ access_token, refresh_token }"
+    type: reply
+  - from: app
+    to: api
+    label: "GET /data (Bearer token)"
+  - from: api
+    to: auth
+    label: Validate token
+  - from: auth
+    to: api
+    label: Token valid
+    type: reply
+  - from: api
+    to: app
+    label: Protected data
+    type: reply
+  - from: app
+    to: user
+    label: Display dashboard
+    type: reply
+```
+````
+
+</details>
+
 ## Properties
 
 | Property   | Type             | Default      | Description                   |

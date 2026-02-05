@@ -185,6 +185,543 @@ layout: top-down
 
 </details>
 
+### Microservices topology
+
+A complex microservices architecture with multiple interconnected services.
+
+export const microservicesExample = `\`\`\`ui:architecture
+title: E-Commerce Microservices
+children:
+  - id: gateway
+    label: API Gateway
+    icon: gateway
+  - id: auth
+    label: Auth Service
+    icon: function
+  - id: users
+    label: User Service
+    icon: server
+  - id: products
+    label: Product Catalog
+    icon: server
+  - id: orders
+    label: Order Service
+    icon: server
+  - id: payments
+    label: Payment Service
+    icon: function
+  - id: inventory
+    label: Inventory Service
+    icon: server
+  - id: notifications
+    label: Notification Service
+    icon: function
+  - id: userdb
+    label: Users DB
+    icon: database
+  - id: productdb
+    label: Products DB
+    icon: database
+  - id: orderdb
+    label: Orders DB
+    icon: database
+  - id: queue
+    label: Event Bus
+    icon: queue
+edges:
+  - from: gateway
+    to: auth
+    label: validate
+  - from: gateway
+    to: users
+  - from: gateway
+    to: products
+  - from: gateway
+    to: orders
+  - from: orders
+    to: payments
+    label: charge
+  - from: orders
+    to: inventory
+    label: reserve
+  - from: orders
+    to: queue
+    type: async
+  - from: queue
+    to: notifications
+    type: async
+  - from: users
+    to: userdb
+  - from: products
+    to: productdb
+  - from: orders
+    to: orderdb
+  - from: payments
+    to: orderdb
+layout: top-down
+\`\`\``;
+
+<GlyphPreview client:only="react" source={microservicesExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:architecture
+title: E-Commerce Microservices
+children:
+  - id: gateway
+    label: API Gateway
+    icon: gateway
+  - id: auth
+    label: Auth Service
+    icon: function
+  - id: users
+    label: User Service
+    icon: server
+  - id: products
+    label: Product Catalog
+    icon: server
+  - id: orders
+    label: Order Service
+    icon: server
+  - id: payments
+    label: Payment Service
+    icon: function
+  - id: inventory
+    label: Inventory Service
+    icon: server
+  - id: notifications
+    label: Notification Service
+    icon: function
+  - id: userdb
+    label: Users DB
+    icon: database
+  - id: productdb
+    label: Products DB
+    icon: database
+  - id: orderdb
+    label: Orders DB
+    icon: database
+  - id: queue
+    label: Event Bus
+    icon: queue
+edges:
+  - from: gateway
+    to: auth
+    label: validate
+  - from: gateway
+    to: users
+  - from: gateway
+    to: products
+  - from: gateway
+    to: orders
+  - from: orders
+    to: payments
+    label: charge
+  - from: orders
+    to: inventory
+    label: reserve
+  - from: orders
+    to: queue
+    type: async
+  - from: queue
+    to: notifications
+    type: async
+  - from: users
+    to: userdb
+  - from: products
+    to: productdb
+  - from: orders
+    to: orderdb
+  - from: payments
+    to: orderdb
+layout: top-down
+```
+````
+
+</details>
+
+### Multi-layer architecture
+
+A three-tier architecture showing frontend, backend, and data layers with grouped zones.
+
+export const multiLayerExample = `\`\`\`ui:architecture
+title: Three-Tier Web Application
+children:
+  - id: frontend
+    label: Presentation Layer
+    type: zone
+    children:
+      - id: web
+        label: Web App
+        icon: cloud
+      - id: mobile
+        label: Mobile App
+        icon: cloud
+      - id: cdn
+        label: CDN
+        icon: network
+  - id: backend
+    label: Application Layer
+    type: zone
+    children:
+      - id: lb
+        label: Load Balancer
+        icon: loadbalancer
+      - id: api1
+        label: API Server 1
+        icon: server
+      - id: api2
+        label: API Server 2
+        icon: server
+      - id: worker
+        label: Background Jobs
+        icon: function
+      - id: cache
+        label: Redis Cache
+        icon: cache
+  - id: data
+    label: Data Layer
+    type: zone
+    children:
+      - id: primary
+        label: Primary DB
+        icon: database
+      - id: replica
+        label: Read Replica
+        icon: database
+      - id: search
+        label: Elasticsearch
+        icon: database
+      - id: blob
+        label: Blob Storage
+        icon: storage
+edges:
+  - from: web
+    to: cdn
+  - from: mobile
+    to: cdn
+  - from: cdn
+    to: lb
+    label: HTTPS
+  - from: lb
+    to: api1
+  - from: lb
+    to: api2
+  - from: api1
+    to: cache
+  - from: api2
+    to: cache
+  - from: api1
+    to: primary
+    label: writes
+  - from: api2
+    to: replica
+    label: reads
+  - from: worker
+    to: primary
+  - from: api1
+    to: search
+    label: index
+  - from: api1
+    to: blob
+    type: data
+  - from: primary
+    to: replica
+    type: async
+    label: replication
+layout: top-down
+\`\`\``;
+
+<GlyphPreview client:only="react" source={multiLayerExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:architecture
+title: Three-Tier Web Application
+children:
+  - id: frontend
+    label: Presentation Layer
+    type: zone
+    children:
+      - id: web
+        label: Web App
+        icon: cloud
+      - id: mobile
+        label: Mobile App
+        icon: cloud
+      - id: cdn
+        label: CDN
+        icon: network
+  - id: backend
+    label: Application Layer
+    type: zone
+    children:
+      - id: lb
+        label: Load Balancer
+        icon: loadbalancer
+      - id: api1
+        label: API Server 1
+        icon: server
+      - id: api2
+        label: API Server 2
+        icon: server
+      - id: worker
+        label: Background Jobs
+        icon: function
+      - id: cache
+        label: Redis Cache
+        icon: cache
+  - id: data
+    label: Data Layer
+    type: zone
+    children:
+      - id: primary
+        label: Primary DB
+        icon: database
+      - id: replica
+        label: Read Replica
+        icon: database
+      - id: search
+        label: Elasticsearch
+        icon: database
+      - id: blob
+        label: Blob Storage
+        icon: storage
+edges:
+  - from: web
+    to: cdn
+  - from: mobile
+    to: cdn
+  - from: cdn
+    to: lb
+    label: HTTPS
+  - from: lb
+    to: api1
+  - from: lb
+    to: api2
+  - from: api1
+    to: cache
+  - from: api2
+    to: cache
+  - from: api1
+    to: primary
+    label: writes
+  - from: api2
+    to: replica
+    label: reads
+  - from: worker
+    to: primary
+  - from: api1
+    to: search
+    label: index
+  - from: api1
+    to: blob
+    type: data
+  - from: primary
+    to: replica
+    type: async
+    label: replication
+layout: top-down
+```
+````
+
+</details>
+
+### AWS-style multi-region deployment
+
+An architecture with deeply nested zones representing AWS regions, VPCs, and availability zones.
+
+export const multiRegionExample = `\`\`\`ui:architecture
+title: Multi-Region Deployment
+children:
+  - id: users
+    label: Global Users
+    icon: user
+  - id: dns
+    label: Route 53
+    icon: network
+  - id: us-east
+    label: US-East Region
+    type: zone
+    children:
+      - id: us-vpc
+        label: Production VPC
+        type: zone
+        children:
+          - id: us-alb
+            label: ALB
+            icon: loadbalancer
+          - id: us-az1
+            label: AZ-1
+            type: zone
+            children:
+              - id: us-app1
+                label: App Server
+                icon: container
+              - id: us-db-primary
+                label: RDS Primary
+                icon: database
+          - id: us-az2
+            label: AZ-2
+            type: zone
+            children:
+              - id: us-app2
+                label: App Server
+                icon: container
+              - id: us-db-standby
+                label: RDS Standby
+                icon: database
+  - id: eu-west
+    label: EU-West Region
+    type: zone
+    children:
+      - id: eu-vpc
+        label: Production VPC
+        type: zone
+        children:
+          - id: eu-alb
+            label: ALB
+            icon: loadbalancer
+          - id: eu-app
+            label: App Server
+            icon: container
+          - id: eu-db
+            label: RDS Replica
+            icon: database
+edges:
+  - from: users
+    to: dns
+  - from: dns
+    to: us-alb
+    label: primary
+  - from: dns
+    to: eu-alb
+    label: failover
+  - from: us-alb
+    to: us-app1
+  - from: us-alb
+    to: us-app2
+  - from: us-app1
+    to: us-db-primary
+  - from: us-app2
+    to: us-db-primary
+  - from: us-db-primary
+    to: us-db-standby
+    type: async
+    label: sync
+  - from: us-db-primary
+    to: eu-db
+    type: async
+    label: cross-region
+  - from: eu-alb
+    to: eu-app
+  - from: eu-app
+    to: eu-db
+layout: top-down
+\`\`\``;
+
+<GlyphPreview client:only="react" source={multiRegionExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:architecture
+title: Multi-Region Deployment
+children:
+  - id: users
+    label: Global Users
+    icon: user
+  - id: dns
+    label: Route 53
+    icon: network
+  - id: us-east
+    label: US-East Region
+    type: zone
+    children:
+      - id: us-vpc
+        label: Production VPC
+        type: zone
+        children:
+          - id: us-alb
+            label: ALB
+            icon: loadbalancer
+          - id: us-az1
+            label: AZ-1
+            type: zone
+            children:
+              - id: us-app1
+                label: App Server
+                icon: container
+              - id: us-db-primary
+                label: RDS Primary
+                icon: database
+          - id: us-az2
+            label: AZ-2
+            type: zone
+            children:
+              - id: us-app2
+                label: App Server
+                icon: container
+              - id: us-db-standby
+                label: RDS Standby
+                icon: database
+  - id: eu-west
+    label: EU-West Region
+    type: zone
+    children:
+      - id: eu-vpc
+        label: Production VPC
+        type: zone
+        children:
+          - id: eu-alb
+            label: ALB
+            icon: loadbalancer
+          - id: eu-app
+            label: App Server
+            icon: container
+          - id: eu-db
+            label: RDS Replica
+            icon: database
+edges:
+  - from: users
+    to: dns
+  - from: dns
+    to: us-alb
+    label: primary
+  - from: dns
+    to: eu-alb
+    label: failover
+  - from: us-alb
+    to: us-app1
+  - from: us-alb
+    to: us-app2
+  - from: us-app1
+    to: us-db-primary
+  - from: us-app2
+    to: us-db-primary
+  - from: us-db-primary
+    to: us-db-standby
+    type: async
+    label: sync
+  - from: us-db-primary
+    to: eu-db
+    type: async
+    label: cross-region
+  - from: eu-alb
+    to: eu-app
+  - from: eu-app
+    to: eu-db
+layout: top-down
+```
+````
+
+</details>
+
 ## Properties
 
 | Property | Type | Required | Default | Description |
