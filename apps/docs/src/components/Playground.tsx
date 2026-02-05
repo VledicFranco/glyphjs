@@ -2,6 +2,7 @@ import { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { compile } from '@glyphjs/compiler';
 import { createGlyphRuntime } from '@glyphjs/runtime';
 import type { InteractionEvent } from '@glyphjs/types';
+import { useStarlightTheme } from './useStarlightTheme.js';
 import { useInteractionLog } from './useInteractionLog.js';
 import EventLog from './EventLog.js';
 import {
@@ -86,6 +87,7 @@ const allComponents = [
 ];
 
 export default function Playground() {
+  const starlightTheme = useStarlightTheme();
   const [markdown, setMarkdown] = useState(DEFAULT_MARKDOWN);
   const [ir, setIr] = useState<GlyphIR | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -103,11 +105,11 @@ export default function Playground() {
   const runtime = useMemo(
     () =>
       createGlyphRuntime({
-        theme: 'light',
+        theme: starlightTheme,
         components: allComponents,
         onInteraction: stableOnInteraction,
       }),
-    [stableOnInteraction],
+    [starlightTheme, stableOnInteraction],
   );
 
   const GlyphDocument = runtime.GlyphDocument;

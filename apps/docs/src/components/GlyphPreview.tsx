@@ -1,7 +1,8 @@
-import { useMemo, useState, useEffect, useCallback, useRef } from 'react';
+import { useMemo, useCallback, useRef } from 'react';
 import { compile } from '@glyphjs/compiler';
 import { createGlyphRuntime } from '@glyphjs/runtime';
 import type { GlyphTheme, InteractionEvent } from '@glyphjs/types';
+import { useStarlightTheme } from './useStarlightTheme.js';
 import { useInteractionLog } from './useInteractionLog.js';
 import EventLog from './EventLog.js';
 import {
@@ -51,31 +52,6 @@ const allComponents = [
   cardDefinition,
   infographicDefinition,
 ];
-
-function useStarlightTheme(): 'light' | 'dark' {
-  const getTheme = useCallback(
-    () =>
-      (typeof document !== 'undefined' &&
-      document.documentElement.getAttribute('data-theme') === 'dark'
-        ? 'dark'
-        : 'light') as 'light' | 'dark',
-    [],
-  );
-
-  const [theme, setTheme] = useState<'light' | 'dark'>(getTheme);
-
-  useEffect(() => {
-    setTheme(getTheme());
-    const observer = new MutationObserver(() => setTheme(getTheme()));
-    observer.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ['data-theme'],
-    });
-    return () => observer.disconnect();
-  }, [getTheme]);
-
-  return theme;
-}
 
 interface GlyphPreviewProps {
   source: string;

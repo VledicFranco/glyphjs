@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import type { ReactNode } from 'react';
 import type {
   GlyphIR,
@@ -64,7 +64,7 @@ export function createGlyphRuntime(config: GlyphRuntimeConfig): GlyphRuntime {
     }, []);
 
     // Register and unregister listener on mount/unmount
-    useMemo(() => {
+    useEffect(() => {
       listeners.add(forceUpdate);
       return () => {
         listeners.delete(forceUpdate);

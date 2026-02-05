@@ -41,6 +41,9 @@ export default function EventLog({ events, onClear }: EventLogProps) {
       detailsRef.current.open = true;
       hasAutoOpened.current = true;
     }
+    if (events.length === 0) {
+      hasAutoOpened.current = false;
+    }
   }, [events.length]);
 
   return (
