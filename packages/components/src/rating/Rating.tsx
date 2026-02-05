@@ -127,7 +127,20 @@ export function Rating({
               </div>
             )}
 
-            <div aria-live="polite" style={{ position: 'absolute', left: '-9999px' }}>
+            <div
+              aria-live="polite"
+              style={{
+                position: 'absolute',
+                width: '1px',
+                height: '1px',
+                padding: 0,
+                margin: '-1px',
+                overflow: 'hidden',
+                clip: 'rect(0,0,0,0)',
+                whiteSpace: 'nowrap',
+                border: 0,
+              }}
+            >
               {currentRating !== null &&
                 `${item.label} rated ${String(currentRating)} out of ${String(scale)}`}
             </div>

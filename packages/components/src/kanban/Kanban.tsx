@@ -47,7 +47,9 @@ export function Kanban({
   const { title } = data;
   const baseId = `glyph-kanban-${block.id}`;
 
-  const [columns, setColumns] = useState<KanbanColumn[]>(data.columns);
+  const [columns, setColumns] = useState<KanbanColumn[]>(() =>
+    data.columns.map((col) => ({ ...col, cards: [...col.cards] })),
+  );
   const [grabbed, setGrabbed] = useState<{
     cardId: string;
     columnId: string;
@@ -204,8 +206,22 @@ export function Kanban({
         ))}
       </div>
 
-      <div aria-live="assertive" style={{ position: 'absolute', left: '-9999px' }}>
-        {grabbed !== null && `Card grabbed. Use arrow keys to move between columns and positions.`}
+      <div
+        aria-live="assertive"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0,0,0,0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
+        {grabbed !== null &&
+          `${columns.find((c) => c.id === grabbed.columnId)?.cards[grabbed.cardIndex]?.title ?? 'Card'} grabbed in ${columns.find((c) => c.id === grabbed.columnId)?.title ?? 'column'}. Use arrow keys to move.`}
       </div>
     </div>
   );

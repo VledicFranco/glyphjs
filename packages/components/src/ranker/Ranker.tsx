@@ -127,7 +127,20 @@ export function Ranker({
         ))}
       </ul>
 
-      <div aria-live="assertive" style={{ position: 'absolute', left: '-9999px' }}>
+      <div
+        aria-live="assertive"
+        style={{
+          position: 'absolute',
+          width: '1px',
+          height: '1px',
+          padding: 0,
+          margin: '-1px',
+          overflow: 'hidden',
+          clip: 'rect(0,0,0,0)',
+          whiteSpace: 'nowrap',
+          border: 0,
+        }}
+      >
         {grabbedIndex !== null &&
           `${items[grabbedIndex]?.label ?? ''} grabbed, rank ${String(grabbedIndex + 1)} of ${String(items.length)}. Use arrow keys to move.`}
       </div>
