@@ -374,6 +374,7 @@ metrics:
 | `title` | `string` | No | -- | Optional heading displayed above the metric grid. |
 | `metrics` | `KpiMetric[]` | Yes | -- | Array of 1--8 metric objects (see below). |
 | `columns` | `1 \| 2 \| 3 \| 4` | No | `min(metrics.length, 4)` | Number of grid columns. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### KpiMetric
 
@@ -385,6 +386,61 @@ metrics:
 | `trend` | `"up" \| "down" \| "flat"` | No | -- | Direction of change. Controls arrow icon. |
 | `sentiment` | `"positive" \| "negative" \| "neutral"` | No | Derived from `trend` | Color of the delta. Defaults: up=positive (green), down=negative (red), flat=neutral (gray). Override to decouple direction from meaning (e.g. churn going down is positive). |
 | `unit` | `string` | No | -- | Optional unit label displayed after the value. |
+
+## Markdown Support
+
+Enable inline markdown formatting in metric labels by setting `markdown: true`:
+
+export const markdownExample = `\`\`\`ui:kpi
+title: Business Metrics
+metrics:
+  - label: "**Monthly** Revenue"
+    value: "$2.3M"
+    delta: "+15%"
+    trend: up
+  - label: "Active [Users](https://example.com)"
+    value: "48,200"
+    delta: "+3,100"
+    trend: up
+  - label: "\`churn_rate\` Metric"
+    value: "2.1%"
+    delta: "-0.3%"
+    trend: down
+    sentiment: positive
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi
+title: Business Metrics
+metrics:
+  - label: "**Monthly** Revenue"
+    value: "$2.3M"
+    delta: "+15%"
+    trend: up
+  - label: "Active [Users](https://example.com)"
+    value: "48,200"
+    delta: "+3,100"
+    trend: up
+  - label: "`churn_rate` Metric"
+    value: "2.1%"
+    delta: "-0.3%"
+    trend: down
+    sentiment: positive
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Accessibility
 

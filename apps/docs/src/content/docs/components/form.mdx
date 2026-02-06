@@ -101,10 +101,71 @@ fields:
 | `description` | `string` | No | -- | Form description text. |
 | `submitLabel` | `string` | No | `"Submit"` | Submit button text. |
 | `fields` | `FormField[]` | Yes | -- | Array of field definitions. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### Field types
 
 Fields use a discriminated union on the `type` property: `text`, `textarea`, `select`, `checkbox`, `range`.
+
+## Markdown Support
+
+Enable inline markdown formatting in the form description:
+
+export const markdownExample = `\`\`\`ui:form
+title: Project Setup
+description: "Tell us about your **new project**. Read our [setup guide](https://example.com) for details."
+submitLabel: Create Project
+fields:
+  - type: text
+    id: name
+    label: Project Name
+    required: true
+  - type: select
+    id: framework
+    label: Framework
+    options:
+      - React
+      - Vue
+      - Angular
+  - type: checkbox
+    id: typescript
+    label: Use TypeScript
+    default: true
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:form
+title: Project Setup
+description: "Tell us about your **new project**. Read our [setup guide](https://example.com) for details."
+submitLabel: Create Project
+fields:
+  - type: text
+    id: name
+    label: Project Name
+    required: true
+  - type: select
+    id: framework
+    label: Framework
+    options: [React, Vue, Angular]
+  - type: checkbox
+    id: typescript
+    label: Use TypeScript
+    default: true
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

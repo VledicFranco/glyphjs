@@ -90,6 +90,7 @@ annotations:
 | `labels` | `AnnotateLabel[]` | Yes | -- | Available label categories. |
 | `text` | `string` | Yes | -- | The text content to annotate. |
 | `annotations` | `Annotation[]` | No | `[]` | Pre-existing annotations. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### AnnotateLabel
 
@@ -106,6 +107,77 @@ annotations:
 | `end` | `number` | Yes | End character offset. |
 | `label` | `string` | Yes | Label name. |
 | `note` | `string` | No | Annotation note. |
+
+## Markdown Support
+
+Enable inline markdown formatting in annotation notes:
+
+export const markdownExample = `\`\`\`ui:annotate
+title: Code Review
+labels:
+  - name: Bug
+    color: "#dc2626"
+  - name: Unclear
+    color: "#f59e0b"
+  - name: Good
+    color: "#16a34a"
+text: |
+  function processData(input) {
+    var result = input.split(',');
+    eval(result[0]);
+    return result;
+  }
+annotations:
+  - start: 62
+    end: 78
+    label: Bug
+    note: "**eval()** is dangerous. See [MDN security docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval#never_use_eval!)."
+  - start: 28
+    end: 31
+    label: Unclear
+    note: "Use \`let\` or \`const\` instead of *var*"
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:annotate
+title: Code Review
+labels:
+  - name: Bug
+    color: "#dc2626"
+  - name: Unclear
+    color: "#f59e0b"
+  - name: Good
+    color: "#16a34a"
+text: |
+  function processData(input) {
+    var result = input.split(',');
+    eval(result[0]);
+    return result;
+  }
+annotations:
+  - start: 62
+    end: 78
+    label: Bug
+    note: "**eval()** is dangerous. See [MDN security docs](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/eval#never_use_eval!)."
+  - start: 28
+    end: 31
+    label: Unclear
+    note: "Use `let` or `const` instead of *var*"
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

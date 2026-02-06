@@ -84,6 +84,7 @@ parameters:
 | `title` | `string` | No | -- | Optional heading. |
 | `layout` | `"vertical" \| "horizontal"` | No | `"vertical"` | Layout direction. |
 | `parameters` | `SliderParameter[]` | Yes | -- | Parameters to adjust (min 1). |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### SliderParameter
 
@@ -96,6 +97,73 @@ parameters:
 | `step` | `number` | No | `1` | Step increment. |
 | `value` | `number` | No | `min` | Initial value. |
 | `unit` | `string` | No | -- | Unit suffix (e.g., "%", "$"). |
+
+## Markdown Support
+
+Enable inline markdown formatting in parameter labels:
+
+export const markdownExample = `\`\`\`ui:slider
+title: Configure preferences
+parameters:
+  - id: performance
+    label: "**Performance** Level"
+    min: 0
+    max: 100
+    step: 5
+    value: 50
+    unit: "%"
+  - id: cost
+    label: "*Maximum* Budget"
+    min: 0
+    max: 10000
+    step: 100
+    unit: "$"
+  - id: quality
+    label: "\`quality_score\` Rating"
+    min: 1
+    max: 10
+    step: 1
+    value: 7
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:slider
+title: Configure preferences
+parameters:
+  - id: performance
+    label: "**Performance** Level"
+    min: 0
+    max: 100
+    step: 5
+    value: 50
+    unit: "%"
+  - id: cost
+    label: "*Maximum* Budget"
+    min: 0
+    max: 10000
+    step: 100
+    unit: "$"
+  - id: quality
+    label: "`quality_score` Rating"
+    min: 1
+    max: 10
+    step: 1
+    value: 7
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

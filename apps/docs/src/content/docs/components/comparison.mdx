@@ -172,6 +172,7 @@ features:
 | `title` | `string` | No | -- | Optional heading displayed above the comparison table. |
 | `options` | `ComparisonOption[]` | Yes | -- | Array of 2–6 options to compare (table columns). |
 | `features` | `ComparisonFeature[]` | Yes | -- | Array of features to evaluate (table rows). |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### ComparisonOption
 
@@ -197,6 +198,61 @@ features:
 | Any other string | Displayed as plain text |
 
 Value matching is case-insensitive (`Yes` = `yes` = `YES`).
+
+## Markdown Support
+
+Enable inline markdown formatting in option descriptions and feature values:
+
+export const markdownExample = `\`\`\`ui:comparison
+title: Frontend Frameworks
+options:
+  - name: React
+    description: "**Component-based** library from [Meta](https://react.dev)"
+  - name: Vue
+    description: "Progressive framework with *excellent* DX"
+  - name: Svelte
+    description: "Compiler-based with \`zero runtime\`"
+features:
+  - name: Learning curve
+    values: ["moderate", "easy", "easy"]
+  - name: TypeScript support
+    values: ["**full**", "**full**", "**full**"]
+  - name: Bundle size
+    values: ["large", "medium", "*very small*"]
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:comparison
+title: Frontend Frameworks
+options:
+  - name: React
+    description: "**Component-based** library from [Meta](https://react.dev)"
+  - name: Vue
+    description: "Progressive framework with *excellent* DX"
+  - name: Svelte
+    description: "Compiler-based with `zero runtime`"
+features:
+  - name: Learning curve
+    values: ["moderate", "easy", "easy"]
+  - name: TypeScript support
+    values: ["**full**", "**full**", "**full**"]
+  - name: Bundle size
+    values: ["large", "medium", "*very small*"]
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

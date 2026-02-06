@@ -172,6 +172,7 @@ questions:
 | `title` | `string` | No | -- | Optional heading displayed above the quiz. |
 | `questions` | `QuizQuestion[]` | Yes | -- | Array of questions (at least 1). |
 | `showScore` | `boolean` | No | `true` | When `false`, hides the score counter. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### QuizQuestion (discriminated union on `type`)
 
@@ -203,6 +204,61 @@ questions:
 | `options` | `string[]` | Yes | 2 to 8 answer options. |
 | `answer` | `number[]` | Yes | Array of 0-based indices of correct options. |
 | `explanation` | `string` | No | Explanation shown after submitting. |
+
+## Markdown Support
+
+Enable inline markdown formatting in questions, options, and explanations:
+
+export const markdownExample = `\`\`\`ui:quiz
+title: JavaScript Fundamentals
+questions:
+  - type: multiple-choice
+    question: "Which keyword declares a **block-scoped** variable?"
+    options:
+      - "\`var\`"
+      - "\`let\`"
+      - "\`function\`"
+      - "\`declare\`"
+    answer: 1
+    explanation: "The **let** keyword creates block scope. See [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let) for details."
+  - type: true-false
+    question: "JavaScript is a *statically typed* language."
+    answer: false
+    explanation: "JavaScript is **dynamically** typed. Use [TypeScript](https://www.typescriptlang.org/) for static types."
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:quiz
+title: JavaScript Fundamentals
+questions:
+  - type: multiple-choice
+    question: "Which keyword declares a **block-scoped** variable?"
+    options:
+      - "`var`"
+      - "`let`"
+      - "`function`"
+      - "`declare`"
+    answer: 1
+    explanation: "The **let** keyword creates block scope. See [MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/let) for details."
+  - type: true-false
+    question: "JavaScript is a *statically typed* language."
+    answer: false
+    explanation: "JavaScript is **dynamically** typed. Use [TypeScript](https://www.typescriptlang.org/) for static types."
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

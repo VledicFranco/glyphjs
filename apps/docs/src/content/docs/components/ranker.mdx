@@ -74,6 +74,7 @@ items:
 |---|---|---|---|---|
 | `title` | `string` | No | -- | Optional heading. |
 | `items` | `RankerItem[]` | Yes | -- | Items to rank (min 2). |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### RankerItem
 
@@ -82,6 +83,51 @@ items:
 | `id` | `string` | Yes | Unique item identifier. |
 | `label` | `string` | Yes | Display label. |
 | `description` | `string` | No | Optional description. |
+
+## Markdown Support
+
+Enable inline markdown formatting in item labels:
+
+export const markdownExample = `\`\`\`ui:ranker
+title: Rank by importance
+items:
+  - id: auth
+    label: "**Authentication** System"
+  - id: dashboard
+    label: "*Analytics* Dashboard"
+  - id: api
+    label: "\`REST API\` Layer"
+  - id: docs
+    label: "[Documentation](https://example.com/docs) Portal"
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:ranker
+title: Rank by importance
+items:
+  - id: auth
+    label: "**Authentication** System"
+  - id: dashboard
+    label: "*Analytics* Dashboard"
+  - id: api
+    label: "`REST API` Layer"
+  - id: docs
+    label: "[Documentation](https://example.com/docs) Portal"
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

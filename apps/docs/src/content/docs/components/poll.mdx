@@ -89,6 +89,22 @@ showResults: false
 
 <GlyphPreview client:only="react" source={noResultsExample} />
 
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:poll
+question: What is your favorite color?
+options:
+  - Red
+  - Blue
+  - Green
+showResults: false
+```
+````
+
+</details>
+
 ## Properties
 
 | Property | Type | Required | Default | Description |
@@ -98,6 +114,44 @@ showResults: false
 | `multiple` | `boolean` | No | `false` | Allow multiple selections (checkboxes). |
 | `showResults` | `boolean` | No | `true` | Show result bars after voting. |
 | `title` | `string` | No | -- | Optional heading above the poll. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
+
+## Markdown Support
+
+Enable inline markdown formatting in the question and option labels:
+
+export const markdownExample = `\`\`\`ui:poll
+question: "Which **JavaScript framework** do you prefer for *production* apps?"
+options:
+  - "**React** (by [Meta](https://react.dev))"
+  - "**Vue** with \`Composition API\`"
+  - "**Svelte** — *compiler-based*"
+  - "[Angular](https://angular.io)"
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:poll
+question: "Which **JavaScript framework** do you prefer for *production* apps?"
+options:
+  - "**React** (by [Meta](https://react.dev))"
+  - "**Vue** with `Composition API`"
+  - "**Svelte** — *compiler-based*"
+  - "[Angular](https://angular.io)"
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

@@ -499,6 +499,7 @@ sections:
 |---|---|---|---|---|
 | `title` | `string` | No | -- | Optional heading displayed above all sections. |
 | `sections` | `InfographicSection[]` | Yes | -- | Array of 1--8 section objects (see below). |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### InfographicSection
 
@@ -578,6 +579,65 @@ Items use a discriminated union on the `type` field:
 | `value` | `number` | Yes | Rating value 0--5 (supports halves). |
 | `max` | `number` | No | Maximum stars 1--5 (default `5`). |
 | `description` | `string` | No | Additional context text. |
+
+## Markdown Support
+
+Enable inline markdown formatting in text items and descriptions:
+
+export const markdownExample = `\`\`\`ui:infographic
+title: Company Overview
+sections:
+  - heading: Key Metrics
+    items:
+      - type: text
+        content: "Our **Q4 results** exceeded expectations. Read the [full report](https://example.com)."
+      - type: stat
+        label: "Revenue *YoY*"
+        value: "$12.5M"
+        description: "Up **28%** from Q3"
+      - type: fact
+        icon: "\u2713"
+        text: "Largest quarter in \`company.history\`"
+      - type: rating
+        label: "Customer **NPS**"
+        value: 4.5
+        description: "Score improved from *4.2* last quarter"
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:infographic
+title: Company Overview
+sections:
+  - heading: Key Metrics
+    items:
+      - type: text
+        content: "Our **Q4 results** exceeded expectations. Read the [full report](https://example.com)."
+      - type: stat
+        label: "Revenue *YoY*"
+        value: "$12.5M"
+        description: "Up **28%** from Q3"
+      - type: fact
+        icon: "\u2713"
+        text: "Largest quarter in `company.history`"
+      - type: rating
+        label: "Customer **NPS**"
+        value: 4.5
+        description: "Score improved from *4.2* last quarter"
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Accessibility
 

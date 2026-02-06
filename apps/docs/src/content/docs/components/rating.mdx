@@ -82,6 +82,7 @@ items:
 | `mode` | `"star" \| "number"` | No | `"star"` | Visual mode. |
 | `labels` | `{ low: string; high: string }` | No | -- | Scale endpoint labels. |
 | `items` | `RatingItem[]` | Yes | -- | Items to rate (min 1). |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### RatingItem
 
@@ -89,6 +90,51 @@ items:
 |---|---|---|---|
 | `label` | `string` | Yes | Item name. |
 | `description` | `string` | No | Optional description text. |
+
+## Markdown Support
+
+Enable inline markdown formatting in item labels and descriptions:
+
+export const markdownExample = `\`\`\`ui:rating
+title: Rate these features
+scale: 5
+mode: star
+items:
+  - label: "**Performance** & Speed"
+    description: "Response time measured in *milliseconds*"
+  - label: "[Security](https://example.com/security)"
+    description: "Includes \`OAuth 2.0\` and **MFA**"
+  - label: "*Developer* Experience"
+    description: "TypeScript support and [API docs](https://example.com)"
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:rating
+title: Rate these features
+scale: 5
+mode: star
+items:
+  - label: "**Performance** & Speed"
+    description: "Response time measured in *milliseconds*"
+  - label: "[Security](https://example.com/security)"
+    description: "Includes `OAuth 2.0` and **MFA**"
+  - label: "*Developer* Experience"
+    description: "TypeScript support and [API docs](https://example.com)"
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

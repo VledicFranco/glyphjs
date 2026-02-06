@@ -88,6 +88,72 @@ rows:
 | `showTotals` | `boolean` | No | `true` | Show weighted total column. |
 | `columns` | `MatrixColumn[]` | Yes | -- | Criteria columns. |
 | `rows` | `MatrixRow[]` | Yes | -- | Options to evaluate. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
+
+## Markdown Support
+
+Enable inline markdown formatting in row and column labels:
+
+export const markdownExample = `\`\`\`ui:matrix
+title: Framework Evaluation
+scale: 5
+showTotals: true
+columns:
+  - id: perf
+    label: "**Performance**"
+    weight: 2
+  - id: dx
+    label: "*Developer* Experience"
+    weight: 1.5
+  - id: eco
+    label: "\`ecosystem\` Size"
+    weight: 1
+rows:
+  - id: react
+    label: "[React](https://react.dev)"
+  - id: vue
+    label: "**Vue.js**"
+  - id: svelte
+    label: "*Svelte*"
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:matrix
+title: Framework Evaluation
+scale: 5
+showTotals: true
+columns:
+  - id: perf
+    label: "**Performance**"
+    weight: 2
+  - id: dx
+    label: "*Developer* Experience"
+    weight: 1.5
+  - id: eco
+    label: "`ecosystem` Size"
+    weight: 1
+rows:
+  - id: react
+    label: "[React](https://react.dev)"
+  - id: vue
+    label: "**Vue.js**"
+  - id: svelte
+    label: "*Svelte*"
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Interaction events
 

@@ -151,6 +151,7 @@ sections:
 | `sections` | `AccordionSection[]` | Yes | -- | Array of collapsible sections (at least 1). |
 | `defaultOpen` | `number[]` | No | `[]` | 0-based indices of sections that start expanded. |
 | `multiple` | `boolean` | No | `true` | When `false`, only one section can be open at a time (exclusive mode). |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in text fields. |
 
 ### AccordionSection
 
@@ -158,6 +159,24 @@ sections:
 |---|---|---|---|
 | `title` | `string` | Yes | Header text displayed in the clickable summary. |
 | `content` | `string` | Yes | Body text revealed when the section is expanded. |
+
+## Markdown Support
+
+Enable inline markdown formatting in section content with `markdown: true`:
+
+````markdown
+```ui:accordion
+title: Documentation
+markdown: true
+sections:
+  - title: Getting Started
+    content: "Follow the **[quick start guide](https://example.com)** to get up and running with `GlyphJS`."
+  - title: Advanced Features
+    content: "Learn about *theming*, **components**, and custom [plugins](https://example.com)."
+```
+````
+
+Supported formatting: **bold**, *italic*, `code`, [links]()
 
 ## Interaction events
 

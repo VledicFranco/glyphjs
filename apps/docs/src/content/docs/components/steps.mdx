@@ -59,6 +59,7 @@ steps:
 | Property | Type | Required | Default | Description |
 |---|---|---|---|---|
 | `steps` | `Step[]` | Yes | -- | An array of step objects. Must contain at least one step. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting (bold, italic, links, code) in step content. |
 
 ### Step object
 
@@ -67,6 +68,25 @@ steps:
 | `title` | `string` | Yes | -- | The heading text for this step. |
 | `status` | `"pending" \| "active" \| "completed"` | No | -- | Visual indicator of the step's progress state. |
 | `content` | `string` | Yes | -- | Markdown content rendered inside the step body. Parsed recursively by the compiler. |
+
+## Markdown Support
+
+Enable inline markdown in step content with `markdown: true`:
+
+````markdown
+```ui:steps
+markdown: true
+steps:
+  - title: Install Dependencies
+    status: completed
+    content: "Run `pnpm install` to install **all packages**. See the [docs](https://example.com) for details."
+  - title: Configure Settings
+    status: active
+    content: "Edit *config files* to set up your **theme** and plugins."
+```
+````
+
+Supported formatting: **bold**, *italic*, `code`, [links]()
 
 ## Status variants
 
