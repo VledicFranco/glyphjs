@@ -17,4 +17,5 @@ export const matrixSchema = z.object({
   showTotals: z.boolean().default(true),
   columns: z.array(matrixColumn).min(1),
   rows: z.array(matrixRow).min(1),
+  markdown: z.boolean().default(false),
 });

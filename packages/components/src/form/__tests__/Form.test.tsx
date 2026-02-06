@@ -107,4 +107,76 @@ describe('Form', () => {
     fireEvent.change(screen.getByLabelText(/Name/), { target: { value: 'Test' } });
     expect(() => fireEvent.click(screen.getByText('Submit'))).not.toThrow();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in description when markdown=false', () => {
+    const props = createMockProps<FormData>(
+      {
+        fields: [{ type: 'text', id: 'name', label: 'Name' }],
+        description: 'Plain text **not bold**',
+        markdown: false,
+      },
+      'ui:form',
+    );
+    render(<Form {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted description when description is InlineNode[]', () => {
+    const props = createMockProps<FormData>(
+      {
+        fields: [{ type: 'text', id: 'name', label: 'Name' }],
+        description: [
+          { type: 'text', value: 'This is ' },
+          { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+          { type: 'text', value: ' and ' },
+          { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+        ],
+        markdown: true,
+      },
+      'ui:form',
+    );
+    render(<Form {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in description even when markdown=true (backward compat)', () => {
+    const props = createMockProps<FormData>(
+      {
+        fields: [{ type: 'text', id: 'name', label: 'Name' }],
+        description: 'Plain string',
+        markdown: true,
+      },
+      'ui:form',
+    );
+    render(<Form {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] description', () => {
+    const props = createMockProps<FormData>(
+      {
+        fields: [{ type: 'text', id: 'name', label: 'Name' }],
+        description: [
+          { type: 'text', value: 'Visit ' },
+          {
+            type: 'link',
+            url: 'https://example.com',
+            children: [{ type: 'text', value: 'our site' }],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:form',
+    );
+    render(<Form {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
 });

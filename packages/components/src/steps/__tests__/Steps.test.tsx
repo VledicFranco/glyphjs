@@ -37,9 +37,7 @@ describe('Steps', () => {
 
     // Completed step has a checkmark character
     const indicators = container.querySelectorAll('[aria-hidden="true"]');
-    const checkmarks = Array.from(indicators).filter(
-      (el) => el.textContent === '\u2713',
-    );
+    const checkmarks = Array.from(indicators).filter((el) => el.textContent === '\u2713');
     expect(checkmarks.length).toBeGreaterThanOrEqual(1);
   });
 
@@ -78,5 +76,83 @@ describe('Steps', () => {
 
     const step = screen.getByLabelText(/No Status — Pending/);
     expect(step).toBeInTheDocument();
+  });
+
+  // Markdown rendering tests
+  it('renders plain text in content when markdown=false', () => {
+    const props = createMockProps<StepsData>(
+      {
+        steps: [{ title: 'Step', content: 'Plain text **not bold**' }],
+        markdown: false,
+      },
+      'ui:steps',
+    );
+    render(<Steps {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted content when content is InlineNode[]', () => {
+    const props = createMockProps<StepsData>(
+      {
+        steps: [
+          {
+            title: 'Step',
+            content: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:steps',
+    );
+    render(<Steps {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in content even when markdown=true (backward compat)', () => {
+    const props = createMockProps<StepsData>(
+      {
+        steps: [{ title: 'Step', content: 'Plain string' }],
+        markdown: true,
+      },
+      'ui:steps',
+    );
+    render(<Steps {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] content', () => {
+    const props = createMockProps<StepsData>(
+      {
+        steps: [
+          {
+            title: 'Step',
+            content: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:steps',
+    );
+    render(<Steps {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
   });
 });

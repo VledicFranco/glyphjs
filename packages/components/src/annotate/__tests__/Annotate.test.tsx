@@ -79,4 +79,76 @@ describe('Annotate', () => {
     const props = createMockProps<AnnotateData>(defaultData, 'ui:annotate');
     expect(() => render(<Annotate {...props} />)).not.toThrow();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in text field when markdown=false', () => {
+    const props = createMockProps<AnnotateData>(
+      {
+        labels: [{ name: 'Label', color: '#ff0000' }],
+        text: 'Plain text **not bold**',
+        markdown: false,
+      },
+      'ui:annotate',
+    );
+    render(<Annotate {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted text when text is InlineNode[]', () => {
+    const props = createMockProps<AnnotateData>(
+      {
+        labels: [{ name: 'Label', color: '#ff0000' }],
+        text: [
+          { type: 'text', value: 'This is ' },
+          { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+          { type: 'text', value: ' and ' },
+          { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+        ],
+        markdown: true,
+      },
+      'ui:annotate',
+    );
+    render(<Annotate {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in text even when markdown=true (backward compat)', () => {
+    const props = createMockProps<AnnotateData>(
+      {
+        labels: [{ name: 'Label', color: '#ff0000' }],
+        text: 'Plain string',
+        markdown: true,
+      },
+      'ui:annotate',
+    );
+    render(<Annotate {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] text', () => {
+    const props = createMockProps<AnnotateData>(
+      {
+        labels: [{ name: 'Label', color: '#ff0000' }],
+        text: [
+          { type: 'text', value: 'Visit ' },
+          {
+            type: 'link',
+            url: 'https://example.com',
+            children: [{ type: 'text', value: 'our site' }],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:annotate',
+    );
+    render(<Annotate {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
 });

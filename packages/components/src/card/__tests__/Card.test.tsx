@@ -137,4 +137,131 @@ describe('Card', () => {
     render(<Card {...props} />);
     expect(screen.getByText('🚀')).toBeInTheDocument();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in body when markdown=false', () => {
+    const props = createMockProps<CardData>(
+      {
+        cards: [
+          {
+            title: 'Card',
+            body: 'Plain text **not bold**',
+          },
+        ],
+        markdown: false,
+      },
+      'ui:card',
+    );
+    render(<Card {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted body content when body is InlineNode[]', () => {
+    const props = createMockProps<CardData>(
+      {
+        cards: [
+          {
+            title: 'Card',
+            body: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:card',
+    );
+    render(<Card {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in body even when markdown=true (backward compat)', () => {
+    const props = createMockProps<CardData>(
+      {
+        cards: [
+          {
+            title: 'Card',
+            body: 'Plain string',
+          },
+        ],
+        markdown: true,
+      },
+      'ui:card',
+    );
+    render(<Card {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] body content', () => {
+    const props = createMockProps<CardData>(
+      {
+        cards: [
+          {
+            title: 'Card',
+            body: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:card',
+    );
+    render(<Card {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
+
+  it('renders plain text in subtitle when markdown=false', () => {
+    const props = createMockProps<CardData>(
+      {
+        cards: [
+          {
+            title: 'Card',
+            subtitle: 'Subtitle **not bold**',
+          },
+        ],
+        markdown: false,
+      },
+      'ui:card',
+    );
+    render(<Card {...props} />);
+    expect(screen.getByText('Subtitle **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted subtitle content when subtitle is InlineNode[]', () => {
+    const props = createMockProps<CardData>(
+      {
+        cards: [
+          {
+            title: 'Card',
+            subtitle: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:card',
+    );
+    render(<Card {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+  });
 });

@@ -277,4 +277,155 @@ describe('Quiz', () => {
     fireEvent.click(screen.getByText('Submit'));
     expect(screen.queryByText(/Score:/)).not.toBeInTheDocument();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in question when markdown=false', () => {
+    const props = createMockProps<QuizData>(
+      {
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: 'Plain text **not bold**',
+            options: ['A', 'B'],
+            answer: 0,
+          },
+        ],
+        markdown: false,
+      },
+      'ui:quiz',
+    );
+    render(<Quiz {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted question when question is InlineNode[]', () => {
+    const props = createMockProps<QuizData>(
+      {
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+            options: ['A', 'B'],
+            answer: 0,
+          },
+        ],
+        markdown: true,
+      },
+      'ui:quiz',
+    );
+    render(<Quiz {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in question even when markdown=true (backward compat)', () => {
+    const props = createMockProps<QuizData>(
+      {
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: 'Plain string',
+            options: ['A', 'B'],
+            answer: 0,
+          },
+        ],
+        markdown: true,
+      },
+      'ui:quiz',
+    );
+    render(<Quiz {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] question', () => {
+    const props = createMockProps<QuizData>(
+      {
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+            options: ['A', 'B'],
+            answer: 0,
+          },
+        ],
+        markdown: true,
+      },
+      'ui:quiz',
+    );
+    render(<Quiz {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
+
+  it('renders formatted explanation when explanation is InlineNode[]', () => {
+    const props = createMockProps<QuizData>(
+      {
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: 'Q',
+            options: ['A', 'B'],
+            answer: 0,
+            explanation: [
+              { type: 'text', value: 'Explanation with ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:quiz',
+    );
+    render(<Quiz {...props} />);
+    const radios = screen.getAllByRole('radio');
+    fireEvent.click(radios[0]);
+    fireEvent.click(screen.getByText('Submit'));
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+  });
+
+  it('renders formatted options when options are InlineNode[]', () => {
+    const props = createMockProps<QuizData>(
+      {
+        questions: [
+          {
+            type: 'multiple-choice',
+            question: 'Q',
+            options: [
+              [
+                { type: 'text', value: 'Option with ' },
+                { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              ],
+              'Plain option',
+            ],
+            answer: 0,
+          },
+        ],
+        markdown: true,
+      },
+      'ui:quiz',
+    );
+    render(<Quiz {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+  });
 });

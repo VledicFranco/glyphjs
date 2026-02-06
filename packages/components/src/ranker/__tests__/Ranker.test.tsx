@@ -83,4 +83,82 @@ describe('Ranker', () => {
     fireEvent.keyDown(listitems[0], { key: ' ' });
     expect(() => fireEvent.keyDown(listitems[0], { key: 'ArrowDown' })).not.toThrow();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in label when markdown=false', () => {
+    const props = createMockProps<RankerData>(
+      {
+        items: [{ id: 'a', label: 'Plain text **not bold**' }],
+        markdown: false,
+      },
+      'ui:ranker',
+    );
+    render(<Ranker {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted label when label is InlineNode[]', () => {
+    const props = createMockProps<RankerData>(
+      {
+        items: [
+          {
+            id: 'a',
+            label: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:ranker',
+    );
+    render(<Ranker {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in label even when markdown=true (backward compat)', () => {
+    const props = createMockProps<RankerData>(
+      {
+        items: [{ id: 'a', label: 'Plain string' }],
+        markdown: true,
+      },
+      'ui:ranker',
+    );
+    render(<Ranker {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] label', () => {
+    const props = createMockProps<RankerData>(
+      {
+        items: [
+          {
+            id: 'a',
+            label: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:ranker',
+    );
+    render(<Ranker {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
 });

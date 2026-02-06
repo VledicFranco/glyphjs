@@ -39,7 +39,8 @@
               "status": "pending",
               "content": "Finally, wrap up.\n"
             }
-          ]
+          ],
+          "markdown": false
         },
         "children": [
           {

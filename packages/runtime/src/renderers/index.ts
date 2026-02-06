@@ -13,6 +13,8 @@ import { GlyphRawHtml } from './GlyphRawHtml.js';
 // ─── Individual renderer exports ─────────────────────────────
 
 export { InlineRenderer } from './InlineRenderer.js';
+export { RichText } from './RichText.js';
+export type { RichTextProps } from './RichText.js';
 export { GlyphHeading } from './GlyphHeading.js';
 export { GlyphParagraph } from './GlyphParagraph.js';
 export { GlyphList } from './GlyphList.js';

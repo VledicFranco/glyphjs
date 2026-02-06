@@ -118,4 +118,82 @@ describe('Kpi', () => {
     const group = screen.getByRole('group');
     expect(group).toHaveAttribute('aria-label', 'Churn: 2.1%, down -0.3%');
   });
+
+  // Markdown rendering tests
+  it('renders plain text in label when markdown=false', () => {
+    const props = createMockProps<KpiData>(
+      {
+        metrics: [{ label: 'Plain text **not bold**', value: '100' }],
+        markdown: false,
+      },
+      'ui:kpi',
+    );
+    render(<Kpi {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted label when label is InlineNode[]', () => {
+    const props = createMockProps<KpiData>(
+      {
+        metrics: [
+          {
+            label: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+            value: '100',
+          },
+        ],
+        markdown: true,
+      },
+      'ui:kpi',
+    );
+    render(<Kpi {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in label even when markdown=true (backward compat)', () => {
+    const props = createMockProps<KpiData>(
+      {
+        metrics: [{ label: 'Plain string', value: '100' }],
+        markdown: true,
+      },
+      'ui:kpi',
+    );
+    render(<Kpi {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] label', () => {
+    const props = createMockProps<KpiData>(
+      {
+        metrics: [
+          {
+            label: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+            value: '100',
+          },
+        ],
+        markdown: true,
+      },
+      'ui:kpi',
+    );
+    render(<Kpi {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
 });

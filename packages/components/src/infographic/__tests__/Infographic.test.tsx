@@ -63,7 +63,10 @@ describe('Infographic', () => {
       'ui:infographic',
     );
     render(<Infographic {...props} />);
-    expect(screen.getByText('Year over year')).toHaveStyle({ fontStyle: 'italic' });
+    const descText = screen.getByText('Year over year');
+    // RichText wraps content in a span, so check the parent div has italic style
+    const parent = descText.parentElement;
+    expect(parent).toHaveStyle({ fontStyle: 'italic' });
   });
 
   it('renders progress bars with correct fill width', () => {
@@ -695,5 +698,119 @@ describe('Infographic', () => {
       ],
     };
     expect(classifySectionWidth(section)).toBe('narrow');
+  });
+
+  // Markdown rendering tests
+  it('renders plain text in fact text when markdown=false', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [{ items: [{ type: 'fact', text: 'Plain text **not bold**' }] }],
+        markdown: false,
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted fact text when text is InlineNode[]', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'fact',
+                text: [
+                  { type: 'text', value: 'This is ' },
+                  { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+                  { type: 'text', value: ' and ' },
+                  { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+                ],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in fact text even when markdown=true (backward compat)', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [{ items: [{ type: 'fact', text: 'Plain string' }] }],
+        markdown: true,
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] fact text', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'fact',
+                text: [
+                  { type: 'text', value: 'Visit ' },
+                  {
+                    type: 'link',
+                    url: 'https://example.com',
+                    children: [{ type: 'text', value: 'our site' }],
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
+
+  it('renders formatted stat description when description is InlineNode[]', () => {
+    const props = createMockProps<InfographicData>(
+      {
+        sections: [
+          {
+            items: [
+              {
+                type: 'stat',
+                label: 'Revenue',
+                value: '$5M',
+                description: [
+                  { type: 'text', value: 'Year over year with ' },
+                  { type: 'strong', children: [{ type: 'text', value: 'growth' }] },
+                ],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:infographic',
+    );
+    render(<Infographic {...props} />);
+
+    const boldEl = screen.getByText('growth');
+    expect(boldEl.tagName).toBe('STRONG');
   });
 });

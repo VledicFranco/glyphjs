@@ -25,7 +25,8 @@
         "type": "ui:callout",
         "data": {
           "type": "info",
-          "content": "This is an informational callout."
+          "content": "This is an informational callout.",
+          "markdown": false
         }
       },
       {
@@ -69,7 +70,8 @@
         "data": {
           "type": "warning",
           "title": "Watch Out",
-          "content": "This is a warning callout."
+          "content": "This is a warning callout.",
+          "markdown": false
         }
       }
     ],

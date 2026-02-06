@@ -1,4 +1,7 @@
 import type { InlineNode } from '@glyphjs/types';
+import type { Diagnostic } from '@glyphjs/types';
+import { unified } from 'unified';
+import remarkParse from 'remark-parse';
 
 // ─── MDAST Phrasing Content Types ───────────────────────────
 // These are structural types matching the shapes from mdast,
@@ -147,4 +150,87 @@ function convertSingleNode(node: MdastPhrasingContent): InlineNode | null {
       return null;
     }
   }
+}
+
+// ─── Markdown String Parser ─────────────────────────────────────
+
+/**
+ * Parse a string containing inline markdown into InlineNode[].
+ *
+ * Uses remark-parse to parse the text, extracts phrasing content from
+ * the first paragraph. Only supports inline elements (bold, italic, links, code).
+ * Block elements trigger diagnostic warnings.
+ *
+ * Edge cases:
+ * - Empty string → `[]`
+ * - Plain text → `[{ type: 'text', value: text }]`
+ * - Block elements (headings, lists) → diagnostic warning, extract text only
+ *
+ * @param text - Markdown string to parse
+ * @param diagnostics - Optional array to collect warnings (e.g., for block elements)
+ * @returns Array of InlineNode elements
+ */
+export function parseInlineMarkdown(text: string, diagnostics?: Diagnostic[]): InlineNode[] {
+  // Handle empty string
+  if (text.trim() === '') {
+    return [];
+  }
+
+  // Parse markdown using unified + remark-parse
+  const processor = unified().use(remarkParse);
+  const tree = processor.parse(text);
+
+  // Type guard for MDAST root node
+  interface MdastRoot {
+    type: 'root';
+    children: { type: string; children?: unknown[] }[];
+  }
+
+  const root = tree as unknown as MdastRoot;
+
+  if (!root.children || root.children.length === 0) {
+    // No content parsed
+    return [{ type: 'text', value: text }];
+  }
+
+  // Check for block-level elements (not just paragraph)
+  const hasBlockElements = root.children.some(
+    (child) =>
+      child.type !== 'paragraph' &&
+      child.type !== 'text' &&
+      !['strong', 'emphasis', 'delete', 'inlineCode', 'link', 'image', 'break'].includes(
+        child.type,
+      ),
+  );
+
+  if (hasBlockElements && diagnostics) {
+    diagnostics.push({
+      severity: 'warning',
+      code: 'INLINE_BLOCK_ELEMENTS',
+      message:
+        'Block-level markdown elements (headings, lists, etc.) are not supported in inline text fields. Only inline formatting (bold, italic, links, code) will be preserved.',
+      source: 'compiler',
+    });
+  }
+
+  // Extract first paragraph's children, or fall back to all inline children
+  const firstParagraph = root.children.find((child) => child.type === 'paragraph');
+
+  if (firstParagraph && firstParagraph.children) {
+    return convertPhrasingContent(firstParagraph.children);
+  }
+
+  // If no paragraph found but we have inline-only children, convert them
+  const inlineChildren = root.children.filter((child) =>
+    ['text', 'strong', 'emphasis', 'delete', 'inlineCode', 'link', 'image', 'break'].includes(
+      child.type,
+    ),
+  );
+
+  if (inlineChildren.length > 0) {
+    return convertPhrasingContent(inlineChildren);
+  }
+
+  // Fallback: return plain text
+  return [{ type: 'text', value: text }];
 }

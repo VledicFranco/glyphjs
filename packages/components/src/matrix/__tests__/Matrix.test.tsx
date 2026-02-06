@@ -97,4 +97,109 @@ describe('Matrix', () => {
     const input = screen.getByLabelText('Score for React on Performance');
     expect(() => fireEvent.change(input, { target: { value: '3' } })).not.toThrow();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in row label when markdown=false', () => {
+    const props = createMockProps<MatrixData>(
+      {
+        columns: [{ id: 'c', label: 'Column' }],
+        rows: [{ id: 'r', label: 'Plain text **not bold**' }],
+        markdown: false,
+      },
+      'ui:matrix',
+    );
+    render(<Matrix {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted row label when label is InlineNode[]', () => {
+    const props = createMockProps<MatrixData>(
+      {
+        columns: [{ id: 'c', label: 'Column' }],
+        rows: [
+          {
+            id: 'r',
+            label: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:matrix',
+    );
+    render(<Matrix {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in row label even when markdown=true (backward compat)', () => {
+    const props = createMockProps<MatrixData>(
+      {
+        columns: [{ id: 'c', label: 'Column' }],
+        rows: [{ id: 'r', label: 'Plain string' }],
+        markdown: true,
+      },
+      'ui:matrix',
+    );
+    render(<Matrix {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] row label', () => {
+    const props = createMockProps<MatrixData>(
+      {
+        columns: [{ id: 'c', label: 'Column' }],
+        rows: [
+          {
+            id: 'r',
+            label: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:matrix',
+    );
+    render(<Matrix {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
+
+  it('renders formatted column label when label is InlineNode[]', () => {
+    const props = createMockProps<MatrixData>(
+      {
+        columns: [
+          {
+            id: 'c',
+            label: [
+              { type: 'text', value: 'Column with ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+            ],
+          },
+        ],
+        rows: [{ id: 'r', label: 'Row' }],
+        markdown: true,
+      },
+      'ui:matrix',
+    );
+    render(<Matrix {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+  });
 });

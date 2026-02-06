@@ -7,6 +7,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Markdown support in component text fields**: Enable inline markdown formatting (bold, italic, links, code, strikethrough) in component text fields by setting `markdown: true` in component YAML or using the `parseComponentMarkdown` compiler option. Supports 17 components including Callout, Card, Accordion, Steps, Timeline, Quiz, Poll, and more. (#74)
+- `RichText` component in `@glyphjs/runtime` for rendering `string | InlineNode[]` union types
+- `parseInlineMarkdown()` utility function in compiler for parsing markdown strings to InlineNode arrays
+- Compiler option `parseComponentMarkdown` to enable markdown parsing globally for all components
+
+### Changed
+
+- Component data TypeScript interfaces now support `string | InlineNode[]` union types for text fields, enabling both plain strings and formatted content
+- All 17 interactive component schemas now include optional `markdown: boolean` field (defaults to `false` for backward compatibility)
+
 ## [0.1.0] - 2026-02-02
 
 ### Added

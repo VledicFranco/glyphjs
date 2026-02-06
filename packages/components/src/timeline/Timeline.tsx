@@ -1,20 +1,22 @@
 import { useRef } from 'react';
 import type { ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import { scaleTime, scaleOrdinal } from 'd3';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 interface TimelineEvent {
   date: string;
-  title: string;
-  description?: string;
+  title: string | InlineNode[];
+  description?: string | InlineNode[];
   type?: string;
 }
 
 export interface TimelineData {
   events: TimelineEvent[];
   orientation?: 'vertical' | 'horizontal';
+  markdown?: boolean;
 }
 
 interface PositionedEvent {
@@ -210,7 +212,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
                   marginTop: 2,
                 }}
               >
-                {pe.event.title}
+                <RichText content={pe.event.title} />
               </div>
               {pe.event.description && (
                 <div
@@ -220,7 +222,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
                     marginTop: 2,
                   }}
                 >
-                  {pe.event.description}
+                  <RichText content={pe.event.description} />
                 </div>
               )}
             </div>
@@ -240,14 +242,18 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
           whiteSpace: 'nowrap',
         }}
       >
-        {sorted.map((e, idx) => (
-          <li key={idx}>
-            <time dateTime={isoDate(e.date)}>{formatDate(e.date)}</time>
-            {' \u2014 '}
-            <strong>{e.title}</strong>
-            {e.description ? `: ${e.description}` : ''}
-          </li>
-        ))}
+        {sorted.map((e, idx) => {
+          const titleText = typeof e.title === 'string' ? e.title : 'Event';
+          const descText = typeof e.description === 'string' ? e.description : '';
+          return (
+            <li key={idx}>
+              <time dateTime={isoDate(e.date)}>{formatDate(e.date)}</time>
+              {' \u2014 '}
+              <strong>{titleText}</strong>
+              {descText ? `: ${descText}` : ''}
+            </li>
+          );
+        })}
       </ol>
     </div>
   );

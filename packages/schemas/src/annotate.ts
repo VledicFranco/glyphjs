@@ -17,4 +17,5 @@ export const annotateSchema = z.object({
   labels: z.array(annotateLabel).min(1),
   text: z.string(),
   annotations: z.array(annotation).default([]),
+  markdown: z.boolean().default(false),
 });

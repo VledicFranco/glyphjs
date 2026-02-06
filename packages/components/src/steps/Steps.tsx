@@ -1,16 +1,18 @@
 import type { ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 export interface StepItem {
   title: string;
   status?: 'pending' | 'active' | 'completed';
-  content: string;
+  content: string | InlineNode[];
 }
 
 export interface StepsData {
   steps: StepItem[];
+  markdown?: boolean;
 }
 
 type StepStatus = NonNullable<StepItem['status']>;
@@ -71,7 +73,9 @@ export function Steps({ data }: GlyphComponentProps<StepsData>): ReactElement {
             {/* Text body */}
             <div style={bodyStyle}>
               <div style={titleStyle(status)}>{step.title}</div>
-              <div style={contentStyle(status)}>{step.content}</div>
+              <div style={contentStyle(status)}>
+                <RichText content={step.content} />
+              </div>
             </div>
           </li>
         );

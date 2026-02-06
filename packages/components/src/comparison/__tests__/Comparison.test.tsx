@@ -110,4 +110,124 @@ describe('Comparison', () => {
     render(<Comparison {...props} />);
     expect(screen.getByRole('region')).toHaveAttribute('aria-label', 'Comparison');
   });
+
+  // Markdown rendering tests
+  it('renders plain text in description when markdown=false', () => {
+    const props = createMockProps<ComparisonData>(
+      {
+        options: [{ name: 'Option', description: 'Plain text **not bold**' }],
+        features: [{ name: 'Feature', values: ['yes'] }],
+        markdown: false,
+      },
+      'ui:comparison',
+    );
+    render(<Comparison {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted description when description is InlineNode[]', () => {
+    const props = createMockProps<ComparisonData>(
+      {
+        options: [
+          {
+            name: 'Option',
+            description: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+          },
+        ],
+        features: [{ name: 'Feature', values: ['yes'] }],
+        markdown: true,
+      },
+      'ui:comparison',
+    );
+    render(<Comparison {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in description even when markdown=true (backward compat)', () => {
+    const props = createMockProps<ComparisonData>(
+      {
+        options: [{ name: 'Option', description: 'Plain string' }],
+        features: [{ name: 'Feature', values: ['yes'] }],
+        markdown: true,
+      },
+      'ui:comparison',
+    );
+    render(<Comparison {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] description', () => {
+    const props = createMockProps<ComparisonData>(
+      {
+        options: [
+          {
+            name: 'Option',
+            description: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+          },
+        ],
+        features: [{ name: 'Feature', values: ['yes'] }],
+        markdown: true,
+      },
+      'ui:comparison',
+    );
+    render(<Comparison {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
+
+  it('renders plain text in feature values when markdown=false', () => {
+    const props = createMockProps<ComparisonData>(
+      {
+        options: [{ name: 'A' }, { name: 'B' }],
+        features: [{ name: 'Feature', values: ['**not bold**', 'plain'] }],
+        markdown: false,
+      },
+      'ui:comparison',
+    );
+    render(<Comparison {...props} />);
+    expect(screen.getByText('**not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted feature values when values are InlineNode[]', () => {
+    const props = createMockProps<ComparisonData>(
+      {
+        options: [{ name: 'A' }],
+        features: [
+          {
+            name: 'Feature',
+            values: [
+              [
+                { type: 'text', value: 'Has ' },
+                { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              ],
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:comparison',
+    );
+    render(<Comparison {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+  });
 });

@@ -116,4 +116,97 @@ describe('Poll', () => {
     expect(radios[0]).toBeDisabled();
     expect(radios[1]).toBeDisabled();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in question when markdown=false', () => {
+    const props = createMockProps<PollData>(
+      {
+        question: 'Plain text **not bold**',
+        options: ['A', 'B'],
+        markdown: false,
+      },
+      'ui:poll',
+    );
+    render(<Poll {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted question when question is InlineNode[]', () => {
+    const props = createMockProps<PollData>(
+      {
+        question: [
+          { type: 'text', value: 'This is ' },
+          { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+          { type: 'text', value: ' and ' },
+          { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+        ],
+        options: ['A', 'B'],
+        markdown: true,
+      },
+      'ui:poll',
+    );
+    render(<Poll {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in question even when markdown=true (backward compat)', () => {
+    const props = createMockProps<PollData>(
+      {
+        question: 'Plain string',
+        options: ['A', 'B'],
+        markdown: true,
+      },
+      'ui:poll',
+    );
+    render(<Poll {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] question', () => {
+    const props = createMockProps<PollData>(
+      {
+        question: [
+          { type: 'text', value: 'Visit ' },
+          {
+            type: 'link',
+            url: 'https://example.com',
+            children: [{ type: 'text', value: 'our site' }],
+          },
+        ],
+        options: ['A', 'B'],
+        markdown: true,
+      },
+      'ui:poll',
+    );
+    render(<Poll {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
+
+  it('renders formatted options when options are InlineNode[]', () => {
+    const props = createMockProps<PollData>(
+      {
+        question: 'Pick one',
+        options: [
+          [
+            { type: 'text', value: 'Option with ' },
+            { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+          ],
+          'Plain option',
+        ],
+        markdown: true,
+      },
+      'ui:poll',
+    );
+    render(<Poll {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+  });
 });

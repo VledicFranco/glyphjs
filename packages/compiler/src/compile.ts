@@ -28,6 +28,8 @@ export interface CompileOptions {
   filePath?: string;
   /** Explicit document ID override. */
   documentId?: string;
+  /** Enable markdown parsing in component text fields by default. */
+  parseComponentMarkdown?: boolean;
 }
 
 // ─── Main Compile Function ───────────────────────────────────
@@ -83,6 +85,7 @@ export function compile(markdown: string, options?: CompileOptions): Compilation
     diagnostics,
     references,
     blockIdMap: new Map(),
+    compileOptions: options ?? {},
   };
 
   // 5. Walk the AST and translate nodes
@@ -176,17 +179,13 @@ function extractFrontmatter(
           metadata.description = fm['description'];
         }
         if (Array.isArray(fm['authors'])) {
-          metadata.authors = fm['authors'].filter(
-            (a): a is string => typeof a === 'string',
-          );
+          metadata.authors = fm['authors'].filter((a): a is string => typeof a === 'string');
         }
         if (typeof fm['createdAt'] === 'string') {
           metadata.createdAt = fm['createdAt'];
         }
         if (Array.isArray(fm['tags'])) {
-          metadata.tags = fm['tags'].filter(
-            (t): t is string => typeof t === 'string',
-          );
+          metadata.tags = fm['tags'].filter((t): t is string => typeof t === 'string');
         }
 
         // Extract layout hints
@@ -273,4 +272,3 @@ function inferMetadata(metadata: DocumentMetadata, blocks: Block[]): void {
     }
   }
 }
-

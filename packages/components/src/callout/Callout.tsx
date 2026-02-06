@@ -1,12 +1,14 @@
 import type { ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 export interface CalloutData {
   type: 'info' | 'warning' | 'error' | 'tip';
   title?: string;
-  content: string;
+  content: string | InlineNode[];
+  markdown?: boolean;
 }
 
 type CalloutType = CalloutData['type'];
@@ -76,7 +78,9 @@ export function Callout({ data }: GlyphComponentProps<CalloutData>): ReactElemen
       </span>
       <div style={bodyStyle}>
         {title && <div style={titleStyle}>{title}</div>}
-        <div>{content}</div>
+        <div>
+          <RichText content={content} />
+        </div>
       </div>
     </div>
   );

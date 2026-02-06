@@ -1,5 +1,6 @@
 import { useState, type ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -15,7 +16,7 @@ import {
 
 export interface SliderParameter {
   id: string;
-  label: string;
+  label: string | InlineNode[];
   min?: number;
   max?: number;
   step?: number;
@@ -27,6 +28,7 @@ export interface SliderData {
   title?: string;
   layout?: 'vertical' | 'horizontal';
   parameters: SliderParameter[];
+  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────
@@ -59,11 +61,11 @@ export function Slider({
         blockType: block.type,
         payload: {
           parameterId: param.id,
-          parameterLabel: param.label,
+          parameterLabel: typeof param.label === 'string' ? param.label : 'Parameter',
           value: newValue,
           allValues: parameters.map((p, i) => ({
             id: p.id,
-            label: p.label,
+            label: typeof p.label === 'string' ? p.label : 'Parameter',
             value: i === paramIndex ? newValue : (newValues[i] ?? 0),
           })),
         },
@@ -90,7 +92,7 @@ export function Slider({
           <div key={param.id} style={parameterStyle(isLast)}>
             <div style={parameterHeaderStyle}>
               <label htmlFor={`${baseId}-${param.id}`} style={parameterLabelStyle}>
-                {param.label}
+                <RichText content={param.label} />
               </label>
               <span style={parameterValueStyle} aria-live="polite">
                 {formatValue(currentValue, param.unit)}

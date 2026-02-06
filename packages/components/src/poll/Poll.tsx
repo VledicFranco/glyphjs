@@ -1,5 +1,6 @@
 import { useState, type ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -17,11 +18,12 @@ import {
 // ─── Types ─────────────────────────────────────────────────────
 
 export interface PollData {
-  question: string;
-  options: string[];
+  question: string | InlineNode[];
+  options: (string | InlineNode[])[];
   multiple?: boolean;
   showResults?: boolean;
   title?: string;
+  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────
@@ -62,7 +64,10 @@ export function Poll({ data, block, onInteraction }: GlyphComponentProps<PollDat
         blockId: block.id,
         blockType: block.type,
         payload: {
-          selectedOptions: selected.map((i) => options[i] ?? String(i)),
+          selectedOptions: selected.map((i) => {
+            const opt = options[i];
+            return typeof opt === 'string' ? opt : String(i);
+          }),
           selectedIndices: [...selected],
         },
       });
@@ -70,13 +75,16 @@ export function Poll({ data, block, onInteraction }: GlyphComponentProps<PollDat
   };
 
   const totalVotes = votes.reduce((a, b) => a + b, 0);
+  const questionAriaLabel = typeof question === 'string' ? question : 'Poll question';
 
   return (
     <div id={baseId} role="region" aria-label={title ?? 'Poll'} style={containerStyle}>
       {title && <div style={headerStyle}>{title}</div>}
-      <div style={questionStyle}>{question}</div>
+      <div style={questionStyle}>
+        <RichText content={question} />
+      </div>
 
-      <div role="group" aria-label={question} style={optionsStyle}>
+      <div role="group" aria-label={questionAriaLabel} style={optionsStyle}>
         {options.map((option, index) => (
           <label key={index} style={optionLabelStyle(selected.includes(index))}>
             <input
@@ -87,7 +95,7 @@ export function Poll({ data, block, onInteraction }: GlyphComponentProps<PollDat
               onChange={() => toggleOption(index)}
               aria-checked={selected.includes(index)}
             />
-            {option}
+            <RichText content={option} />
           </label>
         ))}
       </div>
@@ -112,10 +120,13 @@ export function Poll({ data, block, onInteraction }: GlyphComponentProps<PollDat
           {options.map((option, index) => {
             const count = votes[index] ?? 0;
             const percentage = totalVotes > 0 ? (count / totalVotes) * 100 : 0;
+            const optionLabel = typeof option === 'string' ? option : 'Option';
             return (
               <div key={index} style={resultRowStyle}>
                 <div style={resultLabelStyle}>
-                  <span>{option}</span>
+                  <span>
+                    <RichText content={option} />
+                  </span>
                   <span>
                     {String(count)} vote{count !== 1 ? 's' : ''} ({String(Math.round(percentage))}%)
                   </span>
@@ -126,7 +137,7 @@ export function Poll({ data, block, onInteraction }: GlyphComponentProps<PollDat
                   aria-valuenow={percentage}
                   aria-valuemin={0}
                   aria-valuemax={100}
-                  aria-label={`${option}: ${String(Math.round(percentage))}%`}
+                  aria-label={`${optionLabel}: ${String(Math.round(percentage))}%`}
                 >
                   <div style={barFillStyle(percentage)} />
                 </div>

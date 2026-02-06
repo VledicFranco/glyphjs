@@ -1,0 +1,761 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-a345fc1094138bb3",
+    "metadata": {
+      "title": "Component Markdown Test",
+      "description": "Test inline markdown formatting in component text fields."
+    },
+    "blocks": [
+      {
+        "id": "b-bebeaeabbe5b",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Markdown in Components"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-2f2c880434d6",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Test inline markdown formatting in component text fields."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-f0bc024c80e2",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Callout with Markdown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-eeb3a5784615",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "content": [
+            {
+              "type": "text",
+              "value": "This is "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "bold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " and "
+            },
+            {
+              "type": "emphasis",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "italic"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " with a "
+            },
+            {
+              "type": "link",
+              "url": "https://example.com",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "link"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " and "
+            },
+            {
+              "type": "inlineCode",
+              "value": "code"
+            }
+          ],
+          "markdown": true
+        }
+      },
+      {
+        "id": "b-bab5d6dd5457",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Card with Markdown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-f83b298baf29",
+        "type": "ui:card",
+        "data": {
+          "cards": [
+            {
+              "title": "First Card",
+              "subtitle": [
+                {
+                  "type": "text",
+                  "value": "A "
+                },
+                {
+                  "type": "strong",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "bold"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " subtitle"
+                }
+              ],
+              "body": [
+                {
+                  "type": "text",
+                  "value": "Body with "
+                },
+                {
+                  "type": "emphasis",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "italic"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " text and "
+                },
+                {
+                  "type": "link",
+                  "url": "https://example.com",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "links"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "variant": "default",
+          "markdown": true
+        }
+      },
+      {
+        "id": "b-bb9820704456",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Accordion with Markdown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-8563ddef2e2b",
+        "type": "ui:accordion",
+        "data": {
+          "sections": [
+            {
+              "title": "Section 1",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Content with "
+                },
+                {
+                  "type": "strong",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "bold"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " and "
+                },
+                {
+                  "type": "emphasis",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "italic"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " formatting"
+                }
+              ]
+            },
+            {
+              "title": "Section 2",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "More content with "
+                },
+                {
+                  "type": "inlineCode",
+                  "value": "inline code"
+                },
+                {
+                  "type": "text",
+                  "value": " and "
+                },
+                {
+                  "type": "link",
+                  "url": "https://example.com",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "links"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "multiple": true,
+          "markdown": true
+        }
+      },
+      {
+        "id": "b-d586b6630ffc",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Steps with Markdown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-cee14c1c7537",
+        "type": "ui:steps",
+        "data": {
+          "steps": [
+            {
+              "title": "Step 1",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "First step with "
+                },
+                {
+                  "type": "strong",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "bold"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " text"
+                }
+              ]
+            },
+            {
+              "title": "Step 2",
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Second step with "
+                },
+                {
+                  "type": "emphasis",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "italic"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " and "
+                },
+                {
+                  "type": "inlineCode",
+                  "value": "code"
+                }
+              ]
+            }
+          ],
+          "markdown": true
+        }
+      },
+      {
+        "id": "b-1109e73735f7",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Timeline with Markdown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-3765b5c42d91",
+        "type": "ui:timeline",
+        "data": {
+          "events": [
+            {
+              "date": "2024-01-01",
+              "title": [
+                {
+                  "type": "text",
+                  "value": "Event with "
+                },
+                {
+                  "type": "strong",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "bold"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " title"
+                }
+              ],
+              "description": [
+                {
+                  "type": "text",
+                  "value": "Description with "
+                },
+                {
+                  "type": "emphasis",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "italic"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " and "
+                },
+                {
+                  "type": "link",
+                  "url": "https://example.com",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "link"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "date": "2024-01-02",
+              "title": [
+                {
+                  "type": "text",
+                  "value": "Another event"
+                }
+              ],
+              "description": [
+                {
+                  "type": "text",
+                  "value": "More "
+                },
+                {
+                  "type": "strong",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "formatted"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " text"
+                }
+              ]
+            }
+          ],
+          "markdown": true
+        }
+      },
+      {
+        "id": "b-7a5a47260dd3",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Quiz with Markdown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-73e1b5caa6c5",
+        "type": "ui:quiz",
+        "data": {
+          "questions": [
+            {
+              "type": "multiple-choice",
+              "question": [
+                {
+                  "type": "text",
+                  "value": "What is "
+                },
+                {
+                  "type": "strong",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "bold"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " formatting?"
+                }
+              ],
+              "options": [
+                [
+                  {
+                    "type": "text",
+                    "value": "Option with "
+                  },
+                  {
+                    "type": "emphasis",
+                    "children": [
+                      {
+                        "type": "text",
+                        "value": "italic"
+                      }
+                    ]
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "Option with "
+                  },
+                  {
+                    "type": "inlineCode",
+                    "value": "code"
+                  }
+                ],
+                [
+                  {
+                    "type": "text",
+                    "value": "Plain option"
+                  }
+                ]
+              ],
+              "answer": 0,
+              "explanation": [
+                {
+                  "type": "text",
+                  "value": "Explanation with "
+                },
+                {
+                  "type": "strong",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "bold"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " and "
+                },
+                {
+                  "type": "emphasis",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "italic"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "showScore": true,
+          "markdown": true
+        }
+      },
+      {
+        "id": "b-93bd9fd868f8",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Poll with Markdown"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-9d121b025002",
+        "type": "ui:poll",
+        "data": {
+          "question": [
+            {
+              "type": "text",
+              "value": "Which "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "feature"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " do you prefer?"
+            }
+          ],
+          "options": ["*Feature* A", "Feature `B`", "[Feature C](https://example.com)"],
+          "multiple": false,
+          "showResults": true,
+          "markdown": true
+        }
+      },
+      {
+        "id": "b-837ed39422ec",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Backward Compatibility"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-abdf461fe359",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Components without markdown flag should render text literally:"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-3165004ce1e4",
+        "type": "ui:callout",
+        "data": {
+          "type": "warning",
+          "content": "This stays plain: **not bold** and *not italic*",
+          "markdown": false
+        }
+      },
+      {
+        "id": "b-9861750015d4",
+        "type": "ui:callout",
+        "data": {
+          "type": "tip",
+          "content": "No markdown flag defaults to plain text: **not bold**",
+          "markdown": false
+        }
+      },
+      {
+        "id": "b-f228414ee1ca",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Multiple Formatting Types"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-bd289f6046ad",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "content": [
+            {
+              "type": "text",
+              "value": "Combined: "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "bold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": ", "
+            },
+            {
+              "type": "emphasis",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "italic"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": ", "
+            },
+            {
+              "type": "inlineCode",
+              "value": "code"
+            },
+            {
+              "type": "text",
+              "value": ", ~~strikethrough~~, and "
+            },
+            {
+              "type": "link",
+              "url": "https://example.com",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "link"
+                }
+              ]
+            }
+          ],
+          "markdown": true
+        }
+      },
+      {
+        "id": "b-f5e7b3a12cf9",
+        "type": "heading",
+        "data": {
+          "depth": 2,
+          "children": [
+            {
+              "type": "text",
+              "value": "Nested Formatting"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-3f6211bfe0da",
+        "type": "ui:callout",
+        "data": {
+          "type": "tip",
+          "content": [
+            {
+              "type": "text",
+              "value": "Nested: "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "bold with "
+                },
+                {
+                  "type": "emphasis",
+                  "children": [
+                    {
+                      "type": "text",
+                      "value": "italic inside"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "value": " text"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " and more"
+            }
+          ],
+          "markdown": true
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

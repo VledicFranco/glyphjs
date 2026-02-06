@@ -103,7 +103,37 @@ content: Column key revenue in aggregation does not match any column definition.
 |---|---|---|---|---|
 | `type` | `"info" \| "warning" \| "error" \| "tip"` | Yes | -- | The visual variant that controls color and icon. |
 | `title` | `string` | No | -- | An optional heading displayed at the top of the callout. |
-| `content` | `string` | Yes | -- | The body text of the callout. Supports inline Markdown. |
+| `content` | `string` | Yes | -- | The body text of the callout. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting in `content` and `title`. |
+
+## Markdown Support
+
+Enable inline markdown formatting by setting `markdown: true`:
+
+export const markdownExample = `\`\`\`ui:callout
+type: tip
+content: "Check out the **[documentation](https://glyphjs.dev)** for more info!"
+markdown: true
+\`\`\``;
+
+<GlyphPreview client:only="react" source={markdownExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:callout
+type: tip
+content: "Check out the **[documentation](https://glyphjs.dev)** for more info!"
+markdown: true
+```
+````
+
+</details>
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Variants
 

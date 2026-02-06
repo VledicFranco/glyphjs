@@ -38,7 +38,8 @@
         "type": "ui:callout",
         "data": {
           "type": "tip",
-          "content": "This is the data table callout."
+          "content": "This is the data table callout.",
+          "markdown": false
         }
       }
     ],

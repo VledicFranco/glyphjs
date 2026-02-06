@@ -5,13 +5,8 @@
     "metadata": {
       "title": "Complex Document",
       "description": "A document exercising all features.",
-      "authors": [
-        "Alice"
-      ],
-      "tags": [
-        "complex",
-        "test"
-      ]
+      "authors": ["Alice"],
+      "tags": ["complex", "test"]
     },
     "blocks": [
       {
@@ -124,7 +119,8 @@
         "data": {
           "type": "info",
           "title": "Summary",
-          "content": "This summarizes the graph above."
+          "content": "This summarizes the graph above.",
+          "markdown": false
         }
       },
       {
@@ -211,7 +207,8 @@
               "status": "active",
               "content": "Run the process.\n"
             }
-          ]
+          ],
+          "markdown": false
         },
         "children": [
           {

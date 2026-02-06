@@ -20,6 +20,7 @@ export const comparisonSchema = z
         }),
       )
       .min(1),
+    markdown: z.boolean().default(false),
   })
   .refine((data) => data.features.every((f) => f.values.length === data.options.length), {
     message: 'Each feature must have one value per option',

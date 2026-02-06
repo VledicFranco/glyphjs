@@ -1,11 +1,12 @@
 import { useCallback, useRef, type ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 export interface AccordionSection {
   title: string;
-  content: string;
+  content: string | InlineNode[];
 }
 
 export interface AccordionData {
@@ -13,6 +14,7 @@ export interface AccordionData {
   sections: AccordionSection[];
   defaultOpen?: number[];
   multiple?: boolean;
+  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────
@@ -121,7 +123,9 @@ export function Accordion({
             </span>
             {section.title}
           </summary>
-          <div style={contentStyle}>{section.content}</div>
+          <div style={contentStyle}>
+            <RichText content={section.content} />
+          </div>
         </details>
       ))}
     </div>

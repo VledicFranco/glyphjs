@@ -1,22 +1,24 @@
 import type { ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 export interface ComparisonOption {
   name: string;
-  description?: string;
+  description?: string | InlineNode[];
 }
 
 export interface ComparisonFeature {
   name: string;
-  values: string[];
+  values: (string | InlineNode[])[];
 }
 
 export interface ComparisonData {
   title?: string;
   options: ComparisonOption[];
   features: ComparisonFeature[];
+  markdown?: boolean;
 }
 
 // ─── Value rendering ───────────────────────────────────────────
@@ -26,7 +28,8 @@ type ValueKind = 'yes' | 'no' | 'partial' | 'text';
 const YES_VALUES = new Set(['yes', 'true', 'full']);
 const NO_VALUES = new Set(['no', 'false', 'none']);
 
-function classifyValue(value: string): ValueKind {
+function classifyValue(value: string | InlineNode[]): ValueKind {
+  if (typeof value !== 'string') return 'text';
   const lower = value.toLowerCase().trim();
   if (YES_VALUES.has(lower)) return 'yes';
   if (NO_VALUES.has(lower)) return 'no';
@@ -34,7 +37,7 @@ function classifyValue(value: string): ValueKind {
   return 'text';
 }
 
-function renderValue(value: string): ReactElement {
+function renderValue(value: string | InlineNode[]): ReactElement {
   const kind = classifyValue(value);
 
   switch (kind) {
@@ -66,7 +69,11 @@ function renderValue(value: string): ReactElement {
         </span>
       );
     default:
-      return <span>{value}</span>;
+      return (
+        <span>
+          <RichText content={value} />
+        </span>
+      );
   }
 }
 
@@ -185,7 +192,7 @@ export function Comparison({
                         color: 'var(--glyph-text-muted, #6b7a94)',
                       }}
                     >
-                      {option.description}
+                      <RichText content={option.description} />
                     </div>
                   )}
                 </th>
@@ -208,10 +215,10 @@ export function Comparison({
                   {feature.name}
                 </th>
                 {options.map((_, colIndex) => {
-                  const value = feature.values[colIndex] ?? '';
+                  const value = feature.values[colIndex];
                   return (
                     <td key={colIndex} style={cellStyle(rowIndex)}>
-                      {value ? renderValue(value) : null}
+                      {value !== undefined && value !== '' ? renderValue(value) : null}
                     </td>
                   );
                 })}

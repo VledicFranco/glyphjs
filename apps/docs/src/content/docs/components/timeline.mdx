@@ -358,6 +358,7 @@ orientation: vertical
 |---|---|---|---|---|
 | `events` | `Event[]` | Yes | -- | An array of event objects to display on the timeline. |
 | `orientation` | `"vertical" \| "horizontal"` | No | -- | Layout direction of the timeline. |
+| `markdown` | `boolean` | No | `false` | Enable inline markdown formatting in event `title` and `description` fields. |
 
 ### Event object
 
@@ -367,6 +368,27 @@ orientation: vertical
 | `title` | `string` | Yes | -- | The heading text for the event. |
 | `description` | `string` | No | -- | Additional detail text shown beneath the title. |
 | `type` | `string` | No | -- | A semantic type used for color-coding and grouping (e.g. "release", "milestone", "breaking-change"). |
+
+## Markdown Support
+
+Enable inline markdown in timeline events:
+
+```md
+```ui:timeline
+events:
+  - date: "2024-01-15"
+    title: "Version **2.0** Released"
+    description: "Check out the [release notes](https://example.com) for all the new features."
+  - date: "2024-02-01"
+    title: "New `renderToString` API"
+    description: "Server-side rendering is now *fully supported*."
+markdown: true
+```
+```
+
+Supported formatting: **bold**, *italic*, `code`, [links](url)
+
+[Learn more about markdown in components →](../guides/component-markdown)
 
 ## Orientation
 

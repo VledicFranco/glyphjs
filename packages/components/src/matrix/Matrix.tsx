@@ -1,5 +1,6 @@
 import { useState, useCallback, type ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -17,13 +18,13 @@ import {
 
 export interface MatrixColumn {
   id: string;
-  label: string;
+  label: string | InlineNode[];
   weight?: number;
 }
 
 export interface MatrixRow {
   id: string;
-  label: string;
+  label: string | InlineNode[];
 }
 
 export interface MatrixData {
@@ -32,6 +33,7 @@ export interface MatrixData {
   showTotals?: boolean;
   columns: MatrixColumn[];
   rows: MatrixRow[];
+  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -48,7 +50,8 @@ function computeWeightedTotals(
       const weight = col.weight ?? 1;
       total += score * weight;
     }
-    return { rowId: row.id, rowLabel: row.label, total: Math.round(total * 100) / 100 };
+    const rowLabel = typeof row.label === 'string' ? row.label : 'Row';
+    return { rowId: row.id, rowLabel, total: Math.round(total * 100) / 100 };
   });
 }
 
@@ -98,9 +101,9 @@ export function Matrix({
             blockType: block.type,
             payload: {
               rowId,
-              rowLabel: row.label,
+              rowLabel: typeof row.label === 'string' ? row.label : 'Row',
               columnId,
-              columnLabel: col.label,
+              columnLabel: typeof col.label === 'string' ? col.label : 'Column',
               value: clamped,
               allValues: payloadValues,
               weightedTotals: computeWeightedTotals(rows, columns, newValues),
@@ -126,7 +129,7 @@ export function Matrix({
             <th style={thStyle} />
             {columns.map((col) => (
               <th key={col.id} style={thStyle}>
-                {col.label}
+                <RichText content={col.label} />
                 {(col.weight ?? 1) !== 1 && <div style={weightStyle}>×{String(col.weight)}</div>}
               </th>
             ))}
@@ -136,13 +139,15 @@ export function Matrix({
         <tbody>
           {rows.map((row) => {
             const rowTotal = totals.find((t) => t.rowId === row.id)?.total ?? 0;
+            const rowLabelText = typeof row.label === 'string' ? row.label : 'Row';
             return (
               <tr key={row.id}>
                 <th scope="row" style={rowHeaderStyle}>
-                  {row.label}
+                  <RichText content={row.label} />
                 </th>
                 {columns.map((col) => {
                   const cellValue = values[row.id]?.[col.id] ?? 0;
+                  const colLabelText = typeof col.label === 'string' ? col.label : 'Column';
                   return (
                     <td key={col.id} style={cellStyle}>
                       <input
@@ -151,7 +156,7 @@ export function Matrix({
                         max={scale}
                         value={cellValue}
                         onChange={(e) => handleChange(row.id, col.id, Number(e.target.value))}
-                        aria-label={`Score for ${row.label} on ${col.label}`}
+                        aria-label={`Score for ${rowLabelText} on ${colLabelText}`}
                         style={inputStyle}
                       />
                     </td>

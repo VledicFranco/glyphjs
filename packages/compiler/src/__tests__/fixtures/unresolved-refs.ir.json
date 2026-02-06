@@ -25,7 +25,8 @@
         "type": "ui:callout",
         "data": {
           "type": "info",
-          "content": "This callout references a non-existent block."
+          "content": "This callout references a non-existent block.",
+          "markdown": false
         }
       },
       {

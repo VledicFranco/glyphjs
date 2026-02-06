@@ -1,5 +1,6 @@
 import type { ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
@@ -10,10 +11,10 @@ export interface CardAction {
 
 export interface CardItem {
   title: string;
-  subtitle?: string;
+  subtitle?: string | InlineNode[];
   image?: string;
   icon?: string;
-  body?: string;
+  body?: string | InlineNode[];
   actions?: CardAction[];
 }
 
@@ -22,6 +23,7 @@ export interface CardData {
   cards: CardItem[];
   variant?: 'default' | 'outlined' | 'elevated';
   columns?: number;
+  markdown?: boolean;
 }
 
 // ─── Variant styles ─────────────────────────────────────────────
@@ -163,8 +165,16 @@ export function Card({ data, block, container }: GlyphComponentProps<CardData>):
             <div style={cardBodyStyle}>
               {card.icon && <div style={iconStyle}>{card.icon}</div>}
               <h3 style={titleStyle}>{card.title}</h3>
-              {card.subtitle && <div style={subtitleStyle}>{card.subtitle}</div>}
-              {card.body && <div style={bodyStyle}>{card.body}</div>}
+              {card.subtitle && (
+                <div style={subtitleStyle}>
+                  <RichText content={card.subtitle} />
+                </div>
+              )}
+              {card.body && (
+                <div style={bodyStyle}>
+                  <RichText content={card.body} />
+                </div>
+              )}
               {card.actions && card.actions.length > 0 && (
                 <div style={actionsStyle}>
                   {card.actions.map((action, j) => (

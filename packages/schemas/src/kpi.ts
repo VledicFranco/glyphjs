@@ -18,4 +18,5 @@ export const kpiSchema = z.object({
     .min(1)
     .max(8),
   columns: z.number().min(1).max(4).optional(),
+  markdown: z.boolean().default(false),
 });

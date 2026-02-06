@@ -1,5 +1,6 @@
 import { useState, type ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -16,25 +17,25 @@ import {
 
 export interface QuizMultipleChoice {
   type: 'multiple-choice';
-  question: string;
-  options: string[];
+  question: string | InlineNode[];
+  options: (string | InlineNode[])[];
   answer: number;
-  explanation?: string;
+  explanation?: string | InlineNode[];
 }
 
 export interface QuizTrueFalse {
   type: 'true-false';
-  question: string;
+  question: string | InlineNode[];
   answer: boolean;
-  explanation?: string;
+  explanation?: string | InlineNode[];
 }
 
 export interface QuizMultiSelect {
   type: 'multi-select';
-  question: string;
-  options: string[];
+  question: string | InlineNode[];
+  options: (string | InlineNode[])[];
   answer: number[];
-  explanation?: string;
+  explanation?: string | InlineNode[];
 }
 
 export type QuizQuestion = QuizMultipleChoice | QuizTrueFalse | QuizMultiSelect;
@@ -43,6 +44,7 @@ export interface QuizData {
   questions: QuizQuestion[];
   showScore?: boolean;
   title?: string;
+  markdown?: boolean;
 }
 
 // ─── Per-question state ────────────────────────────────────────
@@ -83,9 +85,10 @@ function renderMultipleChoice(
   baseId: string,
 ): ReactElement {
   const selected = typeof state.selected === 'number' ? state.selected : null;
+  const ariaLabel = typeof question.question === 'string' ? question.question : 'Question';
 
   return (
-    <div role="radiogroup" aria-label={question.question}>
+    <div role="radiogroup" aria-label={ariaLabel}>
       {question.options.map((option, oIndex) => {
         const isSelected = selected === oIndex;
         const isCorrectOption = state.submitted && oIndex === question.answer;
@@ -110,7 +113,7 @@ function renderMultipleChoice(
               onChange={() => updateState(qIndex, { selected: oIndex })}
               aria-checked={isSelected}
             />
-            {option}
+            <RichText content={option} />
           </label>
         );
       })}
@@ -126,9 +129,10 @@ function renderTrueFalse(
   baseId: string,
 ): ReactElement {
   const selected = typeof state.selected === 'boolean' ? state.selected : null;
+  const ariaLabel = typeof question.question === 'string' ? question.question : 'Question';
 
   return (
-    <div role="radiogroup" aria-label={question.question}>
+    <div role="radiogroup" aria-label={ariaLabel}>
       {[true, false].map((value) => {
         const isSelected = selected === value;
         const isCorrectOption = state.submitted && value === question.answer;
@@ -202,7 +206,7 @@ function renderMultiSelect(
               onChange={() => toggleOption(oIndex)}
               aria-checked={isSelected}
             />
-            {option}
+            <RichText content={option} />
           </label>
         );
       })}
@@ -254,7 +258,7 @@ export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizDat
       >
         <div style={questionTextStyle}>
           {questions.length > 1 ? `${String(qIndex + 1)}. ` : ''}
-          {question.question}
+          <RichText content={question.question} />
         </div>
 
         {question.type === 'multiple-choice' &&
@@ -286,10 +290,12 @@ export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizDat
                 let selected: string[];
                 switch (question.type) {
                   case 'multiple-choice':
-                    selected =
-                      typeof state.selected === 'number'
-                        ? [question.options[state.selected] ?? String(state.selected)]
-                        : [];
+                    if (typeof state.selected === 'number') {
+                      const opt = question.options[state.selected];
+                      selected = [typeof opt === 'string' ? opt : String(state.selected)];
+                    } else {
+                      selected = [];
+                    }
                     break;
                   case 'true-false':
                     selected =
@@ -299,10 +305,16 @@ export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizDat
                     break;
                   case 'multi-select':
                     selected = Array.isArray(state.selected)
-                      ? state.selected.map((idx) => question.options[idx] ?? String(idx))
+                      ? state.selected.map((idx) => {
+                          const opt = question.options[idx];
+                          return typeof opt === 'string' ? opt : String(idx);
+                        })
                       : [];
                     break;
                 }
+
+                const questionText =
+                  typeof question.question === 'string' ? question.question : 'Question';
 
                 onInteraction({
                   kind: 'quiz-submit',
@@ -311,7 +323,7 @@ export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizDat
                   blockType: block.type,
                   payload: {
                     questionIndex: qIndex,
-                    question: question.question,
+                    question: questionText,
                     selected,
                     correct,
                     score: { correct: newScore, total: questions.length },
@@ -329,7 +341,9 @@ export function Quiz({ data, block, onInteraction }: GlyphComponentProps<QuizDat
             <div style={feedbackStyle(correct)}>{correct ? 'Correct!' : 'Incorrect'}</div>
           )}
           {state.submitted && question.explanation && (
-            <div style={explanationStyle}>{question.explanation}</div>
+            <div style={explanationStyle}>
+              <RichText content={question.explanation} />
+            </div>
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState, useCallback, type ReactElement, type KeyboardEvent } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -16,13 +17,14 @@ import {
 
 export interface RankerItemData {
   id: string;
-  label: string;
+  label: string | InlineNode[];
   description?: string;
 }
 
 export interface RankerData {
   title?: string;
   items: RankerItemData[];
+  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────
@@ -56,12 +58,12 @@ export function Ranker({
             payload: {
               orderedItems: newItems.map((item, i) => ({
                 id: item.id,
-                label: item.label,
+                label: typeof item.label === 'string' ? item.label : 'Item',
                 rank: i + 1,
               })),
               movedItem: {
                 id: moved.id,
-                label: moved.label,
+                label: typeof moved.label === 'string' ? moved.label : 'Item',
                 fromRank: fromIndex + 1,
                 toRank: toIndex + 1,
               },
@@ -105,26 +107,31 @@ export function Ranker({
       {title && <div style={headerStyle}>{title}</div>}
 
       <ul role="list" aria-label={title ?? 'Rank items'} style={listStyle}>
-        {items.map((item, index) => (
-          <li
-            key={item.id}
-            role="listitem"
-            aria-grabbed={grabbedIndex === index}
-            aria-label={`${item.label}, rank ${String(index + 1)}`}
-            tabIndex={0}
-            style={itemStyle(false, grabbedIndex === index)}
-            onKeyDown={(e) => handleKeyDown(e, index)}
-          >
-            <span style={gripStyle} aria-hidden="true">
-              ⠿
-            </span>
-            <span style={rankBadgeStyle}>{String(index + 1)}</span>
-            <div style={itemContentStyle}>
-              <div style={itemLabelStyle}>{item.label}</div>
-              {item.description && <div style={itemDescriptionStyle}>{item.description}</div>}
-            </div>
-          </li>
-        ))}
+        {items.map((item, index) => {
+          const itemLabelText = typeof item.label === 'string' ? item.label : 'Item';
+          return (
+            <li
+              key={item.id}
+              role="listitem"
+              aria-grabbed={grabbedIndex === index}
+              aria-label={`${itemLabelText}, rank ${String(index + 1)}`}
+              tabIndex={0}
+              style={itemStyle(false, grabbedIndex === index)}
+              onKeyDown={(e) => handleKeyDown(e, index)}
+            >
+              <span style={gripStyle} aria-hidden="true">
+                ⠿
+              </span>
+              <span style={rankBadgeStyle}>{String(index + 1)}</span>
+              <div style={itemContentStyle}>
+                <div style={itemLabelStyle}>
+                  <RichText content={item.label} />
+                </div>
+                {item.description && <div style={itemDescriptionStyle}>{item.description}</div>}
+              </div>
+            </li>
+          );
+        })}
       </ul>
 
       <div
@@ -141,8 +148,9 @@ export function Ranker({
           border: 0,
         }}
       >
-        {grabbedIndex !== null &&
-          `${items[grabbedIndex]?.label ?? ''} grabbed, rank ${String(grabbedIndex + 1)} of ${String(items.length)}. Use arrow keys to move.`}
+        {grabbedIndex !== null && items[grabbedIndex] !== undefined
+          ? `${typeof items[grabbedIndex].label === 'string' ? items[grabbedIndex].label : 'Item'} grabbed, rank ${String(grabbedIndex + 1)} of ${String(items.length)}. Use arrow keys to move.`
+          : ''}
       </div>
     </div>
   );

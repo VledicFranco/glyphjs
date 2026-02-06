@@ -12,4 +12,5 @@ export const timelineSchema = z.object({
     }),
   ),
   orientation: z.enum(['vertical', 'horizontal']).optional(),
+  markdown: z.boolean().default(false),
 });

@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, type ReactElement, type MouseEvent } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -32,8 +33,9 @@ export interface Annotation {
 export interface AnnotateData {
   title?: string;
   labels: AnnotateLabel[];
-  text: string;
+  text: string | InlineNode[];
   annotations?: Annotation[];
+  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -44,7 +46,12 @@ interface TextSegment {
   annotation: Annotation | null;
 }
 
-function computeSegments(text: string, annotations: Annotation[]): TextSegment[] {
+function computeSegments(text: string | InlineNode[], annotations: Annotation[]): TextSegment[] {
+  // For now, annotation only works with plain text strings
+  if (typeof text !== 'string') {
+    return [{ text: '', start: 0, annotation: null }];
+  }
+
   if (annotations.length === 0) {
     return [{ text, start: 0, annotation: null }];
   }
@@ -148,7 +155,7 @@ export function Annotate({
           allAnnotations: newAnnotations.map((a) => ({
             start: a.start,
             end: a.end,
-            text: text.slice(a.start, a.end),
+            text: typeof text === 'string' ? text.slice(a.start, a.end) : '',
             label: a.label,
           })),
         },
@@ -177,25 +184,29 @@ export function Annotate({
 
       <div style={bodyStyle}>
         <div ref={textRef} role="document" style={textPaneStyle} onMouseUp={handleMouseUp}>
-          {segments.map((seg, i) => {
-            if (seg.annotation) {
-              const color = labelColorMap.get(seg.annotation.label) ?? '#888';
-              return (
-                <mark
-                  key={i}
-                  style={{
-                    backgroundColor: `${color}33`,
-                    borderBottom: `2px solid ${color}`,
-                    padding: '0 1px',
-                  }}
-                  title={`${seg.annotation.label}${seg.annotation.note ? `: ${seg.annotation.note}` : ''}`}
-                >
-                  {seg.text}
-                </mark>
-              );
-            }
-            return <span key={i}>{seg.text}</span>;
-          })}
+          {typeof text === 'string' ? (
+            segments.map((seg, i) => {
+              if (seg.annotation) {
+                const color = labelColorMap.get(seg.annotation.label) ?? '#888';
+                return (
+                  <mark
+                    key={i}
+                    style={{
+                      backgroundColor: `${color}33`,
+                      borderBottom: `2px solid ${color}`,
+                      padding: '0 1px',
+                    }}
+                    title={`${seg.annotation.label}${seg.annotation.note ? `: ${seg.annotation.note}` : ''}`}
+                  >
+                    {seg.text}
+                  </mark>
+                );
+              }
+              return <span key={i}>{seg.text}</span>;
+            })
+          ) : (
+            <RichText content={text} />
+          )}
 
           {pickerPos && (
             <div
@@ -230,13 +241,14 @@ export function Annotate({
           <div role="list">
             {annotations.map((ann, i) => {
               const color = labelColorMap.get(ann.label) ?? '#888';
+              const annotatedText = typeof text === 'string' ? text.slice(ann.start, ann.end) : '';
               return (
                 <div key={i} role="listitem" style={annotationItemStyle(color)}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '0.375rem' }}>
                     <span style={colorDotStyle(color)} />
                     <strong style={{ fontSize: '0.75rem' }}>{ann.label}</strong>
                   </div>
-                  <div style={annotationTextStyle}>{text.slice(ann.start, ann.end)}</div>
+                  <div style={annotationTextStyle}>{annotatedText}</div>
                   {ann.note && <div style={annotationNoteStyle}>{ann.note}</div>}
                 </div>
               );

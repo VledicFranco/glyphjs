@@ -126,4 +126,86 @@ describe('Accordion', () => {
     render(<Accordion {...props} />);
     expect(screen.getByText('This content is visible')).toBeInTheDocument();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in content when markdown=false', () => {
+    const props = createMockProps<AccordionData>(
+      {
+        sections: [{ title: 'Section', content: 'Plain text **not bold**' }],
+        markdown: false,
+        defaultOpen: [0],
+      },
+      'ui:accordion',
+    );
+    render(<Accordion {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted content when content is InlineNode[]', () => {
+    const props = createMockProps<AccordionData>(
+      {
+        sections: [
+          {
+            title: 'Section',
+            content: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+          },
+        ],
+        markdown: true,
+        defaultOpen: [0],
+      },
+      'ui:accordion',
+    );
+    render(<Accordion {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in content even when markdown=true (backward compat)', () => {
+    const props = createMockProps<AccordionData>(
+      {
+        sections: [{ title: 'Section', content: 'Plain string' }],
+        markdown: true,
+        defaultOpen: [0],
+      },
+      'ui:accordion',
+    );
+    render(<Accordion {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] content', () => {
+    const props = createMockProps<AccordionData>(
+      {
+        sections: [
+          {
+            title: 'Section',
+            content: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+        defaultOpen: [0],
+      },
+      'ui:accordion',
+    );
+    render(<Accordion {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
 });

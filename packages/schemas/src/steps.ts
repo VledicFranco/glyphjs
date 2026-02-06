@@ -10,4 +10,5 @@ export const stepsSchema = z.object({
       content: z.string(),
     }),
   ),
+  markdown: z.boolean().default(false),
 });

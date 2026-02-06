@@ -88,4 +88,107 @@ describe('Timeline', () => {
     expect(screen.getAllByText(/Started the project/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText(/General availability/).length).toBeGreaterThanOrEqual(1);
   });
+
+  // Markdown rendering tests
+  it('renders plain text in title when markdown=false', () => {
+    const props = createMockProps<TimelineData>(
+      {
+        events: [{ date: '2024-01-01', title: 'Plain text **not bold**' }],
+        markdown: false,
+      },
+      'ui:timeline',
+    );
+    render(<Timeline {...props} />);
+    expect(screen.getAllByText('Plain text **not bold**').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders formatted title when title is InlineNode[]', () => {
+    const props = createMockProps<TimelineData>(
+      {
+        events: [
+          {
+            date: '2024-01-01',
+            title: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:timeline',
+    );
+    render(<Timeline {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in title even when markdown=true (backward compat)', () => {
+    const props = createMockProps<TimelineData>(
+      {
+        events: [{ date: '2024-01-01', title: 'Plain string' }],
+        markdown: true,
+      },
+      'ui:timeline',
+    );
+    render(<Timeline {...props} />);
+    expect(screen.getAllByText('Plain string').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('renders links in InlineNode[] title', () => {
+    const props = createMockProps<TimelineData>(
+      {
+        events: [
+          {
+            date: '2024-01-01',
+            title: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:timeline',
+    );
+    const { container } = render(<Timeline {...props} />);
+
+    // Timeline visual elements are aria-hidden, so we need to query directly
+    const link = container.querySelector('a[href="https://example.com"]');
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveTextContent('our site');
+  });
+
+  it('renders formatted description when description is InlineNode[]', () => {
+    const props = createMockProps<TimelineData>(
+      {
+        events: [
+          {
+            date: '2024-01-01',
+            title: 'Event',
+            description: [
+              { type: 'text', value: 'Description with ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+            ],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:timeline',
+    );
+    render(<Timeline {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+  });
 });

@@ -59,4 +59,67 @@ describe('Callout', () => {
     render(<Callout {...props} />);
     expect(screen.getByText('Watch out for this!')).toBeInTheDocument();
   });
+
+  it('renders plain text when markdown=false', () => {
+    const props = createMockProps<CalloutData>(
+      { type: 'info', content: 'Plain text **not bold**', markdown: false },
+      'ui:callout',
+    );
+    render(<Callout {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted content when content is InlineNode[]', () => {
+    const props = createMockProps<CalloutData>(
+      {
+        type: 'info',
+        content: [
+          { type: 'text', value: 'This is ' },
+          { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+          { type: 'text', value: ' and ' },
+          { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+        ],
+        markdown: true,
+      },
+      'ui:callout',
+    );
+    render(<Callout {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string even when markdown=true (backward compat)', () => {
+    const props = createMockProps<CalloutData>(
+      { type: 'info', content: 'Plain string', markdown: true },
+      'ui:callout',
+    );
+    render(<Callout {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] content', () => {
+    const props = createMockProps<CalloutData>(
+      {
+        type: 'tip',
+        content: [
+          { type: 'text', value: 'Visit ' },
+          {
+            type: 'link',
+            url: 'https://example.com',
+            children: [{ type: 'text', value: 'our site' }],
+          },
+        ],
+        markdown: true,
+      },
+      'ui:callout',
+    );
+    render(<Callout {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
 });

@@ -42,6 +42,7 @@ export {
 // Built-in renderers
 export {
   InlineRenderer,
+  RichText,
   GlyphHeading,
   GlyphParagraph,
   GlyphList,
@@ -52,6 +53,7 @@ export {
   GlyphRawHtml,
   builtInRenderers,
 } from './renderers/index.js';
+export type { RichTextProps } from './renderers/index.js';
 
 // Theme system
 export {

@@ -12,4 +12,5 @@ export const accordionSchema = z.object({
     .min(1),
   defaultOpen: z.array(z.number()).optional(),
   multiple: z.boolean().default(true),
+  markdown: z.boolean().default(false),
 });

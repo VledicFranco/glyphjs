@@ -88,4 +88,86 @@ describe('Slider', () => {
     const sliders = screen.getAllByRole('slider');
     expect(() => fireEvent.change(sliders[0], { target: { value: '30' } })).not.toThrow();
   });
+
+  // Markdown rendering tests
+  it('renders plain text in label when markdown=false', () => {
+    const props = createMockProps<SliderData>(
+      {
+        parameters: [{ id: 'p', label: 'Plain text **not bold**', min: 0, max: 100 }],
+        markdown: false,
+      },
+      'ui:slider',
+    );
+    render(<Slider {...props} />);
+    expect(screen.getByText('Plain text **not bold**')).toBeInTheDocument();
+  });
+
+  it('renders formatted label when label is InlineNode[]', () => {
+    const props = createMockProps<SliderData>(
+      {
+        parameters: [
+          {
+            id: 'p',
+            label: [
+              { type: 'text', value: 'This is ' },
+              { type: 'strong', children: [{ type: 'text', value: 'bold' }] },
+              { type: 'text', value: ' and ' },
+              { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
+            ],
+            min: 0,
+            max: 100,
+          },
+        ],
+        markdown: true,
+      },
+      'ui:slider',
+    );
+    render(<Slider {...props} />);
+
+    const boldEl = screen.getByText('bold');
+    expect(boldEl.tagName).toBe('STRONG');
+
+    const italicEl = screen.getByText('italic');
+    expect(italicEl.tagName).toBe('EM');
+  });
+
+  it('handles plain string in label even when markdown=true (backward compat)', () => {
+    const props = createMockProps<SliderData>(
+      {
+        parameters: [{ id: 'p', label: 'Plain string', min: 0, max: 100 }],
+        markdown: true,
+      },
+      'ui:slider',
+    );
+    render(<Slider {...props} />);
+    expect(screen.getByText('Plain string')).toBeInTheDocument();
+  });
+
+  it('renders links in InlineNode[] label', () => {
+    const props = createMockProps<SliderData>(
+      {
+        parameters: [
+          {
+            id: 'p',
+            label: [
+              { type: 'text', value: 'Visit ' },
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'our site' }],
+              },
+            ],
+            min: 0,
+            max: 100,
+          },
+        ],
+        markdown: true,
+      },
+      'ui:slider',
+    );
+    render(<Slider {...props} />);
+
+    const link = screen.getByRole('link', { name: 'our site' });
+    expect(link).toHaveAttribute('href', 'https://example.com');
+  });
 });

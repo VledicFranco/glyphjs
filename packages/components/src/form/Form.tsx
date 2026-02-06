@@ -1,5 +1,6 @@
 import { useState, type ReactElement, type FormEvent } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -68,9 +69,10 @@ export type FormField = TextField | TextareaField | SelectField | CheckboxField 
 
 export interface FormData {
   title?: string;
-  description?: string;
+  description?: string | InlineNode[];
   submitLabel?: string;
   fields: FormField[];
+  markdown?: boolean;
 }
 
 // ─── Field Renderer ───────────────────────────────────────────
@@ -312,7 +314,11 @@ export function Form({ data, block, onInteraction }: GlyphComponentProps<FormDat
   return (
     <div id={baseId} role="region" aria-label={title ?? 'Form'} style={containerStyle}>
       {title && <div style={headerStyle}>{title}</div>}
-      {description && <div style={descriptionStyle}>{description}</div>}
+      {description && (
+        <div style={descriptionStyle}>
+          <RichText content={description} />
+        </div>
+      )}
 
       <form onSubmit={handleSubmit} style={formStyle} noValidate>
         {fields.map((field) =>

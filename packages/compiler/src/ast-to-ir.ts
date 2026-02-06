@@ -13,8 +13,9 @@ import type {
 } from '@glyphjs/types';
 import { generateBlockId } from '@glyphjs/ir';
 import { componentSchemas } from '@glyphjs/schemas';
-import { convertPhrasingContent } from './inline.js';
+import { convertPhrasingContent, parseInlineMarkdown } from './inline.js';
 import { createSchemaError, createUnknownComponentInfo, createYamlError } from './diagnostics.js';
+import type { CompileOptions } from './compile.js';
 
 // ─── Default Source Position ─────────────────────────────────
 
@@ -30,12 +31,148 @@ export interface TranslationContext {
   diagnostics: Diagnostic[];
   references: Reference[];
   blockIdMap: Map<string, string>;
+  compileOptions: CompileOptions;
 }
 
 // ─── AST Node Type Guards ────────────────────────────────────
 
 function isGlyphUIBlock(node: GlyphUIBlock | MdastContentNode): node is GlyphUIBlock {
   return node.type === 'glyphUIBlock';
+}
+
+// ─── Markdown Field Processing ──────────────────────────────
+
+/**
+ * Field mapping table: defines which component text fields support markdown.
+ * Format: componentType -> array of field paths (supports nested paths like "items[].text")
+ */
+const MARKDOWN_FIELD_MAP: Record<string, string[]> = {
+  callout: ['content', 'title'],
+  card: ['cards[].body', 'cards[].subtitle'],
+  accordion: ['sections[].content'],
+  steps: ['steps[].content'],
+  kpi: ['metrics[].label'],
+  comparison: ['options[].description', 'features[].values[]'],
+  quiz: ['questions[].question', 'questions[].explanation', 'questions[].options[]'],
+  infographic: ['sections[].items[].text', 'sections[].items[].description'],
+  timeline: ['events[].title', 'events[].description'],
+  poll: ['question', 'options[].label'],
+  rating: ['label', 'description'],
+  ranker: ['items[].label'],
+  slider: ['label'],
+  matrix: ['rowLabels[]', 'columnLabels[]'],
+  annotate: ['annotations[].text'],
+  form: ['description'],
+};
+
+/**
+ * Process component data to parse markdown text fields into InlineNode[].
+ * Checks if markdown is enabled (component-level flag OR global option).
+ * Recursively processes nested objects and arrays based on field mapping.
+ *
+ * @param componentType - Component type (without "ui:" prefix)
+ * @param data - Component data object
+ * @param ctx - Translation context with compiler options and diagnostics
+ * @returns Processed data with markdown fields converted to InlineNode[]
+ */
+function processMarkdownFields(
+  componentType: string,
+  data: Record<string, unknown>,
+  ctx: TranslationContext,
+): Record<string, unknown> {
+  // Check if markdown is enabled (component-level flag OR global option)
+  const markdownEnabled =
+    (data.markdown as boolean) === true || ctx.compileOptions.parseComponentMarkdown === true;
+
+  if (!markdownEnabled) {
+    return data;
+  }
+
+  // Get field paths for this component type
+  const fieldPaths = MARKDOWN_FIELD_MAP[componentType];
+  if (!fieldPaths || fieldPaths.length === 0) {
+    return data;
+  }
+
+  // Clone data to avoid mutations
+  const result = { ...data };
+
+  // Process each field path
+  for (const path of fieldPaths) {
+    processFieldPath(result, path, ctx.diagnostics);
+  }
+
+  return result;
+
+  /**
+   * Recursively process a field path (e.g., "items[].text" or "question")
+   */
+  function processFieldPath(
+    obj: Record<string, unknown>,
+    path: string,
+    diagnostics: Diagnostic[],
+  ): void {
+    // Split path into segments (e.g., "items[].text" -> ["items[]", "text"])
+    const segments = path.split('.');
+    processSegments(obj, segments, diagnostics);
+  }
+
+  /**
+   * Process path segments recursively
+   */
+  function processSegments(
+    obj: Record<string, unknown>,
+    segments: string[],
+    diagnostics: Diagnostic[],
+  ): void {
+    if (segments.length === 0) return;
+
+    const [first, ...rest] = segments;
+
+    // Type guard: first must be defined
+    if (!first) return;
+
+    // Check if segment is array notation (e.g., "items[]")
+    if (first.endsWith('[]')) {
+      const fieldName = first.slice(0, -2);
+      const value = obj[fieldName];
+
+      if (Array.isArray(value)) {
+        if (rest.length === 0) {
+          // This array contains strings to process directly
+          // This case handles paths like "options[]" where the array elements are strings
+          obj[fieldName] = value.map((item) => {
+            if (typeof item === 'string') {
+              return parseInlineMarkdown(item, diagnostics);
+            }
+            return item;
+          });
+        } else {
+          // Array contains objects, process nested fields
+          for (const item of value) {
+            if (typeof item === 'object' && item !== null) {
+              processSegments(item as Record<string, unknown>, rest, diagnostics);
+            }
+          }
+        }
+      }
+    } else {
+      // Regular field
+      if (rest.length === 0) {
+        // Leaf node - process the string field
+        const value = obj[first];
+        if (typeof value === 'string') {
+          obj[first] = parseInlineMarkdown(value, diagnostics);
+        }
+      } else {
+        // Continue traversing
+        const value = obj[first];
+        if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
+          processSegments(value as Record<string, unknown>, rest, diagnostics);
+        }
+      }
+    }
+  }
 }
 
 // ─── Main Translation Entry Point ────────────────────────────
@@ -112,6 +249,9 @@ function translateGlyphUIBlock(node: GlyphUIBlock, ctx: TranslationContext): Blo
       ctx.diagnostics.push(diag);
     }
   }
+
+  // Process markdown fields after validation
+  data = processMarkdownFields(componentType, data, ctx);
 
   // Process refs into references
   if (node.refs && node.refs.length > 0) {

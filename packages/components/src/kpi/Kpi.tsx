@@ -1,10 +1,11 @@
 import type { ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 export interface KpiMetric {
-  label: string;
+  label: string | InlineNode[];
   value: string;
   delta?: string;
   trend?: 'up' | 'down' | 'flat';
@@ -16,6 +17,7 @@ export interface KpiData {
   title?: string;
   metrics: KpiMetric[];
   columns?: number;
+  markdown?: boolean;
 }
 
 // ─── Trend symbols ─────────────────────────────────────────────
@@ -36,7 +38,8 @@ function resolveSentiment(metric: KpiMetric): 'positive' | 'negative' | 'neutral
 }
 
 function buildAriaLabel(metric: KpiMetric): string {
-  let label = `${metric.label}: ${metric.value}`;
+  const labelText = typeof metric.label === 'string' ? metric.label : 'Metric';
+  let label = `${labelText}: ${metric.value}`;
   if (metric.unit) label += ` ${metric.unit}`;
   if (metric.delta && metric.trend) {
     label += `, ${metric.trend} ${metric.delta}`;
@@ -126,7 +129,9 @@ export function Kpi({ data, block, container }: GlyphComponentProps<KpiData>): R
 
           return (
             <div key={i} role="group" aria-label={buildAriaLabel(metric)} style={cardStyle}>
-              <div style={labelStyle}>{metric.label}</div>
+              <div style={labelStyle}>
+                <RichText content={metric.label} />
+              </div>
               <div style={valueStyle}>
                 {metric.value}
                 {metric.unit && (

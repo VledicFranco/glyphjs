@@ -19,4 +19,5 @@ export const cardSchema = z.object({
   cards: z.array(cardItemSchema).min(1).max(12),
   variant: z.enum(['default', 'outlined', 'elevated']).default('default'),
   columns: z.number().min(1).max(4).optional(),
+  markdown: z.boolean().default(false),
 });

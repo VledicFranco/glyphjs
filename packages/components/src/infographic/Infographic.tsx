@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import type { ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
@@ -8,13 +9,13 @@ export interface StatItem {
   type: 'stat';
   label: string;
   value: string;
-  description?: string;
+  description?: string | InlineNode[];
 }
 
 export interface FactItem {
   type: 'fact';
   icon?: string;
-  text: string;
+  text: string | InlineNode[];
 }
 
 export interface ProgressItem {
@@ -73,6 +74,7 @@ export interface InfographicSection {
 export interface InfographicData {
   title?: string;
   sections: InfographicSection[];
+  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -183,7 +185,11 @@ function renderStatGroup(items: StatItem[], keyPrefix: string): ReactElement {
         <div key={`${keyPrefix}-${String(i)}`} style={statStyle}>
           <div style={valueStyle}>{item.value}</div>
           <div style={labelStyle}>{item.label}</div>
-          {item.description && <div style={descStyle}>{item.description}</div>}
+          {item.description && (
+            <div style={descStyle}>
+              <RichText content={item.description} />
+            </div>
+          )}
         </div>
       ))}
     </div>
@@ -287,7 +293,7 @@ function renderFactGroup(items: FactItem[], keyPrefix: string): ReactElement {
               {item.icon}
             </span>
           )}
-          {item.text}
+          <RichText content={item.text} />
         </li>
       ))}
     </ul>

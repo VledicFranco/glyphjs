@@ -1,0 +1,312 @@
+---
+title: Markdown in Components
+description: Enable inline markdown formatting in component text fields
+---
+
+import { Callout } from '@components'
+
+GlyphJS v0.3.0+ supports inline markdown formatting in component text fields, allowing you to add **bold**, *italic*, `code`, and [links](#) directly within component content.
+
+## Quick Start
+
+Enable markdown in any component by setting `markdown: true`:
+
+```md
+```ui:callout
+type: info
+content: "This is **bold**, *italic*, and has a [link](https://example.com)"
+markdown: true
+```
+```
+
+## Supported Formatting
+
+When `markdown: true` is set, these inline elements are supported:
+
+| Syntax | Result | Example |
+|--------|--------|---------|
+| `**text**` | **Bold** | `**important**` |
+| `*text*` | *Italic* | `*emphasis*` |
+| `` `text` `` | `Code` | `` `console.log()` `` |
+| `[text](url)` | [Link](#) | `[docs](https://example.com)` |
+
+### What's NOT Supported
+
+Block-level markdown elements are not supported in inline fields:
+- ❌ Headings (`# Heading`)
+- ❌ Lists (`- item`)
+- ❌ Code blocks (` ``` `)
+- ❌ Blockquotes (`> quote`)
+
+If you include block elements, the compiler will emit a warning and extract only the inline content.
+
+## Enabling Markdown
+
+### Per-Component (Recommended)
+
+Enable markdown for specific components:
+
+```md
+```ui:callout
+type: tip
+content: "Check out the **[documentation](https://glyphjs.dev)** for more info!"
+markdown: true
+```
+```
+
+### Globally
+
+Enable markdown for all components in a document:
+
+```typescript
+import { compile } from '@glyphjs/compiler'
+
+const result = compile(markdown, {
+  parseComponentMarkdown: true
+})
+```
+
+With global mode, all component text fields will parse markdown automatically.
+
+## Supported Components
+
+Markdown support is available in 17 components:
+
+### Text-Heavy Components
+- **Callout**: `content`, `title`
+- **Card**: `cards[].body`, `cards[].subtitle`
+- **Accordion**: `sections[].content`
+- **Steps**: `steps[].content`
+- **Timeline**: `events[].title`, `events[].description`
+
+### Interactive Components
+- **Quiz**: `questions[].question`, `questions[].explanation`, `questions[].options[]`
+- **Poll**: `question`, `options[]`
+- **Rating**: `items[].label`, `items[].description`
+- **Ranker**: `items[].label`
+- **Slider**: `parameters[].label`
+- **Matrix**: `rows[].label`, `columns[].label`
+
+### Data Components
+- **KPI**: `metrics[].label`
+- **Comparison**: `options[].description`, `features[].values[]`
+- **Infographic**: `sections[].items[].text`, `sections[].items[].description`
+- **Annotate**: `annotations[].text`
+- **Form**: `description`
+
+## Examples
+
+### Callout with Links
+
+```md
+```ui:callout
+type: info
+content: "Read the **[Getting Started Guide](../getting-started)** to learn more."
+markdown: true
+```
+```
+
+### Quiz with Formatting
+
+```md
+```ui:quiz
+questions:
+  - type: multiple-choice
+    question: "What does `Array.map()` return?"
+    options:
+      - "A *new* array"
+      - "The **same** array"
+      - "`undefined`"
+    answer: 0
+    explanation: "**`Array.map()`** always returns a *new* array with transformed elements."
+markdown: true
+```
+```
+
+### Timeline with Rich Content
+
+```md
+```ui:timeline
+events:
+  - date: "2024-01-15"
+    title: "Version **2.0** Released"
+    description: "Check out the [release notes](https://example.com) for details."
+  - date: "2024-02-01"
+    title: "New `renderToString` API"
+    description: "Server-side rendering is now *fully supported*."
+markdown: true
+```
+```
+
+### Card with Formatted Text
+
+```md
+```ui:card
+cards:
+  - title: Getting Started
+    subtitle: "Learn the **basics** in *5 minutes*"
+    body: "Follow our [quick start guide](../getting-started) to get up and running."
+  - title: API Reference
+    subtitle: "Complete **API** documentation"
+    body: "Explore all available `components` and their properties."
+markdown: true
+```
+```
+
+## Backward Compatibility
+
+Markdown support is **fully backward compatible**:
+
+### Without `markdown` flag
+```md
+```ui:callout
+type: info
+content: "This **stays literal**: **not bold**"
+```
+```
+
+Renders: `This **stays literal**: **not bold**`
+
+### With `markdown: false`
+```md
+```ui:callout
+type: info
+content: "This also **stays literal**"
+markdown: false
+```
+```
+
+Renders: `This also **stays literal**`
+
+### With `markdown: true`
+```md
+```ui:callout
+type: info
+content: "This is **now bold**"
+markdown: true
+```
+```
+
+Renders: `This is` **now bold**
+
+## TypeScript Support
+
+The TypeScript types reflect the union types for text fields:
+
+```typescript
+import type { InlineNode } from '@glyphjs/types'
+
+interface CalloutData {
+  type: 'info' | 'warning' | 'error' | 'tip'
+  title?: string
+  content: string | InlineNode[]  // Union type
+  markdown?: boolean
+}
+```
+
+When rendering, the `RichText` component handles both types:
+
+```tsx
+import { RichText } from '@glyphjs/runtime'
+
+// Handles both string and InlineNode[]
+<RichText content={data.content} />
+```
+
+## Escaping Markdown
+
+To include literal markdown syntax, either:
+
+1. **Disable markdown** (recommended):
+```md
+```ui:callout
+type: info
+content: "Literal: **not bold**"
+markdown: false
+```
+```
+
+2. **Escape with backslashes**:
+```md
+```ui:callout
+type: info
+content: "Literal: \\**not bold\\**"
+markdown: true
+```
+```
+
+## Performance
+
+Markdown parsing adds minimal overhead:
+- **Compilation**: < 10% increase
+- **Bundle size**: ~3KB increase (gzipped)
+- **Runtime**: No performance impact (pre-compiled to InlineNode[])
+
+## Migration Checklist
+
+Adopting markdown in existing documents:
+
+1. ✅ **Update GlyphJS** to v0.3.0+
+2. ✅ **Test locally**: Enable markdown in a few components
+3. ✅ **Review content**: Ensure no unintended markdown syntax
+4. ✅ **Enable gradually**: Start with new content, migrate old content over time
+5. ✅ **Use per-component flags**: More control than global option
+
+## Troubleshooting
+
+### Markdown not rendering
+
+**Problem**: Text shows literal markdown syntax
+
+**Solution**: Ensure `markdown: true` is set:
+```md
+```ui:callout
+type: info
+content: "**Bold text**"
+markdown: true  ← Make sure this is set
+```
+```
+
+### Unexpected formatting
+
+**Problem**: Text renders differently than expected
+
+**Solution**: Check for unintended markdown syntax:
+```md
+# This *might* have unintended_underscores or **asterisks**
+```
+
+Consider using `markdown: false` for literal text.
+
+### Block elements warning
+
+**Problem**: Compiler warns about block-level elements
+
+**Solution**: Remove block elements (headings, lists) from inline fields:
+```md
+# BAD: Heading in inline field
+```ui:callout
+content: "# This is a heading"
+markdown: true
+```
+
+# GOOD: Use bold for emphasis
+```ui:callout
+content: "**This is emphasized**"
+markdown: true
+```
+```
+
+## Best Practices
+
+1. **Use markdown for user-facing text**: Great for documentation, tutorials, error messages
+2. **Disable for technical content**: Code snippets, API responses, JSON—keep markdown off
+3. **Test edge cases**: Check text with underscores, asterisks in variable names
+4. **Be consistent**: Enable markdown for similar fields across components
+5. **Document your choice**: Note in your content guidelines whether markdown is enabled
+
+## Learn More
+
+- [Component Reference](../components/) - See which fields support markdown
+- [Compiler API](../reference/compiler-api/) - Learn about `parseComponentMarkdown` option
+- [Theming](../reference/theming/) - Style markdown elements

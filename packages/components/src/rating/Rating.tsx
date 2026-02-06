@@ -1,5 +1,6 @@
 import { useState, type ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -15,8 +16,8 @@ import {
 // ─── Types ─────────────────────────────────────────────────────
 
 export interface RatingItem {
-  label: string;
-  description?: string;
+  label: string | InlineNode[];
+  description?: string | InlineNode[];
 }
 
 export interface RatingData {
@@ -25,6 +26,7 @@ export interface RatingData {
   mode?: 'star' | 'number';
   labels?: { low: string; high: string };
   items: RatingItem[];
+  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────
@@ -46,6 +48,9 @@ export function Rating({
     setRatings(newRatings);
 
     if (onInteraction) {
+      const item = items[itemIndex];
+      const itemLabel = item ? (typeof item.label === 'string' ? item.label : 'Item') : '';
+
       onInteraction({
         kind: 'rating-change',
         timestamp: new Date().toISOString(),
@@ -53,10 +58,10 @@ export function Rating({
         blockType: block.type,
         payload: {
           itemIndex,
-          itemLabel: items[itemIndex]?.label ?? '',
+          itemLabel,
           value,
           allRatings: items.map((item, i) => ({
-            label: item.label,
+            label: typeof item.label === 'string' ? item.label : 'Item',
             value: i === itemIndex ? value : (newRatings[i] ?? null),
           })),
         },
@@ -71,13 +76,20 @@ export function Rating({
       {items.map((item, itemIndex) => {
         const currentRating = ratings[itemIndex] ?? null;
         const isLast = itemIndex === items.length - 1;
+        const itemLabelText = typeof item.label === 'string' ? item.label : 'Item';
 
         return (
           <div key={itemIndex} style={itemStyle(isLast)}>
-            <div style={itemLabelStyle}>{item.label}</div>
-            {item.description && <div style={itemDescriptionStyle}>{item.description}</div>}
+            <div style={itemLabelStyle}>
+              <RichText content={item.label} />
+            </div>
+            {item.description && (
+              <div style={itemDescriptionStyle}>
+                <RichText content={item.description} />
+              </div>
+            )}
 
-            <div role="radiogroup" aria-label={`Rate ${item.label}`} style={starsContainerStyle}>
+            <div role="radiogroup" aria-label={`Rate ${itemLabelText}`} style={starsContainerStyle}>
               {Array.from({ length: scale }, (_, starIndex) => {
                 const value = starIndex + 1;
                 const isHovered =
@@ -142,7 +154,7 @@ export function Rating({
               }}
             >
               {currentRating !== null &&
-                `${item.label} rated ${String(currentRating)} out of ${String(scale)}`}
+                `${itemLabelText} rated ${String(currentRating)} out of ${String(scale)}`}
             </div>
           </div>
         );

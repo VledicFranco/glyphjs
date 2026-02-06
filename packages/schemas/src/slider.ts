@@ -14,4 +14,5 @@ export const sliderSchema = z.object({
   title: z.string().optional(),
   layout: z.enum(['vertical', 'horizontal']).default('vertical'),
   parameters: z.array(sliderParameter).min(1),
+  markdown: z.boolean().default(false),
 });
