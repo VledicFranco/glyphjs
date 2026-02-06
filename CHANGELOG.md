@@ -13,11 +13,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - `RichText` component in `@glyphjs/runtime` for rendering `string | InlineNode[]` union types
 - `parseInlineMarkdown()` utility function in compiler for parsing markdown strings to InlineNode arrays
 - Compiler option `parseComponentMarkdown` to enable markdown parsing globally for all components
+- **Configurable interaction modes for graph visualizations**: Add three interaction modes to prevent accidental zooming when scrolling past graphs: `modifier-key` (Alt+scroll to zoom), `click-to-activate` (click to enable zoom/pan), and `always` (traditional behavior). Includes button-driven zoom controls (+/-/reset) for all visualization components (Graph, Flowchart, Relation)
+- `useZoomInteraction` hook for managing D3 zoom behavior with mode-specific filters
+- `InteractionOverlay` component for visual feedback (tooltips, activation prompts)
+- `ZoomControls` component with accessible button-driven zoom controls
+- E2E tests for all interaction modes and zoom controls (30 tests total)
 
 ### Changed
 
 - Component data TypeScript interfaces now support `string | InlineNode[]` union types for text fields, enabling both plain strings and formatted content
 - All 17 interactive component schemas now include optional `markdown: boolean` field (defaults to `false` for backward compatibility)
+- **BREAKING**: Default `interactionMode` for Graph, Flowchart, and Relation components changed from `'always'` to `'modifier-key'`. To restore old behavior, set `interactionMode: 'always'` in component data. See `docs-dev/MIGRATION-v0.4.md` for migration guide
 
 ## [0.1.0] - 2026-02-02
 
