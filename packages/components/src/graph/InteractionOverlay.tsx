@@ -24,6 +24,7 @@ export function InteractionOverlay({
   if (mode === 'modifier-key') {
     return (
       <div
+        className="glyph-interaction-overlay"
         style={{
           ...OVERLAY_BASE_STYLE,
           width,
@@ -44,6 +45,7 @@ export function InteractionOverlay({
     return (
       <>
         <div
+          className="glyph-interaction-overlay"
           style={{
             ...OVERLAY_BASE_STYLE,
             ...ACTIVATION_OVERLAY_STYLE,
