@@ -9,7 +9,7 @@ import {
 test.describe('Architecture doc page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('architecture'));
-    await waitForAllPreviews(page, 2);
+    await waitForAllPreviews(page, 6);
   });
 
   test('each preview renders without error and has valid dimensions', async ({ page }) => {

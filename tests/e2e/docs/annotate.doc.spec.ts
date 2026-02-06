@@ -9,7 +9,7 @@ import {
 test.describe('Annotate docs page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('annotate'));
-    await waitForAllPreviews(page, 2);
+    await waitForAllPreviews(page, 3);
   });
 
   test('loads annotate documentation', async ({ page }) => {
