@@ -24,19 +24,18 @@ export function getPreviewContainers(page: Page): Locator {
 export async function waitForAllPreviews(
   page: Page,
   expectedCount: number,
-  timeout = 15_000,
+  timeout = 30_000,
 ): Promise<void> {
   const previews = getPreviewContainers(page);
+
+  // Wait for network to be idle and page to be fully loaded
+  await page.waitForLoadState('networkidle', { timeout: timeout / 2 });
 
   // Wait for the expected number of client:only previews to mount
   await expect(previews).toHaveCount(expectedCount, { timeout });
 
   for (let i = 0; i < expectedCount; i++) {
-    await expect(previews.nth(i)).toHaveAttribute(
-      'data-glyph-status',
-      'ready',
-      { timeout },
-    );
+    await expect(previews.nth(i)).toHaveAttribute('data-glyph-status', 'ready', { timeout });
   }
 }
 

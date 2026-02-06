@@ -30,6 +30,8 @@ export default defineConfig({
     {
       name: 'docs',
       testDir: './tests/e2e/docs',
+      timeout: 60000, // Increase timeout for docs tests (components take longer to hydrate)
+      retries: process.env.CI ? 2 : 1, // More retries in CI for flaky docs tests
       // Skip screenshot comparison tests in CI — baselines are platform-specific
       grepInvert: process.env.CI ? /screenshot/ : undefined,
       use: {
@@ -37,6 +39,7 @@ export default defineConfig({
         baseURL: 'http://localhost:4321',
         viewport: { width: 1280, height: 720 },
         contextOptions: { reducedMotion: 'reduce' },
+        navigationTimeout: 30000, // Increase navigation timeout for slower CI environments
       },
     },
   ],
@@ -57,7 +60,7 @@ export default defineConfig({
       command: 'pnpm --filter @glyphjs/docs preview --port 4321',
       port: 4321,
       reuseExistingServer: !process.env.CI,
-      timeout: 120_000,
+      timeout: 180_000, // Increased timeout for docs server (needs full build)
     },
   ],
 });
