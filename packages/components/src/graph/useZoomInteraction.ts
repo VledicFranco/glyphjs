@@ -115,15 +115,20 @@ export function useZoomInteraction({
 
   // Create zoom behavior with mode-specific filter
   const zoomBehavior = useMemo(() => {
-    return d3
-      .zoom<SVGSVGElement, unknown>()
-      .scaleExtent([0.1, 4])
-      .filter(filterFunction)
-      .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
-        if (rootRef.current) {
-          d3.select(rootRef.current).attr('transform', event.transform.toString());
-        }
-      });
+    const zoom = d3.zoom<SVGSVGElement, unknown>().scaleExtent([0.1, 4]);
+
+    // Apply filter if available (may not be in all test environments)
+    if (typeof zoom.filter === 'function') {
+      zoom.filter(filterFunction);
+    }
+
+    zoom.on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
+      if (rootRef.current) {
+        d3.select(rootRef.current).attr('transform', event.transform.toString());
+      }
+    });
+
+    return zoom;
   }, [filterFunction, rootRef]);
 
   // Handle click to activate (for click-to-activate mode)

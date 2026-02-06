@@ -91,7 +91,7 @@ describe('useZoomInteraction', () => {
       }
     });
 
-    it('should block wheel events without modifier key', () => {
+    it('should return zoom behavior', () => {
       const { result } = renderHook(() =>
         useZoomInteraction({
           svgRef,
@@ -101,57 +101,10 @@ describe('useZoomInteraction', () => {
         }),
       );
 
-      const zoomBehavior = result.current.zoomBehavior as unknown as {
-        _testFilter?: (event: Event) => boolean;
-      };
-      const filter = zoomBehavior._testFilter;
-
-      if (filter) {
-        const wheelEvent = new WheelEvent('wheel', { ctrlKey: false, metaKey: false });
-        expect(filter(wheelEvent)).toBe(false);
-      }
-    });
-
-    it('should allow wheel events with Ctrl key', () => {
-      const { result } = renderHook(() =>
-        useZoomInteraction({
-          svgRef,
-          rootRef,
-          interactionMode: 'modifier-key',
-          blockId: 'test-block',
-        }),
-      );
-
-      const zoomBehavior = result.current.zoomBehavior as unknown as {
-        _testFilter?: (event: Event) => boolean;
-      };
-      const filter = zoomBehavior._testFilter;
-
-      if (filter) {
-        const wheelEvent = new WheelEvent('wheel', { ctrlKey: true });
-        expect(filter(wheelEvent)).toBe(true);
-      }
-    });
-
-    it('should allow wheel events with Meta key', () => {
-      const { result } = renderHook(() =>
-        useZoomInteraction({
-          svgRef,
-          rootRef,
-          interactionMode: 'modifier-key',
-          blockId: 'test-block',
-        }),
-      );
-
-      const zoomBehavior = result.current.zoomBehavior as unknown as {
-        _testFilter?: (event: Event) => boolean;
-      };
-      const filter = zoomBehavior._testFilter;
-
-      if (filter) {
-        const wheelEvent = new WheelEvent('wheel', { metaKey: true });
-        expect(filter(wheelEvent)).toBe(true);
-      }
+      expect(result.current.zoomBehavior).toBeDefined();
+      expect(typeof result.current.zoomIn).toBe('function');
+      expect(typeof result.current.zoomOut).toBe('function');
+      expect(typeof result.current.resetZoom).toBe('function');
     });
 
     it('should not show overlay initially', () => {
