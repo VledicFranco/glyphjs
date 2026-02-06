@@ -23,6 +23,7 @@ export default defineConfig({
         'theming.spec.ts',
         'errors.spec.ts',
         'determinism.spec.ts',
+        'markdown.spec.ts',
       ],
       use: { browserName: 'chromium', baseURL: 'http://localhost:5173' },
     },

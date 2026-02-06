@@ -6,7 +6,7 @@ import { RichText } from '@glyphjs/runtime';
 
 export interface CalloutData {
   type: 'info' | 'warning' | 'error' | 'tip';
-  title?: string;
+  title?: string | InlineNode[];
   content: string | InlineNode[];
   markdown?: boolean;
 }
@@ -77,7 +77,11 @@ export function Callout({ data }: GlyphComponentProps<CalloutData>): ReactElemen
         {CALLOUT_ICONS[type]}
       </span>
       <div style={bodyStyle}>
-        {title && <div style={titleStyle}>{title}</div>}
+        {title && (
+          <div style={titleStyle}>
+            <RichText content={title} />
+          </div>
+        )}
         <div>
           <RichText content={content} />
         </div>

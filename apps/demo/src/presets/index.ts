@@ -388,6 +388,56 @@ events:
 *Built with Glyph JS*
 `;
 
+export const markdown = `\
+# Markdown in Components
+
+This demo showcases inline markdown formatting in component text fields.
+
+\`\`\`ui:callout
+type: info
+title: Formatting Support
+content: "This callout has **bold text**, *italic text*, \`code\`, and a [link](https://glyphjs.dev)."
+markdown: true
+\`\`\`
+
+\`\`\`ui:card
+cards:
+  - title: Getting Started
+    subtitle: "Learn the **basics** in *5 minutes*"
+    body: "Follow our [quick start guide](https://example.com) to get up and running with \`GlyphJS\`."
+  - title: Advanced Features
+    subtitle: "Deep dive into **markdown** support"
+    body: "Enable *inline formatting* in **17 components** with the \`markdown: true\` flag."
+markdown: true
+\`\`\`
+
+\`\`\`ui:timeline
+orientation: vertical
+events:
+  - date: "2024-01"
+    title: "Version **1.0** Released"
+    description: "Initial release with *basic components* and [documentation](https://example.com)."
+  - date: "2024-06"
+    title: "Added \`markdown\` Support"
+    description: "Enable **bold**, *italic*, and [links]() in component text fields."
+    type: milestone
+markdown: true
+\`\`\`
+
+\`\`\`ui:quiz
+questions:
+  - type: multiple-choice
+    question: "What does \`Array.map()\` return?"
+    options:
+      - "A *new* array"
+      - "The **same** array"
+      - "\`undefined\`"
+    answer: 0
+    explanation: "**\`Array.map()\`** always returns a *new* array with transformed elements."
+markdown: true
+\`\`\`
+`;
+
 export const presets: Record<string, string> = {
   simple,
   callout,
@@ -397,5 +447,6 @@ export const presets: Record<string, string> = {
   graph,
   chart,
   timeline,
+  markdown,
   kitchenSink,
 };
