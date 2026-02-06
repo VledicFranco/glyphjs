@@ -54,11 +54,13 @@ apps/
 
 ## Testing
 
-- Unit tests: Vitest
-- Component tests: React Testing Library
-- E2E tests: Playwright
-- Property-based tests: fast-check (IR package)
-- Accessibility: jest-axe + axe-core
+- **Unit tests:** Vitest - `pnpm test`
+- **Component tests:** React Testing Library
+- **E2E tests:** Playwright - `npx playwright test` (run locally before submitting PRs)
+- **Property-based tests:** fast-check (IR package)
+- **Accessibility:** jest-axe + axe-core
+
+**Note:** E2E tests are **not run in CI/CD** due to flakiness and long runtimes. Please run `npx playwright test` locally to verify your changes before pushing.
 
 ## Commit Messages
 
