@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-02-06
+
 ### Added
 
 - **Markdown support in component text fields**: Enable inline markdown formatting (bold, italic, links, code, strikethrough) in component text fields by setting `markdown: true` in component YAML or using the `parseComponentMarkdown` compiler option. Supports 17 components including Callout, Card, Accordion, Steps, Timeline, Quiz, Poll, and more. (#74)

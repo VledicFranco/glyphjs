@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/parser",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Markdown parser with remark plugin for ui: fenced blocks",
   "type": "module",
   "main": "./dist/index.cjs",

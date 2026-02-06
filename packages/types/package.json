@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/types",
-  "version": "0.3.0",
+  "version": "0.4.0",
   "description": "Shared TypeScript type definitions for Glyph JS",
   "type": "module",
   "types": "./dist/index.d.ts",
