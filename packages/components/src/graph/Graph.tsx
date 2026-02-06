@@ -4,6 +4,9 @@ import * as d3 from 'd3';
 import type { GlyphComponentProps, Reference } from '@glyphjs/types';
 import { computeDagreLayout, computeForceLayout } from './layout.js';
 import type { LayoutResult } from './layout.js';
+import { useZoomInteraction } from './useZoomInteraction.js';
+import { InteractionOverlay } from './InteractionOverlay.js';
+import { ZoomControls } from './ZoomControls.js';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -28,6 +31,7 @@ export interface GraphData {
   nodes: GraphNodeData[];
   edges: GraphEdgeData[];
   layout?: 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'force';
+  interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
 }
 
 type LayoutDirection = 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'force';
@@ -89,6 +93,7 @@ function renderGraph(
   groupIndex: Map<string, number>,
   outgoingRefs: Reference[],
   onNavigate: (ref: Reference) => void,
+  zoomBehavior: d3.ZoomBehavior<SVGSVGElement, unknown>,
   onNodeClick?: (nodeId: string, nodeLabel: string) => void,
 ): void {
   const svg = d3.select(svgElement);
@@ -124,14 +129,7 @@ function renderGraph(
   // Root group for zoom/pan
   const root = svg.append('g').attr('class', 'glyph-graph-root');
 
-  // Zoom behavior
-  const zoomBehavior = d3
-    .zoom<SVGSVGElement, unknown>()
-    .scaleExtent([0.1, 4])
-    .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
-      root.attr('transform', event.transform.toString());
-    });
-
+  // Apply zoom behavior
   svg.call(zoomBehavior);
 
   // Build a set of node IDs that have outgoing refs for navigation
@@ -259,6 +257,7 @@ export function Graph({
   container,
 }: GlyphComponentProps<GraphData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
+  const rootRef = useRef<SVGGElement>(null);
   const groupIndex = useRef(new Map<string, number>());
 
   const layoutResult = useMemo<LayoutResult>(() => {
@@ -268,6 +267,13 @@ export function Graph({
     }
     return computeDagreLayout(data.nodes, data.edges, direction);
   }, [data]);
+
+  const { overlayProps, zoomBehavior, zoomIn, zoomOut, resetZoom } = useZoomInteraction({
+    svgRef,
+    rootRef,
+    interactionMode: data.interactionMode ?? 'modifier-key',
+    blockId: block.id,
+  });
 
   const handleNodeClick = useMemo(() => {
     if (!onInteraction) return undefined;
@@ -290,27 +296,37 @@ export function Graph({
       groupIndex.current,
       outgoingRefs,
       onNavigate,
+      zoomBehavior,
       handleNodeClick,
     );
-  }, [layoutResult, outgoingRefs, onNavigate, handleNodeClick]);
+    // Store reference to the D3-created root group so zoom controls can transform it
+    const rootElement = svgRef.current.querySelector('.glyph-graph-root') as SVGGElement;
+    if (rootElement) {
+      rootRef.current = rootElement;
+    }
+  }, [layoutResult, outgoingRefs, onNavigate, zoomBehavior, handleNodeClick]);
 
   // Build an accessible description
   const ariaLabel = `${data.type} graph with ${data.nodes.length} nodes and ${data.edges.length} edges`;
 
   return (
     <div className="glyph-graph-container">
-      <svg
-        ref={svgRef}
-        role="img"
-        aria-label={ariaLabel}
-        width="100%"
-        height="100%"
-        style={{
-          minHeight: container.tier === 'compact' ? 200 : 300,
-          maxHeight: container.tier === 'compact' ? 500 : 700,
-          display: 'block',
-        }}
-      />
+      <div style={{ position: 'relative' }}>
+        <svg
+          ref={svgRef}
+          role="img"
+          aria-label={ariaLabel}
+          width="100%"
+          height="100%"
+          style={{
+            minHeight: container.tier === 'compact' ? 200 : 300,
+            maxHeight: container.tier === 'compact' ? 500 : 700,
+            display: 'block',
+          }}
+        />
+        {overlayProps && <InteractionOverlay {...overlayProps} />}
+        <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} onReset={resetZoom} />
+      </div>
       {/* Hidden data table fallback for screen readers */}
       <table className="sr-only" aria-label="Graph data" style={SR_ONLY_STYLE}>
         <caption>Graph nodes and connections</caption>

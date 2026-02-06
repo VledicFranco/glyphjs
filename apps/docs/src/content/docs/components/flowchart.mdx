@@ -157,6 +157,7 @@ edges:
 | `nodes`     | `FlowchartNode[]`           | *(required)* | Array of nodes (min 2)                 |
 | `edges`     | `FlowchartEdge[]`           | *(required)* | Array of directed edges (min 1)        |
 | `direction` | `'top-down' \| 'left-right'` | `'top-down'` | Layout direction                       |
+| `interactionMode` | `'modifier-key' \| 'click-to-activate' \| 'always'` | `'modifier-key'` | Controls zoom/pan behavior |
 
 ### FlowchartNode
 
@@ -179,6 +180,16 @@ edges:
 - **start / end** — Rounded rectangle (stadium shape) with accent coloring
 - **process** — Standard rectangle with surface coloring
 - **decision** — Diamond shape with accent border
+
+## Interaction Modes
+
+The flowchart supports three interaction modes for zooming and panning:
+
+- **`modifier-key` (default):** Hold Ctrl/Cmd while scrolling to zoom. Best for scrollable content.
+- **`click-to-activate`:** Click once to activate zoom/pan, Escape to deactivate. Best for explicit opt-in.
+- **`always`:** Scroll immediately zooms with no modifier required. Legacy behavior.
+
+See the [Graph component documentation](/components/graph/#interaction-modes) for detailed examples and use cases.
 
 ## Accessibility
 

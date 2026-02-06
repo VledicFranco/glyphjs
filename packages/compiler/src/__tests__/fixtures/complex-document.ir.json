@@ -110,7 +110,8 @@
               "to": "output"
             }
           ],
-          "layout": "left-right"
+          "layout": "left-right",
+          "interactionMode": "modifier-key"
         }
       },
       {

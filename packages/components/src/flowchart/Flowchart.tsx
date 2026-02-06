@@ -3,6 +3,9 @@ import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 import dagre from 'dagre';
 import type { GlyphComponentProps } from '@glyphjs/types';
+import { useZoomInteraction } from '../graph/useZoomInteraction.js';
+import { InteractionOverlay } from '../graph/InteractionOverlay.js';
+import { ZoomControls } from '../graph/ZoomControls.js';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -25,6 +28,7 @@ export interface FlowchartData {
   nodes: FlowchartNodeData[];
   edges: FlowchartEdgeData[];
   direction: 'top-down' | 'left-right';
+  interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
 }
 
 interface PositionedNode extends FlowchartNodeData {
@@ -181,6 +185,7 @@ function renderNodeShape(
 function renderFlowchart(
   svgElement: SVGSVGElement,
   layout: { nodes: PositionedNode[]; edges: PositionedEdge[]; width: number; height: number },
+  zoomBehavior: d3.ZoomBehavior<SVGSVGElement, unknown>,
 ): void {
   const svg = d3.select(svgElement);
   svg.selectAll('*').remove();
@@ -210,14 +215,7 @@ function renderFlowchart(
 
   const root = svg.append('g').attr('class', 'glyph-flowchart-root');
 
-  // Zoom behavior
-  const zoomBehavior = d3
-    .zoom<SVGSVGElement, unknown>()
-    .scaleExtent([0.1, 4])
-    .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
-      root.attr('transform', event.transform.toString());
-    });
-
+  // Apply zoom behavior
   svg.call(zoomBehavior);
 
   // ─── Edges ─────────────────────────────────────────────────
@@ -282,15 +280,32 @@ function renderFlowchart(
 
 // ─── Component ──────────────────────────────────────────────
 
-export function Flowchart({ data, container }: GlyphComponentProps<FlowchartData>): ReactElement {
+export function Flowchart({
+  data,
+  block,
+  container,
+}: GlyphComponentProps<FlowchartData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
+  const rootRef = useRef<SVGGElement>(null);
 
   const layoutResult = useMemo(() => computeLayout(data.nodes, data.edges, data.direction), [data]);
 
+  const { overlayProps, zoomBehavior, zoomIn, zoomOut, resetZoom } = useZoomInteraction({
+    svgRef,
+    rootRef,
+    interactionMode: data.interactionMode ?? 'modifier-key',
+    blockId: block.id,
+  });
+
   useEffect(() => {
     if (!svgRef.current) return;
-    renderFlowchart(svgRef.current, layoutResult);
-  }, [layoutResult]);
+    renderFlowchart(svgRef.current, layoutResult, zoomBehavior);
+    // Store reference to the D3-created root group so zoom controls can transform it
+    const rootElement = svgRef.current.querySelector('.glyph-flowchart-root') as SVGGElement;
+    if (rootElement) {
+      rootRef.current = rootElement;
+    }
+  }, [layoutResult, zoomBehavior]);
 
   const nodeCount = data.nodes.length;
   const edgeCount = data.edges.length;
@@ -313,18 +328,22 @@ export function Flowchart({ data, container }: GlyphComponentProps<FlowchartData
           {data.title}
         </div>
       )}
-      <svg
-        ref={svgRef}
-        role="img"
-        aria-label={ariaLabel}
-        width="100%"
-        height="100%"
-        style={{
-          minHeight: container.tier === 'compact' ? 200 : 300,
-          maxHeight: container.tier === 'compact' ? 500 : 700,
-          display: 'block',
-        }}
-      />
+      <div style={{ position: 'relative' }}>
+        <svg
+          ref={svgRef}
+          role="img"
+          aria-label={ariaLabel}
+          width="100%"
+          height="100%"
+          style={{
+            minHeight: container.tier === 'compact' ? 200 : 300,
+            maxHeight: container.tier === 'compact' ? 500 : 700,
+            display: 'block',
+          }}
+        />
+        {overlayProps && <InteractionOverlay {...overlayProps} />}
+        <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} onReset={resetZoom} />
+      </div>
       {/* Hidden data table for screen readers */}
       <table className="sr-only" aria-label="Flowchart data" style={SR_ONLY_STYLE}>
         <caption>Flowchart nodes and connections</caption>

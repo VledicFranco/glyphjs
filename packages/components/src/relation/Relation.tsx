@@ -3,6 +3,9 @@ import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 import dagre from 'dagre';
 import type { GlyphComponentProps } from '@glyphjs/types';
+import { useZoomInteraction } from '../graph/useZoomInteraction.js';
+import { InteractionOverlay } from '../graph/InteractionOverlay.js';
+import { ZoomControls } from '../graph/ZoomControls.js';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -29,6 +32,7 @@ export interface RelationData {
   entities: Entity[];
   relationships: Relationship[];
   layout?: 'top-down' | 'left-right';
+  interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
 }
 
 // ─── Layout Constants ────────────────────────────────────────
@@ -235,7 +239,11 @@ function drawCrowsFoot(
 
 // ─── SVG Rendering ───────────────────────────────────────────
 
-function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void {
+function renderRelation(
+  svgElement: SVGSVGElement,
+  layout: RelationLayout,
+  zoomBehavior: d3.ZoomBehavior<SVGSVGElement, unknown>,
+): void {
   const svg = d3.select(svgElement);
   svg.selectAll('*').remove();
 
@@ -247,14 +255,7 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
   // Root group for zoom/pan
   const root = svg.append('g').attr('class', 'glyph-relation-root');
 
-  // Zoom behavior
-  const zoomBehavior = d3
-    .zoom<SVGSVGElement, unknown>()
-    .scaleExtent([0.1, 4])
-    .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
-      root.attr('transform', event.transform.toString());
-    });
-
+  // Apply zoom behavior
   svg.call(zoomBehavior);
 
   // Build an entity position lookup for edge endpoint computation
@@ -453,31 +454,48 @@ function renderRelation(svgElement: SVGSVGElement, layout: RelationLayout): void
 
 // ─── Component ──────────────────────────────────────────────
 
-export function Relation({ data }: GlyphComponentProps<RelationData>): ReactElement {
+export function Relation({ data, block }: GlyphComponentProps<RelationData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
+  const rootRef = useRef<SVGGElement>(null);
 
   const layoutResult = useMemo<RelationLayout>(() => {
     return computeRelationLayout(data);
   }, [data]);
 
+  const { overlayProps, zoomBehavior, zoomIn, zoomOut, resetZoom } = useZoomInteraction({
+    svgRef,
+    rootRef,
+    interactionMode: data.interactionMode ?? 'modifier-key',
+    blockId: block.id,
+  });
+
   useEffect(() => {
     if (!svgRef.current) return;
-    renderRelation(svgRef.current, layoutResult);
-  }, [layoutResult]);
+    renderRelation(svgRef.current, layoutResult, zoomBehavior);
+    // Store reference to the D3-created root group so zoom controls can transform it
+    const rootElement = svgRef.current.querySelector('.glyph-relation-root') as SVGGElement;
+    if (rootElement) {
+      rootRef.current = rootElement;
+    }
+  }, [layoutResult, zoomBehavior]);
 
   // Build accessible description
   const ariaLabel = `Entity-relationship diagram with ${data.entities.length} entities and ${data.relationships.length} relationships`;
 
   return (
     <div className="glyph-relation-container">
-      <svg
-        ref={svgRef}
-        role="img"
-        aria-label={ariaLabel}
-        width="100%"
-        height="100%"
-        style={{ minHeight: 300, maxHeight: 700, display: 'block' }}
-      />
+      <div style={{ position: 'relative' }}>
+        <svg
+          ref={svgRef}
+          role="img"
+          aria-label={ariaLabel}
+          width="100%"
+          height="100%"
+          style={{ minHeight: 300, maxHeight: 700, display: 'block' }}
+        />
+        {overlayProps && <InteractionOverlay {...overlayProps} />}
+        <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} onReset={resetZoom} />
+      </div>
       {/* Hidden table fallback for screen readers */}
       <table className="sr-only" aria-label="Entity-relationship data" style={SR_ONLY_STYLE}>
         <caption>Entities and relationships</caption>

@@ -165,3 +165,77 @@ export const Compact: Story = {
       React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
   ],
 };
+
+// ─── Interaction Modes ──────────────────────────────────────────
+
+export const ModifierKeyMode: Story = {
+  name: 'Modifier Key Mode (Default)',
+  args: mockProps<FlowchartData>({
+    title: 'Order Processing',
+    direction: 'top-down',
+    interactionMode: 'modifier-key',
+    nodes: [
+      { id: 'start', type: 'start', label: 'Order Received' },
+      { id: 'validate', type: 'process', label: 'Validate Payment' },
+      { id: 'check', type: 'decision', label: 'Payment Valid?' },
+      { id: 'fulfill', type: 'process', label: 'Fulfill Order' },
+      { id: 'reject', type: 'end', label: 'Reject Order' },
+      { id: 'done', type: 'end', label: 'Complete' },
+    ],
+    edges: [
+      { from: 'start', to: 'validate' },
+      { from: 'validate', to: 'check' },
+      { from: 'check', to: 'fulfill', label: 'Yes' },
+      { from: 'check', to: 'reject', label: 'No' },
+      { from: 'fulfill', to: 'done' },
+    ],
+  }),
+};
+
+export const ClickToActivateMode: Story = {
+  name: 'Click to Activate Mode',
+  args: mockProps<FlowchartData>({
+    title: 'Order Processing',
+    direction: 'top-down',
+    interactionMode: 'click-to-activate',
+    nodes: [
+      { id: 'start', type: 'start', label: 'Order Received' },
+      { id: 'validate', type: 'process', label: 'Validate Payment' },
+      { id: 'check', type: 'decision', label: 'Payment Valid?' },
+      { id: 'fulfill', type: 'process', label: 'Fulfill Order' },
+      { id: 'reject', type: 'end', label: 'Reject Order' },
+      { id: 'done', type: 'end', label: 'Complete' },
+    ],
+    edges: [
+      { from: 'start', to: 'validate' },
+      { from: 'validate', to: 'check' },
+      { from: 'check', to: 'fulfill', label: 'Yes' },
+      { from: 'check', to: 'reject', label: 'No' },
+      { from: 'fulfill', to: 'done' },
+    ],
+  }),
+};
+
+export const AlwaysMode: Story = {
+  name: 'Always Mode (Legacy)',
+  args: mockProps<FlowchartData>({
+    title: 'Order Processing',
+    direction: 'top-down',
+    interactionMode: 'always',
+    nodes: [
+      { id: 'start', type: 'start', label: 'Order Received' },
+      { id: 'validate', type: 'process', label: 'Validate Payment' },
+      { id: 'check', type: 'decision', label: 'Payment Valid?' },
+      { id: 'fulfill', type: 'process', label: 'Fulfill Order' },
+      { id: 'reject', type: 'end', label: 'Reject Order' },
+      { id: 'done', type: 'end', label: 'Complete' },
+    ],
+    edges: [
+      { from: 'start', to: 'validate' },
+      { from: 'validate', to: 'check' },
+      { from: 'check', to: 'fulfill', label: 'Yes' },
+      { from: 'check', to: 'reject', label: 'No' },
+      { from: 'fulfill', to: 'done' },
+    ],
+  }),
+};

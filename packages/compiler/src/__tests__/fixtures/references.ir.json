@@ -30,7 +30,8 @@
               "label": "X"
             }
           ],
-          "edges": []
+          "edges": [],
+          "interactionMode": "modifier-key"
         }
       },
       {

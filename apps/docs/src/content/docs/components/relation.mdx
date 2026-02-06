@@ -582,6 +582,7 @@ layout: left-right
 | `entities` | `Entity[]` | Yes | -- | An array of entity objects to render as ER diagram boxes. |
 | `relationships` | `Relationship[]` | Yes | -- | An array of relationship objects connecting entities. |
 | `layout` | `"top-down" \| "left-right"` | No | -- | Layout direction for the diagram. |
+| `interactionMode` | `"modifier-key" \| "click-to-activate" \| "always"` | No | `"modifier-key"` | Controls zoom/pan behavior. |
 
 ### Entity object
 
@@ -618,6 +619,16 @@ Relationships are drawn with crow's foot notation:
 | `1:N` | One-to-many | Single line on source, crow's foot on target |
 | `N:1` | Many-to-one | Crow's foot on source, single line on target |
 | `N:M` | Many-to-many | Crow's foot on both ends |
+
+## Interaction Modes
+
+The relation diagram supports three interaction modes for zooming and panning:
+
+- **`modifier-key` (default):** Hold Ctrl/Cmd while scrolling to zoom. Best for scrollable content.
+- **`click-to-activate`:** Click once to activate zoom/pan, Escape to deactivate. Best for explicit opt-in.
+- **`always`:** Scroll immediately zooms with no modifier required. Legacy behavior.
+
+See the [Graph component documentation](/components/graph/#interaction-modes) for detailed examples and use cases.
 
 ## Shared abstraction with Graph
 

@@ -135,3 +135,77 @@ export const Compact: Story = {
       React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
   ],
 };
+
+// ─── Interaction Modes ──────────────────────────────────────────
+
+export const ModifierKeyMode: Story = {
+  name: 'Modifier Key Mode (Default)',
+  args: mockProps<GraphData>(
+    {
+      type: 'dag',
+      interactionMode: 'modifier-key',
+      nodes: [
+        { id: 'src', label: 'Source', group: 'input' },
+        { id: 'parse', label: 'Parser', group: 'processing' },
+        { id: 'transform', label: 'Transform', group: 'processing' },
+        { id: 'validate', label: 'Validate', group: 'processing' },
+        { id: 'output', label: 'Output', group: 'output' },
+      ],
+      edges: [
+        { from: 'src', to: 'parse' },
+        { from: 'parse', to: 'transform' },
+        { from: 'transform', to: 'validate' },
+        { from: 'validate', to: 'output' },
+      ],
+    },
+    { block: mockBlock({ id: 'graph-modifier-key', type: 'ui:graph' }) },
+  ),
+};
+
+export const ClickToActivateMode: Story = {
+  name: 'Click to Activate Mode',
+  args: mockProps<GraphData>(
+    {
+      type: 'dag',
+      interactionMode: 'click-to-activate',
+      nodes: [
+        { id: 'src', label: 'Source', group: 'input' },
+        { id: 'parse', label: 'Parser', group: 'processing' },
+        { id: 'transform', label: 'Transform', group: 'processing' },
+        { id: 'validate', label: 'Validate', group: 'processing' },
+        { id: 'output', label: 'Output', group: 'output' },
+      ],
+      edges: [
+        { from: 'src', to: 'parse' },
+        { from: 'parse', to: 'transform' },
+        { from: 'transform', to: 'validate' },
+        { from: 'validate', to: 'output' },
+      ],
+    },
+    { block: mockBlock({ id: 'graph-click-activate', type: 'ui:graph' }) },
+  ),
+};
+
+export const AlwaysMode: Story = {
+  name: 'Always Mode (Legacy)',
+  args: mockProps<GraphData>(
+    {
+      type: 'dag',
+      interactionMode: 'always',
+      nodes: [
+        { id: 'src', label: 'Source', group: 'input' },
+        { id: 'parse', label: 'Parser', group: 'processing' },
+        { id: 'transform', label: 'Transform', group: 'processing' },
+        { id: 'validate', label: 'Validate', group: 'processing' },
+        { id: 'output', label: 'Output', group: 'output' },
+      ],
+      edges: [
+        { from: 'src', to: 'parse' },
+        { from: 'parse', to: 'transform' },
+        { from: 'transform', to: 'validate' },
+        { from: 'validate', to: 'output' },
+      ],
+    },
+    { block: mockBlock({ id: 'graph-always', type: 'ui:graph' }) },
+  ),
+};

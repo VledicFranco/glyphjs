@@ -100,6 +100,11 @@ const LIGHT_THEME_VARS: Record<string, string> = {
   '--glyph-annotate-label-bg': '#f4f6fa',
   '--glyph-annotate-sidebar-bg': '#e8ecf3',
   '--glyph-form-error': '#dc2626',
+  '--glyph-interaction-overlay-bg': 'rgba(244, 246, 250, 0.8)',
+  '--glyph-interaction-overlay-text': '#1a2035',
+  '--glyph-interaction-tooltip-bg': 'rgba(26, 32, 53, 0.9)',
+  '--glyph-interaction-tooltip-text': '#f4f6fa',
+  '--glyph-interaction-active-border': '#0a9d7c',
 };
 
 const DARK_THEME_VARS: Record<string, string> = {
@@ -206,6 +211,11 @@ const DARK_THEME_VARS: Record<string, string> = {
   '--glyph-annotate-label-bg': '#162038',
   '--glyph-annotate-sidebar-bg': '#0f1526',
   '--glyph-form-error': '#f87171',
+  '--glyph-interaction-overlay-bg': 'rgba(10, 14, 26, 0.8)',
+  '--glyph-interaction-overlay-text': '#d4dae3',
+  '--glyph-interaction-tooltip-bg': 'rgba(0, 0, 0, 0.9)',
+  '--glyph-interaction-tooltip-text': '#d4dae3',
+  '--glyph-interaction-active-border': '#00d4aa',
 };
 
 function ThemeWrapper({ children, theme }: { children: React.ReactNode; theme: 'light' | 'dark' }) {

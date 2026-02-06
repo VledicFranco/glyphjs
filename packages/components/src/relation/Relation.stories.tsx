@@ -36,9 +36,7 @@ export const SimpleER: Story = {
           ],
         },
       ],
-      relationships: [
-        { from: 'users', to: 'orders', label: 'places', cardinality: '1:N' },
-      ],
+      relationships: [{ from: 'users', to: 'orders', label: 'places', cardinality: '1:N' }],
     },
     { block: mockBlock({ id: 'relation-simple', type: 'ui:relation' }) },
   ),
@@ -98,5 +96,100 @@ export const ComplexER: Story = {
       layout: 'left-right',
     },
     { block: mockBlock({ id: 'relation-complex', type: 'ui:relation' }) },
+  ),
+};
+
+// ─── Interaction Modes ──────────────────────────────────────────
+
+export const ModifierKeyMode: Story = {
+  name: 'Modifier Key Mode (Default)',
+  args: mockProps<RelationData>(
+    {
+      interactionMode: 'modifier-key',
+      entities: [
+        {
+          id: 'users',
+          label: 'Users',
+          attributes: [
+            { name: 'id', type: 'INT', primaryKey: true },
+            { name: 'name', type: 'VARCHAR(100)' },
+            { name: 'email', type: 'VARCHAR(255)' },
+          ],
+        },
+        {
+          id: 'orders',
+          label: 'Orders',
+          attributes: [
+            { name: 'id', type: 'INT', primaryKey: true },
+            { name: 'user_id', type: 'INT' },
+            { name: 'total', type: 'DECIMAL(10,2)' },
+          ],
+        },
+      ],
+      relationships: [{ from: 'users', to: 'orders', label: 'places', cardinality: '1:N' }],
+    },
+    { block: mockBlock({ id: 'relation-modifier-key', type: 'ui:relation' }) },
+  ),
+};
+
+export const ClickToActivateMode: Story = {
+  name: 'Click to Activate Mode',
+  args: mockProps<RelationData>(
+    {
+      interactionMode: 'click-to-activate',
+      entities: [
+        {
+          id: 'users',
+          label: 'Users',
+          attributes: [
+            { name: 'id', type: 'INT', primaryKey: true },
+            { name: 'name', type: 'VARCHAR(100)' },
+            { name: 'email', type: 'VARCHAR(255)' },
+          ],
+        },
+        {
+          id: 'orders',
+          label: 'Orders',
+          attributes: [
+            { name: 'id', type: 'INT', primaryKey: true },
+            { name: 'user_id', type: 'INT' },
+            { name: 'total', type: 'DECIMAL(10,2)' },
+          ],
+        },
+      ],
+      relationships: [{ from: 'users', to: 'orders', label: 'places', cardinality: '1:N' }],
+    },
+    { block: mockBlock({ id: 'relation-click-activate', type: 'ui:relation' }) },
+  ),
+};
+
+export const AlwaysMode: Story = {
+  name: 'Always Mode (Legacy)',
+  args: mockProps<RelationData>(
+    {
+      interactionMode: 'always',
+      entities: [
+        {
+          id: 'users',
+          label: 'Users',
+          attributes: [
+            { name: 'id', type: 'INT', primaryKey: true },
+            { name: 'name', type: 'VARCHAR(100)' },
+            { name: 'email', type: 'VARCHAR(255)' },
+          ],
+        },
+        {
+          id: 'orders',
+          label: 'Orders',
+          attributes: [
+            { name: 'id', type: 'INT', primaryKey: true },
+            { name: 'user_id', type: 'INT' },
+            { name: 'total', type: 'DECIMAL(10,2)' },
+          ],
+        },
+      ],
+      relationships: [{ from: 'users', to: 'orders', label: 'places', cardinality: '1:N' }],
+    },
+    { block: mockBlock({ id: 'relation-always', type: 'ui:relation' }) },
   ),
 };

@@ -22,7 +22,6 @@ export const graphSchema = z.object({
       style: z.record(z.string()).optional(),
     }),
   ),
-  layout: z
-    .enum(['top-down', 'left-right', 'bottom-up', 'radial', 'force'])
-    .optional(),
+  layout: z.enum(['top-down', 'left-right', 'bottom-up', 'radial', 'force']).optional(),
+  interactionMode: z.enum(['modifier-key', 'click-to-activate', 'always']).default('modifier-key'),
 });

@@ -142,6 +142,7 @@ edges:
 | `nodes` | `Node[]` | Yes | -- | An array of node objects to render. |
 | `edges` | `Edge[]` | Yes | -- | An array of edge objects connecting nodes. |
 | `layout` | `"top-down" \| "left-right" \| "bottom-up" \| "radial" \| "force"` | No | Determined by `type` | Override the automatic layout direction. |
+| `interactionMode` | `"modifier-key" \| "click-to-activate" \| "always"` | No | `"modifier-key"` | Controls how users can zoom and pan the graph. |
 
 ### Node object
 
@@ -181,6 +182,87 @@ The `layout` property overrides the default layout direction for the chosen grap
 | `bottom-up` | Root nodes at the bottom, children above. |
 | `radial` | Nodes arranged in concentric circles from the center. |
 | `force` | Physics-based simulation with no fixed direction. |
+
+## Interaction Modes
+
+The `interactionMode` property controls how users can zoom and pan the graph. Three modes are available:
+
+### Modifier Key (Default)
+
+Requires holding **Ctrl** (Windows/Linux) or **⌘ Cmd** (Mac) while scrolling to zoom. Panning via click-and-drag always works.
+
+```ui:graph
+type: dag
+interactionMode: modifier-key
+nodes:
+  - id: a
+    label: Node A
+  - id: b
+    label: Node B
+edges:
+  - from: a
+    to: b
+```
+
+**When to use:** Documentation, blogs, or any scrollable content where accidental zooming would disrupt reading.
+
+**Behavior:**
+- **Scroll:** Page scrolls normally (tooltip appears on first attempt)
+- **Ctrl/Cmd + Scroll:** Zooms in/out
+- **Click and drag:** Pans the graph
+
+### Click to Activate
+
+Requires clicking the graph once to activate zoom/pan controls. Press Escape or click outside to deactivate.
+
+```ui:graph
+type: dag
+interactionMode: click-to-activate
+nodes:
+  - id: a
+    label: Node A
+  - id: b
+    label: Node B
+edges:
+  - from: a
+    to: b
+```
+
+**When to use:** Dense dashboards or galleries where you want explicit opt-in for interaction.
+
+**Behavior:**
+- **Initial state:** Graph shows "Click to interact" overlay
+- **Click graph:** Activates zoom/pan
+- **Scroll (active):** Zooms in/out
+- **Drag (active):** Pans the graph
+- **Escape / click outside:** Deactivates
+
+### Always
+
+Traditional behavior with no restrictions. Scrolling immediately zooms.
+
+```ui:graph
+type: dag
+interactionMode: always
+nodes:
+  - id: a
+    label: Node A
+  - id: b
+    label: Node B
+edges:
+  - from: a
+    to: b
+```
+
+**When to use:** Standalone visualization apps or when zoom-first interaction is desired.
+
+**Behavior:**
+- **Scroll:** Zooms in/out immediately
+- **Click and drag:** Pans the graph
+
+:::note[Breaking Change in v0.4]
+Prior to v0.4, the default behavior was `always`. The new default is `modifier-key` for better UX in scrollable content. To restore the old behavior, explicitly set `interactionMode: always`. See the [Migration Guide](/migration-v0.4) for details.
+:::
 
 ## Shared abstraction with Relation
 
