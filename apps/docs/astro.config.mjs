@@ -12,7 +12,7 @@ export default defineConfig({
   integrations: [
     starlight({
       title: 'Glyph JS',
-      favicon: '/glyphjs/favicon.svg',
+      favicon: '/favicon.svg',
       logo: {
         light: './src/assets/logo-light.svg',
         dark: './src/assets/logo-dark.svg',
