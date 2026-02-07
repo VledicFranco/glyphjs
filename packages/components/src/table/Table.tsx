@@ -1,13 +1,14 @@
 import type React from 'react';
 import type { ReactElement } from 'react';
 import { useMemo, useState } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 export interface TableColumn {
   key: string;
-  label: string;
+  label: string | InlineNode[];
   sortable?: boolean;
   filterable?: boolean;
   type?: 'string' | 'number' | 'date' | 'boolean';
@@ -22,6 +23,7 @@ export interface TableData {
   columns: TableColumn[];
   rows: Record<string, unknown>[];
   aggregation?: TableAggregation[];
+  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -151,7 +153,7 @@ function TableHead({
                 whiteSpace: 'nowrap',
               }}
             >
-              {col.label}
+              <RichText content={col.label} />
               {col.sortable ? sortIndicator(direction) : ''}
             </th>
           );

@@ -50,7 +50,8 @@
             }
           ],
           "layout": "top-down",
-          "interactionMode": "modifier-key"
+          "interactionMode": "modifier-key",
+          "markdown": false
         }
       }
     ],

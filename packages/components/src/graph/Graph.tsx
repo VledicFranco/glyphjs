@@ -1,18 +1,19 @@
 import type { CSSProperties, ReactElement } from 'react';
 import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
-import type { GlyphComponentProps, Reference } from '@glyphjs/types';
+import type { GlyphComponentProps, Reference, InlineNode } from '@glyphjs/types';
 import { computeDagreLayout, computeForceLayout } from './layout.js';
 import type { LayoutResult } from './layout.js';
 import { useZoomInteraction } from './useZoomInteraction.js';
 import { InteractionOverlay } from './InteractionOverlay.js';
 import { ZoomControls } from './ZoomControls.js';
+import { inlineToText } from '../utils/inlineToText.js';
 
 // ─── Types ───────────────────────────────────────────────────
 
 interface GraphNodeData {
   id: string;
-  label: string;
+  label: string | InlineNode[];
   type?: string;
   style?: Record<string, string>;
   group?: string;
@@ -21,7 +22,7 @@ interface GraphNodeData {
 interface GraphEdgeData {
   from: string;
   to: string;
-  label?: string;
+  label?: string | InlineNode[];
   type?: string;
   style?: Record<string, string>;
 }
@@ -32,6 +33,7 @@ export interface GraphData {
   edges: GraphEdgeData[];
   layout?: 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'force';
   interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
+  markdown?: boolean;
 }
 
 type LayoutDirection = 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'force';
@@ -174,7 +176,7 @@ function renderGraph(
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
           .attr('fill', 'var(--glyph-edge-color, #6b7a94)')
-          .text(edge.label);
+          .text(inlineToText(edge.label));
       }
     }
   }
@@ -230,7 +232,7 @@ function renderGraph(
       .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('fill', 'var(--glyph-node-label-color, #fff)')
       .attr('pointer-events', 'none')
-      .text(node.label);
+      .text(inlineToText(node.label));
 
     // Click handler: navigation (for ref-linked nodes) + interaction event (for all nodes)
     if (isNavigable || onNodeClick) {
@@ -240,7 +242,7 @@ function renderGraph(
           const ref = refByAnchor.get(node.id);
           if (ref) onNavigate(ref);
         }
-        onNodeClick?.(node.id, node.label);
+        onNodeClick?.(node.id, inlineToText(node.label));
       });
     }
   }
@@ -349,7 +351,7 @@ export function Graph({
               .join(', ');
             return (
               <tr key={node.id}>
-                <td>{node.label}</td>
+                <td>{inlineToText(node.label)}</td>
                 <td>{node.group ?? ''}</td>
                 <td>{connections}</td>
               </tr>

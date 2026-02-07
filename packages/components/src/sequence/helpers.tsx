@@ -1,4 +1,6 @@
 import type { ReactElement } from 'react';
+import type { InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Layout Constants ────────────────────────────────────────
 
@@ -17,7 +19,7 @@ export const ARROW_SIZE = 8;
 
 interface Actor {
   id: string;
-  label: string;
+  label: string | InlineNode[];
 }
 
 export function renderActorBox(
@@ -42,18 +44,24 @@ export function renderActorBox(
         stroke="var(--glyph-border-strong, #2a3550)"
         strokeWidth={1.5}
       />
-      <text
-        x={cx}
-        y={y + height / 2}
-        dy="0.35em"
-        textAnchor="middle"
-        fontSize={fontSize}
-        fontFamily="Inter, system-ui, sans-serif"
-        fontWeight={600}
-        fill="var(--glyph-text, #d4dae3)"
-      >
-        {actor.label}
-      </text>
+      <foreignObject x={cx - width / 2} y={y} width={width} height={height}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            width: '100%',
+            height: '100%',
+            fontSize,
+            fontFamily: 'Inter, system-ui, sans-serif',
+            fontWeight: 600,
+            color: 'var(--glyph-text, #d4dae3)',
+            textAlign: 'center',
+          }}
+        >
+          <RichText content={actor.label} />
+        </div>
+      </foreignObject>
     </g>
   );
 }
@@ -61,7 +69,7 @@ export function renderActorBox(
 export function renderSelfMessage(
   x: number,
   y: number,
-  label: string,
+  label: string | InlineNode[],
   idx: number,
   fontSize = '12px',
 ): ReactElement {
@@ -74,16 +82,19 @@ export function renderSelfMessage(
         strokeWidth={1.5}
         markerEnd="url(#seq-arrow-solid)"
       />
-      <text
-        x={x + SELF_ARC_WIDTH + 6}
-        y={y + SELF_ARC_HEIGHT / 2}
-        dy="0.35em"
-        fontSize={fontSize}
-        fontFamily="Inter, system-ui, sans-serif"
-        fill="var(--glyph-text, #d4dae3)"
-      >
-        {label}
-      </text>
+      <foreignObject x={x + SELF_ARC_WIDTH + 6} y={y} width={150} height={SELF_ARC_HEIGHT}>
+        <div
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            fontSize,
+            fontFamily: 'Inter, system-ui, sans-serif',
+            color: 'var(--glyph-text, #d4dae3)',
+          }}
+        >
+          <RichText content={label} />
+        </div>
+      </foreignObject>
     </g>
   );
 }
@@ -92,7 +103,7 @@ export function renderStandardMessage(
   fromX: number,
   toX: number,
   y: number,
-  label: string,
+  label: string | InlineNode[],
   isDashed: boolean,
   idx: number,
   fontSize = '12px',
@@ -112,16 +123,20 @@ export function renderStandardMessage(
         strokeDasharray={isDashed ? '6,4' : undefined}
         markerEnd={`url(#${markerId})`}
       />
-      <text
-        x={midX}
-        y={y - 8}
-        textAnchor="middle"
-        fontSize={fontSize}
-        fontFamily="Inter, system-ui, sans-serif"
-        fill="var(--glyph-text, #d4dae3)"
-      >
-        {label}
-      </text>
+      <foreignObject x={midX - 75} y={y - 22} width={150} height={20}>
+        <div
+          style={{
+            display: 'flex',
+            justifyContent: 'center',
+            fontSize,
+            fontFamily: 'Inter, system-ui, sans-serif',
+            color: 'var(--glyph-text, #d4dae3)',
+            textAlign: 'center',
+          }}
+        >
+          <RichText content={label} />
+        </div>
+      </foreignObject>
     </g>
   );
 }

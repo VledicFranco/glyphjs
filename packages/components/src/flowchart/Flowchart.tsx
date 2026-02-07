@@ -2,10 +2,12 @@ import type { CSSProperties, ReactElement } from 'react';
 import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 import dagre from 'dagre';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import { useZoomInteraction } from '../graph/useZoomInteraction.js';
 import { InteractionOverlay } from '../graph/InteractionOverlay.js';
 import { ZoomControls } from '../graph/ZoomControls.js';
+import { inlineToText } from '../utils/inlineToText.js';
 
 // ─── Types ───────────────────────────────────────────────────
 
@@ -14,21 +16,22 @@ type FlowchartNodeType = 'start' | 'end' | 'process' | 'decision';
 interface FlowchartNodeData {
   id: string;
   type: FlowchartNodeType;
-  label: string;
+  label: string | InlineNode[];
 }
 
 interface FlowchartEdgeData {
   from: string;
   to: string;
-  label?: string;
+  label?: string | InlineNode[];
 }
 
 export interface FlowchartData {
-  title?: string;
+  title?: string | InlineNode[];
   nodes: FlowchartNodeData[];
   edges: FlowchartEdgeData[];
   direction: 'top-down' | 'left-right';
   interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
+  markdown?: boolean;
 }
 
 interface PositionedNode extends FlowchartNodeData {
@@ -249,7 +252,7 @@ function renderFlowchart(
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
           .attr('fill', 'var(--glyph-text-muted, #6b7a94)')
-          .text(edge.label);
+          .text(inlineToText(edge.label));
       }
     }
   }
@@ -274,7 +277,7 @@ function renderFlowchart(
       .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('fill', 'var(--glyph-node-label-color, #fff)')
       .attr('pointer-events', 'none')
-      .text(node.label);
+      .text(inlineToText(node.label));
   }
 }
 
@@ -310,7 +313,7 @@ export function Flowchart({
   const nodeCount = data.nodes.length;
   const edgeCount = data.edges.length;
   const ariaLabel = data.title
-    ? `${data.title}: flowchart with ${nodeCount} nodes and ${edgeCount} edges`
+    ? `${inlineToText(data.title)}: flowchart with ${nodeCount} nodes and ${edgeCount} edges`
     : `Flowchart with ${nodeCount} nodes and ${edgeCount} edges`;
 
   return (
@@ -325,7 +328,7 @@ export function Flowchart({
             marginBottom: '0.5rem',
           }}
         >
-          {data.title}
+          <RichText content={data.title} />
         </div>
       )}
       <div style={{ position: 'relative' }}>
@@ -361,12 +364,12 @@ export function Flowchart({
               .map((e) => {
                 const target = e.from === node.id ? e.to : e.from;
                 const dir = e.from === node.id ? '->' : '<-';
-                return `${dir} ${target}${e.label ? ` (${e.label})` : ''}`;
+                return `${dir} ${target}${e.label ? ` (${inlineToText(e.label)})` : ''}`;
               })
               .join(', ');
             return (
               <tr key={node.id}>
-                <td>{node.label}</td>
+                <td>{inlineToText(node.label)}</td>
                 <td>{node.type}</td>
                 <td>{connections}</td>
               </tr>

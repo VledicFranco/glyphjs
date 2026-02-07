@@ -1,6 +1,7 @@
-import type { GraphNode, GraphEdge } from '@glyphjs/types';
+import type { GraphNode, GraphEdge, InlineNode } from '@glyphjs/types';
 import dagre from 'dagre';
 import * as d3 from 'd3';
+import { measureText } from '../utils/measureText.js';
 
 // ─── Positioned Node / Edge ──────────────────────────────────
 
@@ -64,10 +65,20 @@ export function computeDagreLayout(
   g.setDefaultEdgeLabel(() => ({}));
 
   for (const node of nodes) {
+    // Dynamically measure label dimensions
+    const labelDimensions = measureText(node.label, {
+      fontSize: '13px',
+      fontFamily: 'Inter, system-ui, sans-serif',
+      maxWidth: 200,
+    });
+
+    const nodeWidth = Math.max(120, Math.min(250, labelDimensions.width + 40));
+    const nodeHeight = Math.max(40, labelDimensions.height + 20);
+
     g.setNode(node.id, {
       label: node.label,
-      width: DEFAULT_NODE_WIDTH,
-      height: DEFAULT_NODE_HEIGHT,
+      width: nodeWidth,
+      height: nodeHeight,
     });
   }
 
@@ -118,7 +129,7 @@ export function computeDagreLayout(
 
 interface SimNode extends d3.SimulationNodeDatum {
   id: string;
-  label: string;
+  label: string | InlineNode[];
   type?: string;
   style?: Record<string, string>;
   group?: string;
@@ -128,10 +139,7 @@ interface SimNode extends d3.SimulationNodeDatum {
  * Uses D3 force simulation to compute physics-based layout positions.
  * Runs the simulation synchronously for a fixed number of ticks.
  */
-export function computeForceLayout(
-  nodes: GraphNode[],
-  edges: GraphEdge[],
-): LayoutResult {
+export function computeForceLayout(nodes: GraphNode[], edges: GraphEdge[]): LayoutResult {
   const simNodes: SimNode[] = nodes.map((n) => ({
     ...n,
     x: undefined,
@@ -177,7 +185,7 @@ export function computeForceLayout(
   const positionedNodes: PositionedNode[] = simNodes.map((sn) => {
     const pn: PositionedNode = {
       id: sn.id,
-      label: sn.label,
+      label: sn.label as string | InlineNode[],
       type: sn.type,
       style: sn.style,
       group: sn.group,

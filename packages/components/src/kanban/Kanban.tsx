@@ -1,5 +1,6 @@
 import { useState, type ReactElement, type KeyboardEvent } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import {
   containerStyle,
   headerStyle,
@@ -19,8 +20,8 @@ import {
 
 export interface KanbanCard {
   id: string;
-  title: string;
-  description?: string;
+  title: string | InlineNode[];
+  description?: string | InlineNode[];
   priority?: 'high' | 'medium' | 'low';
   tags?: string[];
 }
@@ -35,6 +36,7 @@ export interface KanbanColumn {
 export interface KanbanData {
   title?: string;
   columns: KanbanColumn[];
+  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────
@@ -187,8 +189,14 @@ export function Kanban({
                     style={cardStyle(isGrabbed, card.priority)}
                     onKeyDown={(e) => handleCardKeyDown(e, card.id, col.id, cardIndex)}
                   >
-                    <div style={cardTitleStyle}>{card.title}</div>
-                    {card.description && <div style={cardDescStyle}>{card.description}</div>}
+                    <div style={cardTitleStyle}>
+                      <RichText content={card.title} />
+                    </div>
+                    {card.description && (
+                      <div style={cardDescStyle}>
+                        <RichText content={card.description} />
+                      </div>
+                    )}
                     {card.tags && card.tags.length > 0 && (
                       <div style={tagContainerStyle}>
                         {card.tags.map((tag) => (

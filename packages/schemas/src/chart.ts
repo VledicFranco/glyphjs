@@ -10,11 +10,8 @@ export const chartSchema = z.object({
       data: z.array(z.record(z.union([z.number(), z.string()]))),
     }),
   ),
-  xAxis: z
-    .object({ key: z.string(), label: z.string().optional() })
-    .optional(),
-  yAxis: z
-    .object({ key: z.string(), label: z.string().optional() })
-    .optional(),
+  xAxis: z.object({ key: z.string(), label: z.string().optional() }).optional(),
+  yAxis: z.object({ key: z.string(), label: z.string().optional() }).optional(),
   legend: z.boolean().optional(),
+  markdown: z.boolean().default(false),
 });

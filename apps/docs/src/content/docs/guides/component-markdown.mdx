@@ -68,7 +68,7 @@ With global mode, all component text fields will parse markdown automatically.
 
 ## Supported Components
 
-Markdown support is available in 17 components:
+Markdown support is available in 27 components:
 
 ### Text-Heavy Components
 - **Callout**: `content`, `title`
@@ -76,6 +76,8 @@ Markdown support is available in 17 components:
 - **Accordion**: `sections[].content`
 - **Steps**: `steps[].content`
 - **Timeline**: `events[].title`, `events[].description`
+- **Tabs**: `tabs[].label`, `tabs[].content`
+- **Kanban**: `cards[].title`, `cards[].description`
 
 ### Interactive Components
 - **Quiz**: `questions[].question`, `questions[].explanation`, `questions[].options[]`
@@ -85,12 +87,22 @@ Markdown support is available in 17 components:
 - **Slider**: `parameters[].label`
 - **Matrix**: `rows[].label`, `columns[].label`
 
-### Data Components
+### Data & Visualization Components
 - **KPI**: `metrics[].label`
 - **Comparison**: `options[].description`, `features[].values[]`
 - **Infographic**: `sections[].items[].text`, `sections[].items[].description`
 - **Annotate**: `annotations[].text`
 - **Form**: `description`
+- **Table**: `columns[].label`
+- **Chart**: `xAxis.label`, `yAxis.label`, `series[].name`
+- **Equation**: `label`, `steps[].annotation`
+- **CodeDiff**: `beforeLabel`, `afterLabel`
+
+### Diagram Components
+- **Graph**: `nodes[].label`, `edges[].label`
+- **Relation**: `entities[].label`, `relationships[].label`, `entities[].attributes[].name`
+- **Flowchart**: `title`, `nodes[].label`, `edges[].label`
+- **Sequence**: `title`, `actors[].label`, `messages[].label`
 
 ## Examples
 
@@ -147,6 +159,73 @@ cards:
   - title: API Reference
     subtitle: "Complete **API** documentation"
     body: "Explore all available `components` and their properties."
+markdown: true
+```
+```
+
+### Graph with Formatted Nodes
+
+```md
+```ui:graph
+type: dag
+nodes:
+  - id: input
+    label: "`input.md` file"
+  - id: compile
+    label: "**Compile** Step"
+  - id: output
+    label: "*IR* Output"
+edges:
+  - from: input
+    to: compile
+    label: "parse"
+  - from: compile
+    to: output
+    label: "transform"
+markdown: true
+```
+```
+
+### Tabs with Rich Content
+
+```md
+```ui:tabs
+tabs:
+  - label: "**Getting Started**"
+    content: "Install using `npm install glyphjs` or check the [documentation](https://glyphjs.dev)."
+  - label: "*API* Reference"
+    content: "The `compile()` function accepts **markdown** strings and returns IR."
+markdown: true
+```
+```
+
+### Flowchart with Code References
+
+```md
+```ui:flowchart
+title: "**API** Request Flow"
+direction: top-down
+nodes:
+  - id: start
+    type: start
+    label: "`POST` Request"
+  - id: auth
+    type: decision
+    label: "*Authenticated*?"
+  - id: process
+    type: process
+    label: "**Process** Data"
+  - id: success
+    type: end
+    label: "`200` OK"
+edges:
+  - from: start
+    to: auth
+  - from: auth
+    to: process
+    label: "**Yes**"
+  - from: process
+    to: success
 markdown: true
 ```
 ```

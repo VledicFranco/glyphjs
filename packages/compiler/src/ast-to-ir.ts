@@ -63,6 +63,16 @@ const MARKDOWN_FIELD_MAP: Record<string, string[]> = {
   matrix: ['rowLabels[]', 'columnLabels[]'],
   annotate: ['annotations[].text'],
   form: ['description'],
+  tabs: ['tabs[].label', 'tabs[].content'],
+  kanban: ['cards[].title', 'cards[].description'],
+  table: ['columns[].label'],
+  chart: ['xAxis.label', 'yAxis.label', 'series[].name'],
+  equation: ['label', 'steps[].annotation'],
+  codediff: ['beforeLabel', 'afterLabel'],
+  graph: ['nodes[].label', 'edges[].label'],
+  relation: ['entities[].label', 'relationships[].label', 'entities[].attributes[].name'],
+  flowchart: ['title', 'nodes[].label', 'edges[].label'],
+  sequence: ['title', 'actors[].label', 'messages[].label'],
 };
 
 /**

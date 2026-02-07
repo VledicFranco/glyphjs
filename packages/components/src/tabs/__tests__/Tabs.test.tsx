@@ -4,6 +4,7 @@ import '@testing-library/jest-dom';
 import { Tabs } from '../Tabs.js';
 import type { TabsData } from '../Tabs.js';
 import { createMockProps } from '../../__tests__/helpers.js';
+import type { InlineNode } from '@glyphjs/types';
 
 const tabsData: TabsData = {
   tabs: [
@@ -87,5 +88,81 @@ describe('Tabs', () => {
       expect(controlsId).toBeTruthy();
       expect(document.getElementById(controlsId!)).toBeInTheDocument();
     }
+  });
+
+  describe('Markdown support', () => {
+    it('renders InlineNode[] in tab labels', () => {
+      const data: TabsData = {
+        tabs: [
+          {
+            label: [
+              { type: 'text', value: 'Tab with ' },
+              {
+                type: 'strong',
+                children: [{ type: 'text', value: 'bold' }],
+              },
+            ] as InlineNode[],
+            content: 'Content',
+          },
+        ],
+        markdown: true,
+      };
+      const props = createMockProps<TabsData>(data, 'ui:tabs');
+      render(<Tabs {...props} />);
+
+      const strong = screen.getByText('bold');
+      expect(strong.tagName).toBe('STRONG');
+    });
+
+    it('renders InlineNode[] in tab content', () => {
+      const data: TabsData = {
+        tabs: [
+          {
+            label: 'Tab',
+            content: [
+              { type: 'text', value: 'Content with ' },
+              {
+                type: 'emphasis',
+                children: [{ type: 'text', value: 'italic' }],
+              },
+              { type: 'text', value: ' and ' },
+              { type: 'inlineCode', value: 'code' },
+            ] as InlineNode[],
+          },
+        ],
+        markdown: true,
+      };
+      const props = createMockProps<TabsData>(data, 'ui:tabs');
+      render(<Tabs {...props} />);
+
+      const em = screen.getByText('italic');
+      expect(em.tagName).toBe('EM');
+
+      const code = screen.getByText('code');
+      expect(code.tagName).toBe('CODE');
+    });
+
+    it('renders links in tab content', () => {
+      const data: TabsData = {
+        tabs: [
+          {
+            label: 'Tab',
+            content: [
+              {
+                type: 'link',
+                url: 'https://example.com',
+                children: [{ type: 'text', value: 'Click here' }],
+              },
+            ] as InlineNode[],
+          },
+        ],
+        markdown: true,
+      };
+      const props = createMockProps<TabsData>(data, 'ui:tabs');
+      render(<Tabs {...props} />);
+
+      const link = screen.getByRole('link', { name: 'Click here' });
+      expect(link).toHaveAttribute('href', 'https://example.com');
+    });
   });
 });

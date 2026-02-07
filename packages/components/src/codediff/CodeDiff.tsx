@@ -1,5 +1,6 @@
 import { useMemo, type ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 import { computeDiff } from './diff.js';
 import type { DiffLine } from './diff.js';
 
@@ -9,8 +10,9 @@ export interface CodeDiffData {
   language?: string;
   before: string;
   after: string;
-  beforeLabel?: string;
-  afterLabel?: string;
+  beforeLabel?: string | InlineNode[];
+  afterLabel?: string | InlineNode[];
+  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -112,9 +114,17 @@ export function CodeDiff({ data, block }: GlyphComponentProps<CodeDiffData>): Re
     <div id={baseId} role="region" aria-label={summary} style={containerStyle}>
       {(beforeLabel || afterLabel) && (
         <div style={labelBarStyle}>
-          {beforeLabel && <span>{beforeLabel}</span>}
+          {beforeLabel && (
+            <span>
+              <RichText content={beforeLabel} />
+            </span>
+          )}
           {beforeLabel && afterLabel && <span>→</span>}
-          {afterLabel && <span>{afterLabel}</span>}
+          {afterLabel && (
+            <span>
+              <RichText content={afterLabel} />
+            </span>
+          )}
         </div>
       )}
       <div style={{ overflowX: 'auto' }}>

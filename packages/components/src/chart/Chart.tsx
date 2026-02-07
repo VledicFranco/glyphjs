@@ -19,6 +19,7 @@ import {
 } from './render.js';
 import type { ChartData, DataRecord } from './render.js';
 import { ChartAccessibleTable } from './ChartAccessibleTable.js';
+import { inlineToText } from '../utils/inlineToText.js';
 
 export type { ChartData } from './render.js';
 
@@ -101,6 +102,7 @@ function renderAllSeries(
   const { xScale, xScalePoint, yScale, innerHeight } = scales;
   series.forEach((s: ChartData['series'][number], i: number) => {
     const color = COLOR_SCHEME[i % COLOR_SCHEME.length] ?? '#333';
+    const seriesName = inlineToText(s.name);
     switch (type) {
       case 'line':
         renderLineSeries(
@@ -112,7 +114,7 @@ function renderAllSeries(
           xKey,
           color,
           i,
-          s.name,
+          seriesName,
           showTooltip,
           hideTooltip,
         );
@@ -128,7 +130,7 @@ function renderAllSeries(
           innerHeight,
           color,
           i,
-          s.name,
+          seriesName,
           showTooltip,
           hideTooltip,
         );
@@ -145,7 +147,7 @@ function renderAllSeries(
           i,
           series.length,
           innerHeight,
-          s.name,
+          seriesName,
           showTooltip,
           hideTooltip,
         );
@@ -158,7 +160,7 @@ function renderAllSeries(
           xScalePoint,
           yScale,
           scales.innerWidth,
-          s.name,
+          seriesName,
           showTooltip,
           hideTooltip,
         );

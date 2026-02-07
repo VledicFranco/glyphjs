@@ -1,13 +1,15 @@
 import type { ReactElement } from 'react';
+import type { InlineNode } from '@glyphjs/types';
 import type { ChartData, DataRecord } from './render.js';
+import { inlineToText } from '../utils/inlineToText.js';
 
 interface ChartAccessibleTableProps {
   type: ChartData['type'];
   series: ChartData['series'];
   xKey: string;
   yKey: string;
-  xLabel?: string;
-  yLabel?: string;
+  xLabel?: string | InlineNode[];
+  yLabel?: string | InlineNode[];
 }
 
 export function ChartAccessibleTable({
@@ -36,11 +38,11 @@ export function ChartAccessibleTable({
       {series.map((s: ChartData['series'][number], si: number) => (
         <tbody key={si}>
           <tr>
-            <th colSpan={2}>{s.name}</th>
+            <th colSpan={2}>{inlineToText(s.name)}</th>
           </tr>
           <tr>
-            <th>{xLabel ?? xKey}</th>
-            <th>{yLabel ?? yKey}</th>
+            <th>{xLabel ? inlineToText(xLabel) : xKey}</th>
+            <th>{yLabel ? inlineToText(yLabel) : yKey}</th>
           </tr>
           {s.data.map((d: DataRecord, di: number) => (
             <tr key={di}>

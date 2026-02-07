@@ -1,5 +1,7 @@
 import type { CSSProperties, ReactElement } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
+import { inlineToText } from '../utils/inlineToText.js';
 import {
   ACTOR_WIDTH,
   ACTOR_HEIGHT,
@@ -20,20 +22,21 @@ type MessageType = 'message' | 'reply' | 'self';
 
 interface Actor {
   id: string;
-  label: string;
+  label: string | InlineNode[];
 }
 
 interface Message {
   from: string;
   to: string;
-  label: string;
+  label: string | InlineNode[];
   type: MessageType;
 }
 
 export interface SequenceData {
-  title?: string;
+  title?: string | InlineNode[];
   actors: Actor[];
   messages: Message[];
+  markdown?: boolean;
 }
 
 // ─── Component ──────────────────────────────────────────────
@@ -67,7 +70,7 @@ export function Sequence({ data, container }: GlyphComponentProps<SequenceData>)
   const svgHeight = lastMsgY + BOTTOM_PADDING + effectiveActorHeight;
 
   const ariaLabel = data.title
-    ? `${data.title}: sequence diagram with ${actorCount} actors and ${messageCount} messages`
+    ? `${inlineToText(data.title)}: sequence diagram with ${actorCount} actors and ${messageCount} messages`
     : `Sequence diagram with ${actorCount} actors and ${messageCount} messages`;
 
   return (
@@ -82,7 +85,7 @@ export function Sequence({ data, container }: GlyphComponentProps<SequenceData>)
             marginBottom: '0.5rem',
           }}
         >
-          {data.title}
+          <RichText content={data.title} />
         </div>
       )}
       <svg
@@ -205,9 +208,9 @@ export function Sequence({ data, container }: GlyphComponentProps<SequenceData>)
             return (
               <tr key={idx}>
                 <td>{idx + 1}</td>
-                <td>{fromActor?.label ?? msg.from}</td>
-                <td>{toActor?.label ?? msg.to}</td>
-                <td>{msg.label}</td>
+                <td>{fromActor ? inlineToText(fromActor.label) : msg.from}</td>
+                <td>{toActor ? inlineToText(toActor.label) : msg.to}</td>
+                <td>{inlineToText(msg.label)}</td>
                 <td>{msg.type}</td>
               </tr>
             );

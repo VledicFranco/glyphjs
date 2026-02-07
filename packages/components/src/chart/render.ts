@@ -1,14 +1,17 @@
 import * as d3 from 'd3';
+import type { InlineNode } from '@glyphjs/types';
+import { inlineToText } from '../utils/inlineToText.js';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 /** Matches z.infer<typeof chartSchema> without importing zod. */
 export interface ChartData {
   type: 'line' | 'bar' | 'area' | 'ohlc';
-  series: { name: string; data: DataRecord[] }[];
-  xAxis?: { key: string; label?: string };
-  yAxis?: { key: string; label?: string };
+  series: { name: string | InlineNode[]; data: DataRecord[] }[];
+  xAxis?: { key: string; label?: string | InlineNode[] };
+  yAxis?: { key: string; label?: string | InlineNode[] };
   legend?: boolean;
+  markdown?: boolean;
 }
 
 export type DataRecord = Record<string, number | string>;
@@ -96,7 +99,7 @@ export function renderAxes(
       .attr('text-anchor', 'middle')
       .attr('fill', 'var(--glyph-text, #1a2035)')
       .attr('font-size', '12px')
-      .text(xAxisConfig.label);
+      .text(inlineToText(xAxisConfig.label));
   }
 
   const yAxisG = g.append('g').attr('class', 'y-axis');
@@ -120,7 +123,7 @@ export function renderAxes(
       .attr('text-anchor', 'middle')
       .attr('fill', 'var(--glyph-text, #1a2035)')
       .attr('font-size', '12px')
-      .text(yAxisConfig.label);
+      .text(inlineToText(yAxisConfig.label));
   }
 }
 
@@ -345,6 +348,6 @@ export function renderLegend(
       .attr('y', 11)
       .attr('fill', 'var(--glyph-text, #1a2035)')
       .attr('font-size', fontSize)
-      .text(s.name);
+      .text(inlineToText(s.name));
   });
 }

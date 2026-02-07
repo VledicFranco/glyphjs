@@ -9,4 +9,5 @@ export const tabsSchema = z.object({
       content: z.string(),
     }),
   ),
+  markdown: z.boolean().default(false),
 });

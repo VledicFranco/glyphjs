@@ -239,3 +239,72 @@ export const AlwaysMode: Story = {
     ],
   }),
 };
+
+// ─── With Markdown ─────────────────────────────────────────────
+
+export const WithMarkdown: Story = {
+  args: mockProps<FlowchartData>({
+    title: [
+      { type: 'strong', children: [{ type: 'text', value: 'API' }] },
+      { type: 'text', value: ' Request Flow' },
+    ],
+    direction: 'top-down',
+    markdown: true,
+    nodes: [
+      {
+        id: 'start',
+        type: 'start',
+        label: [
+          { type: 'inlineCode', value: 'POST' },
+          { type: 'text', value: ' Request' },
+        ],
+      },
+      {
+        id: 'auth',
+        type: 'decision',
+        label: [
+          { type: 'emphasis', children: [{ type: 'text', value: 'Authenticated' }] },
+          { type: 'text', value: '?' },
+        ],
+      },
+      {
+        id: 'process',
+        type: 'process',
+        label: [
+          { type: 'strong', children: [{ type: 'text', value: 'Process' }] },
+          { type: 'text', value: ' Data' },
+        ],
+      },
+      {
+        id: 'success',
+        type: 'end',
+        label: [
+          { type: 'inlineCode', value: '200' },
+          { type: 'text', value: ' OK' },
+        ],
+      },
+      {
+        id: 'error',
+        type: 'end',
+        label: [
+          { type: 'inlineCode', value: '401' },
+          { type: 'text', value: ' Error' },
+        ],
+      },
+    ],
+    edges: [
+      { from: 'start', to: 'auth' },
+      {
+        from: 'auth',
+        to: 'process',
+        label: [{ type: 'strong', children: [{ type: 'text', value: 'Yes' }] }],
+      },
+      {
+        from: 'auth',
+        to: 'error',
+        label: [{ type: 'emphasis', children: [{ type: 'text', value: 'No' }] }],
+      },
+      { from: 'process', to: 'success' },
+    ],
+  }),
+};

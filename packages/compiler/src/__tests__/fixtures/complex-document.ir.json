@@ -111,7 +111,8 @@
             }
           ],
           "layout": "left-right",
-          "interactionMode": "modifier-key"
+          "interactionMode": "modifier-key",
+          "markdown": false
         }
       },
       {
@@ -150,7 +151,8 @@
               "label": "Tab B",
               "content": "Content for tab B.\n"
             }
-          ]
+          ],
+          "markdown": false
         },
         "children": [
           {

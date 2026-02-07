@@ -24,4 +24,5 @@ export const graphSchema = z.object({
   ),
   layout: z.enum(['top-down', 'left-right', 'bottom-up', 'radial', 'force']).optional(),
   interactionMode: z.enum(['modifier-key', 'click-to-activate', 'always']).default('modifier-key'),
+  markdown: z.boolean().default(false),
 });

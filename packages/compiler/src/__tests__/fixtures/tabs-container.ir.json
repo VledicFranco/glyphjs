@@ -32,7 +32,8 @@
               "label": "Details",
               "content": "## Details Tab\n\nHere are the details with **bold** text.\n"
             }
-          ]
+          ],
+          "markdown": false
         },
         "children": [
           {

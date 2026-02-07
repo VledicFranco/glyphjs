@@ -57,10 +57,7 @@ function assertValidLayoutResult(result: LayoutResult): void {
   expect(result.height).toBeGreaterThan(0);
 }
 
-function assertAllNodesPositioned(
-  result: LayoutResult,
-  expectedCount: number,
-): void {
+function assertAllNodesPositioned(result: LayoutResult, expectedCount: number): void {
   expect(result.nodes).toHaveLength(expectedCount);
   for (const node of result.nodes) {
     expect(typeof node.x).toBe('number');
@@ -72,10 +69,7 @@ function assertAllNodesPositioned(
   }
 }
 
-function assertAllEdgesHavePoints(
-  result: LayoutResult,
-  expectedCount: number,
-): void {
+function assertAllEdgesHavePoints(result: LayoutResult, expectedCount: number): void {
   expect(result.edges).toHaveLength(expectedCount);
   for (const edge of result.edges) {
     expect(edge.points).toBeDefined();
@@ -192,8 +186,10 @@ describe('computeDagreLayout', () => {
     const result = computeDagreLayout(singleNode, []);
     const node = result.nodes[0];
 
-    expect(node.width).toBe(160); // DEFAULT_NODE_WIDTH
-    expect(node.height).toBe(40); // DEFAULT_NODE_HEIGHT
+    // Dynamic sizing: width is based on text measurement (min 120, max 250)
+    expect(node.width).toBeGreaterThanOrEqual(120);
+    expect(node.width).toBeLessThanOrEqual(250);
+    expect(node.height).toBeGreaterThanOrEqual(40);
   });
 
   // Direction tests
@@ -430,9 +426,7 @@ describe('computeForceLayout', () => {
     // No two nodes should have exactly the same position
     for (let i = 0; i < positions.length; i++) {
       for (let j = i + 1; j < positions.length; j++) {
-        const same =
-          positions[i].x === positions[j].x &&
-          positions[i].y === positions[j].y;
+        const same = positions[i].x === positions[j].x && positions[i].y === positions[j].y;
         expect(same).toBe(false);
       }
     }

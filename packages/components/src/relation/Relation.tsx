@@ -2,29 +2,31 @@ import type { CSSProperties, ReactElement } from 'react';
 import { useEffect, useRef, useMemo } from 'react';
 import * as d3 from 'd3';
 import dagre from 'dagre';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
 import { useZoomInteraction } from '../graph/useZoomInteraction.js';
 import { InteractionOverlay } from '../graph/InteractionOverlay.js';
 import { ZoomControls } from '../graph/ZoomControls.js';
+import { inlineToText } from '../utils/inlineToText.js';
+import { measureText } from '../utils/measureText.js';
 
 // ─── Types ───────────────────────────────────────────────────
 
 interface Attribute {
-  name: string;
+  name: string | InlineNode[];
   type: string;
   primaryKey?: boolean;
 }
 
 interface Entity {
   id: string;
-  label: string;
+  label: string | InlineNode[];
   attributes?: Attribute[];
 }
 
 interface Relationship {
   from: string;
   to: string;
-  label?: string;
+  label?: string | InlineNode[];
   cardinality: '1:1' | '1:N' | 'N:1' | 'N:M';
 }
 
@@ -33,6 +35,7 @@ export interface RelationData {
   relationships: Relationship[];
   layout?: 'top-down' | 'left-right';
   interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
+  markdown?: boolean;
 }
 
 // ─── Layout Constants ────────────────────────────────────────
@@ -45,7 +48,6 @@ const NODE_SEP = 60;
 const RANK_SEP = 80;
 const EDGE_SEP = 10;
 const LAYOUT_PADDING = 40;
-const CHAR_WIDTH = 7.5;
 
 // ─── Entity sizing ───────────────────────────────────────────
 
@@ -54,10 +56,18 @@ function computeEntitySize(entity: Entity): { width: number; height: number } {
   const height = ENTITY_HEADER_HEIGHT + attrs.length * ENTITY_ATTR_HEIGHT + ENTITY_PADDING;
 
   // Width is determined by the longest text line
-  let maxTextWidth = entity.label.length * (CHAR_WIDTH + 1);
+  const labelDimensions = measureText(entity.label, {
+    fontSize: '14px',
+    fontFamily: 'Inter, system-ui, sans-serif',
+  });
+  let maxTextWidth = labelDimensions.width;
+
   for (const attr of attrs) {
-    const attrText = `${attr.name}: ${attr.type}`;
-    maxTextWidth = Math.max(maxTextWidth, attrText.length * CHAR_WIDTH);
+    const attrNameDimensions = measureText(attr.name, {
+      fontSize: '12px',
+      fontFamily: 'ui-monospace, monospace',
+    });
+    maxTextWidth = Math.max(maxTextWidth, attrNameDimensions.width + 100); // +100 for ": type"
   }
   const width = Math.max(ENTITY_MIN_WIDTH, maxTextWidth + ENTITY_PADDING * 2 + 16);
 
@@ -315,7 +325,7 @@ function renderRelation(
           .attr('font-size', '11px')
           .attr('font-family', 'Inter, system-ui, sans-serif')
           .attr('fill', 'var(--glyph-relation-label, #6b7a94)')
-          .text(rel.label);
+          .text(inlineToText(rel.label));
       }
     }
 
@@ -408,7 +418,7 @@ function renderRelation(
       .attr('font-weight', 'bold')
       .attr('font-family', 'Inter, system-ui, sans-serif')
       .attr('fill', 'var(--glyph-relation-header-text, #fff)')
-      .text(entity.label);
+      .text(inlineToText(entity.label));
 
     // Separator line below header
     if (attrs.length > 0) {
@@ -438,7 +448,7 @@ function renderRelation(
         .attr('fill', 'var(--glyph-relation-attr-text, #1a2035)');
 
       // Attribute name (bold + underline if primary key)
-      const nameSpan = textEl.append('tspan').text(attr.name);
+      const nameSpan = textEl.append('tspan').text(inlineToText(attr.name));
       if (attr.primaryKey) {
         nameSpan.attr('font-weight', 'bold').attr('text-decoration', 'underline');
       }
@@ -521,7 +531,7 @@ export function Relation({ data, block }: GlyphComponentProps<RelationData>): Re
               .join(', ');
             return (
               <tr key={entity.id}>
-                <td>{entity.label}</td>
+                <td>{inlineToText(entity.label)}</td>
                 <td>{attrs}</td>
                 <td>{rels}</td>
               </tr>

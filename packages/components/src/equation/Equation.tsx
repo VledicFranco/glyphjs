@@ -1,18 +1,20 @@
 import type { CSSProperties, ReactElement } from 'react';
 import katex from 'katex';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ───────────────────────────────────────────────────
 
 export interface EquationStep {
   expression: string;
-  annotation?: string;
+  annotation?: string | InlineNode[];
 }
 
 export interface EquationData {
   expression?: string;
-  label?: string;
+  label?: string | InlineNode[];
   steps?: EquationStep[];
+  markdown?: boolean;
 }
 
 // ─── LaTeX Rendering ─────────────────────────────────────────
@@ -92,7 +94,11 @@ export function Equation({ data }: GlyphComponentProps<EquationData>): ReactElem
         ) : (
           <span dangerouslySetInnerHTML={{ __html: html }} />
         )}
-        {data.label !== undefined && <div style={labelStyle}>{data.label}</div>}
+        {data.label !== undefined && (
+          <div style={labelStyle}>
+            <RichText content={data.label} />
+          </div>
+        )}
       </div>
     );
   }
@@ -116,13 +122,19 @@ export function Equation({ data }: GlyphComponentProps<EquationData>): ReactElem
                   <span dangerouslySetInnerHTML={{ __html: html }} />
                 )}
                 {step.annotation !== undefined && (
-                  <span style={annotationStyle}>{step.annotation}</span>
+                  <span style={annotationStyle}>
+                    <RichText content={step.annotation} />
+                  </span>
                 )}
               </div>
             );
           })}
         </div>
-        {data.label !== undefined && <div style={labelStyle}>{data.label}</div>}
+        {data.label !== undefined && (
+          <div style={labelStyle}>
+            <RichText content={data.label} />
+          </div>
+        )}
       </div>
     );
   }

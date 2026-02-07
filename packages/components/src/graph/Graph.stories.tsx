@@ -209,3 +209,50 @@ export const AlwaysMode: Story = {
     { block: mockBlock({ id: 'graph-always', type: 'ui:graph' }) },
   ),
 };
+
+// ─── With Markdown ─────────────────────────────────────────────
+
+export const WithMarkdown: Story = {
+  args: mockProps<GraphData>(
+    {
+      type: 'dag',
+      markdown: true,
+      nodes: [
+        {
+          id: 'input',
+          label: [
+            { type: 'inlineCode', value: 'input.md' },
+            { type: 'text', value: ' file' },
+          ],
+        },
+        {
+          id: 'compile',
+          label: [
+            { type: 'strong', children: [{ type: 'text', value: 'Compile' }] },
+            { type: 'text', value: ' Step' },
+          ],
+        },
+        {
+          id: 'output',
+          label: [
+            { type: 'emphasis', children: [{ type: 'text', value: 'IR' }] },
+            { type: 'text', value: ' Output' },
+          ],
+        },
+      ],
+      edges: [
+        {
+          from: 'input',
+          to: 'compile',
+          label: [{ type: 'text', value: 'parse' }],
+        },
+        {
+          from: 'compile',
+          to: 'output',
+          label: [{ type: 'text', value: 'transform' }],
+        },
+      ],
+    },
+    { block: mockBlock({ id: 'graph-markdown', type: 'ui:graph' }) },
+  ),
+};

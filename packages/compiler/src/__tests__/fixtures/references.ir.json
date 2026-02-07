@@ -31,7 +31,8 @@
             }
           ],
           "edges": [],
-          "interactionMode": "modifier-key"
+          "interactionMode": "modifier-key",
+          "markdown": false
         }
       },
       {

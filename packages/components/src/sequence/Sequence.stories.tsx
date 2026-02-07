@@ -127,3 +127,70 @@ export const Compact: Story = {
       React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
   ],
 };
+
+// ─── With Markdown ─────────────────────────────────────────────
+
+export const WithMarkdown: Story = {
+  args: mockProps<SequenceData>({
+    title: [
+      { type: 'inlineCode', value: 'API' },
+      { type: 'text', value: ' Call Sequence' },
+    ],
+    markdown: true,
+    actors: [
+      {
+        id: 'client',
+        label: [
+          { type: 'strong', children: [{ type: 'text', value: 'Client' }] },
+          { type: 'text', value: ' App' },
+        ],
+      },
+      {
+        id: 'api',
+        label: [
+          { type: 'emphasis', children: [{ type: 'text', value: 'REST' }] },
+          { type: 'text', value: ' API' },
+        ],
+      },
+      {
+        id: 'db',
+        label: [{ type: 'inlineCode', value: 'PostgreSQL' }],
+      },
+    ],
+    messages: [
+      {
+        from: 'client',
+        to: 'api',
+        label: [
+          { type: 'inlineCode', value: 'POST' },
+          { type: 'text', value: ' /users' },
+        ],
+        type: 'message',
+      },
+      {
+        from: 'api',
+        to: 'db',
+        label: [
+          { type: 'inlineCode', value: 'INSERT' },
+          { type: 'text', value: ' query' },
+        ],
+        type: 'message',
+      },
+      {
+        from: 'db',
+        to: 'api',
+        label: [{ type: 'strong', children: [{ type: 'text', value: 'Success' }] }],
+        type: 'reply',
+      },
+      {
+        from: 'api',
+        to: 'client',
+        label: [
+          { type: 'inlineCode', value: '201' },
+          { type: 'text', value: ' Created' },
+        ],
+        type: 'reply',
+      },
+    ],
+  }),
+};

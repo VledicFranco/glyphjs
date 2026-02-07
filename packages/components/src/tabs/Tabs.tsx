@@ -1,10 +1,12 @@
 import { useState, useRef, useCallback } from 'react';
 import type { KeyboardEvent } from 'react';
-import type { GlyphComponentProps } from '@glyphjs/types';
+import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { RichText } from '@glyphjs/runtime';
 
 /** Shape of the validated `data` for a `ui:tabs` block. */
 export interface TabsData {
-  tabs: { label: string; content: string }[];
+  tabs: { label: string | InlineNode[]; content: string | InlineNode[] }[];
+  markdown?: boolean;
 }
 
 /**
@@ -130,7 +132,7 @@ export function Tabs({ data, block, onInteraction }: GlyphComponentProps<TabsDat
                 outlineOffset: '2px',
               }}
             >
-              {tab.label}
+              <RichText content={tab.label} />
             </button>
           );
         })}
@@ -158,7 +160,7 @@ export function Tabs({ data, block, onInteraction }: GlyphComponentProps<TabsDat
               lineHeight: 1.6,
             }}
           >
-            {tab.content}
+            <RichText content={tab.content} />
           </div>
         );
       })}
