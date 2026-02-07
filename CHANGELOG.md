@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.6.0] - 2026-02-07
 
+### Added
+
+- **Interaction modes for Architecture component**: Added zoom/pan interaction modes (modifier-key, click-to-activate, always) to Architecture component, completing the interaction modes feature across all diagram components
+- `interactionMode` and `showZoomControls` schema fields for Architecture component
+- Interactive overlay and zoom controls for Architecture diagrams
+- Storybook stories demonstrating all three interaction modes for Architecture
+
+### Changed
+
+- All 4 diagram components (Graph, Flowchart, Relation, Architecture) now support consistent zoom/pan interaction modes with the same API
+
 ## [0.5.1] - 2026-02-07
 
 ### Fixed
