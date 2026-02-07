@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/ir",
-  "version": "0.5.0",
+  "version": "0.5.1",
   "description": "IR utilities: validation, diffing, patching, migration",
   "type": "module",
   "main": "./dist/index.cjs",
