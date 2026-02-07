@@ -9,7 +9,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.5.1] - 2026-02-07
 
+### Fixed
+
+- TypeScript compilation error with xmlns attribute in ForeignObjectText component
+
 ## [0.5.0] - 2026-02-07
+
+### Added
+
+- **Extended markdown support to 10 additional components**: Tabs, Kanban, Table, Chart, Equation, CodeDiff (standard components) and Graph, Relation, Flowchart, Sequence (diagram components)
+- Total components with markdown support increased from 17 to 27 (68% coverage)
+- `measureText` utility for dynamic text measurement in SVG diagrams
+- `ForeignObjectText` component for rendering rich text in SVG contexts using foreignObject
+- `inlineToText` utility for converting InlineNode[] to plain strings for SVG text elements
+- Markdown support in diagram node labels, edges, and titles
+- Dynamic node sizing in graph layouts based on label content
+- Storybook examples demonstrating markdown in Tabs, Graph, Flowchart, and Sequence components
+
+### Changed
+
+- Graph, Relation, Flowchart, and Sequence components now support `string | InlineNode[]` union types for labels
+- Chart component now supports markdown in axis labels and series names
+- Table component now supports markdown in column labels
+- Updated component documentation to reflect 27 components with markdown support
 
 ## [0.4.0] - 2026-02-06
 
