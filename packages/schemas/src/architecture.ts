@@ -63,4 +63,6 @@ export const architectureSchema = z.object({
     }),
   ),
   layout: z.enum(['top-down', 'left-right', 'bottom-up']).optional(),
+  interactionMode: z.enum(['modifier-key', 'click-to-activate', 'always']).default('modifier-key'),
+  showZoomControls: z.boolean().default(true),
 });

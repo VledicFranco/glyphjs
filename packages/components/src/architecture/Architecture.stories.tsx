@@ -221,3 +221,71 @@ export const Compact: Story = {
       React.createElement('div', { style: { maxWidth: '400px' } }, React.createElement(Story)),
   ],
 };
+
+// ─── Interaction Modes ──────────────────────────────────────
+
+export const ModifierKeyMode: Story = {
+  args: mockProps<ArchitectureData>(
+    {
+      title: 'Modifier Key Mode (Alt+Scroll to zoom)',
+      children: [
+        { id: 'web', label: 'Web App', icon: 'cloud' },
+        { id: 'api', label: 'API Server', icon: 'server' },
+        { id: 'db', label: 'Database', icon: 'database' },
+        { id: 'cache', label: 'Cache', icon: 'cache' },
+      ],
+      edges: [
+        { from: 'web', to: 'api', label: 'HTTPS' },
+        { from: 'api', to: 'db', label: 'queries' },
+        { from: 'api', to: 'cache', label: 'reads' },
+      ],
+      interactionMode: 'modifier-key',
+      showZoomControls: true,
+    },
+    { block: mockBlock({ id: 'arch-modifier', type: 'ui:architecture' }) },
+  ),
+};
+
+export const ClickToActivateMode: Story = {
+  args: mockProps<ArchitectureData>(
+    {
+      title: 'Click to Activate Mode',
+      children: [
+        { id: 'web', label: 'Web App', icon: 'cloud' },
+        { id: 'api', label: 'API Server', icon: 'server' },
+        { id: 'db', label: 'Database', icon: 'database' },
+        { id: 'cache', label: 'Cache', icon: 'cache' },
+      ],
+      edges: [
+        { from: 'web', to: 'api', label: 'HTTPS' },
+        { from: 'api', to: 'db', label: 'queries' },
+        { from: 'api', to: 'cache', label: 'reads' },
+      ],
+      interactionMode: 'click-to-activate',
+      showZoomControls: true,
+    },
+    { block: mockBlock({ id: 'arch-click', type: 'ui:architecture' }) },
+  ),
+};
+
+export const AlwaysInteractive: Story = {
+  args: mockProps<ArchitectureData>(
+    {
+      title: 'Always Interactive Mode',
+      children: [
+        { id: 'web', label: 'Web App', icon: 'cloud' },
+        { id: 'api', label: 'API Server', icon: 'server' },
+        { id: 'db', label: 'Database', icon: 'database' },
+        { id: 'cache', label: 'Cache', icon: 'cache' },
+      ],
+      edges: [
+        { from: 'web', to: 'api', label: 'HTTPS' },
+        { from: 'api', to: 'db', label: 'queries' },
+        { from: 'api', to: 'cache', label: 'reads' },
+      ],
+      interactionMode: 'always',
+      showZoomControls: true,
+    },
+    { block: mockBlock({ id: 'arch-always', type: 'ui:architecture' }) },
+  ),
+};

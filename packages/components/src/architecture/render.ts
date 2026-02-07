@@ -37,7 +37,12 @@ const ARROW_MARKER_ID = 'glyph-arch-arrowhead';
 
 // ─── Render Function ────────────────────────────────────────
 
-export function renderArchitecture(svgElement: SVGSVGElement, layout: ArchitectureLayout): void {
+export function renderArchitecture(
+  svgElement: SVGSVGElement,
+  layout: ArchitectureLayout,
+  rootRef?: React.RefObject<SVGGElement | null>,
+  zoomBehavior?: d3.ZoomBehavior<SVGSVGElement, unknown>,
+): void {
   const svg = d3.select(svgElement);
   svg.selectAll('*').remove();
 
@@ -71,15 +76,15 @@ export function renderArchitecture(svgElement: SVGSVGElement, layout: Architectu
   // Root group for zoom/pan
   const root = svg.append('g').attr('class', 'glyph-architecture-root');
 
-  // Zoom behavior
-  const zoomBehavior = d3
-    .zoom<SVGSVGElement, unknown>()
-    .scaleExtent([0.1, 4])
-    .on('zoom', (event: d3.D3ZoomEvent<SVGSVGElement, unknown>) => {
-      root.attr('transform', event.transform.toString());
-    });
+  // Set the rootRef if provided
+  if (rootRef) {
+    rootRef.current = root.node();
+  }
 
-  svg.call(zoomBehavior);
+  // Apply zoom behavior if provided
+  if (zoomBehavior) {
+    svg.call(zoomBehavior);
+  }
 
   // ─── Zones (back to front, outermost first) ─────────────
 

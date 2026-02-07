@@ -4,6 +4,9 @@ import type { GlyphComponentProps } from '@glyphjs/types';
 import { computeArchitectureLayout } from './layout.js';
 import type { ArchitectureData, ArchitectureLayout as ArchLayoutResult } from './layout.js';
 import { renderArchitecture } from './render.js';
+import { useZoomInteraction } from '../graph/useZoomInteraction.js';
+import { InteractionOverlay } from '../graph/InteractionOverlay.js';
+import { ZoomControls } from '../graph/ZoomControls.js';
 
 export type { ArchitectureData };
 
@@ -12,9 +15,20 @@ export type { ArchitectureData };
 export function Architecture({
   data,
   container,
+  block,
 }: GlyphComponentProps<ArchitectureData>): ReactElement {
   const svgRef = useRef<SVGSVGElement>(null);
+  const rootRef = useRef<SVGGElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const [layout, setLayout] = useState<ArchLayoutResult | null>(null);
+
+  // Zoom interaction hook
+  const { overlayProps, zoomBehavior, zoomIn, zoomOut, resetZoom } = useZoomInteraction({
+    svgRef,
+    rootRef,
+    interactionMode: data.interactionMode ?? 'modifier-key',
+    blockId: block.id,
+  });
 
   // Async ELK layout
   useEffect(() => {
@@ -30,8 +44,8 @@ export function Architecture({
   // D3 rendering after layout
   useEffect(() => {
     if (!svgRef.current || !layout) return;
-    renderArchitecture(svgRef.current, layout);
-  }, [layout]);
+    renderArchitecture(svgRef.current, layout, rootRef, zoomBehavior);
+  }, [layout, zoomBehavior]);
 
   // Count leaf nodes for aria label
   const nodeCount = countLeafNodes(data.children);
@@ -44,7 +58,11 @@ export function Architecture({
   const flatNodes = flattenNodes(data.children);
 
   return (
-    <div className="glyph-architecture-container">
+    <div
+      ref={containerRef}
+      className="glyph-architecture-container"
+      style={{ position: 'relative' }}
+    >
       {!layout && (
         <div
           style={{
@@ -70,6 +88,12 @@ export function Architecture({
           display: layout ? 'block' : 'none',
         }}
       />
+      {/* Interaction overlay */}
+      {layout && overlayProps && <InteractionOverlay {...overlayProps} />}
+      {/* Zoom controls */}
+      {layout && data.showZoomControls !== false && (
+        <ZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} onReset={resetZoom} />
+      )}
       {/* SR-only fallback table */}
       <table className="sr-only" aria-label="Architecture data" style={SR_ONLY_STYLE}>
         <caption>Architecture nodes and connections</caption>

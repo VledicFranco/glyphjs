@@ -22,6 +22,8 @@ export interface ArchitectureData {
   children: ArchitectureNode[];
   edges: ArchitectureEdge[];
   layout?: 'top-down' | 'left-right' | 'bottom-up';
+  interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
+  showZoomControls?: boolean;
 }
 
 // ─── Positioned Types ───────────────────────────────────────
