@@ -123,7 +123,11 @@ export function ForeignObjectText({
 
   return (
     <foreignObject x={x} y={y} width={width} height={height}>
-      <div xmlns="http://www.w3.org/1999/xhtml" style={containerStyle} className={className}>
+      <div
+        {...{ xmlns: 'http://www.w3.org/1999/xhtml' }}
+        style={containerStyle}
+        className={className}
+      >
         <div style={textStyle}>
           {Array.isArray(content) ? <InlineRenderer nodes={content} /> : content}
         </div>
