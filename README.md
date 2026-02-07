@@ -57,6 +57,16 @@ function App() {
 }
 ```
 
+## Features
+
+- **29 Interactive Components** — Rich catalog covering content, data visualization, diagrams, and interactivity
+- **Markdown Support** — Enable inline markdown formatting (bold, italic, links, code) in component text fields
+- **Smart Graph Interactions** — Configurable interaction modes prevent accidental zooming when scrolling
+- **Type-Safe** — Full TypeScript support with Zod schema validation
+- **Themeable** — Built-in light/dark themes with CSS custom properties
+- **SSR Compatible** — Server-side rendering support for Next.js, Astro, and more
+- **Extensible** — Plugin API for custom components and runtime extensions
+
 ## Packages
 
 | Package                                                                    | Description                                                   |
@@ -67,19 +77,20 @@ function App() {
 | [`@glyphjs/ir`](https://www.npmjs.com/package/@glyphjs/ir)                 | IR utilities: validation, diffing, patching, migration        |
 | [`@glyphjs/compiler`](https://www.npmjs.com/package/@glyphjs/compiler)     | End-to-end Markdown-to-IR compiler                            |
 | [`@glyphjs/runtime`](https://www.npmjs.com/package/@glyphjs/runtime)       | React rendering engine with theming, layouts, and plugins     |
-| [`@glyphjs/components`](https://www.npmjs.com/package/@glyphjs/components) | 21 built-in UI components                                     |
+| [`@glyphjs/components`](https://www.npmjs.com/package/@glyphjs/components) | 29 built-in UI components                                     |
 | [`@glyphjs/brand`](https://www.npmjs.com/package/@glyphjs/brand)           | Logo assets and palette constants                             |
 
 ## Components
 
-21 built-in components covering content structuring, data visualization, diagramming, and interactivity:
+29 built-in components covering content structuring, data visualization, diagramming, and interactivity:
 
-| Category      | Components                                                            |
-| ------------- | --------------------------------------------------------------------- |
-| **Content**   | Callout, Tabs, Steps, Accordion, Card, KPI                            |
-| **Data**      | Table, Chart, Comparison, CodeDiff                                    |
-| **Diagrams**  | Graph, Relation, Flowchart, Sequence, MindMap, Architecture, FileTree |
-| **Narrative** | Timeline, Infographic, Equation, Quiz                                 |
+| Category        | Components                                                            |
+| --------------- | --------------------------------------------------------------------- |
+| **Content**     | Callout, Tabs, Steps, Accordion, Card, KPI, Annotate                  |
+| **Data**        | Table, Chart, Comparison, CodeDiff, Matrix                            |
+| **Diagrams**    | Graph, Relation, Flowchart, Sequence, MindMap, Architecture, FileTree |
+| **Narrative**   | Timeline, Infographic, Equation                                       |
+| **Interactive** | Quiz, Poll, Rating, Ranker, Slider, Form, Kanban                      |
 
 Browse the full catalog in the [component docs](https://vledicfranco.github.io/glyphjs/components/).
 
