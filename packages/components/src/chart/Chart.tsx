@@ -218,6 +218,7 @@ export function Chart({
   const svgRef = useRef<SVGSVGElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(DEFAULT_WIDTH);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { type, series, xAxis, yAxis, legend } = data;
   const xKey = xAxis?.key ?? 'x';
@@ -297,6 +298,8 @@ export function Chart({
     if (legend) {
       renderLegend(sel, series, margin.left, margin.top, isCompact ? '10px' : undefined);
     }
+
+    setIsLoading(false);
   }, [
     scales,
     type,
@@ -319,6 +322,7 @@ export function Chart({
   return (
     <div
       ref={containerRef}
+      data-glyph-loading={isLoading || undefined}
       style={{
         position: 'relative',
         width: '100%',

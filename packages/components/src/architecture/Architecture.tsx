@@ -61,6 +61,7 @@ export function Architecture({
     <div
       ref={containerRef}
       className="glyph-architecture-container"
+      data-glyph-loading={!layout || undefined}
       style={{ position: 'relative' }}
     >
       {!layout && (

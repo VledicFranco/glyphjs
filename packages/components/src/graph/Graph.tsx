@@ -1,5 +1,5 @@
 import type { CSSProperties, ReactElement } from 'react';
-import { useEffect, useRef, useMemo } from 'react';
+import { useEffect, useRef, useMemo, useState } from 'react';
 import * as d3 from 'd3';
 import type { GlyphComponentProps, Reference, InlineNode } from '@glyphjs/types';
 import { computeDagreLayout, computeForceLayout } from './layout.js';
@@ -261,6 +261,7 @@ export function Graph({
   const svgRef = useRef<SVGSVGElement>(null);
   const rootRef = useRef<SVGGElement>(null);
   const groupIndex = useRef(new Map<string, number>());
+  const [isLoading, setIsLoading] = useState(true);
 
   const layoutResult = useMemo<LayoutResult>(() => {
     const direction = resolveLayout(data);
@@ -306,13 +307,15 @@ export function Graph({
     if (rootElement) {
       rootRef.current = rootElement;
     }
+
+    setIsLoading(false);
   }, [layoutResult, outgoingRefs, onNavigate, zoomBehavior, handleNodeClick]);
 
   // Build an accessible description
   const ariaLabel = `${data.type} graph with ${data.nodes.length} nodes and ${data.edges.length} edges`;
 
   return (
-    <div className="glyph-graph-container">
+    <div className="glyph-graph-container" data-glyph-loading={isLoading || undefined}>
       <div style={{ position: 'relative' }}>
         <svg
           ref={svgRef}
