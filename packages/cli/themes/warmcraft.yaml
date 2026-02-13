@@ -1,0 +1,143 @@
+# Warmcraft — warm tones, craft aesthetic
+# A bundled GlyphJS theme with earthy oranges, soft creams, and natural accents.
+
+base: light
+
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: 'transparent'
+  --glyph-text: '#222222'
+  --glyph-text-muted: '#595959'
+  --glyph-heading: '#222222'
+  --glyph-link: '#D5641C'
+  --glyph-link-hover: '#B5520F'
+  --glyph-border: '#E0D6CC'
+  --glyph-border-strong: '#C4B5A5'
+  --glyph-surface: '#F5EDE4'
+  --glyph-surface-raised: '#FDFAF6'
+
+  # ── Accent ─────────────────────────────────────────────────
+  --glyph-accent: '#F56400'
+  --glyph-accent-hover: '#D5641C'
+  --glyph-accent-subtle: '#FFF1E6'
+  --glyph-accent-muted: '#F5C9A0'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#F5EDE4'
+  --glyph-code-text: '#333333'
+
+  # ── Blockquote ─────────────────────────────────────────────
+  --glyph-blockquote-border: '#F56400'
+  --glyph-blockquote-bg: '#FFF1E6'
+
+  # ── Callouts ───────────────────────────────────────────────
+  --glyph-callout-info-border: '#2D72D2'
+  --glyph-callout-info-bg: '#E8F1FC'
+  --glyph-callout-warning-border: '#F56400'
+  --glyph-callout-warning-bg: '#FFF1E6'
+  --glyph-callout-error-border: '#D13B3B'
+  --glyph-callout-error-bg: '#FDEAEA'
+  --glyph-callout-tip-border: '#1D8348'
+  --glyph-callout-tip-bg: '#E6F5EC'
+
+  # ── Table ──────────────────────────────────────────────────
+  --glyph-table-border: '#E0D6CC'
+  --glyph-table-header-bg: '#F5EDE4'
+  --glyph-table-header-color: '#222222'
+  --glyph-table-row-alt-bg: '#FAF5EF'
+  --glyph-table-cell-color: '#333333'
+  --glyph-table-footer-bg: '#F5EDE4'
+  --glyph-table-footer-color: '#222222'
+
+  # ── Grid / Tooltip ─────────────────────────────────────────
+  --glyph-grid: '#E0D6CC'
+  --glyph-tooltip-bg: 'rgba(34, 34, 34, 0.92)'
+  --glyph-tooltip-text: '#FDFAF6'
+
+  # ── Timeline ───────────────────────────────────────────────
+  --glyph-timeline-line: '#E0D6CC'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(60, 40, 20, 0.08)'
+  --glyph-shadow-md: '0 4px 12px rgba(60, 40, 20, 0.12)'
+  --glyph-shadow-lg: '0 8px 30px rgba(60, 40, 20, 0.16)'
+  --glyph-shadow-glow: 'none'
+  --glyph-text-shadow: 'none'
+  --glyph-backdrop: 'none'
+  --glyph-gradient-accent: 'linear-gradient(135deg, #F56400, #D5641C)'
+  --glyph-focus-ring: '0 0 0 2px #F56400'
+
+  # ── SVG / Data Visualization ───────────────────────────────
+  --glyph-edge-color: '#C4B5A5'
+  --glyph-node-label-color: '#fff'
+  --glyph-icon-stroke: '#fff'
+
+  # ── KPI ────────────────────────────────────────────────────
+  --glyph-kpi-positive: '#1D8348'
+  --glyph-kpi-negative: '#D13B3B'
+  --glyph-kpi-neutral: '#595959'
+
+  # ── Comparison ─────────────────────────────────────────────
+  --glyph-comparison-yes: '#1D8348'
+  --glyph-comparison-no: '#D13B3B'
+  --glyph-comparison-partial: '#D5641C'
+
+  # ── CodeDiff ───────────────────────────────────────────────
+  --glyph-codediff-add-bg: 'rgba(29, 131, 72, 0.1)'
+  --glyph-codediff-add-color: '#166534'
+  --glyph-codediff-del-bg: 'rgba(209, 59, 59, 0.1)'
+  --glyph-codediff-del-color: '#991B1B'
+  --glyph-codediff-gutter-bg: '#F5EDE4'
+
+  # ── Infographic ────────────────────────────────────────────
+  --glyph-infographic-track: '#E0D6CC'
+  --glyph-infographic-color-1: '#F56400'
+  --glyph-infographic-color-2: '#1D8348'
+  --glyph-infographic-color-3: '#D5641C'
+  --glyph-infographic-color-4: '#D13B3B'
+  --glyph-infographic-section-divider: '#E0D6CC'
+  --glyph-infographic-star: '#F56400'
+  --glyph-infographic-accent: '#F56400'
+  --glyph-infographic-value-color: '#D5641C'
+  --glyph-infographic-heading-color: '#222222'
+  --glyph-infographic-label-color: '#595959'
+  --glyph-infographic-desc-color: '#7A7A7A'
+  --glyph-infographic-section-bg: 'rgba(245, 237, 228, 0.5)'
+
+  # ── Poll ───────────────────────────────────────────────────
+  --glyph-poll-bar-bg: '#F5EDE4'
+  --glyph-poll-bar-fill: '#F56400'
+
+  # ── Rating ─────────────────────────────────────────────────
+  --glyph-rating-star-fill: '#F56400'
+  --glyph-rating-star-empty: '#E0D6CC'
+  --glyph-rating-hover: '#D5641C'
+
+  # ── Slider ─────────────────────────────────────────────────
+  --glyph-slider-track: '#E0D6CC'
+  --glyph-slider-fill: '#F56400'
+  --glyph-slider-thumb: '#F56400'
+
+  # ── Kanban ─────────────────────────────────────────────────
+  --glyph-kanban-column-bg: '#F5EDE4'
+  --glyph-kanban-card-bg: '#FDFAF6'
+  --glyph-kanban-card-border: '#E0D6CC'
+  --glyph-kanban-drag-shadow: '0 4px 12px rgba(60, 40, 20, 0.15)'
+  --glyph-kanban-priority-high: '#D13B3B'
+  --glyph-kanban-priority-medium: '#F56400'
+  --glyph-kanban-priority-low: '#1D8348'
+
+  # ── Annotate ───────────────────────────────────────────────
+  --glyph-annotate-highlight-opacity: '0.3'
+  --glyph-annotate-label-bg: '#FDFAF6'
+  --glyph-annotate-sidebar-bg: '#F5EDE4'
+
+  # ── Form ───────────────────────────────────────────────────
+  --glyph-form-error: '#D13B3B'
+
+  # ── Interaction ────────────────────────────────────────────
+  --glyph-interaction-overlay-bg: 'rgba(253, 250, 246, 0.85)'
+  --glyph-interaction-overlay-text: '#222222'
+  --glyph-interaction-tooltip-bg: 'rgba(34, 34, 34, 0.92)'
+  --glyph-interaction-tooltip-text: '#FDFAF6'
+  --glyph-interaction-active-border: '#F56400'

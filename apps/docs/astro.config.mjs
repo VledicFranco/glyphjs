@@ -29,6 +29,7 @@ export default defineConfig({
         ]},
         { label: 'Guides', items: [
           { label: 'Custom Components', slug: 'guides/custom-components' },
+          { label: 'CLI Tool', slug: 'guides/cli' },
         ]},
         { label: 'Components', items: [
           { label: 'Overview', slug: 'components' },

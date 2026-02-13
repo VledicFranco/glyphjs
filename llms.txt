@@ -1,0 +1,1703 @@
+# GlyphJS — LLM Reference
+
+> GlyphJS is a Markdown-to-interactive-UI rendering engine. Authors write standard
+> Markdown with embedded `ui:` fenced code blocks containing YAML data, and the
+> pipeline compiles it to an intermediate representation (IR) that React renders as
+> themed, interactive components.
+
+Pipeline: Markdown → Parser (remark) → AST → Compiler → IR (JSON) → Runtime (React) → UI
+
+This document is a self-contained reference for generating valid GlyphJS Markdown.
+
+---
+
+## 1. Authoring Syntax
+
+GlyphJS Markdown is a superset of CommonMark. All standard Markdown features work:
+headings, paragraphs, bold, italic, strikethrough, links, images, lists, blockquotes,
+code blocks, thematic breaks, and tables.
+
+### YAML Frontmatter
+
+Every document can begin with a YAML frontmatter block:
+
+```markdown
+---
+glyph-id: my-document
+title: Document Title
+description: A short description.
+authors:
+  - Alice
+  - Bob
+tags:
+  - tutorial
+  - architecture
+layout:
+  mode: document
+  spacing: relaxed
+---
+```
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `glyph-id` | string | Stable document identifier. Derived from file path if omitted. |
+| `title` | string | Document title. Inferred from first h1 if omitted. |
+| `description` | string | Short description. Inferred from first paragraph if omitted. |
+| `authors` | string[] | List of author names. |
+| `tags` | string[] | Tags for categorization. |
+| `layout` | object | Layout configuration with `mode` and `spacing`. |
+
+### UI Component Syntax
+
+Interactive components use fenced code blocks with a `ui:` language prefix:
+
+````markdown
+```ui:component-name
+key: value
+another_key:
+  - item1
+  - item2
+```
+````
+
+The body is parsed as YAML. The component type is the string after `ui:`.
+
+### Reserved YAML Keys
+
+Three top-level keys have special meaning and are stripped before schema validation:
+
+| Key | Purpose |
+|-----|---------|
+| `glyph-id` | Assigns a stable, user-defined block ID for cross-block references. |
+| `refs` | Declares outgoing references to other blocks. |
+| `interactive` | When `true`, enables interaction event emission for the block. |
+
+All other keys are the component's data payload.
+
+### Cross-Block References
+
+Blocks can reference other blocks via `glyph-id` and `refs`:
+
+````markdown
+```ui:chart
+glyph-id: revenue-chart
+type: bar
+series:
+  - name: Revenue
+    data:
+      - { month: Jan, value: 100 }
+xAxis:
+  key: month
+yAxis:
+  key: value
+```
+
+```ui:callout
+refs:
+  - revenue-chart
+type: info
+content: See the chart above for details.
+```
+````
+
+---
+
+## 2. Component Reference
+
+GlyphJS ships 29 built-in components. Each section below shows the `ui:` type name,
+all fields with types/defaults/constraints, and a minimal YAML example.
+
+Most components accept a `markdown` boolean field (default: `false`). When `true`,
+string content fields are rendered as Markdown. The two exceptions that lack this
+field are `filetree` and `mindmap`.
+
+---
+
+### ui:accordion
+
+Collapsible accordion with expandable sections.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Heading for the accordion group |
+| `sections` | array | yes (min 1) | | Section objects |
+| `sections[].title` | string | yes | | Section heading |
+| `sections[].content` | string | yes | | Section body text |
+| `defaultOpen` | number[] | no | | Indices of sections open by default |
+| `multiple` | boolean | no | `true` | Allow multiple sections open simultaneously |
+| `markdown` | boolean | no | `false` | Render content as Markdown |
+
+```yaml
+sections:
+  - title: Getting Started
+    content: Follow these steps to begin.
+  - title: Advanced Usage
+    content: For power users.
+defaultOpen: [0]
+```
+
+---
+
+### ui:annotate
+
+Text annotation with highlighted spans, colored labels, and optional notes.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Heading |
+| `labels` | array | yes (min 1) | | Label definitions |
+| `labels[].name` | string | yes | | Label identifier |
+| `labels[].color` | string | yes | | CSS color for highlight |
+| `text` | string | yes | | Source text to annotate |
+| `annotations` | array | no | `[]` | Annotation spans |
+| `annotations[].start` | integer | yes | | Character start index (min 0) |
+| `annotations[].end` | integer | yes | | Character end index (min 0) |
+| `annotations[].label` | string | yes | | Must match a label name |
+| `annotations[].note` | string | no | | Tooltip or sidebar note |
+| `markdown` | boolean | no | `false` | Render content as Markdown |
+
+```yaml
+labels:
+  - name: keyword
+    color: "#ff0"
+text: The quick brown fox jumps over the lazy dog.
+annotations:
+  - start: 4
+    end: 9
+    label: keyword
+    note: An adjective describing speed.
+```
+
+---
+
+### ui:architecture
+
+Interactive architecture diagram with nested zones, directional edges, and pan/zoom.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Diagram title |
+| `children` | array | yes | | Top-level nodes/zones (recursive) |
+| `children[].id` | string | yes | | Unique node identifier |
+| `children[].label` | string | yes | | Display label |
+| `children[].icon` | string | no | | One of: `server`, `database`, `queue`, `cache`, `loadbalancer`, `function`, `storage`, `gateway`, `user`, `cloud`, `container`, `network` |
+| `children[].type` | `"zone"` | no | | Marks node as a grouping zone |
+| `children[].children` | array | no | | Nested child nodes (recursive) |
+| `children[].style` | object | no | | CSS style overrides |
+| `edges` | array | yes | | Connections between nodes |
+| `edges[].from` | string | yes | | Source node ID |
+| `edges[].to` | string | yes | | Target node ID |
+| `edges[].label` | string | no | | Edge label |
+| `edges[].type` | string | no | | One of: `sync`, `async`, `data` |
+| `edges[].style` | object | no | | CSS style overrides |
+| `layout` | string | no | | One of: `top-down`, `left-right`, `bottom-up` |
+| `interactionMode` | string | no | `modifier-key` | One of: `modifier-key`, `click-to-activate`, `always` |
+| `showZoomControls` | boolean | no | `true` | Show zoom controls |
+
+```yaml
+title: System Architecture
+children:
+  - id: frontend
+    label: Frontend
+    type: zone
+    children:
+      - id: web
+        label: Web App
+        icon: container
+  - id: api
+    label: API Gateway
+    icon: gateway
+  - id: db
+    label: PostgreSQL
+    icon: database
+edges:
+  - from: web
+    to: api
+    label: REST
+    type: sync
+  - from: api
+    to: db
+    label: queries
+    type: data
+layout: top-down
+```
+
+---
+
+### ui:callout
+
+Styled callout/admonition box for tips, warnings, errors, and info.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `type` | string | yes | | One of: `info`, `warning`, `error`, `tip` |
+| `title` | string | no | | Callout heading |
+| `content` | string | yes | | Body text |
+| `markdown` | boolean | no | `false` | Render content as Markdown |
+
+```yaml
+type: tip
+title: Pro tip
+content: |
+  Use `glyph-id` to create stable cross-block references.
+```
+
+---
+
+### ui:card
+
+Card grid layout with optional images, icons, and action links.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Group heading |
+| `cards` | array | yes (1-12) | | Card objects |
+| `cards[].title` | string | yes | | Card heading |
+| `cards[].subtitle` | string | no | | Subtitle |
+| `cards[].image` | string | no | | Image URL |
+| `cards[].icon` | string | no | | Icon identifier |
+| `cards[].body` | string | no | | Card body text |
+| `cards[].actions` | array | no (max 3) | | Action links |
+| `cards[].actions[].label` | string | yes | | Link text |
+| `cards[].actions[].url` | string | yes | | Link target |
+| `variant` | string | no | `default` | One of: `default`, `outlined`, `elevated` |
+| `columns` | number | no | | Grid columns (1-4) |
+| `markdown` | boolean | no | `false` | Render content as Markdown |
+
+```yaml
+cards:
+  - title: Getting Started
+    body: Learn the basics of GlyphJS.
+    actions:
+      - label: Read Docs
+        url: /docs
+  - title: API Reference
+    body: Full API documentation.
+columns: 2
+```
+
+---
+
+### ui:chart
+
+Data visualization with line, bar, area, and OHLC chart types.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `type` | string | yes | | One of: `line`, `bar`, `area`, `ohlc` |
+| `series` | array | yes | | Data series |
+| `series[].name` | string | yes | | Series label |
+| `series[].data` | array | yes | | Data points as key-value objects |
+| `xAxis` | object | no | | X-axis config |
+| `xAxis.key` | string | yes | | Data key for x-axis |
+| `xAxis.label` | string | no | | Axis label |
+| `yAxis` | object | no | | Y-axis config |
+| `yAxis.key` | string | yes | | Data key for y-axis |
+| `yAxis.label` | string | no | | Axis label |
+| `legend` | boolean | no | | Show/hide legend |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+type: line
+series:
+  - name: Revenue
+    data:
+      - { month: Jan, value: 4200 }
+      - { month: Feb, value: 5100 }
+      - { month: Mar, value: 4800 }
+xAxis:
+  key: month
+  label: Month
+yAxis:
+  key: value
+  label: USD
+legend: true
+```
+
+---
+
+### ui:codediff
+
+Side-by-side code diff viewer with syntax highlighting.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `language` | string | no | | Programming language for highlighting |
+| `before` | string | yes | | Original code |
+| `after` | string | yes | | Modified code |
+| `beforeLabel` | string | no | | Label for "before" pane |
+| `afterLabel` | string | no | | Label for "after" pane |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+language: javascript
+beforeLabel: Before
+afterLabel: After
+before: |
+  function greet(name) {
+    return "Hello " + name;
+  }
+after: |
+  function greet(name: string): string {
+    return `Hello ${name}`;
+  }
+```
+
+---
+
+### ui:comparison
+
+Feature comparison table for evaluating multiple options.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Table title |
+| `options` | array | yes (2-6) | | Options to compare |
+| `options[].name` | string | yes | | Option/product name |
+| `options[].description` | string | no | | Option description |
+| `features` | array | yes (min 1) | | Feature rows |
+| `features[].name` | string | yes | | Feature name |
+| `features[].values` | string[] | yes | | One value per option (length must equal options count) |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: Plan Comparison
+options:
+  - name: Free
+  - name: Pro
+  - name: Enterprise
+features:
+  - name: Storage
+    values: ["5 GB", "100 GB", "Unlimited"]
+  - name: Support
+    values: ["Community", "Email", "24/7 Phone"]
+  - name: SSO
+    values: ["No", "No", "Yes"]
+```
+
+---
+
+### ui:equation
+
+Mathematical equation display with optional step-by-step derivation. Renders LaTeX/KaTeX.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `expression` | string | no* | | Single LaTeX expression |
+| `label` | string | no | | Equation label/number |
+| `steps` | array | no* | | Step-by-step derivation |
+| `steps[].expression` | string | yes | | LaTeX for this step |
+| `steps[].annotation` | string | no | | Explanation of step |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+*At least one of `expression` or `steps` (with length > 0) must be provided.
+
+```yaml
+expression: E = mc^2
+label: Mass-energy equivalence
+```
+
+```yaml
+steps:
+  - expression: x^2 + 2x + 1 = 0
+    annotation: Start with the equation
+  - expression: (x + 1)^2 = 0
+    annotation: Factor the perfect square
+  - expression: x = -1
+    annotation: Solve for x
+```
+
+---
+
+### ui:filetree
+
+Interactive file/directory tree viewer with expandable nodes.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `root` | string | no | | Root directory label |
+| `tree` | array | yes (min 1) | | Recursive tree structure |
+| `tree[].name` | string | yes | | File or directory name |
+| `tree[].annotation` | string | no | | Note displayed next to item |
+| `tree[].children` | array | no | | Subdirectory contents (recursive) |
+| `defaultExpanded` | boolean | no | `true` | Directories start expanded |
+
+Note: This component does NOT have a `markdown` field.
+
+```yaml
+root: my-project
+tree:
+  - name: src
+    children:
+      - name: index.ts
+        annotation: Entry point
+      - name: utils.ts
+  - name: package.json
+  - name: README.md
+defaultExpanded: true
+```
+
+---
+
+### ui:flowchart
+
+Directed flowchart with start, end, process, and decision nodes.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Flowchart title |
+| `nodes` | array | yes (min 2) | | Node definitions |
+| `nodes[].id` | string | yes | | Unique node identifier |
+| `nodes[].type` | string | no | `process` | One of: `start`, `end`, `process`, `decision` |
+| `nodes[].label` | string | yes | | Display text |
+| `edges` | array | yes (min 1) | | Edge definitions |
+| `edges[].from` | string | yes | | Source node ID |
+| `edges[].to` | string | yes | | Target node ID |
+| `edges[].label` | string | no | | Edge label |
+| `direction` | string | no | `top-down` | One of: `top-down`, `left-right` |
+| `interactionMode` | string | no | `modifier-key` | One of: `modifier-key`, `click-to-activate`, `always` |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: Release Process
+nodes:
+  - id: start
+    type: start
+    label: Begin
+  - id: test
+    label: Run Tests
+  - id: pass
+    type: decision
+    label: Tests Pass?
+  - id: deploy
+    label: Deploy
+  - id: fix
+    label: Fix Bugs
+  - id: done
+    type: end
+    label: Done
+edges:
+  - from: start
+    to: test
+  - from: test
+    to: pass
+  - from: pass
+    to: deploy
+    label: "Yes"
+  - from: pass
+    to: fix
+    label: "No"
+  - from: fix
+    to: test
+  - from: deploy
+    to: done
+```
+
+---
+
+### ui:form
+
+Interactive form with text, textarea, select, checkbox, and range field types.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Form title |
+| `description` | string | no | | Form description |
+| `submitLabel` | string | no | `Submit` | Submit button text |
+| `fields` | array | yes (min 1) | | Form fields (discriminated union on `type`) |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+**Field type: "text"**
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `type` | `"text"` | yes | |
+| `id` | string | yes | |
+| `label` | string | yes | |
+| `required` | boolean | no | `false` |
+| `default` | string | no | |
+| `placeholder` | string | no | |
+
+**Field type: "textarea"**
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `type` | `"textarea"` | yes | |
+| `id` | string | yes | |
+| `label` | string | yes | |
+| `required` | boolean | no | `false` |
+| `default` | string | no | |
+| `placeholder` | string | no | |
+| `rows` | integer | no | `4` (1-20) |
+
+**Field type: "select"**
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `type` | `"select"` | yes | |
+| `id` | string | yes | |
+| `label` | string | yes | |
+| `required` | boolean | no | `false` |
+| `options` | string[] | yes (min 1) | |
+| `default` | string | no | |
+
+**Field type: "checkbox"**
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `type` | `"checkbox"` | yes | |
+| `id` | string | yes | |
+| `label` | string | yes | |
+| `default` | boolean | no | `false` |
+
+**Field type: "range"**
+
+| Field | Type | Required | Default |
+|-------|------|----------|---------|
+| `type` | `"range"` | yes | |
+| `id` | string | yes | |
+| `label` | string | yes | |
+| `min` | number | no | `0` |
+| `max` | number | no | `100` |
+| `step` | number | no | `1` (must be positive) |
+| `default` | number | no | |
+| `unit` | string | no | |
+
+```yaml
+title: Contact Us
+fields:
+  - type: text
+    id: name
+    label: Name
+    required: true
+    placeholder: Your full name
+  - type: select
+    id: topic
+    label: Topic
+    options: [Bug Report, Feature Request, Question]
+  - type: textarea
+    id: message
+    label: Message
+    required: true
+    rows: 6
+  - type: checkbox
+    id: newsletter
+    label: Subscribe to newsletter
+submitLabel: Send Message
+```
+
+---
+
+### ui:graph
+
+General-purpose graph/network visualization: DAG, flowchart, mindmap, force-directed.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `type` | string | yes | | One of: `dag`, `flowchart`, `mindmap`, `force` |
+| `nodes` | array | yes | | Node definitions |
+| `nodes[].id` | string | yes | | Unique node identifier |
+| `nodes[].label` | string | yes | | Display text |
+| `nodes[].type` | string | no | | Arbitrary node type (for styling) |
+| `nodes[].style` | object | no | | CSS style overrides |
+| `nodes[].group` | string | no | | Grouping key for clustering |
+| `edges` | array | yes | | Edge definitions |
+| `edges[].from` | string | yes | | Source node ID |
+| `edges[].to` | string | yes | | Target node ID |
+| `edges[].label` | string | no | | Edge label |
+| `edges[].type` | string | no | | Arbitrary edge type |
+| `edges[].style` | object | no | | CSS style overrides |
+| `layout` | string | no | | One of: `top-down`, `left-right`, `bottom-up`, `radial`, `force` |
+| `interactionMode` | string | no | `modifier-key` | One of: `modifier-key`, `click-to-activate`, `always` |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+type: dag
+nodes:
+  - id: api
+    label: API Gateway
+    type: service
+  - id: auth
+    label: Auth Service
+    type: service
+  - id: db
+    label: PostgreSQL
+    type: database
+edges:
+  - from: api
+    to: auth
+    label: authenticates
+  - from: auth
+    to: db
+    label: queries
+layout: top-down
+```
+
+---
+
+### ui:infographic
+
+Multi-section infographic with stats, facts, progress bars, pie/donut charts, text, dividers, and ratings.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Infographic title |
+| `sections` | array | yes (1-8) | | Section objects |
+| `sections[].heading` | string | no | | Section heading |
+| `sections[].items` | array | yes (min 1) | | Items (discriminated union on `type`) |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+**Item type: "stat"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"stat"` | yes |
+| `label` | string | yes |
+| `value` | string | yes |
+| `description` | string | no |
+
+**Item type: "fact"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"fact"` | yes |
+| `icon` | string | no |
+| `text` | string | yes |
+
+**Item type: "progress"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"progress"` | yes |
+| `label` | string | yes |
+| `value` | number | yes (0-100) |
+| `color` | string | no |
+
+**Item type: "text"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"text"` | yes |
+| `content` | string | yes |
+
+**Item type: "pie"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"pie"` | yes |
+| `label` | string | no |
+| `slices` | array | yes (1-12) |
+| `slices[].label` | string | yes |
+| `slices[].value` | number | yes (positive) |
+| `slices[].color` | string | no |
+| `donut` | boolean | no |
+| `size` | number | no (80-300) |
+
+**Item type: "divider"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"divider"` | yes |
+| `style` | string | no (one of: `solid`, `dashed`, `dotted`) |
+
+**Item type: "rating"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"rating"` | yes |
+| `label` | string | yes |
+| `value` | number | yes (0-5) |
+| `max` | number | no (1-5) |
+| `description` | string | no |
+
+```yaml
+title: Q4 Results
+sections:
+  - heading: Key Metrics
+    items:
+      - type: stat
+        label: Revenue
+        value: "$1.2M"
+        description: "Up 15% from Q3"
+      - type: stat
+        label: Users
+        value: "45,000"
+      - type: progress
+        label: Target Achievement
+        value: 85
+  - heading: Revenue Breakdown
+    items:
+      - type: pie
+        slices:
+          - label: Product
+            value: 60
+          - label: Services
+            value: 30
+          - label: Consulting
+            value: 10
+        donut: true
+```
+
+---
+
+### ui:kanban
+
+Kanban board with draggable cards, priorities, tags, and WIP limits.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Board title |
+| `columns` | array | yes (min 1) | | Column definitions |
+| `columns[].id` | string | yes | | Unique column identifier |
+| `columns[].title` | string | yes | | Column heading |
+| `columns[].cards` | array | no | `[]` | Cards in this column |
+| `columns[].cards[].id` | string | yes | | Unique card identifier |
+| `columns[].cards[].title` | string | yes | | Card title |
+| `columns[].cards[].description` | string | no | | Card description |
+| `columns[].cards[].priority` | string | no | | One of: `high`, `medium`, `low` |
+| `columns[].cards[].tags` | string[] | no | | Card tags |
+| `columns[].limit` | integer | no | | WIP limit (positive) |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: Sprint Board
+columns:
+  - id: backlog
+    title: Backlog
+    cards:
+      - id: task1
+        title: Design login page
+        priority: high
+        tags: [design, frontend]
+      - id: task2
+        title: Write API tests
+        priority: medium
+  - id: doing
+    title: In Progress
+    limit: 3
+    cards:
+      - id: task3
+        title: Implement auth
+        priority: high
+  - id: done
+    title: Done
+```
+
+---
+
+### ui:kpi
+
+Key Performance Indicator dashboard with metrics, deltas, trends, and sentiment.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Dashboard title |
+| `metrics` | array | yes (1-8) | | Metric objects |
+| `metrics[].label` | string | yes | | Metric name |
+| `metrics[].value` | string | yes | | Display value |
+| `metrics[].delta` | string | no | | Change indicator (e.g., "+5%") |
+| `metrics[].trend` | string | no | | One of: `up`, `down`, `flat` |
+| `metrics[].sentiment` | string | no | | One of: `positive`, `negative`, `neutral` |
+| `metrics[].unit` | string | no | | Unit suffix |
+| `columns` | number | no | | Grid columns (1-4) |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: Monthly KPIs
+metrics:
+  - label: Revenue
+    value: "$1.2M"
+    delta: "+12%"
+    trend: up
+    sentiment: positive
+  - label: Churn Rate
+    value: "3.2%"
+    delta: "-0.5%"
+    trend: down
+    sentiment: positive
+  - label: NPS
+    value: "72"
+    trend: flat
+    sentiment: neutral
+columns: 3
+```
+
+---
+
+### ui:matrix
+
+Interactive scoring/evaluation matrix with weighted columns and aggregate totals.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Matrix title |
+| `scale` | integer | no | `5` (2-10) | Maximum score per cell |
+| `showTotals` | boolean | no | `true` | Show weighted total column |
+| `columns` | array | yes (min 1) | | Column definitions |
+| `columns[].id` | string | yes | | Unique column identifier |
+| `columns[].label` | string | yes | | Column heading |
+| `columns[].weight` | number | no | `1` (positive) | Scoring weight |
+| `rows` | array | yes (min 1) | | Row definitions |
+| `rows[].id` | string | yes | | Unique row identifier |
+| `rows[].label` | string | yes | | Row label |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: Feature Prioritization
+scale: 5
+columns:
+  - id: impact
+    label: Impact
+    weight: 2
+  - id: effort
+    label: Effort
+    weight: 1
+  - id: risk
+    label: Risk
+    weight: 1.5
+rows:
+  - id: dark-mode
+    label: Dark Mode
+  - id: export
+    label: PDF Export
+  - id: collab
+    label: Real-time Collaboration
+```
+
+---
+
+### ui:mindmap
+
+Radial or tree-layout mind map with a central root and recursive branches.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `root` | string | yes | | Central/root label |
+| `children` | array | yes (min 1) | | First-level branches |
+| `children[].label` | string | yes | | Node label |
+| `children[].children` | array | no | | Sub-branches (recursive) |
+| `layout` | string | no | `radial` | One of: `radial`, `tree` |
+
+Note: This component does NOT have a `markdown` field.
+
+```yaml
+root: GlyphJS
+children:
+  - label: Compiler
+    children:
+      - label: Parser
+      - label: Validator
+      - label: IR Generator
+  - label: Runtime
+    children:
+      - label: React Renderer
+      - label: Theme Provider
+  - label: Components
+    children:
+      - label: Charts
+      - label: Diagrams
+      - label: Interactive
+layout: radial
+```
+
+---
+
+### ui:poll
+
+Interactive poll/voting with multiple-choice options and results display.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Poll title |
+| `question` | string | yes | | The poll question |
+| `options` | string[] | yes (2-10) | | Answer choices |
+| `multiple` | boolean | no | `false` | Allow selecting multiple options |
+| `showResults` | boolean | no | `true` | Show results after voting |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+question: What is your preferred JavaScript runtime?
+options:
+  - Node.js
+  - Deno
+  - Bun
+  - Browser only
+```
+
+---
+
+### ui:quiz
+
+Interactive quiz with multiple-choice, true/false, and multi-select questions.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Quiz title |
+| `questions` | array | yes (min 1) | | Questions (discriminated union on `type`) |
+| `showScore` | boolean | no | `true` | Show score at the end |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+**Question type: "multiple-choice"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"multiple-choice"` | yes |
+| `question` | string | yes |
+| `options` | string[] | yes (2-6) |
+| `answer` | number | yes (0-based index) |
+| `explanation` | string | no |
+
+**Question type: "true-false"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"true-false"` | yes |
+| `question` | string | yes |
+| `answer` | boolean | yes |
+| `explanation` | string | no |
+
+**Question type: "multi-select"**
+
+| Field | Type | Required |
+|-------|------|----------|
+| `type` | `"multi-select"` | yes |
+| `question` | string | yes |
+| `options` | string[] | yes (2-8) |
+| `answer` | number[] | yes (0-based indices) |
+| `explanation` | string | no |
+
+```yaml
+title: TypeScript Quiz
+questions:
+  - type: multiple-choice
+    question: What does the `readonly` modifier do?
+    options:
+      - Prevents reassignment of the variable
+      - Makes the property immutable at the type level
+      - Freezes the object at runtime
+      - Converts to a constant
+    answer: 1
+    explanation: readonly is a compile-time check only.
+  - type: true-false
+    question: TypeScript types exist at runtime.
+    answer: false
+    explanation: Types are erased during compilation.
+  - type: multi-select
+    question: Which are valid TypeScript utility types?
+    options: [Partial, Complete, Pick, Omit, Select]
+    answer: [0, 2, 3]
+```
+
+---
+
+### ui:ranker
+
+Drag-and-drop ranking/ordering of items.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Ranker title |
+| `items` | array | yes (min 2) | | Items to rank |
+| `items[].id` | string | yes | | Unique item identifier |
+| `items[].label` | string | yes | | Display text |
+| `items[].description` | string | no | | Item description |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: Rank your priorities
+items:
+  - id: perf
+    label: Performance
+    description: Fast load times and responsiveness
+  - id: ux
+    label: User Experience
+    description: Intuitive and delightful interface
+  - id: security
+    label: Security
+    description: Data protection and privacy
+  - id: docs
+    label: Documentation
+    description: Clear and comprehensive guides
+```
+
+---
+
+### ui:rating
+
+Interactive rating component with star or numeric mode.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Rating title |
+| `scale` | integer | no | `5` (2-10) | Maximum rating value |
+| `mode` | string | no | `star` | One of: `star`, `number` |
+| `labels` | object | no | | Scale labels |
+| `labels.low` | string | yes | | Label for lowest rating |
+| `labels.high` | string | yes | | Label for highest rating |
+| `items` | array | yes (min 1) | | Items to rate |
+| `items[].label` | string | yes | | Item label |
+| `items[].description` | string | no | | Item description |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: Course Feedback
+scale: 5
+mode: star
+labels:
+  low: Poor
+  high: Excellent
+items:
+  - label: Content Quality
+  - label: Instructor
+  - label: Pace
+  - label: Materials
+```
+
+---
+
+### ui:relation
+
+Entity-Relationship diagram with entities, attributes, and cardinality.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `entities` | array | yes | | Entity definitions |
+| `entities[].id` | string | yes | | Unique entity identifier |
+| `entities[].label` | string | yes | | Entity display name |
+| `entities[].attributes` | array | no | | Attribute list |
+| `entities[].attributes[].name` | string | yes | | Attribute name |
+| `entities[].attributes[].type` | string | yes | | Data type |
+| `entities[].attributes[].primaryKey` | boolean | no | | Mark as primary key |
+| `relationships` | array | yes | | Relationship definitions |
+| `relationships[].from` | string | yes | | Source entity ID |
+| `relationships[].to` | string | yes | | Target entity ID |
+| `relationships[].label` | string | no | | Relationship label |
+| `relationships[].cardinality` | string | yes | | One of: `1:1`, `1:N`, `N:1`, `N:M` |
+| `layout` | string | no | | One of: `top-down`, `left-right` |
+| `interactionMode` | string | no | `modifier-key` | One of: `modifier-key`, `click-to-activate`, `always` |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+entities:
+  - id: user
+    label: User
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: email
+        type: string
+      - name: name
+        type: string
+  - id: order
+    label: Order
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: total
+        type: decimal
+      - name: created_at
+        type: timestamp
+  - id: product
+    label: Product
+    attributes:
+      - name: id
+        type: uuid
+        primaryKey: true
+      - name: name
+        type: string
+      - name: price
+        type: decimal
+relationships:
+  - from: user
+    to: order
+    label: places
+    cardinality: "1:N"
+  - from: order
+    to: product
+    label: contains
+    cardinality: "N:M"
+layout: left-right
+```
+
+---
+
+### ui:sequence
+
+Sequence diagram showing message exchanges between actors.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Diagram title |
+| `actors` | array | yes (min 2) | | Actor definitions |
+| `actors[].id` | string | yes | | Unique actor identifier |
+| `actors[].label` | string | yes | | Display name |
+| `messages` | array | yes (min 1) | | Message sequence |
+| `messages[].from` | string | yes | | Sender actor ID |
+| `messages[].to` | string | yes | | Receiver actor ID |
+| `messages[].label` | string | yes | | Message text |
+| `messages[].type` | string | no | `message` | One of: `message`, `reply`, `self` |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: OAuth2 Flow
+actors:
+  - id: user
+    label: User
+  - id: app
+    label: App
+  - id: auth
+    label: Auth Server
+  - id: api
+    label: Resource API
+messages:
+  - from: user
+    to: app
+    label: Click Login
+  - from: app
+    to: auth
+    label: Redirect to /authorize
+  - from: auth
+    to: user
+    label: Show consent screen
+  - from: user
+    to: auth
+    label: Grant access
+  - from: auth
+    to: app
+    label: Authorization code
+  - from: app
+    to: auth
+    label: Exchange code for token
+    type: message
+  - from: auth
+    to: app
+    label: Access token
+    type: reply
+  - from: app
+    to: api
+    label: GET /resource (Bearer token)
+  - from: api
+    to: app
+    label: Protected data
+    type: reply
+```
+
+---
+
+### ui:slider
+
+Interactive parameter slider(s) for adjusting numeric values.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `title` | string | no | | Slider group title |
+| `layout` | string | no | `vertical` | One of: `vertical`, `horizontal` |
+| `parameters` | array | yes (min 1) | | Slider definitions |
+| `parameters[].id` | string | yes | | Unique parameter identifier |
+| `parameters[].label` | string | yes | | Display label |
+| `parameters[].min` | number | no | `0` | Minimum value |
+| `parameters[].max` | number | no | `100` | Maximum value |
+| `parameters[].step` | number | no | `1` (positive) | Step increment |
+| `parameters[].value` | number | no | | Initial value |
+| `parameters[].unit` | string | no | | Unit suffix (e.g., "%", "px") |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+title: Image Adjustments
+layout: vertical
+parameters:
+  - id: brightness
+    label: Brightness
+    min: 0
+    max: 200
+    value: 100
+    unit: "%"
+  - id: contrast
+    label: Contrast
+    min: 0
+    max: 200
+    value: 100
+    unit: "%"
+  - id: blur
+    label: Blur
+    min: 0
+    max: 20
+    step: 0.5
+    value: 0
+    unit: "px"
+```
+
+---
+
+### ui:steps
+
+Step-by-step process indicator with status badges.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `steps` | array | yes | | Step definitions |
+| `steps[].title` | string | yes | | Step heading |
+| `steps[].status` | string | no | | One of: `pending`, `active`, `completed` |
+| `steps[].content` | string | yes | | Step description |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+steps:
+  - title: Install Dependencies
+    status: completed
+    content: Run `pnpm install` to install all packages.
+  - title: Configure Environment
+    status: active
+    content: Copy `.env.example` to `.env` and fill in values.
+  - title: Run Migrations
+    status: pending
+    content: Execute `pnpm db:migrate` to set up the database.
+  - title: Start Development Server
+    status: pending
+    content: Run `pnpm dev` to start on port 3000.
+```
+
+---
+
+### ui:table
+
+Interactive data table with sorting, filtering, and aggregation.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `columns` | array | yes | | Column definitions |
+| `columns[].key` | string | yes | | Data key matching row properties |
+| `columns[].label` | string | yes | | Column header text |
+| `columns[].sortable` | boolean | no | | Enable sorting |
+| `columns[].filterable` | boolean | no | | Enable filtering |
+| `columns[].type` | string | no | | One of: `string`, `number`, `date`, `boolean` |
+| `rows` | array | yes | | Data rows as key-value objects |
+| `aggregation` | array | no | | Aggregation rows |
+| `aggregation[].column` | string | yes | | Column key to aggregate |
+| `aggregation[].function` | string | yes | | One of: `sum`, `avg`, `count`, `min`, `max` |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+columns:
+  - key: name
+    label: Name
+    sortable: true
+    filterable: true
+    type: string
+  - key: department
+    label: Department
+    filterable: true
+    type: string
+  - key: salary
+    label: Salary
+    sortable: true
+    type: number
+rows:
+  - { name: Alice, department: Engineering, salary: 120000 }
+  - { name: Bob, department: Design, salary: 95000 }
+  - { name: Carol, department: Engineering, salary: 135000 }
+  - { name: Dave, department: Marketing, salary: 88000 }
+aggregation:
+  - column: salary
+    function: avg
+```
+
+---
+
+### ui:tabs
+
+Tabbed content container.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `tabs` | array | yes | | Tab definitions |
+| `tabs[].label` | string | yes | | Tab label |
+| `tabs[].content` | string | yes | | Tab body |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+tabs:
+  - label: JavaScript
+    content: |
+      ```js
+      console.log("Hello!");
+      ```
+  - label: Python
+    content: |
+      ```python
+      print("Hello!")
+      ```
+  - label: Rust
+    content: |
+      ```rust
+      fn main() { println!("Hello!"); }
+      ```
+```
+
+---
+
+### ui:timeline
+
+Chronological timeline of events.
+
+| Field | Type | Required | Default | Description |
+|-------|------|----------|---------|-------------|
+| `events` | array | yes | | Event definitions |
+| `events[].date` | string | yes | | Date label (freeform) |
+| `events[].title` | string | yes | | Event title |
+| `events[].description` | string | no | | Event details |
+| `events[].type` | string | no | | Category/type label |
+| `orientation` | string | no | | One of: `vertical`, `horizontal` |
+| `markdown` | boolean | no | `false` | Render as Markdown |
+
+```yaml
+events:
+  - date: "2024-01"
+    title: Project Kickoff
+    description: Requirements gathering and initial planning.
+  - date: "2024-03"
+    title: Alpha Release
+    type: milestone
+    description: First internal release for testing.
+  - date: "2024-06"
+    title: Public Beta
+    type: milestone
+  - date: "2024-09"
+    title: GA Release
+    description: General availability.
+orientation: vertical
+```
+
+---
+
+## 3. Theming
+
+GlyphJS uses CSS custom properties prefixed with `--glyph-` for all component styling.
+Two built-in themes (light and dark) are provided by `@glyphjs/runtime`.
+
+### Theme YAML File Format (CLI)
+
+```yaml
+base: light   # or "dark" — which built-in theme to extend
+
+variables:
+  --glyph-accent: "#F56400"
+  --glyph-surface: "#F5EDE4"
+  --glyph-border: "#E0D6CC"
+  # any --glyph-* CSS custom property
+```
+
+### Bundled Themes
+
+The CLI ships with example themes in its `themes/` directory:
+
+| Theme | Description |
+|-------|-------------|
+| **warmcraft** | Warm tones with earthy oranges, soft creams, and natural accents |
+
+Use a bundled theme with any command via `--theme-file`:
+
+```bash
+glyphjs export document.md --format html --theme-file node_modules/@glyphjs/cli/themes/warmcraft.yaml -o output.html
+glyphjs serve document.md --theme-file node_modules/@glyphjs/cli/themes/warmcraft.yaml
+```
+
+### Core Theme Variables
+
+| Variable | Description |
+|----------|-------------|
+| `--glyph-bg` | Background color |
+| `--glyph-text` | Primary text color |
+| `--glyph-text-muted` | Secondary/muted text color |
+| `--glyph-heading` | Heading text color |
+| `--glyph-link` | Link color |
+| `--glyph-link-hover` | Link hover color |
+| `--glyph-border` | Default border color |
+| `--glyph-border-strong` | Strong/emphasized border color |
+| `--glyph-surface` | Surface/card background |
+| `--glyph-surface-raised` | Elevated surface background |
+| `--glyph-accent` | Primary accent color |
+| `--glyph-accent-hover` | Accent hover state |
+| `--glyph-accent-subtle` | Subtle accent background |
+| `--glyph-accent-muted` | Muted accent color |
+| `--glyph-code-bg` | Code block background |
+| `--glyph-code-text` | Code block text color |
+
+### Callout Variables
+
+| Variable | Description |
+|----------|-------------|
+| `--glyph-callout-info-border` | Info callout border |
+| `--glyph-callout-info-bg` | Info callout background |
+| `--glyph-callout-warning-border` | Warning callout border |
+| `--glyph-callout-warning-bg` | Warning callout background |
+| `--glyph-callout-error-border` | Error callout border |
+| `--glyph-callout-error-bg` | Error callout background |
+| `--glyph-callout-tip-border` | Tip callout border |
+| `--glyph-callout-tip-bg` | Tip callout background |
+
+### Table Variables
+
+| Variable | Description |
+|----------|-------------|
+| `--glyph-table-border` | Table border color |
+| `--glyph-table-header-bg` | Table header background |
+| `--glyph-table-header-color` | Table header text |
+| `--glyph-table-row-alt-bg` | Alternating row background |
+| `--glyph-table-cell-color` | Cell text color |
+| `--glyph-table-footer-bg` | Footer background |
+| `--glyph-table-footer-color` | Footer text color |
+
+### Effect Variables
+
+| Variable | Description |
+|----------|-------------|
+| `--glyph-shadow-sm` | Small shadow |
+| `--glyph-shadow-md` | Medium shadow |
+| `--glyph-shadow-lg` | Large shadow |
+| `--glyph-shadow-glow` | Glow effect |
+| `--glyph-text-shadow` | Text shadow |
+| `--glyph-backdrop` | Backdrop filter |
+| `--glyph-gradient-accent` | Accent gradient |
+| `--glyph-focus-ring` | Focus ring shadow |
+
+### Component-Specific Variables
+
+| Variable | Component |
+|----------|-----------|
+| `--glyph-blockquote-border` | Blockquote |
+| `--glyph-blockquote-bg` | Blockquote |
+| `--glyph-timeline-line` | Timeline |
+| `--glyph-grid` | Grid |
+| `--glyph-tooltip-bg` | Tooltip |
+| `--glyph-tooltip-text` | Tooltip |
+| `--glyph-edge-color` | Graph/SVG edges |
+| `--glyph-node-label-color` | Graph node labels |
+| `--glyph-icon-stroke` | Icon stroke |
+| `--glyph-kpi-positive` | KPI positive trend |
+| `--glyph-kpi-negative` | KPI negative trend |
+| `--glyph-kpi-neutral` | KPI neutral trend |
+| `--glyph-comparison-yes` | Comparison "yes" |
+| `--glyph-comparison-no` | Comparison "no" |
+| `--glyph-comparison-partial` | Comparison "partial" |
+| `--glyph-codediff-add-bg` | CodeDiff added line background |
+| `--glyph-codediff-add-color` | CodeDiff added line text |
+| `--glyph-codediff-del-bg` | CodeDiff deleted line background |
+| `--glyph-codediff-del-color` | CodeDiff deleted line text |
+| `--glyph-codediff-gutter-bg` | CodeDiff gutter background |
+| `--glyph-infographic-track` | Infographic progress track |
+| `--glyph-infographic-color-1` | Infographic palette 1 |
+| `--glyph-infographic-color-2` | Infographic palette 2 |
+| `--glyph-infographic-color-3` | Infographic palette 3 |
+| `--glyph-infographic-color-4` | Infographic palette 4 |
+| `--glyph-poll-bar-bg` | Poll bar background |
+| `--glyph-poll-bar-fill` | Poll bar fill |
+| `--glyph-rating-star-fill` | Rating filled star |
+| `--glyph-rating-star-empty` | Rating empty star |
+| `--glyph-rating-hover` | Rating hover |
+| `--glyph-slider-track` | Slider track |
+| `--glyph-slider-fill` | Slider fill |
+| `--glyph-slider-thumb` | Slider thumb |
+| `--glyph-kanban-column-bg` | Kanban column background |
+| `--glyph-kanban-card-bg` | Kanban card background |
+| `--glyph-kanban-card-border` | Kanban card border |
+| `--glyph-kanban-drag-shadow` | Kanban drag shadow |
+| `--glyph-kanban-priority-high` | Kanban high priority |
+| `--glyph-kanban-priority-medium` | Kanban medium priority |
+| `--glyph-kanban-priority-low` | Kanban low priority |
+| `--glyph-annotate-highlight-opacity` | Annotate highlight opacity |
+| `--glyph-annotate-label-bg` | Annotate label background |
+| `--glyph-annotate-sidebar-bg` | Annotate sidebar background |
+| `--glyph-form-error` | Form error color |
+| `--glyph-interaction-overlay-bg` | Interaction overlay background |
+| `--glyph-interaction-overlay-text` | Interaction overlay text |
+| `--glyph-interaction-tooltip-bg` | Interaction tooltip background |
+| `--glyph-interaction-tooltip-text` | Interaction tooltip text |
+| `--glyph-interaction-active-border` | Interaction active border |
+
+---
+
+## 4. CLI Commands
+
+Install: `npm install -g @glyphjs/cli`
+
+### glyphjs compile
+
+Compile Markdown to IR (JSON).
+
+```
+glyphjs compile <input> [options]
+
+Options:
+  -o, --output <path>    Write JSON to file instead of stdout
+  --compact              Output minified JSON
+  -v, --verbose          Show diagnostics on stderr
+```
+
+Input can be a file path or `-` to read from stdin.
+
+### glyphjs render
+
+Render ui: blocks to PNG screenshots.
+
+```
+glyphjs render <input> [options]
+
+Options:
+  -o, --output <path>           Output file or directory
+  -d, --output-dir <dir>        Output directory for screenshots
+  -t, --theme <theme>           Base theme: light or dark (default: light)
+  --theme-file <path>           YAML file with custom theme variables
+  -b, --block-id <id>           Render only this block
+  -w, --width <px>              Viewport width (default: 1280)
+  --device-scale-factor <n>     Device scale factor (default: 2)
+  -v, --verbose                 Show progress on stderr
+```
+
+Requires: Playwright (`npm install playwright`)
+
+### glyphjs export
+
+Export Markdown to HTML, PDF, Markdown, or DOCX.
+
+```
+glyphjs export <input> --format <fmt> [options]
+
+Options:
+  --format <fmt>         Required. One of: html, pdf, md, docx
+  -o, --output <path>    Write to file instead of stdout
+  -t, --theme <theme>    Base theme: light or dark (default: light)
+  --theme-file <path>    YAML file with custom theme variables
+  -w, --width <px>       Document width (default: 800)
+  --title <title>        Override document title
+  --page-size <size>     PDF page size, e.g. Letter, A4 (default: Letter)
+  --margin <margin>      PDF margin in CSS shorthand (default: 1in)
+  --landscape            Landscape orientation for PDF
+  --images-dir <dir>     Directory for block images in md export (default: ./images/)
+  -v, --verbose          Show diagnostics on stderr
+```
+
+Requires: Playwright for pdf/md formats. Pandoc for docx format.
+
+### glyphjs serve
+
+Development server with live reload.
+
+```
+glyphjs serve <input> [options]
+
+Options:
+  -p, --port <port>      Port to listen on (default: 3000)
+  -t, --theme <theme>    Base theme: light or dark (default: light)
+  --theme-file <path>    YAML file with custom theme variables
+  --open                 Open browser on start
+  -v, --verbose          Show diagnostics on stderr
+```
+
+---
+
+## 5. Full Document Example
+
+````markdown
+---
+title: Q4 Engineering Review
+authors:
+  - Engineering Team
+tags:
+  - quarterly
+  - review
+---
+
+# Q4 Engineering Review
+
+Welcome to the Q4 review. This document covers key metrics, architecture
+changes, and next quarter's roadmap.
+
+```ui:kpi
+title: Key Metrics
+metrics:
+  - label: Uptime
+    value: "99.97%"
+    delta: "+0.02%"
+    trend: up
+    sentiment: positive
+  - label: P95 Latency
+    value: "142ms"
+    delta: "-18ms"
+    trend: down
+    sentiment: positive
+  - label: Deploy Frequency
+    value: "4.2/day"
+    trend: up
+    sentiment: positive
+columns: 3
+```
+
+## Architecture
+
+```ui:architecture
+title: Current System
+children:
+  - id: lb
+    label: Load Balancer
+    icon: loadbalancer
+  - id: services
+    label: Services
+    type: zone
+    children:
+      - id: api
+        label: API
+        icon: server
+      - id: worker
+        label: Worker
+        icon: function
+  - id: data
+    label: Data Layer
+    type: zone
+    children:
+      - id: pg
+        label: PostgreSQL
+        icon: database
+      - id: redis
+        label: Redis
+        icon: cache
+edges:
+  - from: lb
+    to: api
+    type: sync
+  - from: api
+    to: worker
+    type: async
+  - from: api
+    to: pg
+    type: data
+  - from: api
+    to: redis
+    type: data
+layout: top-down
+```
+
+## Roadmap
+
+```ui:timeline
+events:
+  - date: "Jan 2025"
+    title: Auth v2
+    description: Migrate to OAuth2 with PKCE.
+    type: feature
+  - date: "Feb 2025"
+    title: Real-time Dashboard
+    type: feature
+  - date: "Mar 2025"
+    title: SOC 2 Audit
+    type: milestone
+```
+
+```ui:callout
+type: info
+title: Questions?
+content: Reach out in #engineering-review on Slack.
+```
+````

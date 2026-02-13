@@ -14,11 +14,40 @@
       }
     }
   },
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "files": [
     "dist",
+    "themes",
     "LICENSE",
     "README.md"
   ],
+  "keywords": [
+    "glyphjs",
+    "markdown",
+    "cli",
+    "export",
+    "pdf",
+    "html",
+    "docx",
+    "render",
+    "screenshot",
+    "interactive",
+    "components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VledicFranco/glyphjs.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/VledicFranco/glyphjs#readme",
+  "bugs": {
+    "url": "https://github.com/VledicFranco/glyphjs/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build": "tsup",
     "test": "vitest run",
