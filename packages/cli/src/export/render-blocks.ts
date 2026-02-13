@@ -81,7 +81,8 @@ export async function renderAndRewriteBlocks(
     const startIdx = block.position.start.line - 1; // 1-indexed → 0-indexed
     const endIdx = block.position.end.line - 1;
     const count = endIdx - startIdx + 1;
-    const imageRef = `![${block.id}](${imageRefPrefix}/${block.id}.png)`;
+    const altText = block.type.replace(/^ui:/, '');
+    const imageRef = `![${altText}](${imageRefPrefix}/${block.id}.png)`;
     lines.splice(startIdx, count, imageRef);
   }
 
