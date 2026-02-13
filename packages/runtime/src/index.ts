@@ -59,6 +59,9 @@ export type { RichTextProps } from './renderers/index.js';
 export {
   lightTheme,
   darkTheme,
+  LIGHT_THEME_VARS,
+  DARK_THEME_VARS,
+  themeVarsToCSS,
   ThemeProvider,
   useGlyphTheme,
   resolveTheme,

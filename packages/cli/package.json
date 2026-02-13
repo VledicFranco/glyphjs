@@ -1,0 +1,79 @@
+{
+  "name": "@glyphjs/cli",
+  "version": "0.6.0",
+  "description": "CLI tool for compiling, rendering, and exporting GlyphJS documents",
+  "type": "module",
+  "bin": {
+    "glyphjs": "./dist/index.js"
+  },
+  "exports": {
+    ".": {
+      "import": {
+        "types": "./dist/index.d.ts",
+        "default": "./dist/index.js"
+      }
+    }
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "files": [
+    "dist",
+    "themes",
+    "LICENSE",
+    "README.md"
+  ],
+  "keywords": [
+    "glyphjs",
+    "markdown",
+    "cli",
+    "export",
+    "pdf",
+    "html",
+    "docx",
+    "render",
+    "screenshot",
+    "interactive",
+    "components"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VledicFranco/glyphjs.git",
+    "directory": "packages/cli"
+  },
+  "homepage": "https://github.com/VledicFranco/glyphjs#readme",
+  "bugs": {
+    "url": "https://github.com/VledicFranco/glyphjs/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/",
+    "clean": "rm -rf dist .turbo"
+  },
+  "dependencies": {
+    "@glyphjs/compiler": "workspace:*",
+    "@glyphjs/components": "workspace:*",
+    "@glyphjs/runtime": "workspace:*",
+    "@glyphjs/types": "workspace:*",
+    "commander": "^13.1.0",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "yaml": "^2.7.0"
+  },
+  "optionalDependencies": {
+    "playwright": "^1.52.0"
+  },
+  "devDependencies": {
+    "@types/node": ">=20.0.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "tsup": "^8.4.0",
+    "typescript": "^5.7.3"
+  },
+  "license": "MIT"
+}

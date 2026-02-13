@@ -138,7 +138,7 @@ interface ElkPositionedRoot {
 // ─── Build ELK Graph ────────────────────────────────────────
 
 function buildElkNode(node: ArchitectureNode): ElkNode {
-  if (node.type === 'zone' && node.children?.length) {
+  if (node.children?.length) {
     return {
       id: node.id,
       labels: [{ text: node.label }],
@@ -196,7 +196,7 @@ function collectNodes(
   const absY = offsetY + (elkNode.y ?? 0);
   const original = nodeMap.get(elkNode.id);
 
-  if (original?.type === 'zone' && elkNode.children?.length) {
+  if (original?.children?.length && elkNode.children?.length) {
     zones.push({
       id: elkNode.id,
       label: original.label,
@@ -243,7 +243,7 @@ function buildAncestorMap(
 ): void {
   for (const node of children) {
     map.set(node.id, [...ancestors]);
-    if (node.type === 'zone' && node.children) {
+    if (node.children?.length) {
       buildAncestorMap(node.children, [...ancestors, node.id], map);
     }
   }

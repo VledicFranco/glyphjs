@@ -27,6 +27,15 @@ const measurementCache = new WeakMap<InlineNode[], TextDimensions>();
  * Measures plain text using canvas 2D context (fastest method).
  */
 export function measurePlainText(text: string, style: TextStyle): TextDimensions {
+  // SSR fallback: estimate dimensions without canvas
+  if (typeof document === 'undefined') {
+    const avgCharWidth = parseInt(style.fontSize) * 0.6;
+    return {
+      width: text.length * avgCharWidth,
+      height: parseInt(style.fontSize) * 1.2,
+    };
+  }
+
   // Create canvas context for text measurement
   const canvas = document.createElement('canvas');
   const ctx = canvas.getContext('2d');
@@ -58,6 +67,12 @@ export function measurePlainText(text: string, style: TextStyle): TextDimensions
  * Used for InlineNode[] which may contain formatting like bold, italic, etc.
  */
 export function measureHtmlText(content: InlineNode[], style: TextStyle): TextDimensions {
+  // SSR fallback: flatten nodes to plain text and estimate
+  if (typeof document === 'undefined') {
+    const plainText = flattenInlineNodes(content);
+    return measurePlainText(plainText, style);
+  }
+
   // Check cache first
   const cached = measurementCache.get(content);
   if (cached) {
@@ -100,6 +115,35 @@ export function measureHtmlText(content: InlineNode[], style: TextStyle): TextDi
 }
 
 /**
+ * Recursively extracts plain text from InlineNode[].
+ * Used as SSR fallback when DOM measurement is unavailable.
+ */
+function flattenInlineNodes(nodes: InlineNode[]): string {
+  return nodes
+    .map((node) => {
+      switch (node.type) {
+        case 'text':
+          return node.value;
+        case 'inlineCode':
+          return node.value;
+        case 'strong':
+        case 'emphasis':
+        case 'delete':
+          return flattenInlineNodes(node.children);
+        case 'link':
+          return flattenInlineNodes(node.children);
+        case 'image':
+          return node.alt ?? '';
+        case 'break':
+          return '\n';
+        default:
+          return '';
+      }
+    })
+    .join('');
+}
+
+/**
  * Converts InlineNode[] to HTML string for measurement.
  * This is a simplified version that doesn't need React.
  */
@@ -134,6 +178,13 @@ function inlineNodesToHtml(nodes: InlineNode[]): string {
  * Escapes HTML special characters to prevent injection.
  */
 function escapeHtml(str: string): string {
+  if (typeof document === 'undefined') {
+    return str
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;');
+  }
   const div = document.createElement('div');
   div.textContent = str;
   return div.innerHTML;

@@ -23,6 +23,38 @@ import { inlineToText } from '../utils/inlineToText.js';
 
 export type { ChartData } from './render.js';
 
+// ─── Axis key inference ─────────────────────────────────────────
+
+/**
+ * Infer x/y axis keys from the data when not explicitly provided.
+ * Looks at the first data record and picks the first string-valued field as x
+ * and the first numeric-valued field as y.
+ */
+function inferAxisKeys(
+  series: ChartData['series'],
+  explicitX?: string,
+  explicitY?: string,
+): { xKey: string; yKey: string } {
+  if (explicitX && explicitY) return { xKey: explicitX, yKey: explicitY };
+
+  const sample = series[0]?.data[0];
+  if (!sample) return { xKey: explicitX ?? 'x', yKey: explicitY ?? 'y' };
+
+  let inferredX: string | undefined;
+  let inferredY: string | undefined;
+
+  for (const [key, value] of Object.entries(sample)) {
+    if (!inferredX && typeof value === 'string') inferredX = key;
+    if (!inferredY && typeof value === 'number') inferredY = key;
+    if (inferredX && inferredY) break;
+  }
+
+  return {
+    xKey: explicitX ?? inferredX ?? 'x',
+    yKey: explicitY ?? inferredY ?? 'y',
+  };
+}
+
 // ─── Chart computation helpers ──────────────────────────────────
 
 interface ChartScales {
@@ -218,10 +250,10 @@ export function Chart({
   const svgRef = useRef<SVGSVGElement>(null);
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [width, setWidth] = useState(DEFAULT_WIDTH);
+  const [isLoading, setIsLoading] = useState(true);
 
   const { type, series, xAxis, yAxis, legend } = data;
-  const xKey = xAxis?.key ?? 'x';
-  const yKey = yAxis?.key ?? 'y';
+  const { xKey, yKey } = inferAxisKeys(series, xAxis?.key, yAxis?.key);
   const height = DEFAULT_HEIGHT;
   const isCompact = containerCtx.tier === 'compact';
   const margin = isCompact
@@ -297,6 +329,8 @@ export function Chart({
     if (legend) {
       renderLegend(sel, series, margin.left, margin.top, isCompact ? '10px' : undefined);
     }
+
+    setIsLoading(false);
   }, [
     scales,
     type,
@@ -319,6 +353,7 @@ export function Chart({
   return (
     <div
       ref={containerRef}
+      data-glyph-loading={isLoading || undefined}
       style={{
         position: 'relative',
         width: '100%',

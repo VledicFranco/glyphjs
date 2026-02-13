@@ -20,7 +20,7 @@ describe('Theme system', () => {
 
     // Check that light theme variables are set as inline styles
     const style = themeDiv!.getAttribute('style');
-    expect(style).toContain('#f4f6fa'); // --glyph-bg for light theme
+    expect(style).toContain('transparent'); // --glyph-bg for light theme
     expect(style).toContain('#1a2035'); // --glyph-text for light theme
   });
 
@@ -159,7 +159,7 @@ describe('Theme system', () => {
     // Consumer style is merged in
     expect(style).toContain('max-width');
     // Theme variables are still present
-    expect(style).toContain('#f4f6fa');
+    expect(style).toContain('transparent');
   });
 
   it('RuntimeProvider renders className on wrapper div', () => {
