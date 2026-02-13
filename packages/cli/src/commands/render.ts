@@ -5,12 +5,14 @@ import type { Block, GlyphIR } from '@glyphjs/types';
 import { logDiagnostics } from '../utils/logger.js';
 import { checkPlaywrightAvailable, BrowserManager } from '../rendering/browser.js';
 import { captureBlockScreenshot } from '../rendering/screenshot.js';
+import { loadThemeFile, resolveThemeVars } from '../rendering/theme-loader.js';
 import type { ThemeName } from '../rendering/ssr.js';
 
 export interface RenderCommandOptions {
   output?: string;
   outputDir?: string;
   theme?: ThemeName;
+  themeFile?: string;
   blockId?: string;
   width?: number;
   deviceScaleFactor?: number;
@@ -137,6 +139,20 @@ export async function renderCommand(input: string, options: RenderCommandOptions
     return;
   }
 
+  // Load custom theme file if provided
+  let themeVars: Record<string, string> | undefined;
+  if (options.themeFile) {
+    try {
+      const themeData = await loadThemeFile(resolve(process.cwd(), options.themeFile));
+      themeVars = resolveThemeVars(themeData.base, themeData.overrides);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      process.stderr.write(`error — Failed to load theme file: ${message}\n`);
+      process.exitCode = 2;
+      return;
+    }
+  }
+
   // Render each block
   let page;
   let errorCount = 0;
@@ -152,6 +168,7 @@ export async function renderCommand(input: string, options: RenderCommandOptions
           theme: options.theme,
           width: options.width,
           deviceScaleFactor: options.deviceScaleFactor,
+          themeVars,
         });
 
         // Ensure output directory exists

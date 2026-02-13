@@ -140,7 +140,7 @@ interface FlatNode {
 function flattenNodes(children: ArchitectureData['children'], zone?: string): FlatNode[] {
   const result: FlatNode[] = [];
   for (const child of children) {
-    if (child.type === 'zone' && child.children) {
+    if (child.children?.length) {
       result.push(...flattenNodes(child.children, child.label));
     } else {
       result.push({ id: child.id, label: child.label, zone });
@@ -152,7 +152,7 @@ function flattenNodes(children: ArchitectureData['children'], zone?: string): Fl
 function countLeafNodes(children: ArchitectureData['children']): number {
   let count = 0;
   for (const child of children) {
-    if (child.type === 'zone' && child.children) {
+    if (child.children?.length) {
       count += countLeafNodes(child.children);
     } else {
       count++;

@@ -1,7 +1,8 @@
 import type { Page } from 'playwright';
-import type { Block } from '@glyphjs/types';
+import type { Block, GlyphIR } from '@glyphjs/types';
 import { renderBlockToHTML } from './ssr.js';
 import { buildHtmlTemplate } from './html-template.js';
+import { getClientBundle } from './client-bundle.js';
 import type { ThemeName } from './ssr.js';
 
 export interface ScreenshotOptions {
@@ -13,23 +14,33 @@ export interface ScreenshotOptions {
   deviceScaleFactor?: number;
   /** Maximum time in ms to wait for rendering to settle. Defaults to 5000. */
   timeout?: number;
+  /** Pre-resolved theme CSS variables. When provided, overrides the built-in theme lookup. */
+  themeVars?: Record<string, string>;
 }
 
 /**
  * Capture a PNG screenshot of a single block.
  *
  * Multi-stage render completion detection:
- * 1. Set the page HTML via SSR
+ * 1. Set the page HTML via SSR + client hydration bundle
  * 2. Wait for network idle (fonts, images)
  * 3. Wait for the block element to appear in the DOM
- * 4. Capture a screenshot of the block element
+ * 4. Wait for async components to finish rendering
+ * 5. Stability pause for D3 transitions
+ * 6. Capture a screenshot of the block element
  */
 export async function captureBlockScreenshot(
   page: Page,
   block: Block,
   options: ScreenshotOptions = {},
 ): Promise<Buffer> {
-  const { theme = 'light', width = 1280, deviceScaleFactor = 2, timeout = 5000 } = options;
+  const {
+    theme = 'light',
+    width = 1280,
+    deviceScaleFactor = 2,
+    timeout = 5000,
+    themeVars,
+  } = options;
 
   // Set viewport
   await page.setViewportSize({ width, height: 800 });
@@ -49,9 +60,26 @@ export async function captureBlockScreenshot(
     }
   }
 
-  // Stage 1: SSR the block and build the full HTML page
-  const bodyHtml = renderBlockToHTML(block, theme);
-  const fullHtml = buildHtmlTemplate({ body: bodyHtml, theme });
+  // Build a single-block IR for hydration
+  const singleBlockIR: GlyphIR = {
+    version: '1.0.0',
+    id: 'cli-screenshot',
+    metadata: {},
+    blocks: [block],
+    references: [],
+    layout: { mode: 'document', spacing: 'normal' },
+  };
+
+  // Stage 1: SSR the block and build the full HTML page with hydration bundle
+  const bodyHtml = renderBlockToHTML(block, theme, themeVars);
+  const clientBundle = getClientBundle();
+  const fullHtml = buildHtmlTemplate({
+    body: bodyHtml,
+    theme,
+    clientBundle,
+    ir: singleBlockIR,
+    themeVars,
+  });
 
   // Stage 2: Load the HTML and wait for network idle
   await page.setContent(fullHtml, { waitUntil: 'networkidle', timeout });
@@ -64,7 +92,23 @@ export async function captureBlockScreenshot(
     throw new Error(`Block element not found: ${selector}`);
   }
 
-  // Stage 4: Capture the element screenshot
+  // Stage 4: Wait for async components to finish rendering.
+  // Some components may error and never clear their loading state,
+  // so we catch the timeout and proceed with what we have.
+  await page
+    .waitForFunction(
+      () => document.querySelectorAll('[data-glyph-loading]').length === 0,
+      undefined,
+      { timeout: 10_000 },
+    )
+    .catch(() => {
+      // Timed out — proceed with partial rendering
+    });
+
+  // Stage 5: Brief stability pause for D3 transitions / layout settling
+  await page.waitForTimeout(300);
+
+  // Stage 6: Capture the element screenshot
   const screenshot = await element.screenshot({ type: 'png' });
 
   return Buffer.from(screenshot);

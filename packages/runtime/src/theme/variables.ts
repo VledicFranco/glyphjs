@@ -8,7 +8,7 @@
 
 export const LIGHT_THEME_VARS: Record<string, string> = {
   // ── Core colors ────────────────────────────────────────────
-  '--glyph-bg': '#f4f6fa',
+  '--glyph-bg': 'transparent',
   '--glyph-text': '#1a2035',
   '--glyph-text-muted': '#6b7a94',
   '--glyph-heading': '#0a0e1a',
@@ -336,7 +336,7 @@ export const DARK_THEME_VARS: Record<string, string> = {
  * @example
  * ```ts
  * const css = themeVarsToCSS(LIGHT_THEME_VARS);
- * // => "--glyph-bg: #f4f6fa; --glyph-text: #1a2035; ..."
+ * // => "--glyph-bg: transparent; --glyph-text: #1a2035; ..."
  * ```
  */
 export function themeVarsToCSS(vars: Record<string, string>): string {

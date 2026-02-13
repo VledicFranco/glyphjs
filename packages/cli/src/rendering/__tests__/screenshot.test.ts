@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import type { Block } from '@glyphjs/types';
 import { captureBlockScreenshot } from '../screenshot.js';
 
-// ── Mock the SSR + template modules ─────────────────────────
+// ── Mock the SSR + template + client-bundle modules ─────────
 
 vi.mock('../ssr.js', () => ({
   renderBlockToHTML: vi.fn().mockReturnValue('<div data-glyph-block="b1">Callout</div>'),
@@ -12,8 +12,13 @@ vi.mock('../html-template.js', () => ({
   buildHtmlTemplate: vi.fn().mockReturnValue('<!DOCTYPE html><html><body>mock</body></html>'),
 }));
 
+vi.mock('../client-bundle.js', () => ({
+  getClientBundle: vi.fn().mockReturnValue('/* hydrate */'),
+}));
+
 import { renderBlockToHTML } from '../ssr.js';
 import { buildHtmlTemplate } from '../html-template.js';
+import { getClientBundle } from '../client-bundle.js';
 
 // ── Mock page object ─────────────────────────────────────────
 
@@ -35,6 +40,8 @@ function createMockPage() {
       setViewportSize: vi.fn().mockResolvedValue(undefined),
       setContent: vi.fn().mockResolvedValue(undefined),
       waitForSelector: vi.fn().mockResolvedValue(mockElement),
+      waitForFunction: vi.fn().mockResolvedValue(undefined),
+      waitForTimeout: vi.fn().mockResolvedValue(undefined),
       context: vi.fn().mockReturnValue({
         newCDPSession: vi.fn().mockResolvedValue(mockCdp),
       }),
@@ -60,16 +67,23 @@ beforeEach(() => {
 });
 
 describe('captureBlockScreenshot', () => {
-  it('calls renderBlockToHTML and buildHtmlTemplate', async () => {
+  it('calls renderBlockToHTML and buildHtmlTemplate with clientBundle and ir', async () => {
     const { page } = createMockPage();
     const block = createBlock();
 
     await captureBlockScreenshot(page as never, block);
 
-    expect(renderBlockToHTML).toHaveBeenCalledWith(block, 'light');
+    expect(renderBlockToHTML).toHaveBeenCalledWith(block, 'light', undefined);
+    expect(getClientBundle).toHaveBeenCalled();
     expect(buildHtmlTemplate).toHaveBeenCalledWith({
       body: '<div data-glyph-block="b1">Callout</div>',
       theme: 'light',
+      clientBundle: '/* hydrate */',
+      ir: expect.objectContaining({
+        id: 'cli-screenshot',
+        blocks: [block],
+      }),
+      themeVars: undefined,
     });
   });
 
@@ -104,6 +118,24 @@ describe('captureBlockScreenshot', () => {
     );
   });
 
+  it('waits for async components to finish loading', async () => {
+    const { page } = createMockPage();
+
+    await captureBlockScreenshot(page as never, createBlock());
+
+    expect(page.waitForFunction).toHaveBeenCalledWith(expect.any(Function), undefined, {
+      timeout: 10_000,
+    });
+  });
+
+  it('adds a stability pause after async wait', async () => {
+    const { page } = createMockPage();
+
+    await captureBlockScreenshot(page as never, createBlock());
+
+    expect(page.waitForTimeout).toHaveBeenCalledWith(300);
+  });
+
   it('returns a Buffer with the screenshot data', async () => {
     const { page } = createMockPage();
 
@@ -135,8 +167,10 @@ describe('captureBlockScreenshot', () => {
 
     await captureBlockScreenshot(page as never, createBlock(), { theme: 'dark' });
 
-    expect(renderBlockToHTML).toHaveBeenCalledWith(expect.anything(), 'dark');
-    expect(buildHtmlTemplate).toHaveBeenCalledWith(expect.objectContaining({ theme: 'dark' }));
+    expect(renderBlockToHTML).toHaveBeenCalledWith(expect.anything(), 'dark', undefined);
+    expect(buildHtmlTemplate).toHaveBeenCalledWith(
+      expect.objectContaining({ theme: 'dark', themeVars: undefined }),
+    );
   });
 
   it('sets CDP device scale factor', async () => {
@@ -149,6 +183,18 @@ describe('captureBlockScreenshot', () => {
     expect(mockCdp.send).toHaveBeenCalledWith(
       'Emulation.setDeviceMetricsOverride',
       expect.objectContaining({ deviceScaleFactor: 3 }),
+    );
+  });
+
+  it('passes custom themeVars to renderBlockToHTML and buildHtmlTemplate', async () => {
+    const { page } = createMockPage();
+    const customVars = { '--glyph-bg': '#fff', '--glyph-accent': '#F56400' };
+
+    await captureBlockScreenshot(page as never, createBlock(), { themeVars: customVars });
+
+    expect(renderBlockToHTML).toHaveBeenCalledWith(expect.anything(), 'light', customVars);
+    expect(buildHtmlTemplate).toHaveBeenCalledWith(
+      expect.objectContaining({ themeVars: customVars }),
     );
   });
 

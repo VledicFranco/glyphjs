@@ -6,12 +6,14 @@ import { exportHTML } from '../export/html.js';
 import { exportPDF } from '../export/pdf.js';
 import { exportMarkdown } from '../export/markdown.js';
 import { exportDocx } from '../export/docx.js';
+import { loadThemeFile, resolveThemeVars } from '../rendering/theme-loader.js';
 import type { ThemeName } from '../rendering/ssr.js';
 
 export interface ExportCommandOptions {
   format: string;
   output?: string;
   theme?: ThemeName;
+  themeFile?: string;
   width?: number;
   title?: string;
   pageSize?: string;
@@ -61,6 +63,20 @@ export async function exportCommand(input: string, options: ExportCommandOptions
     return;
   }
 
+  // Load custom theme file if provided
+  let themeVars: Record<string, string> | undefined;
+  if (options.themeFile) {
+    try {
+      const themeData = await loadThemeFile(resolve(process.cwd(), options.themeFile));
+      themeVars = resolveThemeVars(themeData.base, themeData.overrides);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      process.stderr.write(`error — Failed to load theme file: ${message}\n`);
+      process.exitCode = 2;
+      return;
+    }
+  }
+
   // Dispatch to format handler
   let output: string | Buffer;
 
@@ -69,6 +85,7 @@ export async function exportCommand(input: string, options: ExportCommandOptions
       output = exportHTML(result.ir, {
         theme: options.theme,
         title: options.title,
+        themeVars,
       });
       break;
     case 'pdf':
@@ -80,6 +97,7 @@ export async function exportCommand(input: string, options: ExportCommandOptions
           pageSize: options.pageSize,
           margin: options.margin,
           landscape: options.landscape,
+          themeVars,
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);
@@ -97,6 +115,7 @@ export async function exportCommand(input: string, options: ExportCommandOptions
           theme: options.theme,
           width: options.width,
           imagesDir: options.imagesDir,
+          themeVars,
         });
         output = mdResult.markdown;
       } catch (err) {
@@ -112,6 +131,7 @@ export async function exportCommand(input: string, options: ExportCommandOptions
         output = await exportDocx(markdown, result.ir, {
           theme: options.theme,
           width: options.width,
+          themeVars,
         });
       } catch (err) {
         const message = err instanceof Error ? err.message : String(err);

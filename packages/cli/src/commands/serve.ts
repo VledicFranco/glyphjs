@@ -7,11 +7,13 @@ import { platform } from 'node:os';
 import { compile } from '@glyphjs/compiler';
 import { logDiagnostics } from '../utils/logger.js';
 import { exportHTML } from '../export/html.js';
+import { loadThemeFile, resolveThemeVars } from '../rendering/theme-loader.js';
 import type { ThemeName } from '../rendering/ssr.js';
 
 export interface ServeCommandOptions {
   port?: number;
   theme?: ThemeName;
+  themeFile?: string;
   open?: boolean;
   verbose?: boolean;
 }
@@ -59,6 +61,20 @@ export async function serveCommand(input: string, options: ServeCommandOptions):
   const theme = options.theme ?? 'light';
   const filePath = resolve(process.cwd(), input);
 
+  // Load custom theme file if provided
+  let themeVars: Record<string, string> | undefined;
+  if (options.themeFile) {
+    try {
+      const themeData = await loadThemeFile(resolve(process.cwd(), options.themeFile));
+      themeVars = resolveThemeVars(themeData.base, themeData.overrides);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : String(err);
+      process.stderr.write(`error — Failed to load theme file: ${message}\n`);
+      process.exitCode = 2;
+      return;
+    }
+  }
+
   // Initial compile
   let currentHTML: string;
   try {
@@ -67,7 +83,7 @@ export async function serveCommand(input: string, options: ServeCommandOptions):
     if (options.verbose) {
       logDiagnostics(result.diagnostics, filePath);
     }
-    currentHTML = injectLiveReload(exportHTML(result.ir, { theme }));
+    currentHTML = injectLiveReload(exportHTML(result.ir, { theme, themeVars }));
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     process.stderr.write(`error — Could not read input: ${message}\n`);
@@ -108,7 +124,7 @@ export async function serveCommand(input: string, options: ServeCommandOptions):
         if (options.verbose) {
           logDiagnostics(result.diagnostics, filePath);
         }
-        currentHTML = injectLiveReload(exportHTML(result.ir, { theme }));
+        currentHTML = injectLiveReload(exportHTML(result.ir, { theme, themeVars }));
         for (const client of clients) {
           client.write('event: reload\ndata: {}\n\n');
         }

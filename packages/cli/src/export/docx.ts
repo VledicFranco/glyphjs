@@ -42,6 +42,7 @@ export async function exportDocx(
     const result = await renderAndRewriteBlocks(originalMarkdown, ir, tmpDir, '.', {
       theme: options.theme,
       width: options.width,
+      themeVars: options.themeVars,
     });
 
     // Write processed markdown

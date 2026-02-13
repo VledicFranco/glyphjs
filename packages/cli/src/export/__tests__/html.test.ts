@@ -74,7 +74,7 @@ describe('exportHTML', () => {
     const ir = createTestIR();
     const html = exportHTML(ir, { theme: 'dark' });
 
-    expect(renderDocumentToHTML).toHaveBeenCalledWith(ir, 'dark');
+    expect(renderDocumentToHTML).toHaveBeenCalledWith(ir, 'dark', undefined);
     // Dark theme bg color
     expect(html).toContain('--glyph-bg: #0a0e1a');
   });
@@ -83,8 +83,8 @@ describe('exportHTML', () => {
     const ir = createTestIR();
     const html = exportHTML(ir);
 
-    expect(renderDocumentToHTML).toHaveBeenCalledWith(ir, 'light');
-    expect(html).toContain('--glyph-bg: #f4f6fa');
+    expect(renderDocumentToHTML).toHaveBeenCalledWith(ir, 'light', undefined);
+    expect(html).toContain('--glyph-bg: transparent');
   });
 
   it('output is a single string with no external resource references', () => {

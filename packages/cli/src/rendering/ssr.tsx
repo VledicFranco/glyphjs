@@ -9,7 +9,11 @@ export type ThemeName = 'light' | 'dark';
 /**
  * Render a single IR block to an HTML string.
  */
-export function renderBlockToHTML(block: Block, theme: ThemeName = 'light'): string {
+export function renderBlockToHTML(
+  block: Block,
+  theme: ThemeName = 'light',
+  themeVars?: Record<string, string>,
+): string {
   const singleBlockIR: GlyphIR = {
     version: '1.0.0',
     id: 'cli-render',
@@ -19,16 +23,20 @@ export function renderBlockToHTML(block: Block, theme: ThemeName = 'light'): str
     layout: { mode: 'document', spacing: 'normal' },
   };
 
-  return renderDocumentToHTML(singleBlockIR, theme);
+  return renderDocumentToHTML(singleBlockIR, theme, themeVars);
 }
 
 /**
  * Render a full IR document to an HTML string.
  */
-export function renderDocumentToHTML(ir: GlyphIR, theme: ThemeName = 'light'): string {
+export function renderDocumentToHTML(
+  ir: GlyphIR,
+  theme: ThemeName = 'light',
+  themeVars?: Record<string, string>,
+): string {
   const themeObj: GlyphTheme = {
     name: theme,
-    variables: theme === 'dark' ? DARK_THEME_VARS : LIGHT_THEME_VARS,
+    variables: themeVars ?? (theme === 'dark' ? DARK_THEME_VARS : LIGHT_THEME_VARS),
   };
 
   const runtime = createGlyphRuntime({

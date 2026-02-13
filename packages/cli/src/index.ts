@@ -27,6 +27,7 @@ program
   .option('-o, --output <path>', 'output file or directory path')
   .option('-d, --output-dir <dir>', 'output directory for screenshots')
   .option('-t, --theme <theme>', 'theme to use: light or dark', 'light')
+  .option('--theme-file <path>', 'YAML file with custom theme variables')
   .option('-b, --block-id <id>', 'render only the block with this ID')
   .option('-w, --width <px>', 'viewport width in pixels', '1280')
   .option('--device-scale-factor <factor>', 'device scale factor for HiDPI', '2')
@@ -36,6 +37,7 @@ program
       output: opts['output'] as string | undefined,
       outputDir: opts['outputDir'] as string | undefined,
       theme: (opts['theme'] as 'light' | 'dark') ?? 'light',
+      themeFile: opts['themeFile'] as string | undefined,
       blockId: opts['blockId'] as string | undefined,
       width: opts['width'] ? Number(opts['width']) : undefined,
       deviceScaleFactor: opts['deviceScaleFactor'] ? Number(opts['deviceScaleFactor']) : undefined,
@@ -50,6 +52,7 @@ program
   .requiredOption('--format <format>', 'output format: html|pdf|md|docx')
   .option('-o, --output <path>', 'write to file instead of stdout')
   .option('-t, --theme <theme>', 'theme to use: light or dark', 'light')
+  .option('--theme-file <path>', 'YAML file with custom theme variables')
   .option('-w, --width <px>', 'document width in pixels', '800')
   .option('--title <title>', 'override document title')
   .option('--page-size <size>', 'PDF page size (e.g. Letter, A4)', 'Letter')
@@ -62,6 +65,7 @@ program
       format: opts['format'] as string,
       output: opts['output'] as string | undefined,
       theme: (opts['theme'] as 'light' | 'dark') ?? 'light',
+      themeFile: opts['themeFile'] as string | undefined,
       width: opts['width'] ? Number(opts['width']) : undefined,
       title: opts['title'] as string | undefined,
       pageSize: opts['pageSize'] as string | undefined,
@@ -78,12 +82,14 @@ program
   .argument('<input>', 'input Markdown file path')
   .option('-p, --port <port>', 'port to listen on', '3000')
   .option('-t, --theme <theme>', 'theme to use: light or dark', 'light')
+  .option('--theme-file <path>', 'YAML file with custom theme variables')
   .option('--open', 'open browser on start')
   .option('-v, --verbose', 'show diagnostics on stderr')
   .action((input: string, opts: Record<string, string | boolean | undefined>) => {
     return serveCommand(input, {
       port: opts['port'] ? Number(opts['port']) : undefined,
       theme: (opts['theme'] as 'light' | 'dark') ?? 'light',
+      themeFile: opts['themeFile'] as string | undefined,
       open: opts['open'] === true,
       verbose: opts['verbose'] === true,
     });

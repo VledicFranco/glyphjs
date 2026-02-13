@@ -579,6 +579,11 @@ function renderRatingGroup(items: RatingItem[], keyPrefix: string): ReactElement
   );
 }
 
+function cssEscape(value: string): string {
+  if (typeof CSS !== 'undefined' && CSS.escape) return CSS.escape(value);
+  return value.replace(/([^\w-])/g, '\\$1');
+}
+
 // ─── Component ─────────────────────────────────────────────────
 
 export function Infographic({
@@ -643,7 +648,7 @@ export function Infographic({
   };
 
   const printCss = useGrid
-    ? `@media print { #${CSS.escape(baseId)} [data-layout="grid"] { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; } #${CSS.escape(baseId)} [data-layout="grid"] > div { break-inside: avoid; } }`
+    ? `@media print { #${cssEscape(baseId)} [data-layout="grid"] { display: grid !important; grid-template-columns: repeat(2, 1fr) !important; gap: 0.5rem !important; } #${cssEscape(baseId)} [data-layout="grid"] > div { break-inside: avoid; } }`
     : '';
 
   let progressColorOffset = 0;

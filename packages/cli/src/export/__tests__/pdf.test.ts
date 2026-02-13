@@ -11,10 +11,16 @@ vi.mock('../../rendering/html-template.js', () => ({
   buildHtmlTemplate: vi.fn(() => '<!DOCTYPE html><html><body>full page</body></html>'),
 }));
 
+vi.mock('../../rendering/client-bundle.js', () => ({
+  getClientBundle: vi.fn(() => '/* hydrate bundle */'),
+}));
+
 const mockPage = {
   setViewportSize: vi.fn(),
   setContent: vi.fn(),
   waitForSelector: vi.fn(),
+  waitForFunction: vi.fn().mockResolvedValue(undefined),
+  waitForTimeout: vi.fn(),
   pdf: vi.fn(() => Buffer.from('%PDF-mock')),
 };
 
@@ -28,6 +34,7 @@ vi.mock('../../rendering/browser.js', () => ({
 
 import { renderDocumentToHTML } from '../../rendering/ssr.js';
 import { buildHtmlTemplate } from '../../rendering/html-template.js';
+import { getClientBundle } from '../../rendering/client-bundle.js';
 import { checkPlaywrightAvailable, BrowserManager } from '../../rendering/browser.js';
 import { exportPDF } from '../pdf.js';
 
@@ -58,16 +65,22 @@ describe('exportPDF', () => {
     expect(renderDocumentToHTML).toHaveBeenCalledWith(
       expect.objectContaining({ id: 'test-doc' }),
       'dark',
+      undefined,
     );
   });
 
-  it('builds an HTML template with the correct options', async () => {
-    await exportPDF(createTestIR(), { theme: 'dark', title: 'My PDF' });
+  it('builds an HTML template with clientBundle and ir', async () => {
+    const ir = createTestIR();
+    await exportPDF(ir, { theme: 'dark', title: 'My PDF' });
 
+    expect(getClientBundle).toHaveBeenCalled();
     expect(buildHtmlTemplate).toHaveBeenCalledWith({
       body: '<div data-glyph-block="b1">rendered</div>',
       theme: 'dark',
       title: 'My PDF',
+      clientBundle: '/* hydrate bundle */',
+      ir,
+      themeVars: undefined,
     });
   });
 
@@ -121,10 +134,26 @@ describe('exportPDF', () => {
     expect(mockPage.waitForSelector).toHaveBeenCalledWith('[data-glyph-block]');
   });
 
-  it('skips waiting for selector when there are no blocks', async () => {
+  it('waits for async components to finish loading', async () => {
+    await exportPDF(createTestIR());
+
+    expect(mockPage.waitForFunction).toHaveBeenCalledWith(expect.any(Function), undefined, {
+      timeout: 10_000,
+    });
+  });
+
+  it('adds a stability pause after async wait', async () => {
+    await exportPDF(createTestIR());
+
+    expect(mockPage.waitForTimeout).toHaveBeenCalledWith(300);
+  });
+
+  it('skips all waiting when there are no blocks', async () => {
     await exportPDF(createTestIR({ blocks: [] }));
 
     expect(mockPage.waitForSelector).not.toHaveBeenCalled();
+    expect(mockPage.waitForFunction).not.toHaveBeenCalled();
+    expect(mockPage.waitForTimeout).not.toHaveBeenCalled();
   });
 
   it('calls page.pdf with correct options', async () => {

@@ -34,5 +34,6 @@ export async function exportMarkdown(
   return renderAndRewriteBlocks(originalMarkdown, ir, imagesDir, imageRefPrefix, {
     theme: options.theme,
     width: options.width,
+    themeVars: options.themeVars,
   });
 }

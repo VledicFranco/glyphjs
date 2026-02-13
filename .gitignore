@@ -41,6 +41,9 @@ playwright-report/
 # Claude Code
 .claude/
 
+# Temp
+tmp/
+
 # Misc
 nul
 _gen.js

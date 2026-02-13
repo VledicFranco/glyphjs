@@ -5,6 +5,7 @@ import { buildHtmlTemplate } from '../rendering/html-template.js';
 export interface ExportHTMLOptions {
   theme?: ThemeName;
   title?: string;
+  themeVars?: Record<string, string>;
 }
 
 /**
@@ -12,11 +13,11 @@ export interface ExportHTMLOptions {
  * SSR-only — no client-side JavaScript is included.
  */
 export function exportHTML(ir: GlyphIR, options: ExportHTMLOptions = {}): string {
-  const { theme = 'light', title } = options;
+  const { theme = 'light', title, themeVars } = options;
 
-  const body = renderDocumentToHTML(ir, theme);
+  const body = renderDocumentToHTML(ir, theme, themeVars);
 
   const pageTitle = title ?? (ir.metadata?.title as string | undefined) ?? 'GlyphJS Export';
 
-  return buildHtmlTemplate({ body, theme, title: pageTitle });
+  return buildHtmlTemplate({ body, theme, title: pageTitle, themeVars });
 }

@@ -5,6 +5,7 @@ export interface PdfExportOptions {
   pageSize?: string;
   margin?: string;
   landscape?: boolean;
+  themeVars?: Record<string, string>;
 }
 
 export interface ParsedMargin {
