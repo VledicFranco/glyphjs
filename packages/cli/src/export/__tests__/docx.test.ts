@@ -3,12 +3,15 @@ import type { GlyphIR } from '@glyphjs/types';
 
 // ── Mocks ────────────────────────────────────────────────────
 
-vi.mock('node:fs/promises', () => ({
-  mkdir: vi.fn(),
-  writeFile: vi.fn(),
-  readFile: vi.fn(() => Promise.resolve(Buffer.from('DOCX-content'))),
-  rm: vi.fn(),
-}));
+vi.mock('node:fs/promises', () => {
+  const mod = {
+    mkdir: vi.fn(),
+    writeFile: vi.fn(),
+    readFile: vi.fn(() => Promise.resolve(Buffer.from('DOCX-content'))),
+    rm: vi.fn(),
+  };
+  return { ...mod, default: mod };
+});
 
 vi.mock('../pandoc.js', () => ({
   checkPandocAvailable: vi.fn(() => Promise.resolve('pandoc 3.1.9')),

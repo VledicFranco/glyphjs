@@ -1,9 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { getClientBundle, _resetClientBundleCache } from '../client-bundle.js';
 
-vi.mock('node:fs', () => ({
-  readFileSync: vi.fn(() => '/* hydrate bundle content */'),
-}));
+vi.mock('node:fs', () => {
+  const mod = { readFileSync: vi.fn(() => '/* hydrate bundle content */') };
+  return { ...mod, default: mod };
+});
 
 import { readFileSync } from 'node:fs';
 

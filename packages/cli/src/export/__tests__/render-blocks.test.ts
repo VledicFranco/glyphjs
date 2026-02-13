@@ -3,10 +3,10 @@ import type { Block, GlyphIR } from '@glyphjs/types';
 
 // ── Mocks ────────────────────────────────────────────────────
 
-vi.mock('node:fs/promises', () => ({
-  mkdir: vi.fn(),
-  writeFile: vi.fn(),
-}));
+vi.mock('node:fs/promises', () => {
+  const mod = { mkdir: vi.fn(), writeFile: vi.fn() };
+  return { ...mod, default: mod };
+});
 
 const mockPage = {};
 
@@ -153,7 +153,7 @@ describe('renderAndRewriteBlocks', () => {
 
     const result = await renderAndRewriteBlocks(sampleMarkdown, ir, '/tmp/img', './images');
 
-    expect(result.markdown).toContain('![chart-1](./images/chart-1.png)');
+    expect(result.markdown).toContain('![chart](./images/chart-1.png)');
     expect(result.markdown).not.toContain('```ui:chart');
   });
 
@@ -190,8 +190,8 @@ describe('renderAndRewriteBlocks', () => {
 
     const result = await renderAndRewriteBlocks(md, ir, '/tmp/img', './images');
 
-    expect(result.markdown).toContain('![b1](./images/b1.png)');
-    expect(result.markdown).toContain('![b2](./images/b2.png)');
+    expect(result.markdown).toContain('![chart](./images/b1.png)');
+    expect(result.markdown).toContain('![graph](./images/b2.png)');
     expect(result.markdown).toContain('Middle text');
     expect(result.markdown).toContain('End text');
   });
@@ -210,7 +210,7 @@ describe('renderAndRewriteBlocks', () => {
 
     const result = await renderAndRewriteBlocks(sampleMarkdown, ir, '/tmp/img', 'assets/img');
 
-    expect(result.markdown).toContain('![c1](assets/img/c1.png)');
+    expect(result.markdown).toContain('![chart](assets/img/c1.png)');
   });
 
   it('returns image paths', async () => {

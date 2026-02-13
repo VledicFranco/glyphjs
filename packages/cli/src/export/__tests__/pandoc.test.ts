@@ -2,9 +2,10 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { execFile } from 'node:child_process';
 import { checkPandocAvailable, runPandoc } from '../pandoc.js';
 
-vi.mock('node:child_process', () => ({
-  execFile: vi.fn(),
-}));
+vi.mock('node:child_process', () => {
+  const mod = { execFile: vi.fn() };
+  return { ...mod, default: mod };
+});
 
 beforeEach(() => {
   vi.clearAllMocks();

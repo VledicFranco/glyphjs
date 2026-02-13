@@ -3,9 +3,10 @@ import { loadThemeFile, resolveThemeVars } from '../theme-loader.js';
 
 // ── Mock fs and yaml ────────────────────────────────────────
 
-vi.mock('node:fs/promises', () => ({
-  readFile: vi.fn(),
-}));
+vi.mock('node:fs/promises', () => {
+  const mod = { readFile: vi.fn() };
+  return { ...mod, default: mod };
+});
 
 vi.mock('yaml', () => ({
   parse: vi.fn(),

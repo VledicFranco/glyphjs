@@ -3,11 +3,14 @@ import type { CompilationResult, Block, GlyphIR } from '@glyphjs/types';
 
 // ── Mocks ────────────────────────────────────────────────────
 
-vi.mock('node:fs/promises', () => ({
-  readFile: vi.fn(),
-  writeFile: vi.fn().mockResolvedValue(undefined),
-  mkdir: vi.fn().mockResolvedValue(undefined),
-}));
+vi.mock('node:fs/promises', () => {
+  const mod = {
+    readFile: vi.fn(),
+    writeFile: vi.fn().mockResolvedValue(undefined),
+    mkdir: vi.fn().mockResolvedValue(undefined),
+  };
+  return { ...mod, default: mod };
+});
 
 vi.mock('@glyphjs/compiler', () => ({
   compile: vi.fn(),

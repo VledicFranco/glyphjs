@@ -2,19 +2,23 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 // ── Mocks ────────────────────────────────────────────────────
 
-vi.mock('node:fs/promises', () => ({
-  readFile: vi.fn(() => Promise.resolve('# Hello')),
-}));
+vi.mock('node:fs/promises', () => {
+  const mod = { readFile: vi.fn(() => Promise.resolve('# Hello')) };
+  return { ...mod, default: mod };
+});
 
 let watchCallback: (() => void) | null = null;
 const mockWatcher = { close: vi.fn() };
 
-vi.mock('node:fs', () => ({
-  watch: vi.fn((_path: string, cb: () => void) => {
-    watchCallback = cb;
-    return mockWatcher;
-  }),
-}));
+vi.mock('node:fs', () => {
+  const mod = {
+    watch: vi.fn((_path: string, cb: () => void) => {
+      watchCallback = cb;
+      return mockWatcher;
+    }),
+  };
+  return { ...mod, default: mod };
+});
 
 let requestHandler: ((req: unknown, res: unknown) => void) | null = null;
 const mockServer = {
@@ -25,12 +29,15 @@ const mockServer = {
   close: vi.fn(),
 };
 
-vi.mock('node:http', () => ({
-  createServer: vi.fn((handler: (req: unknown, res: unknown) => void) => {
-    requestHandler = handler;
-    return mockServer;
-  }),
-}));
+vi.mock('node:http', () => {
+  const mod = {
+    createServer: vi.fn((handler: (req: unknown, res: unknown) => void) => {
+      requestHandler = handler;
+      return mockServer;
+    }),
+  };
+  return { ...mod, default: mod };
+});
 
 vi.mock('@glyphjs/compiler', () => ({
   compile: vi.fn(() => ({
@@ -55,13 +62,15 @@ vi.mock('../../utils/logger.js', () => ({
   logDiagnostics: vi.fn(),
 }));
 
-vi.mock('node:child_process', () => ({
-  exec: vi.fn(),
-}));
+vi.mock('node:child_process', () => {
+  const mod = { exec: vi.fn() };
+  return { ...mod, default: mod };
+});
 
-vi.mock('node:os', () => ({
-  platform: vi.fn(() => 'linux'),
-}));
+vi.mock('node:os', () => {
+  const mod = { platform: vi.fn(() => 'linux') };
+  return { ...mod, default: mod };
+});
 
 import { readFile } from 'node:fs/promises';
 import { watch } from 'node:fs';

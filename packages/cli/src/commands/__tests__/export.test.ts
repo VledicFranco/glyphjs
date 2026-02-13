@@ -3,10 +3,10 @@ import type { CompilationResult, Diagnostic, GlyphIR } from '@glyphjs/types';
 
 // ── Mocks ────────────────────────────────────────────────────
 
-vi.mock('node:fs/promises', () => ({
-  readFile: vi.fn(),
-  writeFile: vi.fn(),
-}));
+vi.mock('node:fs/promises', () => {
+  const mod = { readFile: vi.fn(), writeFile: vi.fn() };
+  return { ...mod, default: mod };
+});
 
 vi.mock('@glyphjs/compiler', () => ({
   compile: vi.fn(),
