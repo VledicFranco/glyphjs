@@ -53,7 +53,7 @@ program
   .option('-o, --output <path>', 'write to file instead of stdout')
   .option('-t, --theme <theme>', 'theme to use: light or dark', 'light')
   .option('--theme-file <path>', 'YAML file with custom theme variables')
-  .option('-w, --width <px>', 'document width in pixels', '800')
+  .option('-w, --width <px>', 'document width in pixels', '1024')
   .option('--title <title>', 'override document title')
   .option('--page-size <size>', 'PDF page size (e.g. Letter, A4)', 'Letter')
   .option('--margin <margin>', 'PDF margin in CSS shorthand (e.g. "1in", "0.5in 1in")', '1in')

@@ -152,10 +152,30 @@ describe('buildHtmlTemplate', () => {
     expect(html).toContain('#glyph-root a');
   });
 
-  it('sets max-width on #glyph-root', () => {
+  it('sets max-width on #glyph-root to default 52rem', () => {
     const html = buildHtmlTemplate({ body: '' });
 
     expect(html).toContain('max-width: 52rem');
+  });
+
+  it('uses custom maxWidth when provided', () => {
+    const html = buildHtmlTemplate({ body: '', maxWidth: '64rem' });
+
+    expect(html).toContain('max-width: 64rem');
+    expect(html).not.toContain('max-width: 52rem');
+  });
+
+  // ── @media print CSS ─────────────────────────────────────
+
+  it('includes @media print rules for page breaks', () => {
+    const html = buildHtmlTemplate({ body: '' });
+
+    expect(html).toContain('@media print');
+    expect(html).toContain('break-inside: avoid');
+    expect(html).toContain('page-break-inside: avoid');
+    expect(html).toContain('break-after: avoid');
+    expect(html).toContain('orphans: 3');
+    expect(html).toContain('widows: 3');
   });
 
   // ── Custom themeVars ───────────────────────────────────────

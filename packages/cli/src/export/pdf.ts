@@ -12,7 +12,7 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
   const {
     theme = 'light',
     title,
-    width = 800,
+    width = 1024,
     pageSize = 'Letter',
     margin,
     landscape = false,
@@ -31,7 +31,15 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
 
   const body = renderDocumentToHTML(ir, theme, themeVars);
   const clientBundle = getClientBundle();
-  const html = buildHtmlTemplate({ body, theme, title: pageTitle, clientBundle, ir, themeVars });
+  const html = buildHtmlTemplate({
+    body,
+    theme,
+    title: pageTitle,
+    clientBundle,
+    ir,
+    themeVars,
+    maxWidth: '64rem',
+  });
 
   const parsedMargin = parseMargin(margin);
 
@@ -60,6 +68,39 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
       // Brief stability pause for D3 transitions / layout settling
       await page.waitForTimeout(300);
     }
+
+    // Freeze grid layouts and disconnect React before PDF capture.
+    //
+    // Two problems to solve:
+    // 1. CSS `auto-fill` grid formulas re-evaluate at the narrower print
+    //    paper width, producing fewer columns than the screen layout.
+    // 2. ResizeObserver fires during print layout, causing React to
+    //    re-render container-adaptive components with fewer columns.
+    //
+    // Solution: resolve auto-fill grids to explicit track counts (from the
+    // current screen-width layout), then snapshot the DOM as static HTML
+    // to disconnect React.
+    await page.evaluate(() => {
+      const root = document.getElementById('glyph-root');
+      if (!root) return;
+
+      // Replace auto-fill grid formulas with explicit repeat(N, 1fr)
+      root.querySelectorAll<HTMLElement>('[style]').forEach((el) => {
+        if (!el.style.gridTemplateColumns) return;
+        const computed = getComputedStyle(el).gridTemplateColumns;
+        const tracks = computed.split(/\s+/).filter(Boolean).length;
+        if (tracks > 0) {
+          el.style.gridTemplateColumns = `repeat(${tracks}, 1fr)`;
+        }
+      });
+
+      // Snapshot DOM to disconnect React and prevent re-renders.
+      // Serializing and re-assigning innerHTML replaces React-managed
+      // elements with inert clones, so ResizeObserver callbacks become
+      // no-ops and no further state updates occur.
+      const frozen = root.innerHTML;
+      root.innerHTML = frozen;
+    });
 
     const pdfBuffer = await page.pdf({
       format: pageSize,
