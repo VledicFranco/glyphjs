@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/runtime",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "React-based rendering runtime for Glyph JS IR",
   "type": "module",
   "main": "./dist/index.cjs",

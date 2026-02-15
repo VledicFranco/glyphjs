@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/components",
-  "version": "0.7.0",
+  "version": "0.7.1",
   "description": "Built-in UI components for Glyph JS (graph, table, chart, etc.)",
   "type": "module",
   "main": "./dist/index.cjs",
