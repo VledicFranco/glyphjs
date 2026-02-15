@@ -81,6 +81,7 @@ const packages = [
   "runtime",
   "components",
   "brand",
+  "cli",
 ];
 
 for (const pkg of packages) {
