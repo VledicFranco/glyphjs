@@ -21,6 +21,7 @@ const mockPage = {
   waitForSelector: vi.fn(),
   waitForFunction: vi.fn().mockResolvedValue(undefined),
   waitForTimeout: vi.fn(),
+  evaluate: vi.fn().mockResolvedValue(undefined),
   pdf: vi.fn(() => Buffer.from('%PDF-mock')),
 };
 
@@ -81,6 +82,7 @@ describe('exportPDF', () => {
       clientBundle: '/* hydrate bundle */',
       ir,
       themeVars: undefined,
+      maxWidth: '64rem',
     });
   });
 
@@ -89,7 +91,7 @@ describe('exportPDF', () => {
     await exportPDF(ir);
 
     expect(buildHtmlTemplate).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'From Metadata' }),
+      expect.objectContaining({ title: 'From Metadata', maxWidth: '64rem' }),
     );
   });
 
@@ -97,7 +99,7 @@ describe('exportPDF', () => {
     await exportPDF(createTestIR());
 
     expect(buildHtmlTemplate).toHaveBeenCalledWith(
-      expect.objectContaining({ title: 'GlyphJS Export' }),
+      expect.objectContaining({ title: 'GlyphJS Export', maxWidth: '64rem' }),
     );
   });
 
@@ -110,11 +112,11 @@ describe('exportPDF', () => {
     });
   });
 
-  it('defaults viewport width to 800', async () => {
+  it('defaults viewport width to 1024', async () => {
     await exportPDF(createTestIR());
 
     expect(mockPage.setViewportSize).toHaveBeenCalledWith({
-      width: 800,
+      width: 1024,
       height: 1024,
     });
   });

@@ -15,6 +15,8 @@ export interface HtmlTemplateOptions {
   ir?: GlyphIR;
   /** Optional pre-resolved theme CSS variables. When provided, overrides the built-in theme lookup. */
   themeVars?: Record<string, string>;
+  /** Max width for the root container. Defaults to '52rem'. */
+  maxWidth?: string;
 }
 
 /**
@@ -22,7 +24,15 @@ export interface HtmlTemplateOptions {
  * with theme CSS variables injected as inline styles on the root container.
  */
 export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
-  const { body, theme = 'light', title = 'GlyphJS Render', clientBundle, ir, themeVars } = options;
+  const {
+    body,
+    theme = 'light',
+    title = 'GlyphJS Render',
+    clientBundle,
+    ir,
+    themeVars,
+    maxWidth = '52rem',
+  } = options;
 
   const vars = themeVars ?? (theme === 'dark' ? DARK_THEME_VARS : LIGHT_THEME_VARS);
   const cssVars = themeVarsToCSS(vars);
@@ -63,7 +73,7 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
 
     /* ── Prose styling ─────────────────────────────────── */
     #glyph-root {
-      max-width: 52rem;
+      max-width: ${maxWidth};
       margin: 0 auto;
       padding: 2rem 1.5rem;
       line-height: 1.7;
@@ -168,6 +178,26 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
     }
     #glyph-root th {
       font-weight: 600;
+    }
+
+    @media print {
+      /* Keep component blocks together on one page */
+      [data-glyph-block] {
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      /* Don't orphan headings at the bottom of a page */
+      h1, h2, h3, h4, h5, h6 {
+        break-after: avoid;
+        page-break-after: avoid;
+      }
+
+      /* Minimum lines before/after page breaks */
+      p {
+        orphans: 3;
+        widows: 3;
+      }
     }
   </style>
 </head>

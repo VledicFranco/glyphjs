@@ -84,6 +84,7 @@ describe('captureBlockScreenshot', () => {
         blocks: [block],
       }),
       themeVars: undefined,
+      maxWidth: '64rem',
     });
   });
 
@@ -169,7 +170,7 @@ describe('captureBlockScreenshot', () => {
 
     expect(renderBlockToHTML).toHaveBeenCalledWith(expect.anything(), 'dark', undefined);
     expect(buildHtmlTemplate).toHaveBeenCalledWith(
-      expect.objectContaining({ theme: 'dark', themeVars: undefined }),
+      expect.objectContaining({ theme: 'dark', themeVars: undefined, maxWidth: '64rem' }),
     );
   });
 
@@ -194,7 +195,7 @@ describe('captureBlockScreenshot', () => {
 
     expect(renderBlockToHTML).toHaveBeenCalledWith(expect.anything(), 'light', customVars);
     expect(buildHtmlTemplate).toHaveBeenCalledWith(
-      expect.objectContaining({ themeVars: customVars }),
+      expect.objectContaining({ themeVars: customVars, maxWidth: '64rem' }),
     );
   });
 
