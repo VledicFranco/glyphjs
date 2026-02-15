@@ -1,15 +1,19 @@
+import { createRequire } from 'node:module';
 import { Command } from 'commander';
 import { compileCommand } from './commands/compile.js';
 import { renderCommand } from './commands/render.js';
 import { exportCommand } from './commands/export.js';
 import { serveCommand } from './commands/serve.js';
 
+const require = createRequire(import.meta.url);
+const { version } = require('../package.json') as { version: string };
+
 const program = new Command();
 
 program
   .name('glyphjs')
   .description('GlyphJS CLI — compile, render, export, and serve documents')
-  .version('0.7.0');
+  .version(version);
 
 program
   .command('compile')
