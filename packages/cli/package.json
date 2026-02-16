@@ -66,11 +66,11 @@
     "yaml": "^2.7.0"
   },
   "optionalDependencies": {
-    "playwright": "^1.52.0"
+    "playwright": "^1.58.2"
   },
   "devDependencies": {
-    "@types/node": ">=20.0.0",
-    "@types/react": "^19.0.0",
+    "@types/node": ">=25.2.3",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.0.0",
     "tsup": "^8.4.0",
     "typescript": "^5.7.3"
