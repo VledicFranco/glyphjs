@@ -1570,7 +1570,7 @@ Options:
   -o, --output <path>    Write to file instead of stdout
   -t, --theme <theme>    Base theme: light or dark (default: light)
   --theme-file <path>    YAML file with custom theme variables
-  -w, --width <px>       Document width (default: 800)
+  -w, --width <px>       Document width (default: 1024)
   --title <title>        Override document title
   --page-size <size>     PDF page size, e.g. Letter, A4 (default: Letter)
   --margin <margin>      PDF margin in CSS shorthand (default: 1in)
