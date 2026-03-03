@@ -32,6 +32,14 @@ import {
   quizSchema,
   cardSchema,
   infographicSchema,
+  pollSchema,
+  ratingSchema,
+  rankerSchema,
+  sliderSchema,
+  matrixSchema,
+  formSchema,
+  kanbanSchema,
+  annotateSchema,
 } from '../index.js';
 
 // ─── Component Data Interfaces ──────────────────────────────
@@ -56,6 +64,14 @@ import type { EquationData } from '../../../components/src/equation/Equation';
 import type { QuizData } from '../../../components/src/quiz/Quiz';
 import type { CardData } from '../../../components/src/card/Card';
 import type { InfographicData } from '../../../components/src/infographic/Infographic';
+import type { PollData } from '../../../components/src/poll/Poll';
+import type { RatingData } from '../../../components/src/rating/Rating';
+import type { RankerData } from '../../../components/src/ranker/Ranker';
+import type { SliderData } from '../../../components/src/slider/Slider';
+import type { MatrixData } from '../../../components/src/matrix/Matrix';
+import type { FormData } from '../../../components/src/form/Form';
+import type { KanbanData } from '../../../components/src/kanban/Kanban';
+import type { AnnotateData } from '../../../components/src/annotate/Annotate';
 
 // ─── Sync Assertions ────────────────────────────────────────
 // Each assertion verifies that the Zod-inferred type extends the
@@ -82,3 +98,11 @@ expectTypeOf<z.infer<typeof equationSchema>>().toEqualTypeOf<EquationData>();
 expectTypeOf<z.infer<typeof quizSchema>>().toEqualTypeOf<QuizData>();
 expectTypeOf<z.infer<typeof cardSchema>>().toEqualTypeOf<CardData>();
 expectTypeOf<z.infer<typeof infographicSchema>>().toEqualTypeOf<InfographicData>();
+expectTypeOf<z.infer<typeof pollSchema>>().toEqualTypeOf<PollData>();
+expectTypeOf<z.infer<typeof ratingSchema>>().toEqualTypeOf<RatingData>();
+expectTypeOf<z.infer<typeof rankerSchema>>().toEqualTypeOf<RankerData>();
+expectTypeOf<z.infer<typeof sliderSchema>>().toEqualTypeOf<SliderData>();
+expectTypeOf<z.infer<typeof matrixSchema>>().toEqualTypeOf<MatrixData>();
+expectTypeOf<z.infer<typeof formSchema>>().toEqualTypeOf<FormData>();
+expectTypeOf<z.infer<typeof kanbanSchema>>().toEqualTypeOf<KanbanData>();
+expectTypeOf<z.infer<typeof annotateSchema>>().toEqualTypeOf<AnnotateData>();

@@ -51,3 +51,60 @@ describe('theme variable maps', () => {
     expect(Object.keys(DARK_THEME_VARS).length).toBeGreaterThan(0);
   });
 });
+
+describe('v0.8.0 two-tier theme system', () => {
+  it('LIGHT_THEME_VARS has exactly 53 keys', () => {
+    expect(Object.keys(LIGHT_THEME_VARS).length).toBe(53);
+  });
+
+  it('DARK_THEME_VARS has exactly 53 keys', () => {
+    expect(Object.keys(DARK_THEME_VARS).length).toBe(53);
+  });
+
+  it('all 4 semantic state vars present in LIGHT_THEME_VARS', () => {
+    const light = LIGHT_THEME_VARS as Record<string, string>;
+    expect(light['--glyph-color-success']).toBeDefined();
+    expect(light['--glyph-color-warning']).toBeDefined();
+    expect(light['--glyph-color-error']).toBeDefined();
+    expect(light['--glyph-color-info']).toBeDefined();
+  });
+
+  it('all 4 semantic state vars present in DARK_THEME_VARS', () => {
+    const dark = DARK_THEME_VARS as Record<string, string>;
+    expect(dark['--glyph-color-success']).toBeDefined();
+    expect(dark['--glyph-color-warning']).toBeDefined();
+    expect(dark['--glyph-color-error']).toBeDefined();
+    expect(dark['--glyph-color-info']).toBeDefined();
+  });
+
+  it('all 10 palette vars present in both maps', () => {
+    const light = LIGHT_THEME_VARS as Record<string, string>;
+    const dark = DARK_THEME_VARS as Record<string, string>;
+    for (let i = 1; i <= 10; i++) {
+      expect(light[`--glyph-palette-color-${i}`]).toBeDefined();
+      expect(dark[`--glyph-palette-color-${i}`]).toBeDefined();
+    }
+  });
+
+  it('--glyph-radius-xs present in both maps', () => {
+    const light = LIGHT_THEME_VARS as Record<string, string>;
+    const dark = DARK_THEME_VARS as Record<string, string>;
+    expect(light['--glyph-radius-xs']).toBeDefined();
+    expect(dark['--glyph-radius-xs']).toBeDefined();
+  });
+
+  it('dropped vars absent from both maps', () => {
+    const light = LIGHT_THEME_VARS as Record<string, string>;
+    const dark = DARK_THEME_VARS as Record<string, string>;
+    const dropped = [
+      '--glyph-shadow-glow',
+      '--glyph-text-shadow',
+      '--glyph-backdrop',
+      '--glyph-gradient-accent',
+    ];
+    for (const key of dropped) {
+      expect(light[key]).toBeUndefined();
+      expect(dark[key]).toBeUndefined();
+    }
+  });
+});

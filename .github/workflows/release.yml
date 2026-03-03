@@ -37,6 +37,10 @@ jobs:
           TAG="${{ github.event.release.tag_name }}"
           EXPECTED_VERSION="${TAG#v}"
           for pkg in packages/*/package.json; do
+            IS_PRIVATE=$(node -p "require('./$pkg').private || false")
+            if [ "$IS_PRIVATE" = "true" ]; then
+              continue
+            fi
             PKG_VERSION=$(node -p "require('./$pkg').version")
             if [ "$PKG_VERSION" != "$EXPECTED_VERSION" ]; then
               echo "Version mismatch in $pkg: expected $EXPECTED_VERSION, got $PKG_VERSION"

@@ -57,6 +57,7 @@
   },
   "dependencies": {
     "@glyphjs/compiler": "workspace:*",
+    "@glyphjs/schemas": "workspace:*",
     "@glyphjs/components": "workspace:*",
     "@glyphjs/runtime": "workspace:*",
     "@glyphjs/types": "workspace:*",
