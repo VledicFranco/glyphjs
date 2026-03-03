@@ -13,6 +13,22 @@ export interface CalloutData {
 
 type CalloutType = CalloutData['type'];
 
+// ─── Color maps ─────────────────────────────────────────────
+
+const CALLOUT_BORDER_MAP: Record<CalloutType, string> = {
+  info: 'var(--glyph-callout-info-border, var(--glyph-color-info, #38bdf8))',
+  warning: 'var(--glyph-callout-warning-border, var(--glyph-color-warning, #d97706))',
+  error: 'var(--glyph-callout-error-border, var(--glyph-color-error, #dc2626))',
+  tip: 'var(--glyph-callout-tip-border, var(--glyph-color-success, #16a34a))',
+};
+
+const CALLOUT_BG_MAP: Record<CalloutType, string> = {
+  info: 'var(--glyph-callout-info-bg, rgba(56, 189, 248, 0.08))',
+  warning: 'var(--glyph-callout-warning-bg, rgba(217, 119, 6, 0.08))',
+  error: 'var(--glyph-callout-error-bg, rgba(220, 38, 38, 0.08))',
+  tip: 'var(--glyph-callout-tip-bg, rgba(22, 163, 74, 0.08))',
+};
+
 // ─── Icon map ──────────────────────────────────────────────────
 
 const CALLOUT_ICONS: Record<CalloutType, string> = {
@@ -43,8 +59,8 @@ export function Callout({ data }: GlyphComponentProps<CalloutData>): ReactElemen
   const { type, title, content } = data;
 
   const containerStyle: React.CSSProperties = {
-    backgroundColor: `var(--glyph-callout-${type}-bg)`,
-    borderLeft: `4px solid var(--glyph-callout-${type}-border)`,
+    backgroundColor: CALLOUT_BG_MAP[type],
+    borderLeft: `4px solid ${CALLOUT_BORDER_MAP[type]}`,
     borderRadius: 'var(--glyph-radius-md, 0.1875rem)',
     padding: 'var(--glyph-spacing-md, 1rem)',
     margin: 'var(--glyph-spacing-sm, 0.5rem) 0',

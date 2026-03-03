@@ -1,0 +1,24 @@
+{
+  "name": "@glyphjs/obsidian-plugin",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "build": "node esbuild.config.mjs",
+    "dev": "node esbuild.config.mjs --watch"
+  },
+  "dependencies": {
+    "@glyphjs/compiler": "workspace:*",
+    "@glyphjs/components": "workspace:*",
+    "@glyphjs/runtime": "workspace:*",
+    "@glyphjs/types": "workspace:*",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "esbuild": "^0.24.0",
+    "obsidian": "latest",
+    "typescript": "^5.7.0"
+  }
+}

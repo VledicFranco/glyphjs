@@ -90,8 +90,6 @@ describe('Theme system', () => {
     expect(vars['--glyph-shadow-sm']).toBeDefined();
     expect(vars['--glyph-shadow-md']).toBeDefined();
     expect(vars['--glyph-shadow-lg']).toBeDefined();
-    expect(vars['--glyph-shadow-glow']).toBe('none');
-    expect(vars['--glyph-gradient-accent']).toContain('linear-gradient');
     expect(vars['--glyph-transition']).toBe('0.2s ease');
     expect(vars['--glyph-opacity-muted']).toBe('0.7');
     expect(vars['--glyph-opacity-disabled']).toBe('0.4');
@@ -103,34 +101,32 @@ describe('Theme system', () => {
     expect(vars['--glyph-shadow-sm']).toBeDefined();
     expect(vars['--glyph-shadow-md']).toBeDefined();
     expect(vars['--glyph-shadow-lg']).toBeDefined();
-    expect(vars['--glyph-shadow-glow']).toContain('rgba(0,212,170');
-    expect(vars['--glyph-gradient-accent']).toContain('linear-gradient');
     expect(vars['--glyph-transition']).toBe('0.2s ease');
     expect(vars['--glyph-opacity-muted']).toBe('0.7');
     expect(vars['--glyph-opacity-disabled']).toBe('0.4');
     expect(vars['--glyph-focus-ring']).toContain('#00d4aa');
   });
 
-  it('light theme includes SVG theming variables', () => {
+  it('light theme includes semantic state variables', () => {
     const vars = lightTheme.variables;
-    expect(vars['--glyph-node-fill-opacity']).toBe('0.85');
-    expect(vars['--glyph-node-radius']).toBe('3');
-    expect(vars['--glyph-node-stroke-width']).toBe('1.5');
-    expect(vars['--glyph-node-label-color']).toBe('#fff');
-    expect(vars['--glyph-edge-color']).toBe('#a8b5c8');
-    expect(vars['--glyph-icon-stroke']).toBe('#fff');
-    expect(vars['--glyph-icon-stroke-width']).toBe('1.5');
+    expect(vars['--glyph-color-success']).toBe('#16a34a');
+    expect(vars['--glyph-color-warning']).toBe('#d97706');
+    expect(vars['--glyph-color-error']).toBe('#dc2626');
+    expect(vars['--glyph-color-info']).toBe('#38bdf8');
   });
 
-  it('dark theme includes SVG theming variables', () => {
+  it('dark theme includes semantic state variables', () => {
     const vars = darkTheme.variables;
-    expect(vars['--glyph-node-fill-opacity']).toBe('0.85');
-    expect(vars['--glyph-node-radius']).toBe('3');
-    expect(vars['--glyph-node-stroke-width']).toBe('1.5');
-    expect(vars['--glyph-node-label-color']).toBe('#fff');
-    expect(vars['--glyph-edge-color']).toBe('#6b7a94');
-    expect(vars['--glyph-icon-stroke']).toBe('#fff');
-    expect(vars['--glyph-icon-stroke-width']).toBe('1.5');
+    expect(vars['--glyph-color-success']).toBe('#4ade80');
+    expect(vars['--glyph-color-warning']).toBe('#fbbf24');
+    expect(vars['--glyph-color-error']).toBe('#f87171');
+    expect(vars['--glyph-color-info']).toBe('#38bdf8');
+  });
+
+  it('light theme includes shared palette variables', () => {
+    const vars = lightTheme.variables;
+    expect(vars['--glyph-palette-color-1']).toBe('#00d4aa');
+    expect(vars['--glyph-palette-color-10']).toBe('#38bdf8');
   });
 
   it('ThemeProvider renders className on wrapper div', () => {

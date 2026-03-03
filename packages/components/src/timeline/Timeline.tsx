@@ -37,14 +37,14 @@ const EVENT_SPACING_MIN = 80;
  * through these when assigning colors based on the event `type` field.
  */
 const TYPE_PALETTE = [
-  'var(--glyph-timeline-color-1, #00d4aa)',
-  'var(--glyph-timeline-color-2, #b44dff)',
-  'var(--glyph-timeline-color-3, #22c55e)',
-  'var(--glyph-timeline-color-4, #e040fb)',
-  'var(--glyph-timeline-color-5, #00e5ff)',
-  'var(--glyph-timeline-color-6, #84cc16)',
-  'var(--glyph-timeline-color-7, #f472b6)',
-  'var(--glyph-timeline-color-8, #fb923c)',
+  'var(--glyph-timeline-color-1, var(--glyph-palette-color-1, #00d4aa))',
+  'var(--glyph-timeline-color-2, var(--glyph-palette-color-2, #b44dff))',
+  'var(--glyph-timeline-color-3, var(--glyph-palette-color-3, #22c55e))',
+  'var(--glyph-timeline-color-4, var(--glyph-palette-color-4, #e040fb))',
+  'var(--glyph-timeline-color-5, var(--glyph-palette-color-5, #00e5ff))',
+  'var(--glyph-timeline-color-6, var(--glyph-palette-color-6, #84cc16))',
+  'var(--glyph-timeline-color-7, var(--glyph-palette-color-7, #f472b6))',
+  'var(--glyph-timeline-color-8, var(--glyph-palette-color-8, #fb923c))',
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -147,7 +147,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
         top: 0,
         bottom: 0,
         width: LINE_THICKNESS,
-        backgroundColor: 'var(--glyph-timeline-line, #d0d8e4)',
+        backgroundColor: 'var(--glyph-timeline-line, var(--glyph-border, #d0d8e4))',
         transform: 'translateX(-50%)',
       }
     : {
@@ -156,7 +156,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
         left: 0,
         right: 0,
         height: LINE_THICKNESS,
-        backgroundColor: 'var(--glyph-timeline-line, #d0d8e4)',
+        backgroundColor: 'var(--glyph-timeline-line, var(--glyph-border, #d0d8e4))',
         transform: 'translateY(-50%)',
       };
 
@@ -199,7 +199,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
               <div
                 style={{
                   fontSize: 'var(--glyph-timeline-date-size, 0.75rem)',
-                  color: 'var(--glyph-timeline-date-color, #7a8599)',
+                  color: 'var(--glyph-timeline-date-color, var(--glyph-text-muted, #6b7a94))',
                   fontWeight: 600,
                 }}
               >
@@ -218,7 +218,7 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
                 <div
                   style={{
                     fontSize: 'var(--glyph-timeline-desc-size, 0.8rem)',
-                    color: 'var(--glyph-timeline-desc-color, #7a8599)',
+                    color: 'var(--glyph-timeline-desc-color, var(--glyph-text-muted, #6b7a94))',
                     marginTop: 2,
                   }}
                 >
@@ -305,13 +305,13 @@ function connectorStyle(_pe: PositionedEvent, isVertical: boolean): React.CSSPro
     return {
       flex: '0 0 20px',
       height: LINE_THICKNESS,
-      backgroundColor: 'var(--glyph-timeline-line, #d0d8e4)',
+      backgroundColor: 'var(--glyph-timeline-line, var(--glyph-border, #d0d8e4))',
     };
   }
   return {
     flex: '0 0 20px',
     width: LINE_THICKNESS,
-    backgroundColor: 'var(--glyph-timeline-line, #d0d8e4)',
+    backgroundColor: 'var(--glyph-timeline-line, var(--glyph-border, #d0d8e4))',
   };
 }
 

@@ -23,16 +23,16 @@ export const DEFAULT_HEIGHT = 400;
 export const MARGIN = { top: 20, right: 30, bottom: 50, left: 60 };
 
 export const COLOR_SCHEME = [
-  '#00d4aa', // cyan-green
-  '#b44dff', // purple
-  '#22c55e', // green
-  '#e040fb', // magenta
-  '#00e5ff', // teal
-  '#84cc16', // lime
-  '#f472b6', // rose
-  '#fb923c', // orange
-  '#818cf8', // indigo
-  '#38bdf8', // sky
+  'var(--glyph-palette-color-1, #00d4aa)',
+  'var(--glyph-palette-color-2, #b44dff)',
+  'var(--glyph-palette-color-3, #22c55e)',
+  'var(--glyph-palette-color-4, #e040fb)',
+  'var(--glyph-palette-color-5, #00e5ff)',
+  'var(--glyph-palette-color-6, #84cc16)',
+  'var(--glyph-palette-color-7, #f472b6)',
+  'var(--glyph-palette-color-8, #fb923c)',
+  'var(--glyph-palette-color-9, #818cf8)',
+  'var(--glyph-palette-color-10, #38bdf8)',
 ];
 
 // ─── Helpers ───────────────────────────────────────────────────
@@ -89,7 +89,7 @@ export function renderAxes(
   xAxisG
     .selectAll('text, line, path')
     .attr('fill', 'var(--glyph-text, #1a2035)')
-    .attr('stroke', 'var(--glyph-grid, #1a2035)');
+    .attr('stroke', 'var(--glyph-grid, var(--glyph-border, #d0d8e4))');
 
   if (xAxisConfig?.label) {
     g.append('text')
@@ -112,7 +112,7 @@ export function renderAxes(
   yAxisG
     .selectAll('text, line, path')
     .attr('fill', 'var(--glyph-text, #1a2035)')
-    .attr('stroke', 'var(--glyph-grid, #1a2035)');
+    .attr('stroke', 'var(--glyph-grid, var(--glyph-border, #d0d8e4))');
 
   if (yAxisConfig?.label) {
     g.append('text')
@@ -290,8 +290,8 @@ export function renderOHLCSeries(
     const cx = xScalePoint(d);
     const isBullish = close >= open;
     const candleColor = isBullish
-      ? 'var(--glyph-chart-bullish, #22c55e)'
-      : 'var(--glyph-chart-bearish, #f87171)';
+      ? 'var(--glyph-chart-bullish, var(--glyph-color-success, #22c55e))'
+      : 'var(--glyph-chart-bearish, var(--glyph-color-error, #f87171))';
 
     // High-low wick
     g.append('line')

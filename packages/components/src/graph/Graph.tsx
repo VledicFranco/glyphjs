@@ -41,19 +41,19 @@ type LayoutDirection = 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'for
 // ─── Group Color Palette ─────────────────────────────────────
 
 const GROUP_PALETTE = [
-  '#00d4aa', // cyan-green
-  '#b44dff', // purple
-  '#22c55e', // green
-  '#e040fb', // magenta
-  '#00e5ff', // teal
-  '#84cc16', // lime
-  '#f472b6', // rose
-  '#fb923c', // orange
-  '#818cf8', // indigo
-  '#38bdf8', // sky
+  'var(--glyph-palette-color-1, #00d4aa)',
+  'var(--glyph-palette-color-2, #b44dff)',
+  'var(--glyph-palette-color-3, #22c55e)',
+  'var(--glyph-palette-color-4, #e040fb)',
+  'var(--glyph-palette-color-5, #00e5ff)',
+  'var(--glyph-palette-color-6, #84cc16)',
+  'var(--glyph-palette-color-7, #f472b6)',
+  'var(--glyph-palette-color-8, #fb923c)',
+  'var(--glyph-palette-color-9, #818cf8)',
+  'var(--glyph-palette-color-10, #38bdf8)',
 ];
 
-const DEFAULT_NODE_COLOR = '#00d4aa';
+const DEFAULT_NODE_COLOR = 'var(--glyph-palette-color-1, #00d4aa)';
 
 function getGroupColor(group: string | undefined, groupIndex: Map<string, number>): string {
   if (!group) return GROUP_PALETTE[0] ?? DEFAULT_NODE_COLOR;
@@ -119,7 +119,7 @@ function renderGraph(
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
-    .attr('fill', 'var(--glyph-edge-color, #6b7a94)');
+    .attr('fill', 'var(--glyph-edge-color, var(--glyph-border, #d0d8e4))');
 
   // Read theme variables from the SVG's parent container for attrs that
   // don't support CSS var() (rx, ry, opacity).
@@ -161,7 +161,10 @@ function renderGraph(
       .append('path')
       .attr('d', lineGen(edge.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', edge.style?.['stroke'] ?? 'var(--glyph-edge-color, #6b7a94)')
+      .attr(
+        'stroke',
+        edge.style?.['stroke'] ?? 'var(--glyph-edge-color, var(--glyph-border, #d0d8e4))',
+      )
       .attr('stroke-width', edge.style?.['stroke-width'] ?? nodeStrokeWidth)
       .attr('marker-end', `url(#${ARROW_MARKER_ID})`)
       .attr('stroke-dasharray', edge.type === 'dashed' ? '5,5' : null);
@@ -175,7 +178,7 @@ function renderGraph(
           .attr('y', mid.y - 8)
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
-          .attr('fill', 'var(--glyph-edge-color, #6b7a94)')
+          .attr('fill', 'var(--glyph-edge-color, var(--glyph-border, #d0d8e4))')
           .text(inlineToText(edge.label));
       }
     }
@@ -194,7 +197,8 @@ function renderGraph(
 
     // Shape: circle for 'entity' type, rounded rect otherwise
     const defaultStroke =
-      d3.color(color)?.darker(0.5)?.toString() ?? 'var(--glyph-edge-color, #6b7a94)';
+      d3.color(color)?.darker(0.5)?.toString() ??
+      'var(--glyph-edge-color, var(--glyph-border, #d0d8e4))';
 
     if (node.type === 'circle') {
       nodeG

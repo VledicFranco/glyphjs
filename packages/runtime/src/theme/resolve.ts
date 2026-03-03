@@ -1,4 +1,4 @@
-import type { GlyphTheme } from '@glyphjs/types';
+import type { GlyphTheme, GlyphThemeVarKey } from '@glyphjs/types';
 import { lightTheme } from './light.js';
 import { darkTheme } from './dark.js';
 
@@ -8,9 +8,7 @@ import { darkTheme } from './dark.js';
  *
  * When `undefined` is passed, defaults to the light theme.
  */
-export function resolveTheme(
-  theme: 'light' | 'dark' | GlyphTheme | undefined,
-): GlyphTheme {
+export function resolveTheme(theme: 'light' | 'dark' | GlyphTheme | undefined): GlyphTheme {
   if (!theme || theme === 'light') {
     return lightTheme;
   }
@@ -45,10 +43,8 @@ export function mergeThemeDefaults(
  * returns the value defined in the theme, or an empty string if the variable
  * is not present.
  */
-export function createResolveVar(
-  theme: GlyphTheme,
-): (varName: string) => string {
-  return (varName: string): string => theme.variables[varName] ?? '';
+export function createResolveVar(theme: GlyphTheme): (varName: string) => string {
+  return (varName: string): string => theme.variables[varName as GlyphThemeVarKey] ?? '';
 }
 
 /**

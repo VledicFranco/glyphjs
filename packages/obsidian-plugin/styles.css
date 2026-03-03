@@ -1,0 +1,16 @@
+.glyphjs-root {
+  /* Structural reset */
+  font-family: var(--font-text);
+  font-size: var(--font-text-size);
+  line-height: var(--line-height-normal);
+  margin: 0.75em 0;
+}
+
+/* Remove the default code block chrome Obsidian wraps ui: blocks in */
+.glyphjs-root pre,
+.glyphjs-root code {
+  background: none;
+  padding: 0;
+  border: none;
+  font-family: inherit;
+}

@@ -45,7 +45,10 @@ function renderValue(value: string | InlineNode[]): ReactElement {
       return (
         <span
           aria-label="Supported"
-          style={{ color: 'var(--glyph-comparison-yes, #16a34a)', fontSize: '1.25rem' }}
+          style={{
+            color: 'var(--glyph-comparison-yes, var(--glyph-color-success, #16a34a))',
+            fontSize: '1.25rem',
+          }}
         >
           ✓
         </span>
@@ -54,7 +57,10 @@ function renderValue(value: string | InlineNode[]): ReactElement {
       return (
         <span
           aria-label="Not supported"
-          style={{ color: 'var(--glyph-comparison-no, #dc2626)', fontSize: '1.25rem' }}
+          style={{
+            color: 'var(--glyph-comparison-no, var(--glyph-color-error, #dc2626))',
+            fontSize: '1.25rem',
+          }}
         >
           ✗
         </span>
@@ -63,7 +69,10 @@ function renderValue(value: string | InlineNode[]): ReactElement {
       return (
         <span
           aria-label="Partially supported"
-          style={{ color: 'var(--glyph-comparison-partial, #d97706)', fontSize: '1.25rem' }}
+          style={{
+            color: 'var(--glyph-comparison-partial, var(--glyph-color-warning, #d97706))',
+            fontSize: '1.25rem',
+          }}
         >
           ◐
         </span>
@@ -102,7 +111,7 @@ export function Comparison({
   const tableStyle: React.CSSProperties = {
     width: '100%',
     borderCollapse: 'collapse',
-    border: '1px solid var(--glyph-table-border, #d0d8e4)',
+    border: '1px solid var(--glyph-table-border, var(--glyph-border, #d0d8e4))',
     borderRadius: 'var(--glyph-radius-md, 0.5rem)',
     overflow: 'hidden',
     fontSize: isCompact ? '0.8125rem' : '0.875rem',
@@ -112,8 +121,8 @@ export function Comparison({
     padding: cellPadding,
     textAlign: 'center',
     fontWeight: 600,
-    background: 'var(--glyph-table-header-bg, #e8ecf3)',
-    borderBottom: '2px solid var(--glyph-table-border, #d0d8e4)',
+    background: 'var(--glyph-table-header-bg, var(--glyph-surface, #e8ecf3))',
+    borderBottom: '2px solid var(--glyph-table-border, var(--glyph-border, #d0d8e4))',
     color: 'var(--glyph-heading, #0a0e1a)',
   };
 
@@ -126,15 +135,18 @@ export function Comparison({
     padding: cellPadding,
     textAlign: 'left',
     fontWeight: 600,
-    borderBottom: '1px solid var(--glyph-table-border, #d0d8e4)',
+    borderBottom: '1px solid var(--glyph-table-border, var(--glyph-border, #d0d8e4))',
     fontSize: '0.8125rem',
   };
 
   const cellStyle = (rowIndex: number): React.CSSProperties => ({
     padding: cellPadding,
     textAlign: 'center',
-    borderBottom: '1px solid var(--glyph-table-border, #d0d8e4)',
-    background: rowIndex % 2 === 1 ? 'var(--glyph-table-row-alt-bg, transparent)' : 'transparent',
+    borderBottom: '1px solid var(--glyph-table-border, var(--glyph-border, #d0d8e4))',
+    background:
+      rowIndex % 2 === 1
+        ? 'var(--glyph-table-row-alt-bg, var(--glyph-surface-raised, transparent))'
+        : 'transparent',
   });
 
   return (
@@ -208,7 +220,7 @@ export function Comparison({
                     ...rowThStyle,
                     background:
                       rowIndex % 2 === 1
-                        ? 'var(--glyph-table-row-alt-bg, transparent)'
+                        ? 'var(--glyph-table-row-alt-bg, var(--glyph-surface-raised, transparent))'
                         : 'transparent',
                   }}
                 >

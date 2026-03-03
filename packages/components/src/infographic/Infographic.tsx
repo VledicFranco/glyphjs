@@ -136,10 +136,10 @@ function computeSectionLayout(sections: InfographicSection[]): (string | undefin
 }
 
 const PROGRESS_COLORS = [
-  'var(--glyph-infographic-color-1, #3b82f6)',
-  'var(--glyph-infographic-color-2, #22c55e)',
-  'var(--glyph-infographic-color-3, #f59e0b)',
-  'var(--glyph-infographic-color-4, #ef4444)',
+  'var(--glyph-infographic-color-1, var(--glyph-palette-color-1, #00d4aa))',
+  'var(--glyph-infographic-color-2, var(--glyph-palette-color-2, #b44dff))',
+  'var(--glyph-infographic-color-3, var(--glyph-palette-color-3, #22c55e))',
+  'var(--glyph-infographic-color-4, var(--glyph-palette-color-4, #e040fb))',
 ];
 
 // ─── Sub-renderers ─────────────────────────────────────────────
@@ -159,13 +159,13 @@ function renderStatGroup(items: StatItem[], keyPrefix: string): ReactElement {
   const valueStyle: React.CSSProperties = {
     fontSize: '1.75rem',
     fontWeight: 700,
-    color: 'var(--glyph-infographic-value-color, #1d4ed8)',
+    color: 'var(--glyph-infographic-value-color, var(--glyph-accent, #0a9d7c))',
     lineHeight: 1.2,
   };
 
   const labelStyle: React.CSSProperties = {
     fontSize: '0.8125rem',
-    color: 'var(--glyph-infographic-label-color, #475569)',
+    color: 'var(--glyph-infographic-label-color, var(--glyph-text-muted, #6b7a94))',
     marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
     textTransform: 'uppercase',
     letterSpacing: '0.06em',
@@ -174,7 +174,7 @@ function renderStatGroup(items: StatItem[], keyPrefix: string): ReactElement {
 
   const descStyle: React.CSSProperties = {
     fontSize: '0.75rem',
-    color: 'var(--glyph-infographic-desc-color, #64748b)',
+    color: 'var(--glyph-infographic-desc-color, var(--glyph-text-muted, #6b7a94))',
     marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
     fontStyle: 'italic',
   };
@@ -204,7 +204,7 @@ function renderProgressGroup(
   const trackStyle: React.CSSProperties = {
     height: '0.5rem',
     borderRadius: 'var(--glyph-radius-sm, 0.375rem)',
-    background: 'var(--glyph-infographic-track, #e0e4ea)',
+    background: 'var(--glyph-infographic-track, var(--glyph-surface, #e8ecf3))',
     overflow: 'hidden',
   };
 
@@ -240,7 +240,7 @@ function renderProgressGroup(
               </span>
               <span
                 style={{
-                  color: 'var(--glyph-infographic-value-color, #1d4ed8)',
+                  color: 'var(--glyph-infographic-value-color, var(--glyph-accent, #0a9d7c))',
                   fontWeight: 700,
                 }}
               >
@@ -286,7 +286,7 @@ function renderFactGroup(items: FactItem[], keyPrefix: string): ReactElement {
             <span
               style={{
                 marginRight: 'var(--glyph-spacing-xs, 0.25rem)',
-                color: 'var(--glyph-infographic-accent, #3b82f6)',
+                color: 'var(--glyph-infographic-accent, var(--glyph-accent, #0a9d7c))',
               }}
               aria-hidden="true"
             >
@@ -306,7 +306,7 @@ function renderTextGroup(items: TextItem[], keyPrefix: string): ReactElement {
     fontSize: '0.875rem',
     lineHeight: 1.6,
     color: 'var(--glyph-text, #1a2035)',
-    borderLeft: '3px solid var(--glyph-infographic-accent, #3b82f6)',
+    borderLeft: '3px solid var(--glyph-infographic-accent, var(--glyph-accent, #0a9d7c))',
     paddingLeft: 'var(--glyph-spacing-sm, 0.5rem)',
   };
 
@@ -403,7 +403,7 @@ function renderPieGroup(items: PieItem[], keyPrefix: string, colorOffset: number
                 style={{
                   fontSize: '0.875rem',
                   fontWeight: 600,
-                  color: 'var(--glyph-infographic-heading-color, #1e293b)',
+                  color: 'var(--glyph-infographic-heading-color, var(--glyph-heading, #0a0e1a))',
                   marginBottom: 'var(--glyph-spacing-xs, 0.25rem)',
                 }}
               >
@@ -464,7 +464,7 @@ function renderDividerGroup(items: DividerItem[], keyPrefix: string): ReactEleme
           role="separator"
           style={{
             border: 'none',
-            borderTop: `1px ${item.style ?? 'solid'} var(--glyph-infographic-section-divider, #d0d8e4)`,
+            borderTop: `1px ${item.style ?? 'solid'} var(--glyph-infographic-section-divider, var(--glyph-border, #d0d8e4))`,
             margin: 'var(--glyph-spacing-sm, 0.5rem) 0',
           }}
         />
@@ -474,7 +474,7 @@ function renderDividerGroup(items: DividerItem[], keyPrefix: string): ReactEleme
 }
 
 function renderRatingGroup(items: RatingItem[], keyPrefix: string): ReactElement {
-  const starColor = 'var(--glyph-infographic-star, #f59e0b)';
+  const starColor = 'var(--glyph-infographic-star, var(--glyph-rating-star-fill, #f59e0b))';
   const emptyColor = 'var(--glyph-text-muted, #6b7a94)';
 
   return (
@@ -563,7 +563,7 @@ function renderRatingGroup(items: RatingItem[], keyPrefix: string): ReactElement
                 <div
                   style={{
                     fontSize: '0.75rem',
-                    color: 'var(--glyph-infographic-desc-color, #64748b)',
+                    color: 'var(--glyph-infographic-desc-color, var(--glyph-text-muted, #6b7a94))',
                     marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
                     fontStyle: 'italic',
                   }}
@@ -615,12 +615,12 @@ export function Infographic({
     margin: 0,
     paddingBottom: 'var(--glyph-spacing-sm, 0.5rem)',
     marginBottom: 'var(--glyph-spacing-md, 1rem)',
-    borderBottom: '2px solid var(--glyph-infographic-accent, #3b82f6)',
+    borderBottom: '2px solid var(--glyph-infographic-accent, var(--glyph-accent, #0a9d7c))',
     ...(useGrid ? { gridColumn: '1 / -1' } : {}),
   };
 
   const sectionDividerStyle: React.CSSProperties = {
-    borderTop: '1px solid var(--glyph-infographic-section-divider, #d0d8e4)',
+    borderTop: '1px solid var(--glyph-infographic-section-divider, var(--glyph-border, #d0d8e4))',
     paddingTop: 'var(--glyph-spacing-md, 1rem)',
     marginTop: 'var(--glyph-spacing-md, 1rem)',
   };
@@ -641,9 +641,9 @@ export function Infographic({
   const headingStyle: React.CSSProperties = {
     fontWeight: 700,
     fontSize: '1rem',
-    color: 'var(--glyph-infographic-heading-color, #1e293b)',
+    color: 'var(--glyph-infographic-heading-color, var(--glyph-heading, #0a0e1a))',
     marginBottom: 'var(--glyph-spacing-sm, 0.5rem)',
-    borderLeft: '3px solid var(--glyph-infographic-accent, #3b82f6)',
+    borderLeft: '3px solid var(--glyph-infographic-accent, var(--glyph-accent, #0a9d7c))',
     paddingLeft: 'var(--glyph-spacing-sm, 0.5rem)',
   };
 

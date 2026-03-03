@@ -82,7 +82,8 @@ export function InteractionOverlay({
             width,
             height,
             pointerEvents: 'none',
-            border: '2px solid var(--glyph-interaction-active-border, #0a9d7c)',
+            border:
+              '2px solid var(--glyph-interaction-active-border, var(--glyph-accent, #0a9d7c))',
             borderRadius: '4px',
           }}
           aria-hidden="true"
@@ -114,8 +115,9 @@ const TOOLTIP_STYLE: CSSProperties = {
   bottom: '12px',
   right: '12px',
   padding: '6px 10px',
-  backgroundColor: 'var(--glyph-interaction-tooltip-bg, rgba(26, 32, 53, 0.9))',
-  color: 'var(--glyph-interaction-tooltip-text, #f4f6fa)',
+  backgroundColor:
+    'var(--glyph-interaction-tooltip-bg, var(--glyph-tooltip-bg, rgba(26, 32, 53, 0.9)))',
+  color: 'var(--glyph-interaction-tooltip-text, var(--glyph-tooltip-text, #f4f6fa))',
   borderRadius: '4px',
   fontSize: '12px',
   fontFamily: 'Inter, system-ui, sans-serif',
@@ -138,8 +140,9 @@ const ACTIVATION_OVERLAY_STYLE: CSSProperties = {
 
 const ACTIVATION_TEXT_STYLE: CSSProperties = {
   padding: '12px 20px',
-  backgroundColor: 'var(--glyph-interaction-tooltip-bg, rgba(26, 32, 53, 0.9))',
-  color: 'var(--glyph-interaction-tooltip-text, #f4f6fa)',
+  backgroundColor:
+    'var(--glyph-interaction-tooltip-bg, var(--glyph-tooltip-bg, rgba(26, 32, 53, 0.9)))',
+  color: 'var(--glyph-interaction-tooltip-text, var(--glyph-tooltip-text, #f4f6fa))',
   borderRadius: '6px',
   fontSize: '14px',
   fontFamily: 'Inter, system-ui, sans-serif',

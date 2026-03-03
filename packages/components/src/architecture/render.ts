@@ -5,24 +5,23 @@ import { renderIcon } from './icons.js';
 // ─── Node Color Palette (Oblivion) ─────────────────────────
 
 const NODE_PALETTE = [
-  '#00d4aa',
-  '#b44dff',
-  '#22c55e',
-  '#e040fb',
-  '#00e5ff',
-  '#84cc16',
-  '#f472b6',
-  '#fb923c',
-  '#818cf8',
-  '#38bdf8',
+  'var(--glyph-palette-color-1, #00d4aa)',
+  'var(--glyph-palette-color-2, #b44dff)',
+  'var(--glyph-palette-color-3, #22c55e)',
+  'var(--glyph-palette-color-4, #e040fb)',
+  'var(--glyph-palette-color-5, #00e5ff)',
+  'var(--glyph-palette-color-6, #84cc16)',
+  'var(--glyph-palette-color-7, #f472b6)',
+  'var(--glyph-palette-color-8, #fb923c)',
+  'var(--glyph-palette-color-9, #818cf8)',
+  'var(--glyph-palette-color-10, #38bdf8)',
 ];
 
 // ─── Zone Depth Colors ──────────────────────────────────────
 
-function zoneBackground(depth: number): string {
+function zoneBackground(depth: number): number {
   const alphas = [0.06, 0.1, 0.14, 0.18];
-  const alpha = alphas[Math.min(depth, alphas.length - 1)] ?? 0.18;
-  return `rgba(0,212,170,${alpha})`;
+  return alphas[Math.min(depth, alphas.length - 1)] ?? 0.18;
 }
 
 // ─── Theme Variable Helper ──────────────────────────────────
@@ -64,7 +63,7 @@ export function renderArchitecture(
     .attr('orient', 'auto-start-reverse')
     .append('path')
     .attr('d', 'M 0 0 L 10 5 L 0 10 Z')
-    .attr('fill', 'var(--glyph-edge-color, #6b7a94)');
+    .attr('fill', 'var(--glyph-edge-color, var(--glyph-border, #d0d8e4))');
 
   // Read theme variables from the SVG's parent container for attrs that
   // don't support CSS var() (rx, ry, opacity).
@@ -102,7 +101,8 @@ export function renderArchitecture(
       .attr('height', zone.height)
       .attr('rx', nodeRadius)
       .attr('ry', nodeRadius)
-      .attr('fill', zoneBackground(zone.depth))
+      .attr('fill', 'var(--glyph-accent, #00d4aa)')
+      .attr('fill-opacity', zoneBackground(zone.depth))
       .attr('stroke', 'var(--glyph-accent-muted, #1a4a3a)')
       .attr('stroke-width', 1)
       .attr('stroke-dasharray', '6,3');
@@ -139,7 +139,10 @@ export function renderArchitecture(
       .append('path')
       .attr('d', lineGen(edge.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', edge.style?.['stroke'] ?? 'var(--glyph-edge-color, #6b7a94)')
+      .attr(
+        'stroke',
+        edge.style?.['stroke'] ?? 'var(--glyph-edge-color, var(--glyph-border, #d0d8e4))',
+      )
       .attr('stroke-width', edge.style?.['stroke-width'] ?? String(strokeWidth))
       .attr('marker-end', `url(#${ARROW_MARKER_ID})`)
       .attr('stroke-dasharray', dashArray);
@@ -202,7 +205,8 @@ export function renderArchitecture(
 
     // Node rect
     const defaultStroke =
-      d3.color(color)?.darker(0.5)?.toString() ?? 'var(--glyph-edge-color, #6b7a94)';
+      d3.color(color)?.darker(0.5)?.toString() ??
+      'var(--glyph-edge-color, var(--glyph-border, #d0d8e4))';
 
     nodeG
       .append('rect')

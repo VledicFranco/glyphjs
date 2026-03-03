@@ -207,7 +207,7 @@ function drawCrowsFoot(
       .attr('y1', y)
       .attr('x2', cx)
       .attr('y2', cy)
-      .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
+      .attr('stroke', 'var(--glyph-relation-line, var(--glyph-border, #d0d8e4))')
       .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
 
     // Left fork
@@ -218,7 +218,7 @@ function drawCrowsFoot(
       .attr('y1', y)
       .attr('x2', lx)
       .attr('y2', ly)
-      .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
+      .attr('stroke', 'var(--glyph-relation-line, var(--glyph-border, #d0d8e4))')
       .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
 
     // Right fork
@@ -229,7 +229,7 @@ function drawCrowsFoot(
       .attr('y1', y)
       .attr('x2', rx)
       .attr('y2', ry)
-      .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
+      .attr('stroke', 'var(--glyph-relation-line, var(--glyph-border, #d0d8e4))')
       .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
   } else {
     // Single line perpendicular to the edge for "1"
@@ -242,7 +242,7 @@ function drawCrowsFoot(
       .attr('y1', ty - Math.sin(perpAngle) * halfLen)
       .attr('x2', tx + Math.cos(perpAngle) * halfLen)
       .attr('y2', ty + Math.sin(perpAngle) * halfLen)
-      .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
+      .attr('stroke', 'var(--glyph-relation-line, var(--glyph-border, #d0d8e4))')
       .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
   }
 }
@@ -291,7 +291,7 @@ function renderRelation(
       .append('path')
       .attr('d', lineGen(rel.points) ?? '')
       .attr('fill', 'none')
-      .attr('stroke', 'var(--glyph-relation-line, #6b7a94)')
+      .attr('stroke', 'var(--glyph-relation-line, var(--glyph-border, #d0d8e4))')
       .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
 
     // Cardinality notation
@@ -324,7 +324,7 @@ function renderRelation(
           .attr('text-anchor', 'middle')
           .attr('font-size', '11px')
           .attr('font-family', 'Inter, system-ui, sans-serif')
-          .attr('fill', 'var(--glyph-relation-label, #6b7a94)')
+          .attr('fill', 'var(--glyph-relation-label, var(--glyph-text-muted, #6b7a94))')
           .text(inlineToText(rel.label));
       }
     }
@@ -342,7 +342,7 @@ function renderRelation(
         .attr('text-anchor', 'middle')
         .attr('font-size', '10px')
         .attr('font-family', 'Inter, system-ui, sans-serif')
-        .attr('fill', 'var(--glyph-relation-cardinality, #6b7a94)')
+        .attr('fill', 'var(--glyph-relation-cardinality, var(--glyph-text-muted, #6b7a94))')
         .text(fromSymbol);
     }
 
@@ -358,7 +358,7 @@ function renderRelation(
         .attr('text-anchor', 'middle')
         .attr('font-size', '10px')
         .attr('font-family', 'Inter, system-ui, sans-serif')
-        .attr('fill', 'var(--glyph-relation-cardinality, #6b7a94)')
+        .attr('fill', 'var(--glyph-relation-cardinality, var(--glyph-text-muted, #6b7a94))')
         .text(toSymbol);
     }
   }
@@ -382,8 +382,8 @@ function renderRelation(
       .attr('height', entity.height)
       .attr('rx', 4)
       .attr('ry', 4)
-      .attr('fill', 'var(--glyph-relation-entity-bg, #f4f6fa)')
-      .attr('stroke', 'var(--glyph-relation-entity-border, #a8b5c8)')
+      .attr('fill', 'var(--glyph-relation-entity-bg, var(--glyph-surface-raised, #f4f6fa))')
+      .attr('stroke', 'var(--glyph-relation-entity-border, var(--glyph-border-strong, #a8b5c8))')
       .attr('stroke-width', 'var(--glyph-node-stroke-width, 1.5)');
 
     // Header background
@@ -396,7 +396,7 @@ function renderRelation(
       .attr('height', headerHeight)
       .attr('rx', 4)
       .attr('ry', 4)
-      .attr('fill', 'var(--glyph-relation-header-bg, #00d4aa)');
+      .attr('fill', 'var(--glyph-relation-header-bg, var(--glyph-accent, #0a9d7c))');
 
     // Clip the bottom corners of the header rectangle so it's flat at the bottom
     entityG
@@ -405,7 +405,7 @@ function renderRelation(
       .attr('y', y + headerHeight - 4)
       .attr('width', entity.width)
       .attr('height', 4)
-      .attr('fill', 'var(--glyph-relation-header-bg, #00d4aa)');
+      .attr('fill', 'var(--glyph-relation-header-bg, var(--glyph-accent, #0a9d7c))');
 
     // Header label
     entityG
@@ -417,7 +417,7 @@ function renderRelation(
       .attr('font-size', '13px')
       .attr('font-weight', 'bold')
       .attr('font-family', 'Inter, system-ui, sans-serif')
-      .attr('fill', 'var(--glyph-relation-header-text, #fff)')
+      .attr('fill', 'var(--glyph-relation-header-text, var(--glyph-text-on-accent, #fff))')
       .text(inlineToText(entity.label));
 
     // Separator line below header
@@ -428,7 +428,7 @@ function renderRelation(
         .attr('y1', y + headerHeight)
         .attr('x2', x + entity.width)
         .attr('y2', y + headerHeight)
-        .attr('stroke', 'var(--glyph-relation-entity-border, #a8b5c8)')
+        .attr('stroke', 'var(--glyph-relation-entity-border, var(--glyph-border-strong, #a8b5c8))')
         .attr('stroke-width', 1);
     }
 
@@ -445,7 +445,7 @@ function renderRelation(
         .attr('dy', '0.35em')
         .attr('font-size', '12px')
         .attr('font-family', 'system-ui, -apple-system, monospace')
-        .attr('fill', 'var(--glyph-relation-attr-text, #1a2035)');
+        .attr('fill', 'var(--glyph-relation-attr-text, var(--glyph-text, #1a2035))');
 
       // Attribute name (bold + underline if primary key)
       const nameSpan = textEl.append('tspan').text(inlineToText(attr.name));
@@ -456,7 +456,7 @@ function renderRelation(
       // Attribute type
       textEl
         .append('tspan')
-        .attr('fill', 'var(--glyph-relation-attr-type, #6b7a94)')
+        .attr('fill', 'var(--glyph-relation-attr-type, var(--glyph-text-muted, #6b7a94))')
         .text(`: ${attr.type}`);
     }
   }

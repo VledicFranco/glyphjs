@@ -20,6 +20,14 @@ export interface KpiData {
   markdown?: boolean;
 }
 
+// ─── Sentiment color map ───────────────────────────────────────
+
+const KPI_COLOR_MAP: Record<'positive' | 'negative' | 'neutral', string> = {
+  positive: 'var(--glyph-kpi-positive, var(--glyph-color-success, #16a34a))',
+  negative: 'var(--glyph-kpi-negative, var(--glyph-color-error, #dc2626))',
+  neutral: 'var(--glyph-kpi-neutral, var(--glyph-text-muted, #6b7a94))',
+};
+
 // ─── Trend symbols ─────────────────────────────────────────────
 
 const TREND_SYMBOLS: Record<string, string> = {
@@ -124,7 +132,7 @@ export function Kpi({ data, block, container }: GlyphComponentProps<KpiData>): R
           const deltaStyle: React.CSSProperties = {
             fontSize: '0.875rem',
             marginTop: 'var(--glyph-spacing-xs, 0.25rem)',
-            color: `var(--glyph-kpi-${sentiment}, inherit)`,
+            color: KPI_COLOR_MAP[sentiment],
           };
 
           return (

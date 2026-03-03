@@ -92,11 +92,11 @@ const CONNECTOR_WIDTH = '2px';
 function colorForStatus(status: StepStatus): string {
   switch (status) {
     case 'pending':
-      return 'var(--glyph-steps-pending-color, #7a8599)';
+      return 'var(--glyph-steps-pending-color, var(--glyph-text-muted, #6b7a94))';
     case 'active':
-      return 'var(--glyph-steps-active-color, #00d4aa)';
+      return 'var(--glyph-steps-active-color, var(--glyph-accent, #00d4aa))';
     case 'completed':
-      return 'var(--glyph-steps-completed-color, #22c55e)';
+      return 'var(--glyph-steps-completed-color, var(--glyph-color-success, #22c55e))';
   }
 }
 
@@ -119,8 +119,8 @@ function connectorStyle(status: StepStatus): React.CSSProperties {
     width: CONNECTOR_WIDTH,
     backgroundColor:
       status === 'completed'
-        ? 'var(--glyph-steps-completed-color, #22c55e)'
-        : 'var(--glyph-steps-connector-color, #d0d8e4)',
+        ? 'var(--glyph-steps-completed-color, var(--glyph-color-success, #22c55e))'
+        : 'var(--glyph-steps-connector-color, var(--glyph-border, #d0d8e4))',
   };
 }
 
@@ -156,7 +156,7 @@ function titleStyle(status: StepStatus): React.CSSProperties {
     fontWeight: 600,
     color:
       status === 'pending'
-        ? 'var(--glyph-steps-pending-color, #7a8599)'
+        ? 'var(--glyph-steps-pending-color, var(--glyph-text-muted, #6b7a94))'
         : 'var(--glyph-text, #1a2035)',
   };
 }
@@ -167,7 +167,7 @@ function contentStyle(status: StepStatus): React.CSSProperties {
     fontSize: '0.9em',
     color:
       status === 'pending'
-        ? 'var(--glyph-steps-pending-color, #7a8599)'
+        ? 'var(--glyph-steps-pending-color, var(--glyph-text-muted, #6b7a94))'
         : 'var(--glyph-text-muted, #7a8599)',
   };
 }

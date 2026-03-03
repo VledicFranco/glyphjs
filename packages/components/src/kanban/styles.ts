@@ -59,9 +59,9 @@ export const columnCountStyle: CSSProperties = {
 
 export function cardStyle(isGrabbed: boolean, priority?: string): CSSProperties {
   const priorityColors: Record<string, string> = {
-    high: 'var(--glyph-kanban-priority-high, #dc2626)',
-    medium: 'var(--glyph-kanban-priority-medium, #f59e0b)',
-    low: 'var(--glyph-kanban-priority-low, #22c55e)',
+    high: 'var(--glyph-kanban-priority-high, var(--glyph-color-error, #dc2626))',
+    medium: 'var(--glyph-kanban-priority-medium, var(--glyph-color-warning, #d97706))',
+    low: 'var(--glyph-kanban-priority-low, var(--glyph-color-success, #22c55e))',
   };
 
   return {

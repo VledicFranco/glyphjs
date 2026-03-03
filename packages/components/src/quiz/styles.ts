@@ -45,9 +45,9 @@ export function optionLabelStyle(
     cursor: submitted ? 'default' : 'pointer',
     background: submitted
       ? isCorrectOption
-        ? 'var(--glyph-quiz-correct-bg, #dcfce7)'
+        ? 'var(--glyph-quiz-correct-bg, rgba(22, 163, 74, 0.12))'
         : isIncorrectSelection
-          ? 'var(--glyph-quiz-incorrect-bg, #fee2e2)'
+          ? 'var(--glyph-quiz-incorrect-bg, rgba(220, 38, 38, 0.1))'
           : 'transparent'
       : isSelected
         ? 'var(--glyph-surface, #e8ecf3)'
@@ -55,9 +55,9 @@ export function optionLabelStyle(
     border: '1px solid',
     borderColor: submitted
       ? isCorrectOption
-        ? 'var(--glyph-quiz-correct, #16a34a)'
+        ? 'var(--glyph-quiz-correct, var(--glyph-color-success, #16a34a))'
         : isIncorrectSelection
-          ? 'var(--glyph-quiz-incorrect, #dc2626)'
+          ? 'var(--glyph-quiz-incorrect, var(--glyph-color-error, #dc2626))'
           : 'var(--glyph-border, #d0d8e4)'
       : isSelected
         ? 'var(--glyph-border, #d0d8e4)'
@@ -87,9 +87,11 @@ export function feedbackStyle(correct: boolean): CSSProperties {
     padding: '0.5rem 0.75rem',
     borderRadius: 'var(--glyph-radius-md, 0.5rem)',
     background: correct
-      ? 'var(--glyph-quiz-correct-bg, #dcfce7)'
-      : 'var(--glyph-quiz-incorrect-bg, #fee2e2)',
-    color: correct ? 'var(--glyph-quiz-correct, #16a34a)' : 'var(--glyph-quiz-incorrect, #dc2626)',
+      ? 'var(--glyph-quiz-correct-bg, rgba(22, 163, 74, 0.12))'
+      : 'var(--glyph-quiz-incorrect-bg, rgba(220, 38, 38, 0.1))',
+    color: correct
+      ? 'var(--glyph-quiz-correct, var(--glyph-color-success, #16a34a))'
+      : 'var(--glyph-quiz-incorrect, var(--glyph-color-error, #dc2626))',
     fontWeight: 600,
     fontSize: '0.875rem',
   };

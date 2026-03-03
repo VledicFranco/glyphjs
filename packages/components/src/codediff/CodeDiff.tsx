@@ -105,8 +105,9 @@ export function CodeDiff({ data, block }: GlyphComponentProps<CodeDiffData>): Re
   }
 
   function rowColor(kind: string): string | undefined {
-    if (kind === 'add') return 'var(--glyph-codediff-add-color, inherit)';
-    if (kind === 'del') return 'var(--glyph-codediff-del-color, inherit)';
+    if (kind === 'add')
+      return 'var(--glyph-codediff-add-color, var(--glyph-color-success, #16a34a))';
+    if (kind === 'del') return 'var(--glyph-codediff-del-color, var(--glyph-color-error, #dc2626))';
     return undefined;
   }
 

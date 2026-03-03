@@ -39,7 +39,7 @@ export const labelStyle: CSSProperties = {
 };
 
 export const requiredStyle: CSSProperties = {
-  color: 'var(--glyph-form-error, #dc2626)',
+  color: 'var(--glyph-form-error, var(--glyph-color-error, #dc2626))',
   marginLeft: '0.25rem',
 };
 
@@ -81,7 +81,7 @@ export const submitButtonStyle: CSSProperties = {
   borderRadius: 'var(--glyph-radius-md, 0.5rem)',
   border: '1px solid var(--glyph-accent, #0a9d7c)',
   background: 'var(--glyph-accent, #0a9d7c)',
-  color: '#fff',
+  color: 'var(--glyph-text-on-accent, #fff)',
   cursor: 'pointer',
   fontWeight: 600,
   fontSize: '0.875rem',
@@ -91,6 +91,6 @@ export const submitButtonStyle: CSSProperties = {
 export function invalidStyle(isInvalid: boolean): CSSProperties {
   if (!isInvalid) return {};
   return {
-    borderColor: 'var(--glyph-form-error, #dc2626)',
+    borderColor: 'var(--glyph-form-error, var(--glyph-color-error, #dc2626))',
   };
 }

@@ -71,6 +71,8 @@ export type {
 
 // ─── Runtime Types ────────────────────────────────────────────
 export type {
+  GlyphThemeVarKey,
+  GlyphThemeVars,
   GlyphTheme,
   GlyphThemeContext,
   BlockProps,
