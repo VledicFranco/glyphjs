@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-03-03
+
 ### Added
 
 - **Two-tier theme system**: Reduced required CSS variables from ~155 to 53 semantic tokens (`GlyphThemeVarKey`). Component-specific variables are now optional CSS-only overrides that cascade from the Tier 1 tokens via built-in fallback chains — no TypeScript required. Breaking for theme authors: drop the ~100 removed component-specific vars and add the 4 new `--glyph-color-*` state vars.
