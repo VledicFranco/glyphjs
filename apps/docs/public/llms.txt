@@ -1374,8 +1374,13 @@ orientation: vertical
 
 ## 3. Theming
 
-GlyphJS uses CSS custom properties prefixed with `--glyph-` for all component styling.
-Two built-in themes (light and dark) are provided by `@glyphjs/runtime`.
+GlyphJS uses a **two-tier CSS custom property system** prefixed with `--glyph-`.
+
+- **Tier 1 (53 required tokens)** — the `GlyphThemeVarKey` union. Every theme
+  must supply all 53. They form the semantic contract between themes and components.
+- **Tier 2 (optional overrides)** — component-specific CSS variables that fall
+  back to Tier 1 values via `var(--glyph-*, fallback)` chains. Set them in CSS
+  only when you need per-component customization beyond the Tier 1 tokens.
 
 ### Theme YAML File Format (CLI)
 
@@ -1404,124 +1409,170 @@ glyphjs export document.md --format html --theme-file node_modules/@glyphjs/cli/
 glyphjs serve document.md --theme-file node_modules/@glyphjs/cli/themes/warmcraft.yaml
 ```
 
-### Core Theme Variables
+### Tier 1 — Required Theme Variables (53 total)
 
-| Variable | Description |
-|----------|-------------|
-| `--glyph-bg` | Background color |
-| `--glyph-text` | Primary text color |
-| `--glyph-text-muted` | Secondary/muted text color |
-| `--glyph-heading` | Heading text color |
-| `--glyph-link` | Link color |
-| `--glyph-link-hover` | Link hover color |
-| `--glyph-border` | Default border color |
-| `--glyph-border-strong` | Strong/emphasized border color |
-| `--glyph-surface` | Surface/card background |
-| `--glyph-surface-raised` | Elevated surface background |
-| `--glyph-accent` | Primary accent color |
-| `--glyph-accent-hover` | Accent hover state |
-| `--glyph-accent-subtle` | Subtle accent background |
-| `--glyph-accent-muted` | Muted accent color |
-| `--glyph-code-bg` | Code block background |
-| `--glyph-code-text` | Code block text color |
+All 53 must be present in a custom theme. Values below are the light/dark defaults.
 
-### Callout Variables
+| Variable | Light | Dark | Description |
+|----------|-------|------|-------------|
+| `--glyph-bg` | `transparent` | `#0a0e1a` | Document background |
+| `--glyph-text` | `#1a2035` | `#d4dae3` | Primary text |
+| `--glyph-text-muted` | `#6b7a94` | `#6b7a94` | Secondary/muted text |
+| `--glyph-heading` | `#0a0e1a` | `#edf0f5` | Heading text |
+| `--glyph-link` | `#0a9d7c` | `#00d4aa` | Link color |
+| `--glyph-link-hover` | `#088a6c` | `#33e0be` | Link hover |
+| `--glyph-border` | `#d0d8e4` | `#1a2035` | Default border |
+| `--glyph-border-strong` | `#a8b5c8` | `#2a3550` | Emphasized border |
+| `--glyph-surface` | `#e8ecf3` | `#0f1526` | Surface/card background |
+| `--glyph-surface-raised` | `#f4f6fa` | `#162038` | Elevated surface |
+| `--glyph-accent` | `#0a9d7c` | `#00d4aa` | Primary accent |
+| `--glyph-accent-hover` | `#088a6c` | `#33e0be` | Accent hover |
+| `--glyph-accent-subtle` | `#e6f6f2` | `#0a1a1a` | Subtle accent bg |
+| `--glyph-accent-muted` | `#b0ddd0` | `#1a4a3a` | Muted accent |
+| `--glyph-text-on-accent` | `#fff` | `#0a0e1a` | Text on accent bg |
+| `--glyph-code-bg` | `#e8ecf3` | `#0f1526` | Code block background |
+| `--glyph-code-text` | `#1a2035` | `#d4dae3` | Code block text |
+| `--glyph-font-body` | `"Inter", system-ui, sans-serif` | *(same)* | Body font stack |
+| `--glyph-font-heading` | `"Inter", system-ui, sans-serif` | *(same)* | Heading font stack |
+| `--glyph-font-mono` | `ui-monospace, "Fira Code", monospace` | *(same)* | Monospace font stack |
+| `--glyph-spacing-xs` | `0.25rem` | *(same)* | Extra-small spacing |
+| `--glyph-spacing-sm` | `0.5rem` | *(same)* | Small spacing |
+| `--glyph-spacing-md` | `1rem` | *(same)* | Medium spacing |
+| `--glyph-spacing-lg` | `1.5rem` | *(same)* | Large spacing |
+| `--glyph-spacing-xl` | `2rem` | *(same)* | Extra-large spacing |
+| `--glyph-radius-xs` | `0.25rem` | *(same)* | Extra-small radius |
+| `--glyph-radius-sm` | `0.375rem` | *(same)* | Small radius |
+| `--glyph-radius-md` | `0.5rem` | *(same)* | Medium radius |
+| `--glyph-radius-lg` | `0.75rem` | *(same)* | Large radius |
+| `--glyph-shadow-sm` | `0 1px 3px rgba(0,0,0,0.1)` | `0 1px 3px rgba(0,0,0,0.4)` | Small shadow |
+| `--glyph-shadow-md` | `0 4px 12px rgba(0,0,0,0.15)` | `0 4px 12px rgba(0,0,0,0.5)` | Medium shadow |
+| `--glyph-shadow-lg` | `0 8px 30px rgba(0,0,0,0.2)` | `0 8px 30px rgba(0,0,0,0.6)` | Large shadow |
+| `--glyph-transition` | `0.2s ease` | *(same)* | Default transition |
+| `--glyph-focus-ring` | `0 0 0 2px #0a9d7c` | `0 0 0 2px #00d4aa` | Focus ring shadow |
+| `--glyph-opacity-muted` | `0.7` | *(same)* | Muted opacity |
+| `--glyph-opacity-disabled` | `0.4` | *(same)* | Disabled opacity |
+| `--glyph-color-success` | `#16a34a` | `#4ade80` | Semantic success state |
+| `--glyph-color-warning` | `#d97706` | `#fbbf24` | Semantic warning state |
+| `--glyph-color-error` | `#dc2626` | `#f87171` | Semantic error state |
+| `--glyph-color-info` | `#38bdf8` | `#38bdf8` | Semantic info state |
+| `--glyph-palette-color-1` | `#00d4aa` | `#00d4aa` | Shared palette slot 1 |
+| `--glyph-palette-color-2` | `#b44dff` | `#b44dff` | Shared palette slot 2 |
+| `--glyph-palette-color-3` | `#22c55e` | `#4ade80` | Shared palette slot 3 |
+| `--glyph-palette-color-4` | `#e040fb` | `#e040fb` | Shared palette slot 4 |
+| `--glyph-palette-color-5` | `#00e5ff` | `#00e5ff` | Shared palette slot 5 |
+| `--glyph-palette-color-6` | `#84cc16` | `#bef264` | Shared palette slot 6 |
+| `--glyph-palette-color-7` | `#f472b6` | `#f472b6` | Shared palette slot 7 |
+| `--glyph-palette-color-8` | `#fb923c` | `#fb923c` | Shared palette slot 8 |
+| `--glyph-palette-color-9` | `#818cf8` | `#818cf8` | Shared palette slot 9 |
+| `--glyph-palette-color-10` | `#38bdf8` | `#38bdf8` | Shared palette slot 10 |
+| `--glyph-tooltip-bg` | `rgba(10,14,26,0.9)` | `rgba(0,0,0,0.9)` | Tooltip background |
+| `--glyph-tooltip-text` | `#f4f6fa` | `#d4dae3` | Tooltip text |
+| `--glyph-rating-star-fill` | `#f59e0b` | `#fbbf24` | Rating filled star |
 
-| Variable | Description |
-|----------|-------------|
-| `--glyph-callout-info-border` | Info callout border |
-| `--glyph-callout-info-bg` | Info callout background |
-| `--glyph-callout-warning-border` | Warning callout border |
-| `--glyph-callout-warning-bg` | Warning callout background |
-| `--glyph-callout-error-border` | Error callout border |
-| `--glyph-callout-error-bg` | Error callout background |
-| `--glyph-callout-tip-border` | Tip callout border |
-| `--glyph-callout-tip-bg` | Tip callout background |
+### Palette Notes
 
-### Table Variables
+- **`--glyph-palette-color-1..10`** replaces the old `--glyph-chart-color-N` and
+  `--glyph-timeline-color-N` variables (removed in v0.8.0). One palette drives
+  charts, timelines, infographics, architecture diagrams, and graph groups.
+- **Semantic state vars** (`--glyph-color-success/warning/error/info`) are used
+  by KPI, Kanban, Steps, Comparison, Quiz, Callout, and Form components.
 
-| Variable | Description |
-|----------|-------------|
-| `--glyph-table-border` | Table border color |
-| `--glyph-table-header-bg` | Table header background |
-| `--glyph-table-header-color` | Table header text |
-| `--glyph-table-row-alt-bg` | Alternating row background |
-| `--glyph-table-cell-color` | Cell text color |
-| `--glyph-table-footer-bg` | Footer background |
-| `--glyph-table-footer-color` | Footer text color |
+### Tier 2 — Optional Component Overrides
 
-### Effect Variables
+Component-specific CSS variables cascade from Tier 1 via fallback chains. Override
+them in CSS when you need per-component customization:
 
-| Variable | Description |
-|----------|-------------|
-| `--glyph-shadow-sm` | Small shadow |
-| `--glyph-shadow-md` | Medium shadow |
-| `--glyph-shadow-lg` | Large shadow |
-| `--glyph-shadow-glow` | Glow effect |
-| `--glyph-text-shadow` | Text shadow |
-| `--glyph-backdrop` | Backdrop filter |
-| `--glyph-gradient-accent` | Accent gradient |
-| `--glyph-focus-ring` | Focus ring shadow |
+```css
+/* Example: override specific component variables */
+.my-wrapper {
+  --glyph-codediff-add-bg: #e6ffed;
+  --glyph-codediff-del-bg: #ffeef0;
+}
+```
 
-### Component-Specific Variables
-
-| Variable | Component |
-|----------|-----------|
-| `--glyph-blockquote-border` | Blockquote |
-| `--glyph-blockquote-bg` | Blockquote |
-| `--glyph-timeline-line` | Timeline |
-| `--glyph-grid` | Grid |
-| `--glyph-tooltip-bg` | Tooltip |
-| `--glyph-tooltip-text` | Tooltip |
-| `--glyph-edge-color` | Graph/SVG edges |
-| `--glyph-node-label-color` | Graph node labels |
-| `--glyph-icon-stroke` | Icon stroke |
-| `--glyph-kpi-positive` | KPI positive trend |
-| `--glyph-kpi-negative` | KPI negative trend |
-| `--glyph-kpi-neutral` | KPI neutral trend |
-| `--glyph-comparison-yes` | Comparison "yes" |
-| `--glyph-comparison-no` | Comparison "no" |
-| `--glyph-comparison-partial` | Comparison "partial" |
-| `--glyph-codediff-add-bg` | CodeDiff added line background |
-| `--glyph-codediff-add-color` | CodeDiff added line text |
-| `--glyph-codediff-del-bg` | CodeDiff deleted line background |
-| `--glyph-codediff-del-color` | CodeDiff deleted line text |
-| `--glyph-codediff-gutter-bg` | CodeDiff gutter background |
-| `--glyph-infographic-track` | Infographic progress track |
-| `--glyph-infographic-color-1` | Infographic palette 1 |
-| `--glyph-infographic-color-2` | Infographic palette 2 |
-| `--glyph-infographic-color-3` | Infographic palette 3 |
-| `--glyph-infographic-color-4` | Infographic palette 4 |
-| `--glyph-poll-bar-bg` | Poll bar background |
-| `--glyph-poll-bar-fill` | Poll bar fill |
-| `--glyph-rating-star-fill` | Rating filled star |
-| `--glyph-rating-star-empty` | Rating empty star |
-| `--glyph-rating-hover` | Rating hover |
-| `--glyph-slider-track` | Slider track |
-| `--glyph-slider-fill` | Slider fill |
-| `--glyph-slider-thumb` | Slider thumb |
-| `--glyph-kanban-column-bg` | Kanban column background |
-| `--glyph-kanban-card-bg` | Kanban card background |
-| `--glyph-kanban-card-border` | Kanban card border |
-| `--glyph-kanban-drag-shadow` | Kanban drag shadow |
-| `--glyph-kanban-priority-high` | Kanban high priority |
-| `--glyph-kanban-priority-medium` | Kanban medium priority |
-| `--glyph-kanban-priority-low` | Kanban low priority |
-| `--glyph-annotate-highlight-opacity` | Annotate highlight opacity |
-| `--glyph-annotate-label-bg` | Annotate label background |
-| `--glyph-annotate-sidebar-bg` | Annotate sidebar background |
-| `--glyph-form-error` | Form error color |
-| `--glyph-interaction-overlay-bg` | Interaction overlay background |
-| `--glyph-interaction-overlay-text` | Interaction overlay text |
-| `--glyph-interaction-tooltip-bg` | Interaction tooltip background |
-| `--glyph-interaction-tooltip-text` | Interaction tooltip text |
-| `--glyph-interaction-active-border` | Interaction active border |
+These variables are no longer part of `GlyphThemeVarKey` and TypeScript will not
+require them. They remain valid CSS custom properties — setting them still works.
 
 ---
 
 ## 4. CLI Commands
 
 Install: `npm install -g @glyphjs/cli`
+
+### glyphjs lint
+
+Validate `ui:` blocks and report diagnostics. Designed for CI pipelines and LLM
+tool loops.
+
+```
+glyphjs lint <input> [options]
+
+Options:
+  --format <fmt>    Output format: text or json (default: text)
+  --strict          Treat warnings as errors (exit 1)
+  -q, --quiet       Suppress output — rely on exit code only
+```
+
+Input can be a file path or `-` to read from stdin.
+
+Exit codes: 0 = clean, 1 = errors found, 2 = could not read input.
+
+JSON output shape:
+
+```json
+{
+  "valid": false,
+  "file": "document.md",
+  "errorCount": 1,
+  "warningCount": 0,
+  "diagnostics": [
+    {
+      "severity": "error",
+      "code": "YAML_PARSE_ERROR",
+      "message": "...",
+      "source": "parser",
+      "position": { "start": { "line": 5, "column": 1 }, "end": { "line": 10, "column": 3 } }
+    }
+  ]
+}
+```
+
+### glyphjs schemas
+
+Output JSON Schema for any component type. Use for LLM-assisted authoring, IDE
+validation, and offline schema checks.
+
+```
+glyphjs schemas [type] [options]
+
+Arguments:
+  type              Component type, e.g. "chart" or "ui:chart"
+
+Options:
+  --all             Output all 28 schemas as a single JSON object
+  --list            List available type names, one per line
+  -o, --output      Write to file instead of stdout
+```
+
+Exit codes: 0 = success, 2 = unknown type or I/O error.
+
+Examples:
+
+```bash
+glyphjs schemas chart          # single type
+glyphjs schemas ui:chart       # same — "ui:" prefix is optional
+glyphjs schemas --list         # 28 sorted type names
+glyphjs schemas --all -o all.json
+```
+
+`--all` output shape:
+
+```json
+{
+  "ui:chart": { "$schema": "...", "type": "object", ... },
+  "ui:table": { "$schema": "...", "type": "object", ... }
+}
+```
 
 ### glyphjs compile
 

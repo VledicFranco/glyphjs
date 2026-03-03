@@ -97,6 +97,67 @@ series: []
 }
 ```
 
+### schemas
+
+Output the JSON Schema for any GlyphJS component type. Useful for LLM-assisted document generation, IDE validation, and CI schema checks.
+
+```bash
+glyphjs schemas chart
+```
+
+| Flag | Description |
+|------|-------------|
+| `--all` | Output all 28 component schemas as a single JSON object |
+| `--list` | List available component type names, one per line |
+| `-o, --output <path>` | Write output to file instead of stdout |
+
+**Exit codes:**
+
+| Code | Meaning |
+|------|---------|
+| `0` | Success |
+| `2` | Unknown type or I/O error |
+
+**Examples:**
+
+```bash
+# Schema for a single component (type prefix is optional)
+glyphjs schemas chart
+glyphjs schemas ui:chart    # same output
+
+# List all 28 available types
+glyphjs schemas --list
+
+# Dump all schemas to a file for offline use
+glyphjs schemas --all -o schemas.json
+
+# Pipe a single schema to a validator
+glyphjs schemas table | jq '.properties | keys'
+```
+
+**JSON output shape (single type):**
+
+```json
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "title": { "type": "string" },
+    "series": { "type": "array", "items": { ... } }
+  },
+  "required": ["series"]
+}
+```
+
+**JSON output shape (`--all`):**
+
+```json
+{
+  "ui:chart": { "$schema": "...", "type": "object", ... },
+  "ui:table": { "$schema": "...", "type": "object", ... }
+}
+```
+
 ### compile
 
 Compile a Markdown file to GlyphJS IR (JSON).
@@ -292,4 +353,4 @@ Different commands have different external dependencies:
 | `export --format pdf` | Playwright | `npm install playwright` |
 | `export --format md` | Playwright | `npm install playwright` |
 | `export --format docx` | Playwright + Pandoc | `npm install playwright` + [pandoc.org](https://pandoc.org/) |
-| `lint`, `compile`, `serve`, `export --format html` | None | Built-in |
+| `lint`, `compile`, `schemas`, `serve`, `export --format html` | None | Built-in |

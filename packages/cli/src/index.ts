@@ -5,6 +5,7 @@ import { lintCommand } from './commands/lint.js';
 import { renderCommand } from './commands/render.js';
 import { exportCommand } from './commands/export.js';
 import { serveCommand } from './commands/serve.js';
+import { schemasCommand } from './commands/schemas.js';
 
 const require = createRequire(import.meta.url);
 const { version } = require('../package.json') as { version: string };
@@ -37,6 +38,21 @@ program
       format: opts['format'] as 'text' | 'json' | undefined,
       strict: opts['strict'] === true,
       quiet: opts['quiet'] === true,
+    });
+  });
+
+program
+  .command('schemas')
+  .description('Output JSON Schema for a GlyphJS component type')
+  .argument('[type]', 'component type, e.g. "chart" or "ui:chart"')
+  .option('--all', 'output all component schemas as a single JSON object')
+  .option('--list', 'list available component type names')
+  .option('-o, --output <path>', 'write output to file instead of stdout')
+  .action((type: string | undefined, opts: Record<string, string | boolean | undefined>) => {
+    return schemasCommand(type, {
+      all: opts['all'] === true,
+      list: opts['list'] === true,
+      output: opts['output'] as string | undefined,
     });
   });
 
