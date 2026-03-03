@@ -24,7 +24,10 @@ test.describe('Matrix', () => {
 
   test('score inputs are present and interactive', async ({ page }) => {
     await page.goto(storyUrl('components-matrix--default'));
-    const inputs = page.locator('input[type="number"], input[type="range"]');
+    // Wait for the grid to be fully rendered before counting
+    await page.locator('role=grid').waitFor();
+    const inputs = page.locator('input[type="number"]');
+    await expect(inputs.first()).toBeVisible();
     const count = await inputs.count();
     // 3 rows × 3 cols = 9 cells minimum
     expect(count).toBeGreaterThanOrEqual(9);

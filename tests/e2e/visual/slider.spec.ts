@@ -42,8 +42,8 @@ test.describe('Slider', () => {
 
   test('range labels show min and max values', async ({ page }) => {
     await page.goto(storyUrl('components-slider--single-parameter'));
-    // Min label: 0%, max label: 100%
-    await expect(page.locator('text=0%')).toBeVisible();
-    await expect(page.locator('text=100%')).toBeVisible();
+    // Use exact match: '0%' is a substring of '100%', so partial text= would match both
+    await expect(page.getByText('0%', { exact: true })).toBeVisible();
+    await expect(page.getByText('100%', { exact: true })).toBeVisible();
   });
 });

@@ -109,11 +109,19 @@ test.describe('Theme coverage — Steps', () => {
   test('active step indicator uses --glyph-accent', async ({ page }) => {
     await page.goto(storyUrl('components-steps--mixed-status'));
     await page.locator('[aria-current="step"]').waitFor();
-    await injectSentinels(page, { '--glyph-accent': SENTINELS['--glyph-accent'] });
-    // The status indicator is a span[aria-hidden] inside the active step li
-    const indicator = page.locator('[aria-current="step"] span[aria-hidden="true"]').first();
-    const bg = await indicator.evaluate((el) => window.getComputedStyle(el).backgroundColor);
-    expect(bg).toBe(SENTINELS['--glyph-accent']);
+    // Combine injection + read in one evaluate to avoid Chrome's nested-var caching
+    // The active indicator is the 2nd aria-hidden span (1st is the connector line).
+    // Active status uses border (not backgroundColor which is transparent).
+    const borderColor = await page.evaluate((sentinel) => {
+      const wrapper = document.querySelector('[data-glyph-theme]') as HTMLElement | null;
+      if (!wrapper) return '';
+      wrapper.style.setProperty('--glyph-accent', sentinel);
+      const spans = wrapper.querySelectorAll('[aria-current="step"] span[aria-hidden="true"]');
+      const indicator = (spans.length > 1 ? spans[1] : spans[0]) as HTMLElement | undefined;
+      if (!indicator) return '';
+      return window.getComputedStyle(indicator).borderTopColor;
+    }, SENTINELS['--glyph-accent']);
+    expect(borderColor).toBe(SENTINELS['--glyph-accent']);
   });
 });
 
@@ -122,20 +130,32 @@ test.describe('Theme coverage — Steps', () => {
 test.describe('Theme coverage — Table', () => {
   test('header background uses --glyph-surface', async ({ page }) => {
     await page.goto(storyUrl('components-table--basic'));
-    await page.locator('table').waitFor();
-    await injectSentinels(page, { '--glyph-surface': SENTINELS['--glyph-surface'] });
-    const bg = await getBackgroundColor(page, 'thead th');
+    await page.locator('table[role="grid"]').waitFor();
+    // Combine injection + read in one evaluate: Chrome doesn't live-update
+    // backgroundColor from `background` shorthand when a nested var changes.
+    const bg = await page.evaluate((sentinel) => {
+      const wrapper = document.querySelector('[data-glyph-theme]') as HTMLElement | null;
+      if (!wrapper) return '';
+      wrapper.style.setProperty('--glyph-surface', sentinel);
+      const th = wrapper.querySelector('table[role="grid"] thead th');
+      if (!th) return '';
+      return window.getComputedStyle(th).backgroundColor;
+    }, SENTINELS['--glyph-surface']);
     expect(bg).toBe(SENTINELS['--glyph-surface']);
   });
 
   test('alternate row background uses --glyph-surface-raised', async ({ page }) => {
     await page.goto(storyUrl('components-table--basic'));
-    await page.locator('table').waitFor();
-    await injectSentinels(page, {
-      '--glyph-surface-raised': SENTINELS['--glyph-surface-raised'],
-    });
+    await page.locator('table[role="grid"]').waitFor();
     // Basic story has 3 rows; 2nd row (index 1) gets the alt background
-    const bg = await getBackgroundColor(page, 'tbody tr:nth-child(2)');
+    const bg = await page.evaluate((sentinel) => {
+      const wrapper = document.querySelector('[data-glyph-theme]') as HTMLElement | null;
+      if (!wrapper) return '';
+      wrapper.style.setProperty('--glyph-surface-raised', sentinel);
+      const row = wrapper.querySelector('table[role="grid"] tbody tr:nth-child(2)');
+      if (!row) return '';
+      return window.getComputedStyle(row).backgroundColor;
+    }, SENTINELS['--glyph-surface-raised']);
     expect(bg).toBe(SENTINELS['--glyph-surface-raised']);
   });
 });
@@ -146,12 +166,19 @@ test.describe('Theme coverage — Kanban', () => {
   test('column background uses --glyph-surface', async ({ page }) => {
     await page.goto(storyUrl('components-kanban--default'));
     await page.locator('role=region[name="Sprint Board"]').waitFor();
-    await injectSentinels(page, { '--glyph-surface': SENTINELS['--glyph-surface'] });
-    // The column divs are siblings inside the board flex container
-    const column = page.locator('[role="list"]').first();
-    const bg = await column.evaluate(
-      (el) => window.getComputedStyle(el.parentElement!).backgroundColor,
-    );
+    // Combine injection + read in one evaluate: Chrome doesn't live-update
+    // backgroundColor from `background` shorthand when a nested var changes.
+    const bg = await page.evaluate((sentinel) => {
+      const wrapper = document.querySelector('[data-glyph-theme]') as HTMLElement | null;
+      if (!wrapper) return '';
+      wrapper.style.setProperty('--glyph-surface', sentinel);
+      const list = wrapper.querySelector('[role="list"]');
+      if (!list?.parentElement) return '';
+      const colDiv = list.parentElement as HTMLElement;
+      // Disable CSS transition so getComputedStyle returns the target value immediately
+      colDiv.style.transition = 'none';
+      return window.getComputedStyle(colDiv).backgroundColor;
+    }, SENTINELS['--glyph-surface']);
     expect(bg).toBe(SENTINELS['--glyph-surface']);
   });
 
@@ -180,9 +207,9 @@ test.describe('Theme coverage — Poll', () => {
     await page.goto(storyUrl('components-poll--default'));
     await page.locator('input[type="radio"]').first().click();
     await page.locator('button', { hasText: 'Vote' }).click();
-    await page.locator('role=progressbar').waitFor();
+    await page.locator('[role="progressbar"]').first().waitFor();
     await injectSentinels(page, { '--glyph-accent': SENTINELS['--glyph-accent'] });
-    const fill = page.locator('role=progressbar > div').first();
+    const fill = page.locator('[role="progressbar"]').first().locator('div').first();
     const bg = await fill.evaluate((el) => window.getComputedStyle(el).backgroundColor);
     expect(bg).toBe(SENTINELS['--glyph-accent']);
   });
@@ -196,7 +223,7 @@ test.describe('Theme coverage — Form', () => {
     await page.locator('role=region[name="Project Setup"]').waitFor();
     await injectSentinels(page, { '--glyph-border': SENTINELS['--glyph-border'] });
     const region = page.locator('role=region[name="Project Setup"]');
-    const border = await region.evaluate((el) => window.getComputedStyle(el).borderColor);
+    const border = await region.evaluate((el) => window.getComputedStyle(el).borderTopColor);
     expect(border).toBe(SENTINELS['--glyph-border']);
   });
 
@@ -204,10 +231,10 @@ test.describe('Theme coverage — Form', () => {
     await page.goto(storyUrl('components-form--contact-form'));
     // Trigger validation by submitting empty required fields
     await page.locator('button[type="submit"]').click();
-    await page.locator('[aria-invalid="true"]').waitFor();
+    await page.locator('[aria-invalid="true"]').first().waitFor();
     await injectSentinels(page, { '--glyph-color-error': SENTINELS['--glyph-color-error'] });
     const input = page.locator('[aria-invalid="true"]').first();
-    const border = await input.evaluate((el) => window.getComputedStyle(el).borderColor);
+    const border = await input.evaluate((el) => window.getComputedStyle(el).borderTopColor);
     expect(border).toBe(SENTINELS['--glyph-color-error']);
   });
 });
@@ -219,13 +246,12 @@ test.describe('Theme coverage — KPI', () => {
     await page.goto(storyUrl('components-kpi--all-trends'));
     await page.locator('role=region').waitFor();
     await injectSentinels(page, { '--glyph-color-success': SENTINELS['--glyph-color-success'] });
-    // Positive (up) trend delta uses glyph-color-success
-    const positiveDelta = page.locator('[aria-label*="positive"], [class*="positive"]').first();
-    const count = await positiveDelta.count();
-    if (count > 0) {
-      const color = await positiveDelta.evaluate((el) => window.getComputedStyle(el).color);
-      expect(color).toBe(SENTINELS['--glyph-color-success']);
-    }
+    // AllTrends: first card is 'Growth' (trend: up → positive sentiment)
+    // Delta div is the last direct child div of the first card
+    const firstCard = page.locator('[role="group"]').first();
+    const deltaDiv = firstCard.locator('> div').last();
+    const color = await deltaDiv.evaluate((el) => window.getComputedStyle(el).color);
+    expect(color).toBe(SENTINELS['--glyph-color-success']);
   });
 });
 
@@ -237,7 +263,7 @@ test.describe('Theme coverage — KPI', () => {
 test.describe('Theme coverage — SVG var reachability', () => {
   test('Chart: --glyph-palette-color-1 is accessible on the theme wrapper', async ({ page }) => {
     await page.goto(storyUrl('components-chart--line-chart'));
-    await page.locator('svg').waitFor();
+    await page.locator('svg').first().waitFor();
     const val = await getCSSVar(page, '--glyph-palette-color-1');
     expect(val).not.toBe('');
     // Light theme default
@@ -246,7 +272,7 @@ test.describe('Theme coverage — SVG var reachability', () => {
 
   test('Graph: --glyph-palette-color-1 is accessible on the theme wrapper', async ({ page }) => {
     await page.goto(storyUrl('components-graph--dag-small'));
-    await page.locator('svg').waitFor();
+    await page.locator('svg').first().waitFor();
     const val = await getCSSVar(page, '--glyph-palette-color-1');
     expect(val).not.toBe('');
     expect(val).toBe('#00d4aa');
@@ -256,7 +282,7 @@ test.describe('Theme coverage — SVG var reachability', () => {
     page,
   }) => {
     await page.goto(storyUrl('components-architecture--simple-flow'));
-    await page.locator('svg').waitFor();
+    await page.locator('svg').first().waitFor();
     const val = await getCSSVar(page, '--glyph-palette-color-1');
     expect(val).not.toBe('');
     expect(val).toBe('#00d4aa');
@@ -264,15 +290,17 @@ test.describe('Theme coverage — SVG var reachability', () => {
 
   test('Timeline: --glyph-palette-color-1 is accessible on the theme wrapper', async ({ page }) => {
     await page.goto(storyUrl('components-timeline--vertical'));
-    await page.locator('svg').waitFor();
+    // Timeline is HTML/CSS (no SVG) — wait for the theme wrapper itself
+    await page.locator('[data-glyph-theme]').waitFor();
     const val = await getCSSVar(page, '--glyph-palette-color-1');
     expect(val).not.toBe('');
     expect(val).toBe('#00d4aa');
   });
 
   test('Relation: --glyph-palette-color-1 is accessible on the theme wrapper', async ({ page }) => {
-    await page.goto(storyUrl('components-relation--simple-e-r'));
-    await page.locator('svg').waitFor();
+    await page.goto(storyUrl('components-relation--simple-er'));
+    // Wait for the theme wrapper (which always appears when the story loads)
+    await page.locator('[data-glyph-theme]').waitFor();
     const val = await getCSSVar(page, '--glyph-palette-color-1');
     expect(val).not.toBe('');
     expect(val).toBe('#00d4aa');
@@ -303,7 +331,7 @@ test.describe('Theme coverage — SVG var reachability', () => {
 
   test('Renamed palette vars (not chart-color-N) are provided', async ({ page }) => {
     await page.goto(storyUrl('components-chart--line-chart'));
-    await page.locator('svg').waitFor();
+    await page.locator('svg').first().waitFor();
     // New name must exist
     const paletteColor1 = await getCSSVar(page, '--glyph-palette-color-1');
     const paletteColor10 = await getCSSVar(page, '--glyph-palette-color-10');

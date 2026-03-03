@@ -33,8 +33,9 @@ test.describe('Kanban', () => {
 
   test('tags are displayed on cards', async ({ page }) => {
     await page.goto(storyUrl('components-kanban--default'));
-    await expect(page.locator('text=backend')).toBeVisible();
-    await expect(page.locator('text=security')).toBeVisible();
+    // 'backend' appears on 2 cards; .first() avoids strict-mode violation
+    await expect(page.locator('text=backend').first()).toBeVisible();
+    await expect(page.locator('text=security').first()).toBeVisible();
   });
 
   test('WIP limit is displayed when set', async ({ page }) => {
@@ -59,7 +60,9 @@ test.describe('Kanban', () => {
 
   test('empty board story renders column headers with no cards', async ({ page }) => {
     await page.goto(storyUrl('components-kanban--empty'));
-    await expect(page.locator('role=list[name="Backlog"]')).toBeVisible();
+    await page.locator('role=region[name="New Board"]').waitFor();
+    // Empty lists collapse to 0 height; check the visible column header instead
+    await expect(page.locator('text=Backlog').first()).toBeVisible();
     await expect(page.locator('role=listitem')).toHaveCount(0);
   });
 });

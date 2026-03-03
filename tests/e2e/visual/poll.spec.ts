@@ -37,8 +37,8 @@ test.describe('Poll', () => {
     await page.locator('button', { hasText: 'Vote' }).click();
     // Results section appears
     await expect(page.locator('role=status')).toBeVisible();
-    // Progress bars appear
-    await expect(page.locator('role=progressbar')).toBeVisible();
+    // Progress bars appear (one per option; use .first() to avoid strict-mode)
+    await expect(page.locator('[role="progressbar"]').first()).toBeVisible();
   });
 
   test('multiple selection story uses checkboxes', async ({ page }) => {

@@ -8,7 +8,8 @@ test.describe('Ranker', () => {
     await expect(page.locator('text=Authentication')).toBeVisible();
     await expect(page.locator('text=Dashboard')).toBeVisible();
     await expect(page.locator('text=API Layer')).toBeVisible();
-    await expect(page.locator('text=Documentation')).toBeVisible();
+    // Scope to the ranker list to avoid matching hidden Storybook "Decorators documentation" links
+    await expect(page.locator('[role="listitem"][aria-label*="Documentation"]')).toBeVisible();
   });
 
   test('items render with rank badges', async ({ page }) => {

@@ -16,7 +16,7 @@ function ThemeWrapper({ children, theme }: { children: React.ReactNode; theme: '
     (style as Record<string, string>)[key] = value;
   }
 
-  return React.createElement('div', { style }, children);
+  return React.createElement('div', { style, 'data-glyph-theme': theme }, children);
 }
 
 const preview: Preview = {
