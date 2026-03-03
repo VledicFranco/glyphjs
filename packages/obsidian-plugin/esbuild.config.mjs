@@ -3,20 +3,31 @@ import fs from 'fs';
 
 const isWatch = process.argv.includes('--watch');
 
+// RELEASE_BUILD=true  → output main.js to the plugin root (for GitHub release artifacts)
+// OBSIDIAN_VAULT_PATH → override the dev vault path on other machines
+const isRelease = process.env.RELEASE_BUILD === 'true';
 const VAULT_PLUGIN_DIR =
-  'C:/Users/atfm0/Repositories/oss/.obsidian/plugins/glyphjs';
+  process.env.OBSIDIAN_VAULT_PATH ?? 'C:/Users/atfm0/Repositories/oss/.obsidian/plugins/glyphjs';
 
-fs.mkdirSync(VAULT_PLUGIN_DIR, { recursive: true });
+const outfile = isRelease ? 'main.js' : `${VAULT_PLUGIN_DIR}/main.js`;
+
+if (!isRelease) {
+  fs.mkdirSync(VAULT_PLUGIN_DIR, { recursive: true });
+}
 
 const copyAssets = {
   name: 'copy-assets',
   setup(build) {
     build.onEnd(() => {
-      fs.copyFileSync('manifest.json', `${VAULT_PLUGIN_DIR}/manifest.json`);
-      if (fs.existsSync('styles.css')) {
-        fs.copyFileSync('styles.css', `${VAULT_PLUGIN_DIR}/styles.css`);
+      if (isRelease) {
+        console.log('[GlyphJS] Release build → main.js');
+      } else {
+        fs.copyFileSync('manifest.json', `${VAULT_PLUGIN_DIR}/manifest.json`);
+        if (fs.existsSync('styles.css')) {
+          fs.copyFileSync('styles.css', `${VAULT_PLUGIN_DIR}/styles.css`);
+        }
+        console.log('[GlyphJS] Built → ' + VAULT_PLUGIN_DIR);
       }
-      console.log('[GlyphJS] Built → ' + VAULT_PLUGIN_DIR);
     });
   },
 };
@@ -52,9 +63,9 @@ const ctx = await esbuild.context({
   format: 'cjs',
   target: 'es2020',
   jsx: 'automatic',
-  sourcemap: 'inline',
+  sourcemap: isRelease ? false : 'inline',
   treeShaking: true,
-  outfile: `${VAULT_PLUGIN_DIR}/main.js`,
+  outfile,
   logLevel: 'info',
   plugins: [copyAssets],
 });

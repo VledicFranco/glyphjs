@@ -1,0 +1,55 @@
+name: Release Obsidian Plugin
+
+on:
+  push:
+    tags:
+      - 'obsidian-v*'
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      # Build all workspace packages in dependency order via Turborepo
+      - run: pnpm build
+
+      # Build the plugin bundle (outputs main.js to plugin root, no sourcemap)
+      - name: Build Obsidian plugin
+        run: node esbuild.config.mjs
+        working-directory: packages/obsidian-plugin
+        env:
+          RELEASE_BUILD: 'true'
+
+      # Verify manifest version matches the tag (obsidian-v0.1.0 → 0.1.0)
+      - name: Verify manifest version matches tag
+        run: |
+          TAG="${{ github.ref_name }}"
+          EXPECTED="${TAG#obsidian-v}"
+          ACTUAL=$(node -p "require('./packages/obsidian-plugin/manifest.json').version")
+          if [ "$ACTUAL" != "$EXPECTED" ]; then
+            echo "manifest.json version ($ACTUAL) does not match tag ($EXPECTED)"
+            exit 1
+          fi
+          echo "Version OK: $ACTUAL"
+
+      - name: Create GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            packages/obsidian-plugin/main.js
+            packages/obsidian-plugin/manifest.json
+            packages/obsidian-plugin/styles.css
+          generate_release_notes: true
