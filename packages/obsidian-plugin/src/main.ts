@@ -133,24 +133,16 @@ export default class GlyphJSPlugin extends Plugin {
       }),
     );
 
-    // Live Preview (CodeMirror 6): register a code block processor per type.
-    // CM6 widgets don't use CSS selectors, so the colon in 'ui:callout' is safe here.
-    for (const def of allComponentDefinitions) {
-      const type = def.type; // e.g. 'ui:callout'
-      this.registerMarkdownCodeBlockProcessor(type, (source, el, ctx) => {
-        ctx.addChild(new GlyphBlockChild(el, source, type, this.runtime));
-      });
-    }
-
-    // Reading View: Obsidian's internal enhance.js post-processor calls
-    // querySelectorAll('code.language-ui:callout'), which is an invalid CSS selector
-    // (the colon makes ':callout' look like a pseudo-class) and throws a SyntaxError,
-    // crashing the rendering pipeline before any of the code block processors above
-    // get a chance to run.
+    // registerMarkdownCodeBlockProcessor cannot be used with 'ui:callout'-style
+    // language names: calling it causes Obsidian to immediately re-process all
+    // open notes, and its internal enhance.js runs querySelectorAll with the
+    // language name as a CSS class selector ('code.language-ui:callout'), which
+    // is syntactically invalid (the colon is parsed as a pseudo-class) and throws
+    // a SyntaxError that crashes the entire rendering pipeline.
     //
-    // Fix: register a post-processor with sort order -10000 (runs before enhance.js)
-    // that finds ui:* code blocks via safe DOM iteration and replaces them with React
-    // roots before enhance.js ever tries to form an invalid CSS selector for them.
+    // Instead, use a MarkdownPostProcessor with a very low sort order (-10000)
+    // so it runs before enhance.js. We find ui:* code blocks via safe DOM
+    // iteration (no CSS selectors) and replace them ourselves.
     const allTypes = new Set(allComponentDefinitions.map((d) => d.type));
 
     this.registerMarkdownPostProcessor((element, ctx) => {
