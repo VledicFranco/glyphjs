@@ -34,7 +34,6 @@ jobs:
           RELEASE_BUILD: 'true'
 
       # Verify manifest version matches the tag (obsidian-v0.1.0 → 0.1.0)
-      # and sync root manifest.json (required by BRAT for plugin discovery)
       - name: Verify manifest version matches tag
         run: |
           TAG="${{ github.ref_name }}"
@@ -45,13 +44,37 @@ jobs:
             exit 1
           fi
           echo "Version OK: $ACTUAL"
-          cp packages/obsidian-plugin/manifest.json manifest.json
 
-      - name: Create GitHub release
-        uses: softprops/action-gh-release@v2
-        with:
-          files: |
-            packages/obsidian-plugin/main.js
-            packages/obsidian-plugin/manifest.json
-            packages/obsidian-plugin/styles.css
-          generate_release_notes: true
+      # Publish release to VledicFranco/glyphjs-obsidian with a clean v* tag.
+      # BRAT requires plain semver tags (v0.1.0) — the obsidian-v* tags in this
+      # monorepo conflict with BRAT's tag parser, so we use a dedicated dist repo.
+      - name: Push release to glyphjs-obsidian distribution repo
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION="${TAG#obsidian-v}"
+          DIST_TAG="v${VERSION}"
+
+          # Clone the distribution repo
+          gh repo clone VledicFranco/glyphjs-obsidian dist-repo -- --depth=1
+          cd dist-repo
+
+          # Copy plugin artifacts + manifest
+          cp ../packages/obsidian-plugin/main.js .
+          cp ../packages/obsidian-plugin/manifest.json .
+          cp ../packages/obsidian-plugin/styles.css .
+
+          # Commit updated manifest to the dist repo (BRAT reads it from root)
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add manifest.json main.js styles.css
+          git diff --cached --quiet || git commit -m "release: ${DIST_TAG}"
+          git push
+
+          # Create the release with clean semver tag
+          gh release create "${DIST_TAG}" \
+            main.js manifest.json styles.css \
+            --repo VledicFranco/glyphjs-obsidian \
+            --title "${DIST_TAG}" \
+            --notes "GlyphJS Obsidian plugin ${DIST_TAG}. Install via [BRAT](https://github.com/TfTHacker/obsidian42-brat): \`https://github.com/VledicFranco/glyphjs-obsidian\`"
