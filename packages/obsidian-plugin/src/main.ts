@@ -133,15 +133,40 @@ export default class GlyphJSPlugin extends Plugin {
       }),
     );
 
-    // Register a code block processor for every ui:* component type.
-    // registerMarkdownCodeBlockProcessor works in both Reading View and Live Preview,
-    // and hands us the raw YAML source directly — no fence-parsing required.
+    // Live Preview (CodeMirror 6): register a code block processor per type.
+    // CM6 widgets don't use CSS selectors, so the colon in 'ui:callout' is safe here.
     for (const def of allComponentDefinitions) {
       const type = def.type; // e.g. 'ui:callout'
       this.registerMarkdownCodeBlockProcessor(type, (source, el, ctx) => {
         ctx.addChild(new GlyphBlockChild(el, source, type, this.runtime));
       });
     }
+
+    // Reading View: Obsidian's internal enhance.js post-processor calls
+    // querySelectorAll('code.language-ui:callout'), which is an invalid CSS selector
+    // (the colon makes ':callout' look like a pseudo-class) and throws a SyntaxError,
+    // crashing the rendering pipeline before any of the code block processors above
+    // get a chance to run.
+    //
+    // Fix: register a post-processor with sort order -10000 (runs before enhance.js)
+    // that finds ui:* code blocks via safe DOM iteration and replaces them with React
+    // roots before enhance.js ever tries to form an invalid CSS selector for them.
+    const allTypes = new Set(allComponentDefinitions.map((d) => d.type));
+
+    this.registerMarkdownPostProcessor((element, ctx) => {
+      for (const pre of Array.from(element.querySelectorAll('pre'))) {
+        const code = pre.querySelector('code');
+        if (!code) continue;
+        const langClass = Array.from(code.classList).find((c) => c.startsWith('language-ui:'));
+        if (!langClass) continue;
+        const blockType = langClass.slice('language-'.length); // e.g. 'ui:callout'
+        if (!allTypes.has(blockType)) continue;
+        const source = code.textContent?.trim() ?? '';
+        const container = document.createElement('div');
+        pre.replaceWith(container);
+        ctx.addChild(new GlyphBlockChild(container, source, blockType, this.runtime));
+      }
+    }, -10000);
 
     this.addSettingTab(new GlyphSettingsTab(this.app, this));
   }
