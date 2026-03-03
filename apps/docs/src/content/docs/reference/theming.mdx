@@ -6,7 +6,27 @@ description: Customize the look and feel of Glyph JS components with themes.
 import GlyphPreview from '../../../components/GlyphPreview.tsx';
 import { cyberpunk2077Theme } from './_examples/cyberpunk-theme';
 
-The Glyph JS theming system uses CSS custom properties (variables) prefixed with `--glyph-` to style all components. Two built-in themes (light and dark) ship with `@glyphjs/runtime`, and you can create fully custom themes by providing your own variable map.
+The GlyphJS theming system uses CSS custom properties (variables) prefixed with `--glyph-` to style all components. Two built-in themes (light and dark) ship with `@glyphjs/runtime`, and you can create fully custom themes by providing your own variable map.
+
+## Two-tier theme model
+
+GlyphJS uses a **two-tier** approach — the same model used by Obsidian, Radix UI, and shadcn/ui:
+
+**Tier 1 — 53 semantic tokens (required by TypeScript).**
+These are the building blocks: colors, accent, spacing, radius, effects, semantic states, and a shared color palette. Set these in your theme object and every component gets correct colors automatically.
+
+**Tier 2 — Component-specific overrides (optional, CSS-only).**
+Individual component variables like `--glyph-kanban-card-bg` or `--glyph-steps-active-color` are valid CSS custom properties that cascade from Tier 1 tokens. They are not enforced by TypeScript. Advanced users can override them with plain CSS when needed.
+
+```css
+/* Optional Tier 2 override — no TypeScript required */
+[data-glyph-theme="corporate"] {
+  --glyph-kanban-card-bg: #f0f4ff;
+  --glyph-steps-active-color: #0066cc;
+}
+```
+
+---
 
 ## GlyphTheme interface
 
@@ -75,15 +95,15 @@ The same `className` and `style` props are available on `RuntimeProvider`:
 
 ---
 
-## Built-in variables
+## Tier 1 variables
 
-All theme variables are prefixed with `--glyph-` to avoid collisions with host application styles. The built-in themes define these categories:
+All 53 Tier 1 variables are required when defining a custom theme. They are enforced by the `GlyphThemeVars` TypeScript type.
 
-### Colors
+### Core colors
 
 | Variable | Light | Dark | Description |
 |---|---|---|---|
-| `--glyph-bg` | `#f4f6fa` | `#0a0e1a` | Background color |
+| `--glyph-bg` | `transparent` | `#0a0e1a` | Background color |
 | `--glyph-text` | `#1a2035` | `#d4dae3` | Primary text color |
 | `--glyph-text-muted` | `#6b7a94` | `#6b7a94` | Secondary/muted text |
 | `--glyph-heading` | `#0a0e1a` | `#edf0f5` | Heading text color |
@@ -96,12 +116,13 @@ All theme variables are prefixed with `--glyph-` to avoid collisions with host a
 
 ### Accent
 
-| Variable | Light | Dark |
-|---|---|---|
-| `--glyph-accent` | `#0a9d7c` | `#00d4aa` |
-| `--glyph-accent-hover` | `#088a6c` | `#33e0be` |
-| `--glyph-accent-subtle` | `#e6f6f2` | `#0a1a1a` |
-| `--glyph-accent-muted` | `#b0ddd0` | `#1a4a3a` |
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-accent` | `#0a9d7c` | `#00d4aa` | Primary accent color |
+| `--glyph-accent-hover` | `#088a6c` | `#33e0be` | Accent hover state |
+| `--glyph-accent-subtle` | `#e6f6f2` | `#0a1a1a` | Subtle accent background |
+| `--glyph-accent-muted` | `#b0ddd0` | `#1a4a3a` | Muted accent color |
+| `--glyph-text-on-accent` | `#fff` | `#0a0e1a` | Text on accent backgrounds |
 
 ### Code
 
@@ -110,25 +131,13 @@ All theme variables are prefixed with `--glyph-` to avoid collisions with host a
 | `--glyph-code-bg` | `#e8ecf3` | `#0f1526` |
 | `--glyph-code-text` | `#1a2035` | `#d4dae3` |
 
-### Blockquote
+### Typography
 
-| Variable | Light | Dark |
-|---|---|---|
-| `--glyph-blockquote-border` | `#0a9d7c` | `#00d4aa` |
-| `--glyph-blockquote-bg` | `#e6f6f2` | `#0a1a1a` |
-
-### Callouts
-
-| Variable | Light | Dark |
-|---|---|---|
-| `--glyph-callout-info-bg` | `#e6f2fa` | `#0a1526` |
-| `--glyph-callout-info-border` | `#38bdf8` | `#38bdf8` |
-| `--glyph-callout-warning-bg` | `#fef3e2` | `#1a1608` |
-| `--glyph-callout-warning-border` | `#fb923c` | `#fb923c` |
-| `--glyph-callout-error-bg` | `#fde8e8` | `#1f0e0e` |
-| `--glyph-callout-error-border` | `#f87171` | `#f87171` |
-| `--glyph-callout-tip-bg` | `#e6f6f0` | `#0a1a14` |
-| `--glyph-callout-tip-border` | `#22c55e` | `#22c55e` |
+| Variable | Value |
+|---|---|
+| `--glyph-font-body` | `"Inter", "Helvetica Neue", system-ui, sans-serif` |
+| `--glyph-font-heading` | `"Inter", "Helvetica Neue", system-ui, sans-serif` |
+| `--glyph-font-mono` | `ui-monospace, "Cascadia Code", "Fira Code", monospace` |
 
 ### Spacing
 
@@ -140,23 +149,14 @@ All theme variables are prefixed with `--glyph-` to avoid collisions with host a
 | `--glyph-spacing-lg` | `1.5rem` |
 | `--glyph-spacing-xl` | `2rem` |
 
-### Typography
-
-| Variable | Value |
-|---|---|
-| `--glyph-font-body` | `"Inter", "Helvetica Neue", system-ui, sans-serif` |
-| `--glyph-font-heading` | `"Inter", "Helvetica Neue", system-ui, sans-serif` |
-| `--glyph-font-mono` | `ui-monospace, "Cascadia Code", "Fira Code", monospace` |
-
 ### Border radius
 
 | Variable | Value |
 |---|---|
+| `--glyph-radius-xs` | `0.25rem` |
 | `--glyph-radius-sm` | `0.375rem` |
 | `--glyph-radius-md` | `0.5rem` |
 | `--glyph-radius-lg` | `0.75rem` |
-
-Spacing, typography, and border radius values are mode-independent (same in light and dark).
 
 ### Effects
 
@@ -165,28 +165,46 @@ Spacing, typography, and border radius values are mode-independent (same in ligh
 | `--glyph-shadow-sm` | `0 1px 3px rgba(0,0,0,0.1)` | `0 1px 3px rgba(0,0,0,0.4)` | Subtle shadow |
 | `--glyph-shadow-md` | `0 4px 12px rgba(0,0,0,0.15)` | `0 4px 12px rgba(0,0,0,0.5)` | Medium shadow |
 | `--glyph-shadow-lg` | `0 8px 30px rgba(0,0,0,0.2)` | `0 8px 30px rgba(0,0,0,0.6)` | Large shadow |
-| `--glyph-shadow-glow` | `none` | `0 0 15px rgba(0,212,170,0.3)` | Accent glow (great for dark themes) |
-| `--glyph-text-shadow` | `none` | `none` | Text shadow (for custom themes) |
-| `--glyph-backdrop` | `none` | `none` | `backdrop-filter` value |
-| `--glyph-gradient-accent` | `linear-gradient(135deg, #0a9d7c, #22c55e)` | `linear-gradient(135deg, #00d4aa, #00e5ff)` | Accent gradient |
 | `--glyph-transition` | `0.2s ease` | `0.2s ease` | Default transition timing |
+| `--glyph-focus-ring` | `0 0 0 2px #0a9d7c` | `0 0 0 2px #00d4aa` | Focus ring box-shadow |
 | `--glyph-opacity-muted` | `0.7` | `0.7` | Muted element opacity |
 | `--glyph-opacity-disabled` | `0.4` | `0.4` | Disabled element opacity |
-| `--glyph-focus-ring` | `0 0 0 2px #0a9d7c` | `0 0 0 2px #00d4aa` | Focus ring box-shadow |
 
-### SVG / Data Visualization
+### Semantic states
 
-These variables control the appearance of D3-rendered components (Graph, Architecture, Chart, Relation).
+Four universal state colors used by components across the system (Steps, KPI, Comparison, Kanban priority, Quiz, Callouts, Form validation, and more).
 
 | Variable | Light | Dark | Description |
 |---|---|---|---|
-| `--glyph-node-fill-opacity` | `0.85` | `0.85` | Fill opacity for graph/architecture nodes |
-| `--glyph-node-radius` | `3` | `3` | Corner radius (rx/ry) for rectangular nodes |
-| `--glyph-node-stroke-width` | `1.5` | `1.5` | Stroke width on nodes and edges |
-| `--glyph-node-label-color` | `#fff` | `#fff` | Text color of node labels |
-| `--glyph-edge-color` | `#a8b5c8` | `#6b7a94` | Stroke/fill color for edges and arrow markers |
-| `--glyph-icon-stroke` | `#fff` | `#fff` | Stroke color for architecture icons |
-| `--glyph-icon-stroke-width` | `1.5` | `1.5` | Stroke width for architecture icons |
+| `--glyph-color-success` | `#16a34a` | `#4ade80` | Success / positive |
+| `--glyph-color-warning` | `#d97706` | `#fbbf24` | Warning / caution |
+| `--glyph-color-error` | `#dc2626` | `#f87171` | Error / negative |
+| `--glyph-color-info` | `#38bdf8` | `#38bdf8` | Info / neutral |
+
+### Shared palette
+
+Ten slots used for charts, timelines, infographics, and other multi-series visualizations.
+
+| Variable | Light | Dark |
+|---|---|---|
+| `--glyph-palette-color-1` | `#00d4aa` | `#00d4aa` |
+| `--glyph-palette-color-2` | `#b44dff` | `#b44dff` |
+| `--glyph-palette-color-3` | `#22c55e` | `#4ade80` |
+| `--glyph-palette-color-4` | `#e040fb` | `#e040fb` |
+| `--glyph-palette-color-5` | `#00e5ff` | `#00e5ff` |
+| `--glyph-palette-color-6` | `#84cc16` | `#bef264` |
+| `--glyph-palette-color-7` | `#f472b6` | `#f472b6` |
+| `--glyph-palette-color-8` | `#fb923c` | `#fb923c` |
+| `--glyph-palette-color-9` | `#818cf8` | `#818cf8` |
+| `--glyph-palette-color-10` | `#38bdf8` | `#38bdf8` |
+
+### Misc
+
+| Variable | Light | Dark | Description |
+|---|---|---|---|
+| `--glyph-tooltip-bg` | `rgba(10,14,26,0.9)` | `rgba(0,0,0,0.9)` | Tooltip background |
+| `--glyph-tooltip-text` | `#f4f6fa` | `#d4dae3` | Tooltip text color |
+| `--glyph-rating-star-fill` | `#f59e0b` | `#fbbf24` | Rating star fill color |
 
 ---
 
@@ -262,6 +280,12 @@ The theme wrapper renders `data-glyph-theme="<name>"` on its `<div>`. You can us
   --glyph-accent: #0066cc;
 }
 
+/* Tier 2 override — component-specific, CSS only */
+[data-glyph-theme="corporate"] {
+  --glyph-kanban-priority-high: #c62828;
+  --glyph-steps-active-color: #0066cc;
+}
+
 /* Add a scanline effect on dark themes */
 [data-glyph-theme="dark"]::after {
   content: '';
@@ -289,7 +313,6 @@ Combined with the `className` prop, you can scope animations and pseudo-element 
   transition: var(--glyph-transition);
 }
 .animated-glyph .glyph-graph-node:hover rect {
-  box-shadow: var(--glyph-shadow-glow);
   filter: brightness(1.2);
 }
 ```
@@ -298,7 +321,7 @@ Combined with the `className` prop, you can scope animations and pseudo-element 
 
 ## Example: Cyberpunk 2077 theme
 
-This showcase theme demonstrates every available variable. It uses deep chrome-black backgrounds, neon yellow accents (the signature Cyberpunk 2077 color `#fcee09`), cyber-red edges, electric blue highlights, aggressive glow effects, and scanline-ready backdrop filters.
+This showcase theme demonstrates all 53 Tier 1 variables. It uses deep chrome-black backgrounds, neon yellow accents (the signature Cyberpunk 2077 color `#fcee09`), cyber-red and electric blue semantic states, and an aggressive neon palette.
 
 ```typescript
 import type { GlyphTheme } from '@glyphjs/types';
@@ -306,7 +329,7 @@ import type { GlyphTheme } from '@glyphjs/types';
 export const cyberpunk2077Theme: GlyphTheme = {
   name: 'cyberpunk-2077',
   variables: {
-    // Colors — deep chrome-black with electric white-blue text
+    // Core colors — deep chrome-black with electric white-blue text
     '--glyph-bg': '#0d0d0d',
     '--glyph-text': '#e0f7fa',
     '--glyph-text-muted': '#7b8fa3',
@@ -323,43 +346,26 @@ export const cyberpunk2077Theme: GlyphTheme = {
     '--glyph-accent-hover': '#ffe566',
     '--glyph-accent-subtle': '#1a1a08',
     '--glyph-accent-muted': '#3d3a0e',
+    '--glyph-text-on-accent': '#0d0d0d',
 
     // Code
     '--glyph-code-bg': '#1a1a2e',
     '--glyph-code-text': '#00f0ff',
-
-    // Blockquote — cyber red accent
-    '--glyph-blockquote-border': '#ff003c',
-    '--glyph-blockquote-bg': '#1f1020',
-
-    // Grid / Tooltip
-    '--glyph-grid': 'rgba(252,238,9,0.15)',
-    '--glyph-tooltip-bg': 'rgba(13,13,13,0.95)',
-    '--glyph-tooltip-text': '#fcee09',
-
-    // Callouts
-    '--glyph-callout-info-bg': '#0d1a2e',
-    '--glyph-callout-info-border': '#00f0ff',
-    '--glyph-callout-warning-bg': '#1a1a08',
-    '--glyph-callout-warning-border': '#fcee09',
-    '--glyph-callout-error-bg': '#2d0d0d',
-    '--glyph-callout-error-border': '#ff003c',
-    '--glyph-callout-tip-bg': '#0d1a14',
-    '--glyph-callout-tip-border': '#39ff14',
-
-    // Spacing (mode-independent)
-    '--glyph-spacing-xs': '0.25rem',
-    '--glyph-spacing-sm': '0.5rem',
-    '--glyph-spacing-md': '1rem',
-    '--glyph-spacing-lg': '1.5rem',
-    '--glyph-spacing-xl': '2rem',
 
     // Typography — cyberpunk-style fonts
     '--glyph-font-body': '"Rajdhani", "Share Tech", system-ui, sans-serif',
     '--glyph-font-heading': '"Orbitron", "Audiowide", system-ui, sans-serif',
     '--glyph-font-mono': '"Fira Code", "JetBrains Mono", ui-monospace, monospace',
 
+    // Spacing
+    '--glyph-spacing-xs': '0.25rem',
+    '--glyph-spacing-sm': '0.5rem',
+    '--glyph-spacing-md': '1rem',
+    '--glyph-spacing-lg': '1.5rem',
+    '--glyph-spacing-xl': '2rem',
+
     // Border radius — sharp, angular
+    '--glyph-radius-xs': '1px',
     '--glyph-radius-sm': '2px',
     '--glyph-radius-md': '4px',
     '--glyph-radius-lg': '6px',
@@ -367,27 +373,34 @@ export const cyberpunk2077Theme: GlyphTheme = {
     // Effects — aggressive neon glow
     '--glyph-shadow-sm': '0 1px 4px rgba(252,238,9,0.15)',
     '--glyph-shadow-md': '0 4px 16px rgba(252,238,9,0.2)',
-    '--glyph-shadow-lg':
-      '0 0 20px rgba(252,238,9,0.4), 0 0 60px rgba(252,238,9,0.1)',
-    '--glyph-shadow-glow':
-      '0 0 20px rgba(252,238,9,0.4), 0 0 60px rgba(252,238,9,0.1)',
-    '--glyph-text-shadow': '0 0 8px rgba(252,238,9,0.6)',
-    '--glyph-backdrop': 'blur(12px) saturate(180%)',
-    '--glyph-gradient-accent': 'linear-gradient(135deg, #fcee09, #ff003c)',
+    '--glyph-shadow-lg': '0 0 20px rgba(252,238,9,0.4), 0 0 60px rgba(252,238,9,0.1)',
     '--glyph-transition': '0.15s ease-out',
+    '--glyph-focus-ring': '0 0 0 2px #fcee09, 0 0 12px rgba(252,238,9,0.5)',
     '--glyph-opacity-muted': '0.65',
     '--glyph-opacity-disabled': '0.35',
-    '--glyph-focus-ring':
-      '0 0 0 2px #fcee09, 0 0 12px rgba(252,238,9,0.5)',
 
-    // SVG — neon yellow labels, cyber-red edges, electric blue icons
-    '--glyph-node-fill-opacity': '0.9',
-    '--glyph-node-radius': '2',
-    '--glyph-node-stroke-width': '2',
-    '--glyph-node-label-color': '#fcee09',
-    '--glyph-edge-color': '#ff003c',
-    '--glyph-icon-stroke': '#00f0ff',
-    '--glyph-icon-stroke-width': '2',
+    // Semantic states — cyber neons
+    '--glyph-color-success': '#39ff14',
+    '--glyph-color-warning': '#fcee09',
+    '--glyph-color-error': '#ff003c',
+    '--glyph-color-info': '#00f0ff',
+
+    // Shared palette — neon spectrum
+    '--glyph-palette-color-1': '#fcee09',
+    '--glyph-palette-color-2': '#00f0ff',
+    '--glyph-palette-color-3': '#39ff14',
+    '--glyph-palette-color-4': '#ff003c',
+    '--glyph-palette-color-5': '#ff6ec7',
+    '--glyph-palette-color-6': '#7df9ff',
+    '--glyph-palette-color-7': '#bf5fff',
+    '--glyph-palette-color-8': '#fb923c',
+    '--glyph-palette-color-9': '#c8fb50',
+    '--glyph-palette-color-10': '#f5a0c5',
+
+    // Misc
+    '--glyph-tooltip-bg': 'rgba(13,13,13,0.95)',
+    '--glyph-tooltip-text': '#fcee09',
+    '--glyph-rating-star-fill': '#fcee09',
   },
 };
 ```
@@ -415,10 +428,6 @@ function App() {
 Pair the theme with CSS for scanline and glow effects using the `data-glyph-theme` selector:
 
 ```css
-[data-glyph-theme="cyberpunk-2077"] {
-  text-shadow: var(--glyph-text-shadow);
-}
-
 /* CRT scanline overlay */
 [data-glyph-theme="cyberpunk-2077"]::after {
   content: '';
@@ -445,11 +454,11 @@ Pair the theme with CSS for scanline and glow effects using the `data-glyph-them
 
 ## Cyberpunk 2077 theme in action
 
-The examples below render live components using the Cyberpunk 2077 theme defined above. They showcase how the SVG and data-visualization variables (`--glyph-edge-color`, `--glyph-node-label-color`, `--glyph-node-fill-opacity`, `--glyph-icon-stroke`, etc.) affect complex components.
+The examples below render live components using the Cyberpunk 2077 theme defined above. They showcase how the palette, semantic state, and accent variables affect complex components.
 
 ### Graph — Microservices dependency map
 
-A directed acyclic graph of a microservices architecture. Notice the neon-yellow node labels (`--glyph-node-label-color`), cyber-red edges (`--glyph-edge-color`), and high fill opacity (`--glyph-node-fill-opacity`).
+A directed acyclic graph of a microservices architecture. Notice the neon palette on node fills and the accent-colored focus indicators.
 
 export const graphExample = `
 \`\`\`ui:graph
@@ -517,7 +526,7 @@ edges:
 
 ### Architecture — Cloud infrastructure
 
-A nested cloud infrastructure diagram with VPC zones, public and private subnets, and service dependencies. Shows `--glyph-icon-stroke` (electric blue icons), `--glyph-edge-color` (cyber-red connections), and `--glyph-node-radius` (sharp angular nodes).
+A nested cloud infrastructure diagram with VPC zones, public and private subnets, and service dependencies.
 
 export const architectureExample = `
 \`\`\`ui:architecture
@@ -607,7 +616,7 @@ edges:
 
 ### Chart — System metrics over time
 
-A multi-series line chart tracking system metrics. The dark background (`--glyph-bg`) and light text (`--glyph-text`) from the cyberpunk palette frame the data visualization.
+A multi-series line chart tracking system metrics. The palette colors (`--glyph-palette-color-1..10`) drive the series colors.
 
 export const chartExample = `
 \`\`\`ui:chart

@@ -1,0 +1,209 @@
+---
+title: Obsidian Plugin
+description: Render interactive GlyphJS components natively in your Obsidian notes.
+---
+
+The GlyphJS Obsidian plugin lets you write `ui:*` code blocks in your notes and see them rendered as live, interactive components — directly in Reading View and Live Preview. No browser or separate app required.
+
+---
+
+## What it does
+
+Any `ui:*` fenced code block you author becomes a rendered component inside Obsidian:
+
+````markdown
+```ui:chart
+type: bar
+xAxis:
+  key: month
+  label: Month
+yAxis:
+  key: revenue
+  label: Revenue ($k)
+series:
+  - name: Revenue
+    data:
+      - month: Jan
+        revenue: 82
+      - month: Feb
+        revenue: 95
+      - month: Mar
+        revenue: 110
+```
+````
+
+All 28 built-in components are supported: Chart, Graph, Architecture, Relation, Timeline, Steps, KPI, Kanban, Table, Callout, Comparison, Accordion, CodeDiff, Flowchart, FileTree, Sequence, MindMap, Equation, Quiz, Card, Infographic, Poll, Rating, Ranker, Slider, Matrix, Form, and Annotate.
+
+The plugin automatically reads your Obsidian theme's CSS custom properties and maps them to GlyphJS variables, so charts and diagrams match your vault's color scheme.
+
+---
+
+## Installation via BRAT (recommended)
+
+[BRAT](https://github.com/TfTHacker/obsidian42-brat) (Beta Reviewers Auto-update Tool) is the easiest way to install community plugins that are not yet in the Obsidian marketplace.
+
+### 1. Install BRAT
+
+Open Obsidian → **Settings → Community plugins → Browse** → search for **BRAT** → Install → Enable.
+
+### 2. Add the GlyphJS plugin
+
+In Obsidian, open the **Command Palette** (`Ctrl+P` / `Cmd+P`) and run:
+
+> **BRAT: Add a beta plugin for testing**
+
+Enter the repository URL:
+
+```
+https://github.com/VledicFranco/glyphjs
+```
+
+Select the latest release when prompted, then click **Add Plugin**.
+
+### 3. Enable the plugin
+
+Go to **Settings → Community plugins** and enable **GlyphJS**.
+
+BRAT will automatically check for updates each time you launch Obsidian.
+
+---
+
+## Manual installation
+
+If you prefer not to use BRAT:
+
+1. Go to the [GlyphJS releases page](https://github.com/VledicFranco/glyphjs/releases) and find the latest release tagged `obsidian-v*`.
+2. Download the three files attached to that release:
+   - `main.js`
+   - `manifest.json`
+   - `styles.css`
+3. Create the folder `.obsidian/plugins/glyphjs/` inside your vault.
+4. Copy all three files into that folder.
+5. Restart Obsidian (or reload without saving via **Command Palette → Reload app without saving**).
+6. Go to **Settings → Community plugins** and enable **GlyphJS**.
+
+---
+
+## Settings
+
+The plugin adds a settings tab under **Settings → GlyphJS**:
+
+| Setting | Description |
+|---|---|
+| **Debug logging** | When enabled, logs the resolved theme variable map to the developer console each time a component is rendered. Useful for diagnosing theme sync issues. |
+
+---
+
+## How theme sync works
+
+When the plugin renders a component, it reads the Obsidian CSS custom properties currently active on `document.body` and maps them to GlyphJS Tier 1 variables. The result is a GlyphJS theme object that reflects your vault's current visual style.
+
+The mapping follows a priority chain for each variable. For example, `--glyph-accent` resolves as:
+
+```
+--interactive-accent  (theme override, e.g. Obuntu's orange)
+  └─ --color-accent   (user's global accent setting)
+       └─ GlyphJS default (#0a9d7c)
+```
+
+Obsidian's semantic variables (`--interactive-accent`, `--text-accent`, `--text-error`, etc.) are always preferred over raw color values like `--color-cyan`, because semantic vars reflect the active theme's intent rather than a fixed hue.
+
+### Semantic state mapping
+
+| GlyphJS variable | Obsidian source |
+|---|---|
+| `--glyph-color-success` | `--text-success` → `--color-green` |
+| `--glyph-color-warning` | `--color-orange` → `--color-yellow` |
+| `--glyph-color-error` | `--text-error` → `--color-red` |
+| `--glyph-color-info` | `--color-blue` → `--color-cyan` |
+
+### Palette mapping
+
+The 10 palette slots are filled from Obsidian's color system. Slots 1–5 prefer theme-specific vars over global palette colors:
+
+| Slot | Priority |
+|---|---|
+| 1 | `--text-accent` → `--color-cyan` |
+| 2 | `--accent-mild` → `--color-purple` |
+| 3 | `--color-green` → `--color-teal` |
+| 4 | `--accent-strong` → `--color-pink` |
+| 5 | `--text-accent-hover` → `--color-orange` |
+| 6–10 | Obsidian's standard palette colors |
+
+Enable **Debug logging** in settings to see the full resolved map in the developer console.
+
+---
+
+## Supported components
+
+All 28 GlyphJS component types work in the plugin. Use their `ui:*` identifiers as fenced code block language tags:
+
+| Identifier | Component |
+|---|---|
+| `ui:chart` | Charts (line, bar, pie, candlestick, etc.) |
+| `ui:graph` | Node-link graphs (DAG, force, tree) |
+| `ui:architecture` | Cloud/system architecture diagrams |
+| `ui:relation` | Entity-relation diagrams (ERD) |
+| `ui:timeline` | Event timelines |
+| `ui:steps` | Step-by-step process flows |
+| `ui:kpi` | Key Performance Indicator cards |
+| `ui:kanban` | Kanban boards |
+| `ui:table` | Data tables |
+| `ui:callout` | Styled callout boxes |
+| `ui:comparison` | Feature comparison grids |
+| `ui:accordion` | Collapsible accordion sections |
+| `ui:codediff` | Code diff viewer |
+| `ui:flowchart` | Flowcharts |
+| `ui:filetree` | File tree explorer |
+| `ui:sequence` | Sequence diagrams |
+| `ui:mindmap` | Mind maps |
+| `ui:equation` | LaTeX math equations |
+| `ui:quiz` | Interactive quizzes |
+| `ui:card` | Content cards |
+| `ui:infographic` | Data infographics |
+| `ui:poll` | Polls |
+| `ui:rating` | Star ratings |
+| `ui:ranker` | Drag-to-rank lists |
+| `ui:slider` | Interactive sliders |
+| `ui:matrix` | Decision matrices |
+| `ui:form` | Input forms |
+| `ui:annotate` | Image annotation |
+
+See the [Components reference](/glyphjs/components/) for full YAML schemas and examples for each.
+
+---
+
+## Troubleshooting
+
+### Components don't render after updating the plugin
+
+Obsidian does not hot-reload plugins when `main.js` changes on disk. After updating:
+
+1. Open the **Command Palette** (`Ctrl+P` / `Cmd+P`)
+2. Run **Reload app without saving**
+
+Or toggle the plugin off and on again in **Settings → Community plugins**.
+
+### Components show an error card
+
+A red error card with the block type and message appears when the YAML in the code block is invalid. Check:
+
+- Indentation (YAML requires consistent spaces — no tabs)
+- Required fields for the component type (see the component's docs page)
+- That the `type:` field matches the schema for that component
+
+Enable **Debug logging** in settings and open the developer console (**View → Toggle Developer Tools**) for detailed error output.
+
+### Colors don't match my theme
+
+The theme sync reads Obsidian CSS vars at render time. If you switched themes without reloading:
+
+1. Run **Reload app without saving** from the Command Palette.
+
+If colors still look wrong, enable **Debug logging** and check the console output to see which Obsidian variables resolved to what values.
+
+---
+
+## Publishing and marketplace
+
+The GlyphJS Obsidian plugin is currently distributed via BRAT and manual installation. Submission to the official Obsidian Community Plugin marketplace is planned for a future release.

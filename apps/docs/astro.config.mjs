@@ -71,6 +71,9 @@ export default defineConfig({
           { label: 'Theming', slug: 'reference/theming' },
           { label: 'Theme Variables', slug: 'reference/theme-variables' },
         ]},
+        { label: 'Integrations', items: [
+          { label: 'Obsidian Plugin', slug: 'integrations/obsidian' },
+        ]},
         { label: 'Internals', items: [
           { label: 'Architecture', slug: 'architecture' },
         ]},
