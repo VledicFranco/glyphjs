@@ -38,8 +38,9 @@ playwright-report/
 # Astro
 .astro/
 
-# Claude Code
-.claude/
+# Claude Code — ignore local settings, allow shared skills
+.claude/*
+!.claude/skills
 
 # Temp
 tmp/
