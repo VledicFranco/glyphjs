@@ -7,15 +7,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.8.0] - upcoming
-
 ### Added
 
 - **Two-tier theme system**: Reduced required CSS variables from ~155 to 53 semantic tokens (`GlyphThemeVarKey`). Component-specific variables are now optional CSS-only overrides that cascade from the Tier 1 tokens via built-in fallback chains — no TypeScript required. Breaking for theme authors: drop the ~100 removed component-specific vars and add the 4 new `--glyph-color-*` state vars.
 - **Semantic state tokens**: `--glyph-color-success`, `--glyph-color-warning`, `--glyph-color-error`, `--glyph-color-info` — a universal palette for state-bearing components (KPI, Kanban, Steps, Comparison, Quiz, Callout, Form).
 - **Shared palette**: `--glyph-palette-color-1..10` replaces the old `--glyph-chart-color-N` and `--glyph-timeline-color-N` variables. One palette drives charts, timelines, infographics, architecture diagrams, and graph groups.
 - **`--glyph-radius-xs`**: Extra-small border radius token (0.25rem).
-- **Obsidian plugin** (`@glyphjs/obsidian-plugin`): Renders all 28 `ui:*` component types natively in Obsidian notes (Reading View + Live Preview). Automatically maps Obsidian theme CSS vars to GlyphJS Tier 1 tokens. Includes a Settings tab with debug logging. Distributable via BRAT.
+- **Obsidian plugin** (`@glyphjs/obsidian-plugin`): Renders all 29 `ui:*` component types natively in Obsidian notes (Reading View + Live Preview). Automatically maps Obsidian theme CSS vars to GlyphJS Tier 1 tokens. Includes a Settings tab with debug logging. Distributable via BRAT.
 - **`glyphjs lint` command**: Validates `ui:` blocks in a Markdown file and reports diagnostics. Supports `--format json` for structured output suitable for LLM tool loops, `--strict` to promote warnings to errors, and `--quiet` for exit-code-only use in scripts. Exit 0 = clean, 1 = errors, 2 = unreadable input.
 - **`glyphjs schemas` command**: Outputs JSON Schema for any component type. Use `glyphjs schemas chart` for a single type, `--all` to dump all 28 schemas as a JSON object, or `--list` to enumerate available types. Enables LLM-assisted authoring and offline schema validation.
 - **E2E test coverage expansion**: Full Playwright test coverage for Obsidian plugin Live Preview, lint command edge cases, and schema validation flows.

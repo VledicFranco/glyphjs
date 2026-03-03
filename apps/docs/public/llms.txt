@@ -1549,7 +1549,7 @@ Arguments:
   type              Component type, e.g. "chart" or "ui:chart"
 
 Options:
-  --all             Output all 28 schemas as a single JSON object
+  --all             Output all 29 schemas as a single JSON object
   --list            List available type names, one per line
   -o, --output      Write to file instead of stdout
 ```
@@ -1561,7 +1561,7 @@ Examples:
 ```bash
 glyphjs schemas chart          # single type
 glyphjs schemas ui:chart       # same — "ui:" prefix is optional
-glyphjs schemas --list         # 28 sorted type names
+glyphjs schemas --list         # 29 sorted type names
 glyphjs schemas --all -o all.json
 ```
 
