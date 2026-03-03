@@ -46,11 +46,14 @@ export function buildObsidianTheme(isDark: boolean): GlyphTheme {
     '--glyph-surface-raised': obs('--background-secondary-alt', '--glyph-surface-raised'),
 
     // ── Accent ─────────────────────────────────────────────────────
-    '--glyph-accent': obs('--color-accent', '--glyph-accent'),
-    '--glyph-accent-hover': obs('--color-accent-1', '--glyph-accent-hover'),
+    // --interactive-accent is overridden by themes like Obuntu (orange);
+    // --color-accent is the global user accent setting and may differ from the theme aesthetic.
+    '--glyph-accent':
+      obsVar('--interactive-accent') || obsVar('--color-accent') || base['--glyph-accent'],
+    '--glyph-accent-hover': obs('--text-accent-hover', '--glyph-accent-hover'),
     '--glyph-accent-subtle': obs('--background-modifier-hover', '--glyph-accent-subtle'),
     '--glyph-accent-muted': d('--glyph-accent-muted'), // no Obsidian equivalent
-    '--glyph-text-on-accent': d('--glyph-text-on-accent'), // keep white/dark contrast text
+    '--glyph-text-on-accent': obs('--text-on-accent', '--glyph-text-on-accent'),
 
     // ── Code ───────────────────────────────────────────────────────
     '--glyph-code-bg': obs('--code-background', '--glyph-code-bg'),
@@ -85,26 +88,45 @@ export function buildObsidianTheme(isDark: boolean): GlyphTheme {
 
     // ── Semantic states ─────────────────────────────────────────────
     '--glyph-color-success': obs('--color-green', '--glyph-color-success'),
-    '--glyph-color-warning': obs('--color-orange', '--glyph-color-warning'),
-    '--glyph-color-error': obs('--color-red', '--glyph-color-error'),
+    // --accent-mild is Obuntu's gold; standard themes use --color-orange or --color-yellow
+    '--glyph-color-warning':
+      obsVar('--color-orange') ||
+      obsVar('--color-yellow') ||
+      obsVar('--accent-mild') ||
+      base['--glyph-color-warning'],
+    // --text-error is defined by most themes; --color-red as secondary
+    '--glyph-color-error':
+      obsVar('--text-error') || obsVar('--color-red') || base['--glyph-color-error'],
     '--glyph-color-info': obs('--color-blue', '--glyph-color-info'),
 
     // ── Shared palette ──────────────────────────────────────────────
-    '--glyph-palette-color-1': obs('--color-cyan', '--glyph-palette-color-1'),
-    '--glyph-palette-color-2': obs('--color-purple', '--glyph-palette-color-2'),
-    '--glyph-palette-color-3': obs('--color-green', '--glyph-palette-color-3'),
-    '--glyph-palette-color-4': obs('--color-pink', '--glyph-palette-color-4'),
-    '--glyph-palette-color-5': obs('--color-cyan', '--glyph-palette-color-5'),
-    '--glyph-palette-color-6': obs('--color-yellow', '--glyph-palette-color-6'),
-    '--glyph-palette-color-7': obs('--color-orange', '--glyph-palette-color-7'),
-    '--glyph-palette-color-8': obs('--color-red', '--glyph-palette-color-8'),
-    '--glyph-palette-color-9': obs('--color-purple', '--glyph-palette-color-9'),
-    '--glyph-palette-color-10': obs('--color-blue', '--glyph-palette-color-10'),
+    // Obsidian's base CSS always defines --color-cyan/purple/etc., so those always resolve —
+    // but they reflect the global system palette (cyan+purple), not the active theme's aesthetic.
+    // For prominent slots (1–5) we prioritise Obuntu-specific vars first so charts/graphs adopt
+    // the theme's warm orange/gold palette. Slots 6–10 use the global --color-* for variety.
+    '--glyph-palette-color-1':
+      obsVar('--text-accent') || obsVar('--color-cyan') || base['--glyph-palette-color-1'],
+    '--glyph-palette-color-2':
+      obsVar('--accent-mild') || obsVar('--color-purple') || base['--glyph-palette-color-2'],
+    '--glyph-palette-color-3': obsVar('--color-green') || base['--glyph-palette-color-3'],
+    '--glyph-palette-color-4':
+      obsVar('--accent-strong') || obsVar('--color-pink') || base['--glyph-palette-color-4'],
+    '--glyph-palette-color-5':
+      obsVar('--text-accent-hover') || obsVar('--color-orange') || base['--glyph-palette-color-5'],
+    '--glyph-palette-color-6': obsVar('--color-yellow') || base['--glyph-palette-color-6'],
+    '--glyph-palette-color-7': obsVar('--color-red') || base['--glyph-palette-color-7'],
+    '--glyph-palette-color-8': obsVar('--color-orange') || base['--glyph-palette-color-8'],
+    '--glyph-palette-color-9': obsVar('--color-blue') || base['--glyph-palette-color-9'],
+    '--glyph-palette-color-10':
+      obsVar('--color-purple') || obsVar('--color-cyan') || base['--glyph-palette-color-10'],
 
     // ── Misc ───────────────────────────────────────────────────────
-    '--glyph-tooltip-bg': obs('--background-secondary-alt', '--glyph-tooltip-bg'),
-    '--glyph-tooltip-text': obs('--text-normal', '--glyph-tooltip-text'),
-    '--glyph-rating-star-fill': obs('--color-yellow', '--glyph-rating-star-fill'),
+    // --tooltip-bg is defined by Obuntu (orange rgba) and some other themes; fall back to surface
+    '--glyph-tooltip-bg':
+      obsVar('--tooltip-bg') || obsVar('--background-secondary-alt') || base['--glyph-tooltip-bg'],
+    '--glyph-tooltip-text': obs('--text-on-accent', '--glyph-tooltip-text'),
+    '--glyph-rating-star-fill':
+      obsVar('--color-yellow') || obsVar('--accent-mild') || base['--glyph-rating-star-fill'],
   };
 
   return {
