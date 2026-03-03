@@ -34,6 +34,7 @@ jobs:
           RELEASE_BUILD: 'true'
 
       # Verify manifest version matches the tag (obsidian-v0.1.0 → 0.1.0)
+      # and sync root manifest.json (required by BRAT for plugin discovery)
       - name: Verify manifest version matches tag
         run: |
           TAG="${{ github.ref_name }}"
@@ -44,6 +45,7 @@ jobs:
             exit 1
           fi
           echo "Version OK: $ACTUAL"
+          cp packages/obsidian-plugin/manifest.json manifest.json
 
       - name: Create GitHub release
         uses: softprops/action-gh-release@v2

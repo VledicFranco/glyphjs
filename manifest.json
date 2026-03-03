@@ -1,0 +1,10 @@
+{
+  "id": "glyphjs",
+  "name": "GlyphJS",
+  "version": "0.1.0",
+  "minAppVersion": "1.5.0",
+  "description": "Render interactive GlyphJS components natively in your notes.",
+  "author": "VledicFranco",
+  "authorUrl": "https://github.com/VledicFranco",
+  "isDesktopOnly": false
+}
