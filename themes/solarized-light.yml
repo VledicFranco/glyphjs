@@ -1,0 +1,55 @@
+# Solarized Light — warm, low-contrast light theme
+# https://ethanschoonover.com/solarized
+base: light
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#FDF6E3'
+  --glyph-text: '#657B83'
+  --glyph-text-muted: '#93A1A1'
+  --glyph-heading: '#586E75'
+  --glyph-link: '#2AA198'
+  --glyph-link-hover: '#268BD2'
+  --glyph-border: '#EEE8D5'
+  --glyph-border-strong: '#D5C9B0'
+  --glyph-surface: '#EEE8D5'
+  --glyph-surface-raised: '#FDF6E3'
+
+  # ── Accent (Solarized Blue) ────────────────────────────────
+  --glyph-accent: '#268BD2'
+  --glyph-accent-hover: '#2076B8'
+  --glyph-accent-subtle: '#E8F0F8'
+  --glyph-accent-muted: '#C8DFF4'
+  --glyph-text-on-accent: '#FDF6E3'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#EEE8D5'
+  --glyph-code-text: '#657B83'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(101,123,131,0.15)'
+  --glyph-shadow-md: '0 4px 12px rgba(101,123,131,0.2)'
+  --glyph-shadow-lg: '0 8px 30px rgba(101,123,131,0.25)'
+  --glyph-focus-ring: '0 0 0 2px #268BD2'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#859900'
+  --glyph-color-warning: '#B58900'
+  --glyph-color-error: '#DC322F'
+  --glyph-color-info: '#2AA198'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#2AA198'
+  --glyph-palette-color-2: '#6C71C4'
+  --glyph-palette-color-3: '#859900'
+  --glyph-palette-color-4: '#D33682'
+  --glyph-palette-color-5: '#268BD2'
+  --glyph-palette-color-6: '#B58900'
+  --glyph-palette-color-7: '#CB4B16'
+  --glyph-palette-color-8: '#DC322F'
+  --glyph-palette-color-9: '#586E75'
+  --glyph-palette-color-10: '#93A1A1'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(7, 54, 66, 0.92)'
+  --glyph-tooltip-text: '#FDF6E3'
+  --glyph-rating-star-fill: '#B58900'

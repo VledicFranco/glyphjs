@@ -1,0 +1,55 @@
+# GitHub Dark — clean, familiar GitHub dark color system
+# https://primer.style/primitives
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#0D1117'
+  --glyph-text: '#E6EDF3'
+  --glyph-text-muted: '#7D8590'
+  --glyph-heading: '#F0F6FC'
+  --glyph-link: '#2F81F7'
+  --glyph-link-hover: '#58A6FF'
+  --glyph-border: '#30363D'
+  --glyph-border-strong: '#484F58'
+  --glyph-surface: '#161B22'
+  --glyph-surface-raised: '#21262D'
+
+  # ── Accent (GitHub Blue) ───────────────────────────────────
+  --glyph-accent: '#2F81F7'
+  --glyph-accent-hover: '#58A6FF'
+  --glyph-accent-subtle: '#121D2F'
+  --glyph-accent-muted: '#1F3B6E'
+  --glyph-text-on-accent: '#FFFFFF'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#161B22'
+  --glyph-code-text: '#E6EDF3'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.4)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.55)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.65)'
+  --glyph-focus-ring: '0 0 0 3px rgba(47,129,247,0.4)'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#3FB950'
+  --glyph-color-warning: '#D29922'
+  --glyph-color-error: '#F85149'
+  --glyph-color-info: '#58A6FF'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#2F81F7'
+  --glyph-palette-color-2: '#A371F7'
+  --glyph-palette-color-3: '#3FB950'
+  --glyph-palette-color-4: '#DB61A2'
+  --glyph-palette-color-5: '#39C5CF'
+  --glyph-palette-color-6: '#D29922'
+  --glyph-palette-color-7: '#F0883E'
+  --glyph-palette-color-8: '#F85149'
+  --glyph-palette-color-9: '#8B949E'
+  --glyph-palette-color-10: '#58A6FF'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(13, 17, 23, 0.92)'
+  --glyph-tooltip-text: '#E6EDF3'
+  --glyph-rating-star-fill: '#D29922'

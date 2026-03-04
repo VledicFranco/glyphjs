@@ -1,0 +1,55 @@
+# Nord — Arctic, cool-toned dark theme
+# https://www.nordtheme.com
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#2E3440'
+  --glyph-text: '#E5E9F0'
+  --glyph-text-muted: '#8896B4'
+  --glyph-heading: '#ECEFF4'
+  --glyph-link: '#88C0D0'
+  --glyph-link-hover: '#8FBCBB'
+  --glyph-border: '#3B4252'
+  --glyph-border-strong: '#4C566A'
+  --glyph-surface: '#3B4252'
+  --glyph-surface-raised: '#434C5E'
+
+  # ── Accent (Nord Frost — cyan) ─────────────────────────────
+  --glyph-accent: '#88C0D0'
+  --glyph-accent-hover: '#8FBCBB'
+  --glyph-accent-subtle: '#2E3A42'
+  --glyph-accent-muted: '#374850'
+  --glyph-text-on-accent: '#2E3440'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#3B4252'
+  --glyph-code-text: '#D8DEE9'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.3)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.45)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.55)'
+  --glyph-focus-ring: '0 0 0 2px #88C0D0'
+
+  # ── Semantic states (Nord Aurora) ──────────────────────────
+  --glyph-color-success: '#A3BE8C'
+  --glyph-color-warning: '#EBCB8B'
+  --glyph-color-error: '#BF616A'
+  --glyph-color-info: '#81A1C1'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#88C0D0'
+  --glyph-palette-color-2: '#B48EAD'
+  --glyph-palette-color-3: '#A3BE8C'
+  --glyph-palette-color-4: '#BF616A'
+  --glyph-palette-color-5: '#81A1C1'
+  --glyph-palette-color-6: '#EBCB8B'
+  --glyph-palette-color-7: '#D08770'
+  --glyph-palette-color-8: '#5E81AC'
+  --glyph-palette-color-9: '#8FBCBB'
+  --glyph-palette-color-10: '#4C566A'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(46, 52, 64, 0.95)'
+  --glyph-tooltip-text: '#ECEFF4'
+  --glyph-rating-star-fill: '#EBCB8B'
