@@ -10,7 +10,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [0.8.0] - upcoming
+## [0.9.0] - 2026-03-04
+
+### Added
+
+- **Compile-time variables & macros**: Scalar substitution via `{{key}}` from frontmatter `vars:` keys or `ui:vars` blocks. Block variables (`=varName`) bind a rendered block to a name; suppressed block variables (`=_varName`) compile without rendering. Parameterized block templates (`=_name(p1,p2)`) combined with `{{name("arg1","arg2")}}` invocation enable reusable, data-driven block patterns. All expansion is compile-time — the IR remains flat and schema-valid.
+- **Layout components** — three new primitives for 2D document structure:
+  - `ui:columns`: Horizontal grid. `ratio: [2, 1]` distributes width as CSS `fr` units; `gap` accepts any CSS length. `children` is an ordered list of suppressed block variable names resolved at compile time.
+  - `ui:rows`: Vertical counterpart to `ui:columns`. Nestable inside column cells — `ratio` takes effect when the container height is constrained. `height: 100%` ensures `fr` units work in nested contexts.
+  - `ui:panel`: Wraps a single suppressed block variable in a styled container. Four styles: `card` (default), `bordered`, `elevated`, `ghost`. Accepts any block including `ui:columns` and `ui:rows`.
+- **12 starter and community themes** in `themes/`: `default`, `dark`, `minimal`, `high-contrast`, `warm` plus community themes `catppuccin-mocha`, `tokyo-night`, `solarized-dark`, `gruvbox-dark`, `nord`, `dracula`, `one-dark`. Pass via `--theme-file` in CLI exports.
+- **CLI `--continuous` flag**: Renders all blocks in a single continuous page (no page breaks) for PDF export.
+- **CLI `--padding` option**: Sets page padding for PDF exports.
+- **New diagnostic codes**: `UNDEFINED_VARIABLE`, `CIRCULAR_VARIABLE_REF`, `VARS_BLOCK_INVALID_VALUE`, `UNDEFINED_BLOCK_VAR`, `TEMPLATE_ARITY_MISMATCH`, `LAYOUT_CHILD_UNDEFINED`.
+
+### Fixed
+
+- **CLI PDF full-bleed theme background**: Theme background color now fills the entire page, not just the content area.
+- **Obsidian plugin Reading View rendering**: Fixed blank render caused by `enhance.js` crash; switched to post-processor approach.
+- **Obsidian plugin BRAT discovery**: Added root `manifest.json` for BRAT plugin manager.
+- **Obsidian plugin CI**: Cross-repo publishing to `glyphjs-obsidian` dist repo now uses `DIST_REPO_PAT`.
+
+## [0.8.0] - 2026-03-03
 
 ### Added
 
