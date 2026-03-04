@@ -1,0 +1,55 @@
+# Catppuccin Mocha — soothing pastel dark theme
+# https://catppuccin.com
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#1E1E2E'
+  --glyph-text: '#CDD6F4'
+  --glyph-text-muted: '#A6ADC8'
+  --glyph-heading: '#CDD6F4'
+  --glyph-link: '#89B4FA'
+  --glyph-link-hover: '#B4BEFE'
+  --glyph-border: '#313244'
+  --glyph-border-strong: '#45475A'
+  --glyph-surface: '#313244'
+  --glyph-surface-raised: '#45475A'
+
+  # ── Accent (Mauve) ─────────────────────────────────────────
+  --glyph-accent: '#CBA6F7'
+  --glyph-accent-hover: '#B88FEC'
+  --glyph-accent-subtle: '#2B2040'
+  --glyph-accent-muted: '#3D2F5A'
+  --glyph-text-on-accent: '#1E1E2E'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#181825'
+  --glyph-code-text: '#CDD6F4'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.4)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.55)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.65)'
+  --glyph-focus-ring: '0 0 0 2px #CBA6F7'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#A6E3A1'
+  --glyph-color-warning: '#F9E2AF'
+  --glyph-color-error: '#F38BA8'
+  --glyph-color-info: '#89DCEB'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#89B4FA'
+  --glyph-palette-color-2: '#94E2D5'
+  --glyph-palette-color-3: '#A6E3A1'
+  --glyph-palette-color-4: '#F38BA8'
+  --glyph-palette-color-5: '#89DCEB'
+  --glyph-palette-color-6: '#F9E2AF'
+  --glyph-palette-color-7: '#FAB387'
+  --glyph-palette-color-8: '#EBA0AC'
+  --glyph-palette-color-9: '#94E2D5'
+  --glyph-palette-color-10: '#74C7EC'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(30, 30, 46, 0.95)'
+  --glyph-tooltip-text: '#CDD6F4'
+  --glyph-rating-star-fill: '#F9E2AF'

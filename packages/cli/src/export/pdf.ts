@@ -111,12 +111,29 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
       // Continuous mode: render as one tall page with no pagination.
       // Measure the full content height after layout has settled, then produce
       // a PDF whose height matches the content exactly so no page breaks occur.
-      const scrollHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+      //
+      // PDF margins are white space added by the renderer OUTSIDE the HTML
+      // viewport — they cannot be styled via CSS. In continuous mode the CSS
+      // padding on #glyph-root already provides visual breathing room, so we
+      // force PDF margins to zero to let the theme background fill edge-to-edge.
+      //
+      // Adobe Acrobat and most PDF viewers cap page dimensions at 14400pt.
+      // At 96dpi (Playwright's rendering DPI) that is 14400 × (96/72) ≈ 19200px.
+      // We cap at 18000px to stay safely below the limit.
+      const MAX_CONTINUOUS_HEIGHT_PX = 18000;
+      const rawHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+      if (rawHeight > MAX_CONTINUOUS_HEIGHT_PX) {
+        process.stderr.write(
+          `warn  — Document height (${rawHeight}px) exceeds the PDF viewer maximum (~19200px). ` +
+            `Content will be truncated. Consider using paginated mode (remove --continuous) for long documents.\n`,
+        );
+      }
+      const scrollHeight = Math.min(rawHeight, MAX_CONTINUOUS_HEIGHT_PX);
       pdfBuffer = await page.pdf({
         width: `${width}px`,
         height: `${scrollHeight}px`,
         printBackground: true,
-        margin: parsedMargin,
+        margin: { top: '0', bottom: '0', left: '0', right: '0' },
       });
     } else {
       pdfBuffer = await page.pdf({

@@ -1,0 +1,55 @@
+# Tokyo Night — deep blue urban dark theme
+# https://github.com/enkia/tokyo-night-vscode-theme
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#1A1B26'
+  --glyph-text: '#A9B1D6'
+  --glyph-text-muted: '#565F89'
+  --glyph-heading: '#C0CAF5'
+  --glyph-link: '#7AA2F7'
+  --glyph-link-hover: '#89DDFF'
+  --glyph-border: '#292E42'
+  --glyph-border-strong: '#3B4261'
+  --glyph-surface: '#24283B'
+  --glyph-surface-raised: '#292E42'
+
+  # ── Accent (Tokyo Blue) ────────────────────────────────────
+  --glyph-accent: '#7AA2F7'
+  --glyph-accent-hover: '#89DDFF'
+  --glyph-accent-subtle: '#1A2040'
+  --glyph-accent-muted: '#24306A'
+  --glyph-text-on-accent: '#1A1B26'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#1F2335'
+  --glyph-code-text: '#A9B1D6'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.4)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.55)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.65)'
+  --glyph-focus-ring: '0 0 0 2px #7AA2F7'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#9ECE6A'
+  --glyph-color-warning: '#FF9E64'
+  --glyph-color-error: '#F7768E'
+  --glyph-color-info: '#7DCFFF'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#7AA2F7'
+  --glyph-palette-color-2: '#BB9AF7'
+  --glyph-palette-color-3: '#9ECE6A'
+  --glyph-palette-color-4: '#F7768E'
+  --glyph-palette-color-5: '#7DCFFF'
+  --glyph-palette-color-6: '#E0AF68'
+  --glyph-palette-color-7: '#FF9E64'
+  --glyph-palette-color-8: '#DB4B4B'
+  --glyph-palette-color-9: '#73DACA'
+  --glyph-palette-color-10: '#2AC3DE'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(26, 27, 38, 0.95)'
+  --glyph-tooltip-text: '#C0CAF5'
+  --glyph-rating-star-fill: '#E0AF68'

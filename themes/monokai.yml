@@ -1,0 +1,55 @@
+# Monokai — the classic dark theme
+# https://monokai.pro
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#272822'
+  --glyph-text: '#F8F8F2'
+  --glyph-text-muted: '#75715E'
+  --glyph-heading: '#F8F8F2'
+  --glyph-link: '#66D9EF'
+  --glyph-link-hover: '#A6E22E'
+  --glyph-border: '#3E3D32'
+  --glyph-border-strong: '#49483E'
+  --glyph-surface: '#2D2E27'
+  --glyph-surface-raised: '#3E3D32'
+
+  # ── Accent (Monokai Orange) ────────────────────────────────
+  --glyph-accent: '#FD971F'
+  --glyph-accent-hover: '#E6890A'
+  --glyph-accent-subtle: '#2D2113'
+  --glyph-accent-muted: '#3D2D10'
+  --glyph-text-on-accent: '#272822'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#1E1F1A'
+  --glyph-code-text: '#F8F8F2'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.4)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.55)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.65)'
+  --glyph-focus-ring: '0 0 0 2px #FD971F'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#A6E22E'
+  --glyph-color-warning: '#FD971F'
+  --glyph-color-error: '#F92672'
+  --glyph-color-info: '#66D9EF'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#66D9EF'
+  --glyph-palette-color-2: '#AE81FF'
+  --glyph-palette-color-3: '#A6E22E'
+  --glyph-palette-color-4: '#F92672'
+  --glyph-palette-color-5: '#75715E'
+  --glyph-palette-color-6: '#E6DB74'
+  --glyph-palette-color-7: '#FD971F'
+  --glyph-palette-color-8: '#F92672'
+  --glyph-palette-color-9: '#49483E'
+  --glyph-palette-color-10: '#75715E'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(39, 40, 34, 0.95)'
+  --glyph-tooltip-text: '#F8F8F2'
+  --glyph-rating-star-fill: '#E6DB74'

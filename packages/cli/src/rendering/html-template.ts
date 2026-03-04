@@ -63,6 +63,9 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html {
+      background: ${bgColor};
+    }
     body {
       background: ${bgColor};
       color: ${textColor};
@@ -79,41 +82,56 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
       max-width: ${maxWidth};
       margin: 0 auto;
       padding: ${padding};
+      background: ${bgColor};
       line-height: 1.7;
     }
 
     #glyph-root h1 {
       font-size: 2.25rem;
       font-weight: 700;
-      color: var(--glyph-heading, ${textColor});
-      margin: 0 0 0.75em;
+      color: var(--glyph-accent);
+      margin: 0 0 1em;
+      padding-bottom: 0.4em;
+      border-bottom: 2px solid var(--glyph-accent);
       line-height: 1.2;
+      letter-spacing: -0.02em;
     }
     #glyph-root h2 {
       font-size: 1.75rem;
       font-weight: 600;
-      color: var(--glyph-heading, ${textColor});
-      margin: 1.5em 0 0.5em;
+      color: var(--glyph-palette-color-2);
+      margin: 1.75em 0 0.5em;
+      padding-bottom: 0.25em;
+      border-bottom: 1px solid var(--glyph-border);
       line-height: 1.3;
+      letter-spacing: -0.01em;
     }
     #glyph-root h3 {
       font-size: 1.375rem;
       font-weight: 600;
       color: var(--glyph-heading, ${textColor});
-      margin: 1.25em 0 0.5em;
+      margin: 1.5em 0 0.5em;
+      padding-left: 0.65em;
+      border-left: 3px solid var(--glyph-accent);
       line-height: 1.4;
     }
     #glyph-root h4 {
       font-size: 1.125rem;
       font-weight: 600;
       color: var(--glyph-heading, ${textColor});
-      margin: 1em 0 0.4em;
+      margin: 1.25em 0 0.4em;
     }
     #glyph-root h5, #glyph-root h6 {
-      font-size: 1rem;
+      font-size: 0.875rem;
       font-weight: 600;
-      color: var(--glyph-heading, ${textColor});
+      color: var(--glyph-text-muted, ${textColor});
       margin: 1em 0 0.4em;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    #glyph-root strong {
+      font-weight: 700;
+      color: var(--glyph-heading, ${textColor});
     }
     #glyph-root p {
       margin-bottom: 1em;
@@ -123,46 +141,61 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
       margin-bottom: 1em;
     }
     #glyph-root li {
-      margin-bottom: 0.25em;
+      margin-bottom: 0.3em;
+    }
+    #glyph-root li::marker {
+      color: var(--glyph-accent);
     }
     #glyph-root blockquote {
-      border-left: 3px solid var(--glyph-accent, #0a9d7c);
-      background: var(--glyph-blockquote-bg, rgba(10, 157, 124, 0.06));
-      padding: 0.75em 1em;
+      border-left: 3px solid var(--glyph-accent);
+      background: var(--glyph-surface);
+      color: var(--glyph-text-muted, ${textColor});
+      padding: 0.85em 1.1em;
       margin: 0 0 1em;
       border-radius: 0 6px 6px 0;
     }
+    #glyph-root blockquote p:last-child {
+      margin-bottom: 0;
+    }
     #glyph-root code {
       font-family: var(--glyph-font-mono, 'SFMono-Regular', 'Consolas', 'Liberation Mono', 'Menlo', monospace);
-      background: var(--glyph-code-bg, rgba(0, 0, 0, 0.06));
-      padding: 0.15em 0.35em;
+      background: var(--glyph-code-bg);
+      color: var(--glyph-code-text);
+      padding: 0.15em 0.4em;
       border-radius: 4px;
       font-size: 0.875em;
     }
     #glyph-root pre {
-      background: var(--glyph-code-bg, rgba(0, 0, 0, 0.06));
-      padding: 1em;
+      background: var(--glyph-code-bg);
+      border: 1px solid var(--glyph-border);
+      padding: 1.1em 1.25em;
       overflow-x: auto;
       border-radius: 8px;
-      margin-bottom: 1em;
+      margin-bottom: 1.25em;
     }
     #glyph-root pre code {
       background: none;
+      color: var(--glyph-code-text);
       padding: 0;
       border-radius: 0;
-      font-size: 0.85em;
+      font-size: 0.875em;
+      line-height: 1.6;
     }
     #glyph-root a {
-      color: var(--glyph-link, #0a9d7c);
-      text-decoration: none;
+      color: var(--glyph-link);
+      text-decoration: underline;
+      text-decoration-color: var(--glyph-accent-muted);
+      text-underline-offset: 3px;
+      transition: color 0.15s, text-decoration-color 0.15s;
     }
     #glyph-root a:hover {
-      text-decoration: underline;
+      color: var(--glyph-link-hover);
+      text-decoration-color: var(--glyph-link-hover);
     }
     #glyph-root hr {
       border: none;
-      border-top: 1px solid var(--glyph-border, rgba(0, 0, 0, 0.1));
-      margin: 1.5em 0;
+      border-top: 1px solid var(--glyph-border-strong);
+      margin: 2em 0;
     }
     #glyph-root img {
       max-width: 100%;
@@ -172,15 +205,27 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
     #glyph-root table {
       width: 100%;
       border-collapse: collapse;
-      margin-bottom: 1em;
+      margin-bottom: 1.25em;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid var(--glyph-border);
     }
     #glyph-root th, #glyph-root td {
-      padding: 0.5em 0.75em;
+      padding: 0.6em 0.9em;
       text-align: left;
-      border-bottom: 1px solid var(--glyph-border, rgba(0, 0, 0, 0.1));
+      border-bottom: 1px solid var(--glyph-border);
     }
     #glyph-root th {
       font-weight: 600;
+      color: var(--glyph-heading, ${textColor});
+      background: var(--glyph-surface);
+      border-bottom: 2px solid var(--glyph-border-strong);
+    }
+    #glyph-root tbody tr:nth-child(even) td {
+      background: var(--glyph-surface);
+    }
+    #glyph-root td:last-child, #glyph-root th:last-child {
+      border-right: none;
     }
 
     @media print {

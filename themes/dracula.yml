@@ -1,0 +1,55 @@
+# Dracula — deep purple dark theme
+# https://draculatheme.com
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#282A36'
+  --glyph-text: '#F8F8F2'
+  --glyph-text-muted: '#6272A4'
+  --glyph-heading: '#F8F8F2'
+  --glyph-link: '#8BE9FD'
+  --glyph-link-hover: '#BD93F9'
+  --glyph-border: '#44475A'
+  --glyph-border-strong: '#6272A4'
+  --glyph-surface: '#44475A'
+  --glyph-surface-raised: '#3D4051'
+
+  # ── Accent (Dracula Purple) ────────────────────────────────
+  --glyph-accent: '#BD93F9'
+  --glyph-accent-hover: '#A87CE8'
+  --glyph-accent-subtle: '#2A2541'
+  --glyph-accent-muted: '#3A3260'
+  --glyph-text-on-accent: '#282A36'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#44475A'
+  --glyph-code-text: '#F8F8F2'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.4)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.55)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.65)'
+  --glyph-focus-ring: '0 0 0 2px #BD93F9'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#50FA7B'
+  --glyph-color-warning: '#FFB86C'
+  --glyph-color-error: '#FF5555'
+  --glyph-color-info: '#8BE9FD'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#8BE9FD'
+  --glyph-palette-color-2: '#FF79C6'
+  --glyph-palette-color-3: '#50FA7B'
+  --glyph-palette-color-4: '#FF79C6'
+  --glyph-palette-color-5: '#6272A4'
+  --glyph-palette-color-6: '#F1FA8C'
+  --glyph-palette-color-7: '#FFB86C'
+  --glyph-palette-color-8: '#FF5555'
+  --glyph-palette-color-9: '#44475A'
+  --glyph-palette-color-10: '#6272A4'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(40, 42, 54, 0.95)'
+  --glyph-tooltip-text: '#F8F8F2'
+  --glyph-rating-star-fill: '#F1FA8C'

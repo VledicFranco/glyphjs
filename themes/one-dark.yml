@@ -1,0 +1,55 @@
+# One Dark Pro — Atom's iconic dark theme
+# https://github.com/Binaryify/OneDark-Pro
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#282C34'
+  --glyph-text: '#ABB2BF'
+  --glyph-text-muted: '#5C6370'
+  --glyph-heading: '#E6EFF8'
+  --glyph-link: '#61AFEF'
+  --glyph-link-hover: '#56B6C2'
+  --glyph-border: '#3E4451'
+  --glyph-border-strong: '#4B5363'
+  --glyph-surface: '#2C313C'
+  --glyph-surface-raised: '#3E4451'
+
+  # ── Accent (One Dark Blue) ─────────────────────────────────
+  --glyph-accent: '#61AFEF'
+  --glyph-accent-hover: '#56B6C2'
+  --glyph-accent-subtle: '#1E2D3D'
+  --glyph-accent-muted: '#1E3A52'
+  --glyph-text-on-accent: '#282C34'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#21252B'
+  --glyph-code-text: '#ABB2BF'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.4)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.55)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.65)'
+  --glyph-focus-ring: '0 0 0 2px #61AFEF'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#98C379'
+  --glyph-color-warning: '#E5C07B'
+  --glyph-color-error: '#E06C75'
+  --glyph-color-info: '#56B6C2'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#61AFEF'
+  --glyph-palette-color-2: '#C678DD'
+  --glyph-palette-color-3: '#98C379'
+  --glyph-palette-color-4: '#E06C75'
+  --glyph-palette-color-5: '#56B6C2'
+  --glyph-palette-color-6: '#E5C07B'
+  --glyph-palette-color-7: '#D19A66'
+  --glyph-palette-color-8: '#BE5046'
+  --glyph-palette-color-9: '#5C6370'
+  --glyph-palette-color-10: '#828997'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(30, 33, 39, 0.95)'
+  --glyph-tooltip-text: '#ABB2BF'
+  --glyph-rating-star-fill: '#E5C07B'

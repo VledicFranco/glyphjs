@@ -1,0 +1,55 @@
+# Gruvbox Dark — retro groove earthy dark theme
+# https://github.com/morhetz/gruvbox
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#282828'
+  --glyph-text: '#EBDBB2'
+  --glyph-text-muted: '#A89984'
+  --glyph-heading: '#FBF1C7'
+  --glyph-link: '#83A598'
+  --glyph-link-hover: '#8EC07C'
+  --glyph-border: '#3C3836'
+  --glyph-border-strong: '#504945'
+  --glyph-surface: '#32302F'
+  --glyph-surface-raised: '#3C3836'
+
+  # ── Accent (Gruvbox Orange) ────────────────────────────────
+  --glyph-accent: '#FE8019'
+  --glyph-accent-hover: '#FB4934'
+  --glyph-accent-subtle: '#322014'
+  --glyph-accent-muted: '#4A2E0E'
+  --glyph-text-on-accent: '#282828'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#1D2021'
+  --glyph-code-text: '#EBDBB2'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.4)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.55)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.65)'
+  --glyph-focus-ring: '0 0 0 2px #FE8019'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#B8BB26'
+  --glyph-color-warning: '#FABD2F'
+  --glyph-color-error: '#FB4934'
+  --glyph-color-info: '#83A598'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#83A598'
+  --glyph-palette-color-2: '#D3869B'
+  --glyph-palette-color-3: '#B8BB26'
+  --glyph-palette-color-4: '#FB4934'
+  --glyph-palette-color-5: '#8EC07C'
+  --glyph-palette-color-6: '#FABD2F'
+  --glyph-palette-color-7: '#FE8019'
+  --glyph-palette-color-8: '#CC241D'
+  --glyph-palette-color-9: '#A89984'
+  --glyph-palette-color-10: '#928374'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(40, 40, 40, 0.95)'
+  --glyph-tooltip-text: '#EBDBB2'
+  --glyph-rating-star-fill: '#FABD2F'

@@ -1,0 +1,55 @@
+# Night Owl — deep navy dark theme for low-light coding
+# https://github.com/sdras/night-owl-vscode-theme
+base: dark
+variables:
+  # ── Core colors ────────────────────────────────────────────
+  --glyph-bg: '#011627'
+  --glyph-text: '#D6DEEB'
+  --glyph-text-muted: '#637777'
+  --glyph-heading: '#D6DEEB'
+  --glyph-link: '#82AAFF'
+  --glyph-link-hover: '#7FDBCA'
+  --glyph-border: '#0B253A'
+  --glyph-border-strong: '#1D3B53'
+  --glyph-surface: '#0B253A'
+  --glyph-surface-raised: '#1D3B53'
+
+  # ── Accent (Night Owl Blue) ────────────────────────────────
+  --glyph-accent: '#82AAFF'
+  --glyph-accent-hover: '#7FDBCA'
+  --glyph-accent-subtle: '#061522'
+  --glyph-accent-muted: '#0D2540'
+  --glyph-text-on-accent: '#011627'
+
+  # ── Code ───────────────────────────────────────────────────
+  --glyph-code-bg: '#01111D'
+  --glyph-code-text: '#D6DEEB'
+
+  # ── Effects ────────────────────────────────────────────────
+  --glyph-shadow-sm: '0 1px 3px rgba(0,0,0,0.5)'
+  --glyph-shadow-md: '0 4px 12px rgba(0,0,0,0.65)'
+  --glyph-shadow-lg: '0 8px 30px rgba(0,0,0,0.75)'
+  --glyph-focus-ring: '0 0 0 2px #82AAFF'
+
+  # ── Semantic states ────────────────────────────────────────
+  --glyph-color-success: '#ADDB67'
+  --glyph-color-warning: '#FFCB8B'
+  --glyph-color-error: '#FF5874'
+  --glyph-color-info: '#7FDBCA'
+
+  # ── Palette ────────────────────────────────────────────────
+  --glyph-palette-color-1: '#82AAFF'
+  --glyph-palette-color-2: '#C792EA'
+  --glyph-palette-color-3: '#ADDB67'
+  --glyph-palette-color-4: '#FF5874'
+  --glyph-palette-color-5: '#7FDBCA'
+  --glyph-palette-color-6: '#FFCB8B'
+  --glyph-palette-color-7: '#F78C6C'
+  --glyph-palette-color-8: '#EF5350'
+  --glyph-palette-color-9: '#5F7E97'
+  --glyph-palette-color-10: '#637777'
+
+  # ── Misc ───────────────────────────────────────────────────
+  --glyph-tooltip-bg: 'rgba(1, 22, 39, 0.95)'
+  --glyph-tooltip-text: '#D6DEEB'
+  --glyph-rating-star-fill: '#FFCB8B'
