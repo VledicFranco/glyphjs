@@ -1,0 +1,202 @@
+---
+title: Panel
+description: Wrap a block in a styled container with card, bordered, elevated, or ghost appearance.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Panel** component (`ui:panel`) wraps a single suppressed block variable in a styled container. Use it to add visual weight, grouping, or breathing room to any block — including layout blocks like `ui:columns` and `ui:rows`.
+
+## Examples
+
+### Card (default)
+
+Subtle background, rounded corners, thin border, and a light shadow.
+
+export const cardExample = `\`\`\`ui:kpi=_revenue
+metrics:
+  - label: Revenue
+    value: $4.2M
+    delta: "+18% YoY"
+    trend: up
+    sentiment: positive
+  - label: ARR
+    value: $50.4M
+    trend: up
+    sentiment: positive
+columns: 2
+\`\`\`
+
+\`\`\`ui:panel
+child: revenue
+style: card
+padding: 1.5rem
+\`\`\``;
+
+<GlyphPreview client:only="react" source={cardExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi=_revenue
+metrics:
+  - label: Revenue
+    value: $4.2M
+    delta: "+18% YoY"
+    trend: up
+    sentiment: positive
+  - label: ARR
+    value: $50.4M
+    trend: up
+    sentiment: positive
+columns: 2
+```
+
+```ui:panel
+child: revenue
+style: card
+padding: 1.5rem
+```
+````
+
+</details>
+
+### Bordered
+
+Visible border with rounded corners, no fill. Clean and minimal.
+
+export const borderedExample = `\`\`\`ui:callout=_note
+type: info
+title: Deployment Notice
+content: Release 2.4.0 is scheduled for March 12. No breaking changes.
+\`\`\`
+
+\`\`\`ui:panel
+child: note
+style: bordered
+padding: 1.25rem
+\`\`\``;
+
+<GlyphPreview client:only="react" source={borderedExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:callout=_note
+type: info
+title: Deployment Notice
+content: Release 2.4.0 is scheduled for March 12. No breaking changes.
+```
+
+```ui:panel
+child: note
+style: bordered
+padding: 1.25rem
+```
+````
+
+</details>
+
+### Elevated
+
+Prominent drop shadow to visually lift the panel. Use sparingly to highlight the most important block.
+
+export const elevatedExample = `\`\`\`ui:callout=_highlight
+type: tip
+title: Q1 Objective
+content: Achieve $50M ARR by March 31. Current tracking at 98.7% of target.
+\`\`\`
+
+\`\`\`ui:panel
+child: highlight
+style: elevated
+padding: 1.5rem
+\`\`\``;
+
+<GlyphPreview client:only="react" source={elevatedExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:callout=_highlight
+type: tip
+title: Q1 Objective
+content: Achieve $50M ARR by March 31. Current tracking at 98.7% of target.
+```
+
+```ui:panel
+child: highlight
+style: elevated
+padding: 1.5rem
+```
+````
+
+</details>
+
+### Ghost
+
+No visual chrome — only padding is applied. Useful for spacing control without adding borders or background.
+
+export const ghostExample = `\`\`\`ui:callout=_quiet
+type: warning
+title: Internal Note
+content: Do not distribute outside the executive team before board approval.
+\`\`\`
+
+\`\`\`ui:panel
+child: quiet
+style: ghost
+padding: 2rem
+\`\`\``;
+
+<GlyphPreview client:only="react" source={ghostExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:callout=_quiet
+type: warning
+title: Internal Note
+content: Do not distribute outside the executive team before board approval.
+```
+
+```ui:panel
+child: quiet
+style: ghost
+padding: 2rem
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `child` | `string` | Yes | -- | Name of the suppressed block variable to wrap. |
+| `style` | `"card" \| "bordered" \| "elevated" \| "ghost"` | No | `"card"` | Visual style of the panel container. |
+| `padding` | `string` | No | `"1rem"` | CSS padding inside the panel (e.g. `"1.5rem"`, `"1rem 2rem"`). |
+
+## Wrapping layout blocks
+
+`ui:panel` can wrap any block, including `ui:columns` and `ui:rows`. Define the layout block as a suppressed variable and reference it:
+
+```markdown
+```ui:columns=_grid
+ratio: [1, 1]
+gap: 1rem
+children: [left, right]
+```
+
+```ui:panel
+child: grid
+style: card
+padding: 1.5rem
+```
+```
+
+The suppressed block must be defined before the panel that references it.

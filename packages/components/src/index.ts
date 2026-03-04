@@ -76,6 +76,12 @@ export { kanbanDefinition, Kanban } from './kanban/index.js';
 export type { KanbanData, KanbanColumn, KanbanCard } from './kanban/index.js';
 export { annotateDefinition, Annotate } from './annotate/index.js';
 export type { AnnotateData, AnnotateLabel, Annotation } from './annotate/index.js';
+export { columnsDefinition, Columns } from './columns/index.js';
+export type { ColumnsData } from './columns/index.js';
+export { rowsDefinition, Rows } from './rows/index.js';
+export type { RowsData } from './rows/index.js';
+export { panelDefinition, Panel } from './panel/index.js';
+export type { PanelData } from './panel/index.js';
 
 // All component definitions (for CLI / batch registration)
 import { calloutDefinition as _callout } from './callout/index.js';
@@ -107,6 +113,9 @@ import { matrixDefinition as _matrix } from './matrix/index.js';
 import { formDefinition as _form } from './form/index.js';
 import { kanbanDefinition as _kanban } from './kanban/index.js';
 import { annotateDefinition as _annotate } from './annotate/index.js';
+import { columnsDefinition as _columns } from './columns/index.js';
+import { rowsDefinition as _rows } from './rows/index.js';
+import { panelDefinition as _panel } from './panel/index.js';
 
 export const allComponentDefinitions = [
   _callout,
@@ -138,4 +147,7 @@ export const allComponentDefinitions = [
   _form,
   _kanban,
   _annotate,
+  _columns,
+  _rows,
+  _panel,
 ] as const;

@@ -1,0 +1,66 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-fa88066782d4e980",
+    "metadata": {
+      "title": "Columns Layout Demo"
+    },
+    "blocks": [
+      {
+        "id": "b-ef0f94c169b3",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Columns Layout Demo"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-945830590801",
+        "type": "ui:columns",
+        "data": {
+          "children": ["left", "right"],
+          "ratio": [2, 1],
+          "gap": "1rem"
+        },
+        "children": [
+          {
+            "id": "b-5f6d15ae4891",
+            "type": "ui:callout",
+            "data": {
+              "type": "info",
+              "title": "Left Panel",
+              "content": "Left content here.",
+              "markdown": false
+            }
+          },
+          {
+            "id": "b-3d17982d8be1",
+            "type": "ui:kpi",
+            "data": {
+              "metrics": [
+                {
+                  "label": "Revenue",
+                  "value": "$13.1M",
+                  "trend": "up"
+                }
+              ],
+              "markdown": false
+            }
+          }
+        ]
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

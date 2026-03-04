@@ -1,0 +1,172 @@
+---
+title: Rows
+description: Stack blocks vertically with proportional row heights.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Rows** component (`ui:rows`) stacks two or more blocks vertically in a CSS grid. It is the vertical counterpart to `ui:columns` — same schema, same suppressed-variable pattern, opposite axis.
+
+Used standalone, rows simply adds a configurable gap between items. Used **nested inside a `ui:columns` cell**, the column height is constrained and `ratio` distributes that height between children.
+
+## Examples
+
+### Basic vertical stack
+
+export const basicExample = `\`\`\`ui:callout=_phase1
+type: info
+title: Phase 1 — Discovery
+content: User interviews, competitive analysis, and problem framing. Due March 14.
+\`\`\`
+
+\`\`\`ui:callout=_phase2
+type: tip
+title: Phase 2 — Design
+content: Wireframes, prototypes, and design review. Due March 28.
+\`\`\`
+
+\`\`\`ui:callout=_phase3
+type: warning
+title: Phase 3 — Build
+content: Engineering sprint begins April 1. Dependency on design sign-off.
+\`\`\`
+
+\`\`\`ui:rows
+gap: 0.75rem
+children: [phase1, phase2, phase3]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={basicExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:callout=_phase1
+type: info
+title: Phase 1 — Discovery
+content: User interviews, competitive analysis, and problem framing. Due March 14.
+```
+
+```ui:callout=_phase2
+type: tip
+title: Phase 2 — Design
+content: Wireframes, prototypes, and design review. Due March 28.
+```
+
+```ui:callout=_phase3
+type: warning
+title: Phase 3 — Build
+content: Engineering sprint begins April 1. Dependency on design sign-off.
+```
+
+```ui:rows
+gap: 0.75rem
+children: [phase1, phase2, phase3]
+```
+````
+
+</details>
+
+### Nested inside ui:columns
+
+This is the primary use case for `ui:rows`. Define it as a suppressed variable, then reference it as a child of `ui:columns`:
+
+export const nestedExample = `\`\`\`ui:kpi=_metrics
+title: Q1 Pipeline
+metrics:
+  - label: Deals Open
+    value: "84"
+    trend: up
+    sentiment: positive
+  - label: Win Rate
+    value: "34%"
+    trend: flat
+    sentiment: neutral
+columns: 2
+\`\`\`
+
+\`\`\`ui:callout=_topRight
+type: tip
+title: New Logos This Week
+content: Acme Corp (Enterprise), Dune Systems (Mid-Market). Two more in legal review.
+\`\`\`
+
+\`\`\`ui:callout=_bottomRight
+type: warning
+title: At-risk Deals
+content: 3 deals past 90-day mark without a next step scheduled.
+\`\`\`
+
+\`\`\`ui:rows=_rightCol
+gap: 1rem
+children: [topRight, bottomRight]
+\`\`\`
+
+\`\`\`ui:columns
+ratio: [3, 2]
+gap: 1.5rem
+children: [metrics, rightCol]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={nestedExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi=_metrics
+title: Q1 Pipeline
+metrics:
+  - label: Deals Open
+    value: "84"
+    trend: up
+    sentiment: positive
+  - label: Win Rate
+    value: "34%"
+    trend: flat
+    sentiment: neutral
+columns: 2
+```
+
+```ui:callout=_topRight
+type: tip
+title: New Logos This Week
+content: Acme Corp (Enterprise), Dune Systems (Mid-Market). Two more in legal review.
+```
+
+```ui:callout=_bottomRight
+type: warning
+title: At-risk Deals
+content: 3 deals past 90-day mark without a next step scheduled.
+```
+
+```ui:rows=_rightCol
+gap: 1rem
+children: [topRight, bottomRight]
+```
+
+```ui:columns
+ratio: [3, 2]
+gap: 1.5rem
+children: [metrics, rightCol]
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `children` | `string[]` | Yes | -- | Ordered list of suppressed block variable names to render as rows. |
+| `ratio` | `number[]` | No | equal heights | Relative height of each row (CSS `fr` units). Only applies when the container has a defined height, e.g. when nested inside `ui:columns`. |
+| `gap` | `string` | No | `"1rem"` | CSS gap between rows (e.g. `"0.75rem"`, `"16px"`). |
+
+## Note on ratio
+
+`ratio` distributes the **available height** between rows. When `ui:rows` is used standalone (not inside a column cell), each row is auto-sized to its content and `ratio` has no visible effect. When `ui:rows` is a child of `ui:columns`, the column cell constrains the height and `ratio` takes effect.
+
+## Combining with ui:columns
+
+See the [Layouts guide](/glyphjs/guides/layouts/) for detailed examples including four-quadrant dashboards and three-level nesting.

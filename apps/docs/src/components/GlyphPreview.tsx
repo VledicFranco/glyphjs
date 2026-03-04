@@ -35,6 +35,9 @@ import {
   formDefinition,
   kanbanDefinition,
   annotateDefinition,
+  columnsDefinition,
+  rowsDefinition,
+  panelDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -67,6 +70,9 @@ const allComponents = [
   formDefinition,
   kanbanDefinition,
   annotateDefinition,
+  columnsDefinition,
+  rowsDefinition,
+  panelDefinition,
 ];
 
 interface GlyphPreviewProps {

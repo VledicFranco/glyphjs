@@ -1,0 +1,155 @@
+---
+title: Columns
+description: Arrange blocks side by side with proportional column widths.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Columns** component (`ui:columns`) places two or more blocks side by side in a CSS grid. Column widths are controlled by a `ratio` array of relative weights — the same idea as CSS `fr` units, without needing to write any CSS.
+
+Children are **suppressed block variables** defined with `=_name` syntax. The layout block references them by name.
+
+## Examples
+
+### Two columns (2:1 ratio)
+
+export const twoColExample = `\`\`\`ui:callout=_left
+type: info
+title: Status
+content: All systems operational. No incidents in the last 30 days.
+\`\`\`
+
+\`\`\`ui:kpi=_right
+metrics:
+  - label: Uptime
+    value: "99.97%"
+    trend: up
+    sentiment: positive
+  - label: Latency
+    value: 42ms
+    trend: flat
+    sentiment: neutral
+\`\`\`
+
+\`\`\`ui:columns
+ratio: [2, 1]
+gap: 1.5rem
+children: [left, right]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={twoColExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:callout=_left
+type: info
+title: Status
+content: All systems operational. No incidents in the last 30 days.
+```
+
+```ui:kpi=_right
+metrics:
+  - label: Uptime
+    value: "99.97%"
+    trend: up
+    sentiment: positive
+  - label: Latency
+    value: 42ms
+    trend: flat
+    sentiment: neutral
+```
+
+```ui:columns
+ratio: [2, 1]
+gap: 1.5rem
+children: [left, right]
+```
+````
+
+</details>
+
+### Three equal columns
+
+export const threeColExample = `\`\`\`ui:callout=_a
+type: info
+title: Discovery
+content: User research and problem framing.
+\`\`\`
+
+\`\`\`ui:callout=_b
+type: tip
+title: Design
+content: Wireframes, prototypes, and review.
+\`\`\`
+
+\`\`\`ui:callout=_c
+type: warning
+title: Build
+content: Engineering sprint and QA.
+\`\`\`
+
+\`\`\`ui:columns
+children: [a, b, c]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={threeColExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:callout=_a
+type: info
+title: Discovery
+content: User research and problem framing.
+```
+
+```ui:callout=_b
+type: tip
+title: Design
+content: Wireframes, prototypes, and review.
+```
+
+```ui:callout=_c
+type: warning
+title: Build
+content: Engineering sprint and QA.
+```
+
+```ui:columns
+children: [a, b, c]
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+|---|---|---|---|---|
+| `children` | `string[]` | Yes | -- | Ordered list of suppressed block variable names to render as columns. |
+| `ratio` | `number[]` | No | equal widths | Relative width of each column (maps to CSS `fr` units). Length must match `children`. |
+| `gap` | `string` | No | `"1rem"` | CSS gap between columns (e.g. `"1.5rem"`, `"24px"`). |
+
+## How suppressed variables work
+
+Blocks defined with `=_name` are **suppressed** — they are compiled and stored but do not appear in the document flow on their own. The layout block then references them by their name (without the leading `_`):
+
+```markdown
+```ui:callout=_myBlock   ← suppressed, stored as "myBlock"
+type: tip
+content: Hello.
+```
+
+```ui:columns
+children: [myBlock]     ← resolved at compile time
+```
+```
+
+The suppressed block must be **defined before** the layout block that references it.
+
+## Combining with ui:rows
+
+Nest `ui:rows` inside a column cell to split it vertically — see the [Layouts guide](/glyphjs/guides/layouts/) for examples.

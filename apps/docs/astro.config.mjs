@@ -30,6 +30,8 @@ export default defineConfig({
         { label: 'Guides', items: [
           { label: 'Custom Components', slug: 'guides/custom-components' },
           { label: 'CLI Tool', slug: 'guides/cli' },
+          { label: 'Variables & Macros', slug: 'guides/variables' },
+          { label: 'Layouts', slug: 'guides/layouts' },
         ]},
         { label: 'Components', items: [
           { label: 'Overview', slug: 'components' },
@@ -62,6 +64,9 @@ export default defineConfig({
           { label: 'Form', slug: 'components/form' },
           { label: 'Kanban', slug: 'components/kanban' },
           { label: 'Annotate', slug: 'components/annotate' },
+          { label: 'Columns', slug: 'components/columns' },
+          { label: 'Rows', slug: 'components/rows' },
+          { label: 'Panel', slug: 'components/panel' },
         ]},
         { label: 'Reference', items: [
           { label: 'IR Spec', slug: 'reference/ir-spec' },

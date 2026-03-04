@@ -1,0 +1,331 @@
+---
+title: Layouts
+description: Build 2D dashboards and multi-column documents using ui:columns, ui:rows, and ui:panel.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+GlyphJS renders blocks in a single vertical flow by default. The **layout components** let you break out of that flow and arrange blocks side by side, stacked in sections, or wrapped in styled containers.
+
+There are three layout primitives:
+
+| Component | What it does |
+|---|---|
+| [`ui:columns`](/glyphjs/components/columns/) | Splits horizontally — two or more blocks side by side |
+| [`ui:rows`](/glyphjs/components/rows/) | Splits vertically — two or more blocks stacked with gap control |
+| [`ui:panel`](/glyphjs/components/panel/) | Wraps one block in a styled container (card, bordered, elevated, ghost) |
+
+All three work the same way: children are **suppressed block variables** defined with `=_name`, then referenced by name in the layout block's `children` (or `child`) field.
+
+---
+
+## The suppressed variable pattern
+
+The key idea is to **define blocks without rendering them**, then hand them to a layout component. The `=_name` suffix on a `ui:` block suppresses it from the document flow:
+
+```markdown
+```ui:callout=_myBlock    ← compiled and stored as "myBlock", NOT rendered here
+type: tip
+content: Hello.
+```
+
+```ui:columns             ← this block renders and places myBlock in a column
+children: [myBlock]
+```
+```
+
+The suppressed block must appear **before** the layout block that references it.
+
+---
+
+## ui:columns — horizontal split
+
+`ratio` controls relative widths. `[2, 1]` gives a two-thirds / one-third split:
+
+export const colBasic = `\`\`\`ui:callout=_status
+type: info
+title: System Status
+content: All services nominal. No incidents in the past 30 days.
+\`\`\`
+
+\`\`\`ui:kpi=_kpis
+metrics:
+  - label: Uptime
+    value: "99.97%"
+    trend: up
+    sentiment: positive
+  - label: P99 Latency
+    value: 148ms
+    trend: flat
+    sentiment: neutral
+columns: 2
+\`\`\`
+
+\`\`\`ui:columns
+ratio: [2, 1]
+gap: 1.5rem
+children: [status, kpis]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={colBasic} />
+
+Omit `ratio` for equal widths. `gap` accepts any CSS length string.
+
+---
+
+## ui:rows — vertical split
+
+Used standalone, `ui:rows` stacks blocks with consistent spacing:
+
+export const rowsBasic = `\`\`\`ui:callout=_p1
+type: info
+title: Phase 1 — Discovery
+content: User research and problem framing. Due March 14.
+\`\`\`
+
+\`\`\`ui:callout=_p2
+type: tip
+title: Phase 2 — Design
+content: Wireframes, prototypes, and review. Due March 28.
+\`\`\`
+
+\`\`\`ui:callout=_p3
+type: warning
+title: Phase 3 — Build
+content: Engineering sprint begins April 1.
+\`\`\`
+
+\`\`\`ui:rows
+gap: 0.75rem
+children: [p1, p2, p3]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={rowsBasic} />
+
+---
+
+## Recursive layouts
+
+Nest `ui:rows` inside a column cell (or `ui:columns` inside a row cell) to build 2D layouts. Define the inner layout as a suppressed variable, then reference it from the outer layout.
+
+### Classic split — wide left, narrow right with two rows
+
+```
++----------+----------+
+|          |  top     |
+|  left    +----------+
+|          |  bottom  |
++----------+----------+
+```
+
+export const classicSplit = `\`\`\`ui:kpi=_pipeline
+title: Q1 Pipeline
+metrics:
+  - label: Deals Open
+    value: "84"
+    trend: up
+    sentiment: positive
+  - label: Win Rate
+    value: "34%"
+    trend: flat
+    sentiment: neutral
+  - label: Forecast
+    value: $3.5M
+    trend: up
+    sentiment: positive
+columns: 1
+\`\`\`
+
+\`\`\`ui:callout=_newLogos
+type: tip
+title: New Logos This Week
+content: Acme Corp (Enterprise, $120K ARR) and Dune Systems (Mid-Market, $28K ARR).
+\`\`\`
+
+\`\`\`ui:callout=_atRisk
+type: warning
+title: At-risk Deals
+content: 3 deals past 90-day mark. SDR follow-up scheduled for Thursday.
+\`\`\`
+
+\`\`\`ui:rows=_rightStack
+gap: 1rem
+children: [newLogos, atRisk]
+\`\`\`
+
+\`\`\`ui:columns
+ratio: [3, 2]
+gap: 1.5rem
+children: [pipeline, rightStack]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={classicSplit} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:kpi=_pipeline
+title: Q1 Pipeline
+metrics:
+  - label: Deals Open
+    value: "84"
+    trend: up
+    sentiment: positive
+  - label: Win Rate
+    value: "34%"
+    trend: flat
+    sentiment: neutral
+  - label: Forecast
+    value: $3.5M
+    trend: up
+    sentiment: positive
+columns: 1
+```
+
+```ui:callout=_newLogos
+type: tip
+title: New Logos This Week
+content: Acme Corp (Enterprise, $120K ARR) and Dune Systems (Mid-Market, $28K ARR).
+```
+
+```ui:callout=_atRisk
+type: warning
+title: At-risk Deals
+content: 3 deals past 90-day mark. SDR follow-up scheduled for Thursday.
+```
+
+```ui:rows=_rightStack
+gap: 1rem
+children: [newLogos, atRisk]
+```
+
+```ui:columns
+ratio: [3, 2]
+gap: 1.5rem
+children: [pipeline, rightStack]
+```
+````
+
+</details>
+
+### Four-quadrant dashboard — 2×2 grid
+
+Two `ui:rows` blocks (each with two children) placed side by side in `ui:columns`:
+
+export const fourQuad = `\`\`\`ui:kpi=_mrr
+metrics:
+  - label: MRR
+    value: $182K
+    trend: up
+    sentiment: positive
+  - label: Growth
+    value: "+8.4%"
+    trend: up
+    sentiment: positive
+columns: 2
+\`\`\`
+
+\`\`\`ui:callout=_feature
+type: tip
+title: Top Feature Request
+content: Export to PDF — 142 upvotes. Shipped in v2.4.
+\`\`\`
+
+\`\`\`ui:callout=_infra
+type: info
+title: Infrastructure
+content: All services nominal. Maintenance window Mar 16, 02:00–04:00 UTC.
+\`\`\`
+
+\`\`\`ui:kpi=_nps
+metrics:
+  - label: NPS
+    value: "67"
+    trend: up
+    sentiment: positive
+  - label: CSAT
+    value: "4.6/5"
+    trend: up
+    sentiment: positive
+columns: 2
+\`\`\`
+
+\`\`\`ui:rows=_left
+gap: 1rem
+children: [mrr, feature]
+\`\`\`
+
+\`\`\`ui:rows=_right
+gap: 1rem
+children: [infra, nps]
+\`\`\`
+
+\`\`\`ui:columns
+ratio: [1, 1]
+gap: 1.5rem
+children: [left, right]
+\`\`\``;
+
+<GlyphPreview client:only="react" source={fourQuad} />
+
+---
+
+## ui:panel — styled wrapper
+
+Wrap any block (including layout blocks) in a visual container:
+
+export const panelExample = `\`\`\`ui:callout=_msg
+type: tip
+title: Q1 Objective
+content: Reach $50M ARR by March 31. Currently at 98.7% of target.
+\`\`\`
+
+\`\`\`ui:panel
+child: msg
+style: elevated
+padding: 1.5rem
+\`\`\``;
+
+<GlyphPreview client:only="react" source={panelExample} />
+
+Four styles are available: `card` (default), `bordered`, `elevated`, `ghost`. See the [Panel reference](/glyphjs/components/panel/) for details.
+
+### Wrapping a layout block in a panel
+
+`ui:panel` accepts any suppressed variable, including `ui:columns` and `ui:rows`. Define the layout block with `=_name` to suppress it, then reference it from the panel:
+
+export const panelWrapLayout = `\`\`\`ui:callout=_l
+type: info
+title: Left
+content: Left side content.
+\`\`\`
+
+\`\`\`ui:callout=_r
+type: warning
+title: Right
+content: Right side content.
+\`\`\`
+
+\`\`\`ui:columns=_grid
+ratio: [1, 1]
+gap: 1rem
+children: [l, r]
+\`\`\`
+
+\`\`\`ui:panel
+child: grid
+style: card
+padding: 1.25rem
+\`\`\``;
+
+<GlyphPreview client:only="react" source={panelWrapLayout} />
+
+---
+
+## Rules and limitations
+
+- **Order matters.** A suppressed block must be defined before the layout block that references it. Forward references are not supported.
+- **Shared references.** The same suppressed variable can be referenced by multiple layout blocks. Both layouts point to the same compiled `Block` object — changes to one affect both (though this is irrelevant at render time since the IR is read-only).
+- **No text flow.** Layout components create structural 2D grids. Prose text does not wrap around blocks — this is explicitly out of scope.
+- **`glyph-id` on layout children.** Avoid using `glyph-id` on a suppressed block that is used as a layout child. The block is embedded in `block.children`, not in the top-level `ir.blocks`, so cross-block references won't resolve.

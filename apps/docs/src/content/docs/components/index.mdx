@@ -3,7 +3,7 @@ title: Components Overview
 description: An overview of all built-in Glyph JS UI components.
 ---
 
-Glyph JS ships with **21 built-in UI components** that transform YAML payloads inside fenced code blocks into rich, interactive visualizations. Each component has a Zod schema that validates its YAML at compile time, producing clear diagnostics if anything is wrong.
+Glyph JS ships with **24 built-in UI components** that transform YAML payloads inside fenced code blocks into rich, interactive visualizations. Each component has a Zod schema that validates its YAML at compile time, producing clear diagnostics if anything is wrong.
 
 ## Authoring syntax
 
@@ -20,7 +20,17 @@ The YAML inside the block is parsed and validated by `@glyphjs/compiler` against
 
 ## Component catalog
 
-### Content & Layout
+### Layout
+
+| Component | Type | Description |
+|---|---|---|
+| [Columns](/glyphjs/components/columns/) | `ui:columns` | Place blocks side by side with proportional column widths. |
+| [Rows](/glyphjs/components/rows/) | `ui:rows` | Stack blocks vertically with gap control and optional ratio. |
+| [Panel](/glyphjs/components/panel/) | `ui:panel` | Wrap a block in a styled card, bordered, elevated, or ghost container. |
+
+Nest `ui:columns` and `ui:rows` recursively to build any 2D layout. See the [Layouts guide](/glyphjs/guides/layouts/) for patterns and examples.
+
+### Content & Structure
 
 | Component | Type | Description |
 |---|---|---|
@@ -92,3 +102,7 @@ See the [Authoring Guide](/glyphjs/authoring-guide/#interaction-events) for usag
 ## Container components
 
 `ui:tabs` and `ui:steps` are **container components** whose children are expressed as Markdown strings inside the YAML `content` fields. The compiler re-parses each `content` field recursively, producing child `Block[]` entries in the IR. This allows tabs and steps to contain rich Markdown (paragraphs, lists, code blocks) but not nested `ui:` components in v1.
+
+## Layout components
+
+`ui:columns`, `ui:rows`, and `ui:panel` are **layout components** that arrange other blocks in 2D space. Their children are **suppressed block variables** — blocks defined with `=_name` that are compiled but not rendered directly. The layout component resolves these names at compile time and stores them in `block.children`. The runtime renders each child via `BlockRenderer` inside the layout's grid or container. See the [Layouts guide](/glyphjs/guides/layouts/) for usage.

@@ -1,0 +1,52 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-23adb9ddaa4723bf",
+    "metadata": {
+      "title": "Panel Layout Demo"
+    },
+    "blocks": [
+      {
+        "id": "b-439eca2c3715",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Panel Layout Demo"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-020e267396bc",
+        "type": "ui:panel",
+        "data": {
+          "child": "myContent",
+          "style": "card",
+          "padding": "1.5rem"
+        },
+        "children": [
+          {
+            "id": "b-4dfdb6bd3942",
+            "type": "ui:callout",
+            "data": {
+              "type": "tip",
+              "title": "Wrapped Content",
+              "content": "This block is wrapped in a styled panel.",
+              "markdown": false
+            }
+          }
+        ]
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

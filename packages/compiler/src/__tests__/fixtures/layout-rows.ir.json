@@ -1,0 +1,61 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-faa37bfbca8b0e02",
+    "metadata": {
+      "title": "Rows Layout Demo"
+    },
+    "blocks": [
+      {
+        "id": "b-20a2294da8fd",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Rows Layout Demo"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-d3f7ca3fb07e",
+        "type": "ui:rows",
+        "data": {
+          "children": ["top", "bottom"],
+          "gap": "1rem"
+        },
+        "children": [
+          {
+            "id": "b-1ae474636db4",
+            "type": "ui:callout",
+            "data": {
+              "type": "info",
+              "title": "Top Section",
+              "content": "Top row content.",
+              "markdown": false
+            }
+          },
+          {
+            "id": "b-a4955742c3f8",
+            "type": "ui:callout",
+            "data": {
+              "type": "tip",
+              "title": "Bottom Section",
+              "content": "Bottom row content.",
+              "markdown": false
+            }
+          }
+        ]
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

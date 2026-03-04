@@ -16,10 +16,7 @@ import { createDiagnostic } from './diagnostics.js';
  * @param blocks - The top-level block array to scan for container blocks.
  * @param ctx - Translation context used for recursive compilation.
  */
-export function compileContainerBlocks(
-  blocks: Block[],
-  ctx: TranslationContext,
-): void {
+export function compileContainerBlocks(blocks: Block[], ctx: TranslationContext): void {
   for (const block of blocks) {
     if (block.type === 'ui:tabs') {
       compileTabsBlock(block, ctx);
@@ -112,6 +109,85 @@ function parseContentToBlocks(
   return blocks;
 }
 
+// ─── Layout Block Compilation ────────────────────────────────
+
+/**
+ * Resolve child block references for layout blocks (ui:columns, ui:polymer, ui:panel).
+ *
+ * Each layout block stores child names as strings in its YAML data. This step
+ * looks up each name in `varCtx.suppressedBlockVars` and populates `block.children`.
+ *
+ * Emits a `LAYOUT_CHILD_UNDEFINED` warning for any name not found.
+ */
+export function compileLayoutBlocks(blocks: Block[], ctx: TranslationContext): void {
+  // First pass: resolve any layout blocks stored in suppressedBlockVars.
+  // This enables nested layouts (e.g. a suppressed ui:panel inside a ui:columns).
+  for (const block of ctx.varCtx.suppressedBlockVars.values()) {
+    if (block.type === 'ui:columns' || block.type === 'ui:rows') {
+      resolveChildrenArray(block, ctx);
+    } else if (block.type === 'ui:panel') {
+      resolveChildSingle(block, ctx);
+    }
+  }
+
+  // Second pass: resolve layout blocks in the top-level emitted blocks array.
+  for (const block of blocks) {
+    if (block.type === 'ui:columns' || block.type === 'ui:rows') {
+      resolveChildrenArray(block, ctx);
+    } else if (block.type === 'ui:panel') {
+      resolveChildSingle(block, ctx);
+    }
+  }
+}
+
+function resolveChildrenArray(block: Block, ctx: TranslationContext): void {
+  const data = block.data as Record<string, unknown>;
+  const names = data['children'];
+  if (!Array.isArray(names)) return;
+
+  const resolved: Block[] = [];
+  for (const name of names as string[]) {
+    const child = ctx.varCtx.suppressedBlockVars.get(name);
+    if (child) {
+      resolved.push(child);
+    } else {
+      block.diagnostics ??= [];
+      block.diagnostics.push(
+        createDiagnostic(
+          'compiler',
+          'warning',
+          'LAYOUT_CHILD_UNDEFINED',
+          `Layout child "${name}" is not defined as a suppressed block variable.`,
+          block.position,
+        ),
+      );
+    }
+  }
+  if (resolved.length > 0) block.children = resolved;
+}
+
+function resolveChildSingle(block: Block, ctx: TranslationContext): void {
+  const data = block.data as Record<string, unknown>;
+  const name = data['child'];
+  if (typeof name !== 'string') return;
+
+  const child = ctx.varCtx.suppressedBlockVars.get(name);
+  if (child) {
+    block.children = [child];
+  } else {
+    block.diagnostics ??= [];
+    block.diagnostics.push(
+      createDiagnostic(
+        'compiler',
+        'warning',
+        'LAYOUT_CHILD_UNDEFINED',
+        `Layout child "${name}" is not defined as a suppressed block variable.`,
+        block.position,
+      ),
+    );
+  }
+}
+
 // ─── Nested UI Detection ─────────────────────────────────────
 
 /**
@@ -134,10 +210,7 @@ export function hasNestedUiBlocks(content: string): boolean {
  * @param blocks - The compiled block array to validate.
  * @param diagnostics - Accumulator for warning diagnostics (e.g., missing labels/titles).
  */
-export function validateContainerBlocks(
-  blocks: Block[],
-  diagnostics: Diagnostic[],
-): void {
+export function validateContainerBlocks(blocks: Block[], diagnostics: Diagnostic[]): void {
   for (const block of blocks) {
     if (block.type === 'ui:tabs') {
       validateTabsData(block, diagnostics);
