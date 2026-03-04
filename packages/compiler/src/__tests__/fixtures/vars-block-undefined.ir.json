@@ -1,0 +1,75 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-410f088ec6dbd2cb",
+    "metadata": {
+      "title": "Undefined Block Variable Demo",
+      "description": "This document references an undefined block variable."
+    },
+    "blocks": [
+      {
+        "id": "b-72f2bf3180b1",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Undefined Block Variable Demo"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-8964055770ba",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "This document references an undefined block variable."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-4eca525c9cdd",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "{{undefinedBlock}}"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-4b526fa53c22",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "A normal paragraph after the undefined reference."
+            }
+          ]
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "UNDEFINED_BLOCK_VAR",
+      "message": "Undefined block variable \"{{undefinedBlock}}\"",
+      "source": "compiler"
+    }
+  ],
+  "hasErrors": false
+}

@@ -1,0 +1,71 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-8f986e0165cbfb50",
+    "metadata": {
+      "title": "Template Variable Demo"
+    },
+    "blocks": [
+      {
+        "id": "b-3aa92b4bc8b1",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Template Variable Demo"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-6f3639393004",
+        "type": "ui:callout",
+        "data": {
+          "type": "tip",
+          "title": "Q1 Guidance",
+          "content": "Revenue targets are indicative only."
+        }
+      },
+      {
+        "id": "b-1d09e2059586",
+        "type": "ui:callout",
+        "data": {
+          "type": "tip",
+          "title": "Methodology",
+          "content": "Figures computed using GAAP standards."
+        }
+      },
+      {
+        "id": "b-d9f1c030df77",
+        "type": "ui:callout",
+        "data": {
+          "type": "tip",
+          "title": "Company Context",
+          "content": "All data pertains to Acme Corp operations."
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "UNDEFINED_VARIABLE",
+      "message": "Undefined variable \"{{title}}\"",
+      "source": "compiler"
+    },
+    {
+      "severity": "warning",
+      "code": "UNDEFINED_VARIABLE",
+      "message": "Undefined variable \"{{body}}\"",
+      "source": "compiler"
+    }
+  ],
+  "hasErrors": false
+}

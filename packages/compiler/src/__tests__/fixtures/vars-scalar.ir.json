@@ -1,0 +1,78 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-4efa54dd6426a4c8",
+    "metadata": {
+      "title": "Acme Corp v2.4.1 Release Notes",
+      "description": "This release of  includes important updates."
+    },
+    "blocks": [
+      {
+        "id": "b-389a2942a7bb",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Acme Corp v2.4.1 Release Notes"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-360882b95987",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "This release of "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Acme Corp"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " includes important updates."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-7ed4c1f47743",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Revenue for this quarter: $13.1M."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-10fdf05a7af1",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "content": "Acme Corp ships v2.4.1 today.",
+          "markdown": false
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

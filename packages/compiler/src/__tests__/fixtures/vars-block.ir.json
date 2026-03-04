@@ -1,0 +1,95 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-307720e9463e76fd",
+    "metadata": {
+      "title": "Block Variable Demo",
+      "description": "First mention of the disclaimer above."
+    },
+    "blocks": [
+      {
+        "id": "b-88d7308dd3c3",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Block Variable Demo"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-27a9e8e779e1",
+        "type": "ui:callout",
+        "data": {
+          "type": "warning",
+          "content": "These figures are preliminary and subject to revision.",
+          "markdown": false
+        }
+      },
+      {
+        "id": "b-f5abb55c3e81",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "First mention of the disclaimer above."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-62029dc1e427",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "A paragraph with plain text."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-a5bf865bba82",
+        "type": "ui:callout",
+        "data": {
+          "type": "warning",
+          "content": "These figures are preliminary and subject to revision.",
+          "markdown": false
+        }
+      },
+      {
+        "id": "b-9294974f2528",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Another mention at the end."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-6b62fc477304",
+        "type": "ui:callout",
+        "data": {
+          "type": "warning",
+          "content": "These figures are preliminary and subject to revision.",
+          "markdown": false
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

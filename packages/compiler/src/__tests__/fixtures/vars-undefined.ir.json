@@ -1,0 +1,69 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-02486592f72eb122",
+    "metadata": {
+      "title": "Heading with defined value variable",
+      "description": "This paragraph uses defined value and {{unknown}} variables."
+    },
+    "blocks": [
+      {
+        "id": "b-d14027e8bf0d",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Heading with defined value variable"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-a5ed5bb7c82b",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "This paragraph uses defined value and {{unknown}} variables."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-b172e3179fdf",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "The defined value var is fine but {{alsoUndefined}} is not."
+            }
+          ]
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [
+    {
+      "severity": "warning",
+      "code": "UNDEFINED_VARIABLE",
+      "message": "Undefined variable \"{{unknown}}\"",
+      "source": "compiler"
+    },
+    {
+      "severity": "warning",
+      "code": "UNDEFINED_VARIABLE",
+      "message": "Undefined variable \"{{alsoUndefined}}\"",
+      "source": "compiler"
+    }
+  ],
+  "hasErrors": false
+}

@@ -49,6 +49,10 @@ export type BlockType =
   | 'ui:form'
   | 'ui:kanban'
   | 'ui:annotate'
+  // Layout components
+  | 'ui:columns'
+  | 'ui:rows'
+  | 'ui:panel'
   // Extensible
   | `ui:${string}`;
 

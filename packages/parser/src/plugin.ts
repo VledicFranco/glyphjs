@@ -67,9 +67,43 @@ function transformTree(node: MdastRoot | Parent): void {
  * Precondition: `node.lang` is defined and starts with "ui:".
  */
 function codeNodeToGlyphUIBlock(node: Code): GlyphUIBlock {
-  const lang = node.lang ?? '';
-  const componentType = lang.slice(3); // Remove "ui:" prefix
+  // Remark splits the fenced code info string on the first whitespace:
+  // lang gets the first token, meta gets the rest. For template definitions like
+  // `ui:callout=_note(title, body)`, the spaces inside the parens cause remark to
+  // split: lang="ui:callout=_note(title," meta="body)". Rejoin them before parsing.
+  const lang = node.meta ? `${node.lang ?? ''}${node.meta}` : (node.lang ?? '');
   const rawYaml = node.value;
+
+  // Parse lang: strip "ui:" prefix, then split on "=" for variable binding
+  const langBody = lang.slice(3); // strip "ui:"
+  const eqIdx = langBody.indexOf('=');
+
+  let componentType: string;
+  let varName: string | undefined;
+  let suppressRender = false;
+  let templateParams: string[] | undefined;
+
+  if (eqIdx !== -1) {
+    componentType = langBody.slice(0, eqIdx);
+    let rawVar = langBody.slice(eqIdx + 1);
+
+    // Parse optional (param1, param2) suffix — Phase 3
+    const parenIdx = rawVar.indexOf('(');
+    if (parenIdx !== -1) {
+      const parenClose = rawVar.indexOf(')', parenIdx);
+      const paramStr = parenClose !== -1 ? rawVar.slice(parenIdx + 1, parenClose) : '';
+      rawVar = rawVar.slice(0, parenIdx);
+      templateParams = paramStr
+        .split(',')
+        .map((p) => p.trim())
+        .filter((p) => p.length > 0);
+    }
+
+    suppressRender = rawVar.startsWith('_');
+    varName = suppressRender ? rawVar.slice(1) : rawVar;
+  } else {
+    componentType = langBody;
+  }
 
   let parsedData: Record<string, unknown> | null = null;
   let yamlError: string | undefined;
@@ -140,6 +174,15 @@ function codeNodeToGlyphUIBlock(node: Code): GlyphUIBlock {
   }
   if (interactive !== undefined) {
     block.interactive = interactive;
+  }
+  if (varName !== undefined) {
+    block.varName = varName;
+  }
+  if (suppressRender) {
+    block.suppressRender = true;
+  }
+  if (templateParams !== undefined) {
+    block.templateParams = templateParams;
   }
 
   return block;

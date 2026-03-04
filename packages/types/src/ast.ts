@@ -23,6 +23,12 @@ export interface GlyphUIBlock {
   refs?: RawRef[];
   interactive?: boolean;
   position: SourcePosition;
+  /** Phase 2: variable name to bind this block to (from `ui:type=varName`). */
+  varName?: string;
+  /** Phase 2: if true, block is NOT emitted to IR (from `ui:type=_varName`). */
+  suppressRender?: boolean;
+  /** Phase 3: parameter names for parameterized templates (from `ui:type=_name(p1,p2)`). */
+  templateParams?: string[];
 }
 
 // ─── Glyph Root (Extended MDAST) ─────────────────────────────

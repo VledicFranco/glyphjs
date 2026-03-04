@@ -1,0 +1,74 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-3f4e1936b876de41",
+    "metadata": {
+      "title": "Suppressed Block Variable Demo",
+      "description": "The above block is suppressed — it does not appear in the document."
+    },
+    "blocks": [
+      {
+        "id": "b-595f50f54a23",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Suppressed Block Variable Demo"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-f003d9edd7fe",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "The above block is suppressed — it does not appear in the document."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-f889938c4cbb",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "content": "Internal use only. Do not distribute.",
+          "markdown": false
+        }
+      },
+      {
+        "id": "b-8763de6612bc",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Some more text here."
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-04015529fb7d",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "content": "Internal use only. Do not distribute.",
+          "markdown": false
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

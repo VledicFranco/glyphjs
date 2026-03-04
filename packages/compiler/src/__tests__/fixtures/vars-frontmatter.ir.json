@@ -1,0 +1,74 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-cfdc384f4919534c",
+    "metadata": {
+      "title": "GlyphJS Documentation",
+      "description": "Author: Jane Smith"
+    },
+    "blocks": [
+      {
+        "id": "b-357594653059",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "GlyphJS Documentation"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-23c642ce8163",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Author: Jane Smith"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-2cbf90042ce1",
+        "type": "paragraph",
+        "data": {
+          "children": [
+            {
+              "type": "text",
+              "value": "Status: "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "stable"
+                }
+              ]
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-5e291fdac691",
+        "type": "ui:callout",
+        "data": {
+          "type": "info",
+          "content": "This document is maintained by Jane Smith.",
+          "markdown": false
+        }
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

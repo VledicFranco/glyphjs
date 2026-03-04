@@ -16,6 +16,7 @@ import { componentSchemas } from '@glyphjs/schemas';
 import { convertPhrasingContent, parseInlineMarkdown } from './inline.js';
 import { createSchemaError, createUnknownComponentInfo, createYamlError } from './diagnostics.js';
 import type { CompileOptions } from './compile.js';
+import type { VarContext } from './variables.js';
 
 // ─── Default Source Position ─────────────────────────────────
 
@@ -32,6 +33,7 @@ export interface TranslationContext {
   references: Reference[];
   blockIdMap: Map<string, string>;
   compileOptions: CompileOptions;
+  varCtx: VarContext;
 }
 
 // ─── AST Node Type Guards ────────────────────────────────────

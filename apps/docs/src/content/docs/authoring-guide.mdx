@@ -107,7 +107,76 @@ layout:
 | `description` | `string` | Short description. If omitted, inferred from the first paragraph. |
 | `authors` | `string[]` | List of author names. |
 | `tags` | `string[]` | Tags for categorization. |
+| `vars` | `object` | Compile-time scalar variables. String values are interpolated wherever `{{key}}` appears in prose or `ui:` YAML fields. See [Variables & Macros](/glyphjs/guides/variables). |
 | `layout` | `object` | Layout configuration (see [Layout Modes](#layout-modes) below). |
+
+---
+
+## Variables & Macros
+
+Glyph Markdown supports a compile-time variable system that eliminates
+repetition. All substitution happens before the IR is produced — the runtime
+and the reader see the final values, not the variable syntax.
+
+### Scalar variables
+
+Define scalars in the `vars:` frontmatter key or in a `ui:vars` block, then
+reference them with `{{key}}` in prose or in the YAML fields of any `ui:` block:
+
+````markdown
+---
+vars:
+  company: Acme Corp
+  quarter: Q1 2026
+---
+
+# {{company}} — {{quarter}} Report
+
+```ui:callout
+type: info
+title: "{{quarter}} Update"
+content: "{{company}} achieved strong results this quarter."
+```
+````
+
+### Block variables
+
+Bind a name to an entire `ui:` component by appending `=name` to the lang
+string. A `_` prefix suppresses the initial render:
+
+````markdown
+```ui:callout=_note
+type: info
+content: "Internal use only."
+```
+
+{{note}}
+
+More text.
+
+{{note}}
+````
+
+Each `{{note}}` reference in a standalone paragraph is replaced with a clone of
+the block.
+
+### Parameterized templates
+
+Templates are suppressed block variables with named parameter slots:
+
+````markdown
+```ui:callout=_kpi(label, value)
+type: info
+title: "{{label}}"
+content: "{{value}}"
+```
+
+{{kpi("Revenue", "$13.1M")}}
+{{kpi("NPS Score", "72")}}
+````
+
+For the full reference — including `ui:vars`, scalar expansion rules, arity
+errors, and diagnostics — see the **[Variables & Macros guide](/glyphjs/guides/variables)**.
 
 ---
 
@@ -1206,6 +1275,10 @@ produces valid IR output, even when errors are present.
 | Schema validation error | The block is preserved with the original data. Zod error paths are included in the diagnostic. |
 | Unresolved reference | A warning diagnostic is emitted. The reference is kept with `unresolved: true`. |
 | Unknown component type | An info diagnostic is emitted. The block is preserved as-is and renders a fallback placeholder. |
+| `UNDEFINED_VARIABLE` | A warning is emitted; the literal `{{key}}` text is preserved in the output. |
+| `CIRCULAR_VARIABLE_REF` | An error is emitted; expansion stops and the literal is preserved. |
+| `UNDEFINED_BLOCK_VAR` | A warning is emitted; the standalone `{{name}}` paragraph is kept as-is. |
+| `TEMPLATE_ARITY_MISMATCH` | An error is emitted; the invocation paragraph is kept as-is. |
 
 Check the `diagnostics` array on the `CompilationResult` to find and fix issues.
 Each diagnostic includes severity (`error`, `warning`, or `info`), a message,

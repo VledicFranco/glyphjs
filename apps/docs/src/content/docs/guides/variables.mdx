@@ -1,0 +1,344 @@
+---
+title: Variables & Macros
+description: Eliminate repetition in Glyph Markdown with compile-time scalar variables, reusable block variables, and parameterized templates.
+---
+
+The variable system lets you define values once and reference them throughout a
+document. All substitution happens **at compile time** — the resulting IR is flat
+and variable-free, so the runtime sees no difference between a document that uses
+variables and one that doesn't.
+
+There are three tiers of reuse, each building on the previous:
+
+| Tier | What it does | Syntax |
+|---|---|---|
+| **Scalar variables** | Substitute text values anywhere | `{{name}}` |
+| **Block variables** | Reuse entire UI components | `{{blockName}}` (standalone paragraph) |
+| **Parameterized templates** | Reusable blocks with per-invocation data | `{{templateName("arg1", "arg2")}}` |
+
+---
+
+## Phase 1 — Scalar Variables
+
+Scalar variables hold string values and interpolate into prose text and YAML
+fields of `ui:` components.
+
+### Defining variables in frontmatter
+
+The `vars:` key in YAML frontmatter defines document-wide scalars:
+
+```markdown
+---
+title: Quarterly Report
+vars:
+  company: Acme Corp
+  quarter: Q1 2026
+  ceo: Marcus Webb
+---
+
+# {{company}} — {{quarter}} Earnings Report
+
+Prepared by the Finance Team. Approved by {{ceo}}.
+```
+
+### Defining variables in `ui:vars` blocks
+
+`ui:vars` blocks let you define additional scalars inline, at any point in the
+document. They emit **no block** to the IR — they exist solely to feed the
+variable context.
+
+````markdown
+```ui:vars
+revenue: $13.1M
+growthRate: 5.6%
+```
+
+Revenue for {{quarter}} was **{{revenue}}**, up {{growthRate}} year over year.
+````
+
+`ui:vars` values are scalar-expanded themselves, so later vars can reference
+earlier ones:
+
+````markdown
+```ui:vars
+baseUrl: https://acme.example
+apiUrl: "{{baseUrl}}/api/v3"
+docsUrl: "{{baseUrl}}/docs"
+```
+````
+
+### Using variables in `ui:` components
+
+Variables expand inside YAML string fields of any `ui:` block:
+
+````markdown
+```ui:callout
+type: info
+title: "{{quarter}} Update"
+content: "{{company}} achieved {{revenue}} in revenue during {{quarter}}."
+```
+````
+
+### Transitive expansion
+
+Variables can reference other variables. The compiler expands transitively:
+
+```markdown
+---
+vars:
+  firstName: Alice
+  lastName: Chen
+  fullName: "{{firstName}} {{lastName}}"
+---
+
+Prepared by {{fullName}}.
+```
+
+### Undefined variables
+
+If you reference a variable that has not been defined, the compiler emits an
+`UNDEFINED_VARIABLE` warning and preserves the literal `{{key}}` text in the
+output. The document still compiles successfully.
+
+```
+warning UNDEFINED_VARIABLE: Undefined variable "{{quarter}}"
+```
+
+### Circular references
+
+Circular definitions (e.g., `a = "{{b}}"` and `b = "{{a}}"`) produce a
+`CIRCULAR_VARIABLE_REF` error and halt expansion for that reference, preserving
+the literal text.
+
+---
+
+## Phase 2 — Block Variables
+
+Block variables bind a name to an entire `ui:` component so you can reuse it
+at multiple points in the document.
+
+### Binding a block to a name
+
+Add `=varName` to the lang string of any fenced `ui:` block:
+
+````markdown
+```ui:callout=disclaimer
+type: warning
+title: Forward-Looking Statements
+content: "These figures are preliminary and subject to audit completion."
+```
+````
+
+The block renders **in place** (where you wrote it) and is stored under the
+name `disclaimer`.
+
+### Placing the block elsewhere with `{{name}}`
+
+Use the variable name as the **sole content of a paragraph** to inject a clone
+of the block:
+
+```markdown
+See the disclaimer above for context.
+
+{{disclaimer}}
+
+Some more text after.
+
+{{disclaimer}}
+```
+
+Each `{{disclaimer}}` is replaced with a fresh clone of the original block
+(different block ID, same content). The document ends up with three copies of
+the `disclaimer` callout in total.
+
+### Suppressed block variables (`_prefix`)
+
+Prefix the name with `_` to define a block that is stored but **not rendered**
+at its definition site:
+
+````markdown
+```ui:callout=_note
+type: info
+content: "Internal use only. Do not distribute."
+```
+
+The block above is suppressed — it does not appear here.
+
+{{note}}
+
+Some text.
+
+{{note}}
+````
+
+The `_note` definition site produces no block in the IR. Each `{{note}}`
+reference produces a rendered clone.
+
+### Block variables vs. scalar variables
+
+If you use `{{name}}` as a standalone paragraph and `name` resolves to a block
+variable, the compiler expands it as a block clone. If `name` is only a scalar
+variable, the text is substituted normally and the paragraph remains a
+paragraph.
+
+| Situation | Behavior |
+|---|---|
+| `name` is a block var | Paragraph replaced with block clone |
+| `name` is a scalar var only | Text substituted, paragraph kept |
+| `name` is unknown | `UNDEFINED_BLOCK_VAR` warning, paragraph kept |
+
+### No forward references
+
+Block variables must be defined **before** they are referenced. The compiler
+processes the document in source order; a reference to a block variable that
+has not yet been defined emits an `UNDEFINED_BLOCK_VAR` warning.
+
+---
+
+## Phase 3 — Parameterized Templates
+
+Templates are suppressed block variables with named parameter slots. They allow
+you to define a component shape once and instantiate it with different data.
+
+### Defining a template
+
+Add `=_name(param1, param2, ...)` to the lang string. The block is suppressed
+(not rendered at the definition site). Parameter names must be valid identifiers.
+
+````markdown
+```ui:callout=_kpi(label, value, trend)
+type: info
+title: "{{label}}"
+content: "{{value}} ({{trend}})"
+```
+````
+
+### Invoking a template
+
+Call the template with `{{name("arg1", "arg2")}}` as a standalone paragraph.
+Arguments are comma-separated and should be quoted:
+
+```markdown
+{{kpi("Revenue", "$13.1M", "↑ 5.6% YoY")}}
+
+{{kpi("Operating Margin", "22.4%", "↑ 1.2pp QoQ")}}
+
+{{kpi("NPS Score", "72", "↑ 4 points")}}
+```
+
+Each invocation produces a distinct clone of the template block with the
+parameter placeholders substituted by the supplied arguments.
+
+### Arguments and scalar variables
+
+Arguments are scalar-expanded against the document's scalar variables before
+being substituted into the template. This means you can combine template
+parameters with document-level vars:
+
+````markdown
+---
+vars:
+  company: Acme Corp
+  quarter: Q1 2026
+---
+
+```ui:callout=_section(title, body)
+type: tip
+title: "{{title}}"
+content: "{{body}}"
+```
+
+{{section("Product Update", "{{company}} shipped 3 features in {{quarter}}.")}}
+````
+
+The `{{company}}` and `{{quarter}}` references inside the argument are expanded
+first, then the expanded strings are substituted into the template's YAML.
+
+### Arity errors
+
+If the number of arguments does not match the number of template parameters, the
+compiler emits a `TEMPLATE_ARITY_MISMATCH` error:
+
+```
+error TEMPLATE_ARITY_MISMATCH: Template "kpi" expects 3 argument(s), got 2
+```
+
+---
+
+## Complete Example
+
+The following document combines all three tiers:
+
+**Markdown source:**
+
+```markdown
+---
+title: Q1 2026 Report
+vars:
+  company: Acme Corp
+  quarter: Q1 2026
+---
+
+# {{company}} — {{quarter}} Report
+```
+
+Then, inline in the document body:
+
+```markdown
+ui:vars block defines: revenue=$13.1M, margin=22.4%, nps=72
+
+ui:callout=disclaimer (renders here AND binds name "disclaimer"):
+  type: warning
+  title: Forward-Looking Statements
+  content: "All figures for {{company}} are preliminary pending audit."
+
+ui:callout=_kpi(label, value) (suppressed — stored as template):
+  type: info
+  title: "{{label}}"
+  content: "{{value}}"
+
+{{kpi("Revenue", "$13.1M")}}
+{{kpi("Operating Margin", "22.4%")}}
+{{kpi("NPS Score", "72")}}
+
+{{disclaimer}}
+```
+
+**What the IR contains:**
+
+The compiled IR has no variables — all substitutions are already resolved at compile time:
+
+- One `warning` callout rendered at the `disclaimer` definition site, with `{{company}}` expanded
+- Three `info` callouts from the `kpi` template invocations, with label and value filled in
+- A clone of the `warning` callout at the `{{disclaimer}}` reference (new block ID, same data)
+
+The IR is completely flat. No variable context is stored in the output.
+
+---
+
+## Diagnostic Reference
+
+| Code | Severity | Description |
+|---|---|---|
+| `UNDEFINED_VARIABLE` | warning | `{{key}}` used in a prose node or `ui:` YAML field, but `key` is not defined. Literal preserved. |
+| `CIRCULAR_VARIABLE_REF` | error | Scalar variable expansion entered a cycle (e.g., `a = "{{b}}"`, `b = "{{a}}"`). |
+| `VARS_BLOCK_INVALID_VALUE` | warning | A key in a `ui:vars` block has a non-string value (numbers and booleans are coerced; objects and arrays are rejected). |
+| `UNDEFINED_BLOCK_VAR` | warning | `{{name}}` used as a standalone paragraph but `name` is not a defined block variable. |
+| `TEMPLATE_ARITY_MISMATCH` | error | Template invocation `{{name(...)}}` provides the wrong number of arguments. |
+
+---
+
+## Known Limitations
+
+- **Container block content is not expanded.** Variables inside `tabs[].content`
+  and `steps[].content` strings are not expanded, because the container
+  compilation path does not have access to the variable context. This will be
+  addressed in a future release.
+
+- **No forward references for block variables.** Block variables must be defined
+  before the first reference to them. The compiler processes the document
+  top-to-bottom.
+
+- **Template arguments use simple quoting.** Arguments in `{{name("arg1", "arg2")}}`
+  must be double-quoted or single-quoted strings. Unquoted arguments that contain
+  commas will be split incorrectly.
