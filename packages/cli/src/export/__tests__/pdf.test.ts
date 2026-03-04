@@ -165,21 +165,23 @@ describe('exportPDF', () => {
       landscape: true,
     });
 
+    // PDF engine margins are always zeroed — spacing comes from CSS body
+    // padding (pageMargin) so the theme background fills edge-to-edge.
     expect(mockPage.pdf).toHaveBeenCalledWith({
       format: 'A4',
       printBackground: true,
-      margin: { top: '0.5in', right: '1in', bottom: '0.5in', left: '1in' },
+      margin: { top: '0', bottom: '0', left: '0', right: '0' },
       landscape: true,
     });
   });
 
-  it('uses default page size and margin', async () => {
+  it('uses default page size and zeroed PDF margin', async () => {
     await exportPDF(createTestIR());
 
     expect(mockPage.pdf).toHaveBeenCalledWith({
       format: 'Letter',
       printBackground: true,
-      margin: { top: '1in', right: '1in', bottom: '1in', left: '1in' },
+      margin: { top: '0', bottom: '0', left: '0', right: '0' },
       landscape: false,
     });
   });

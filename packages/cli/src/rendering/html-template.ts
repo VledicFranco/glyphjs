@@ -19,6 +19,13 @@ export interface HtmlTemplateOptions {
   maxWidth?: string;
   /** Inner padding of the root container. Defaults to '2rem 1.5rem'. */
   padding?: string;
+  /**
+   * CSS margin shorthand applied as body padding (e.g. '0.75in 1in').
+   * Use this instead of PDF engine margins to achieve full-bleed theme
+   * backgrounds — PDF engine margins appear outside the HTML viewport
+   * and cannot be styled by CSS.
+   */
+  pageMargin?: string;
 }
 
 /**
@@ -35,6 +42,7 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
     themeVars,
     maxWidth = '52rem',
     padding = '2rem 1.5rem',
+    pageMargin,
   } = options;
 
   const vars = themeVars ?? (theme === 'dark' ? DARK_THEME_VARS : LIGHT_THEME_VARS);
@@ -62,6 +70,11 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
 
+    /* PDF engine margins create white space outside the HTML viewport that
+       CSS cannot reach. Force them to zero at the CSS level too so that
+       full-bleed theme backgrounds work in all Chromium/Playwright builds. */
+    @page { margin: 0; }
+
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html {
       background: ${bgColor};
@@ -71,7 +84,7 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
       color: ${textColor};
       font-family: 'Inter', var(--glyph-font-body, system-ui, sans-serif);
       -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      -moz-osx-font-smoothing: grayscale;${pageMargin ? `\n      padding: ${pageMargin};` : ''}
     }
 
     /* Force blocks visible in static/print context (no IntersectionObserver) */

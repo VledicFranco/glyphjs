@@ -210,4 +210,46 @@ describe('buildHtmlTemplate', () => {
 
     expect(html).not.toContain('glyph-theme-vars');
   });
+
+  // ── Full-bleed background (regression guard) ──────────────
+  // PDF engine margins appear outside the HTML viewport and cannot be
+  // reached by CSS. We must always zero them out and use CSS padding
+  // instead, otherwise theme backgrounds render with a white frame.
+
+  it('always includes @page { margin: 0 } to suppress browser print margins', () => {
+    const light = buildHtmlTemplate({ body: '' });
+    const dark = buildHtmlTemplate({ body: '', theme: 'dark' });
+
+    expect(light).toContain('@page { margin: 0; }');
+    expect(dark).toContain('@page { margin: 0; }');
+  });
+
+  it('applies bgColor to both html and body elements', () => {
+    const html = buildHtmlTemplate({
+      body: '',
+      themeVars: { '--glyph-bg': '#282A36', '--glyph-text': '#F8F8F2' },
+    });
+
+    // Both html and body must carry the bg so no white stripe appears
+    // when the PDF page is taller or wider than the rendered content.
+    const htmlBlock = html.match(/html\s*\{[^}]*\}/)?.[0] ?? '';
+    const bodyBlock = html.match(/body\s*\{[^}]*\}/)?.[0] ?? '';
+    expect(htmlBlock).toContain('background: #282A36');
+    expect(bodyBlock).toContain('background: #282A36');
+  });
+
+  it('adds CSS body padding when pageMargin is provided', () => {
+    const html = buildHtmlTemplate({ body: '', pageMargin: '0.75in 1in' });
+
+    expect(html).toContain('padding: 0.75in 1in');
+  });
+
+  it('omits body padding when pageMargin is not provided', () => {
+    const html = buildHtmlTemplate({ body: '' });
+
+    // Default body rule should not carry a padding declaration
+    // (inner spacing comes from #glyph-root padding, not body)
+    const bodyBlock = html.match(/body\s*\{[^}]*\}/)?.[0] ?? '';
+    expect(bodyBlock).not.toContain('padding:');
+  });
 });

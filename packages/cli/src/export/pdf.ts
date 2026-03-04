@@ -3,7 +3,7 @@ import { checkPlaywrightAvailable, BrowserManager } from '../rendering/browser.j
 import { renderDocumentToHTML } from '../rendering/ssr.js';
 import { buildHtmlTemplate } from '../rendering/html-template.js';
 import { getClientBundle } from '../rendering/client-bundle.js';
-import { parseMargin, type PdfExportOptions } from './pdf-options.js';
+import type { PdfExportOptions } from './pdf-options.js';
 
 /**
  * Export a compiled IR document to a PDF buffer via Playwright.
@@ -42,9 +42,12 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
     themeVars,
     maxWidth: '64rem',
     padding,
+    // Translate the CLI --margin option into CSS body padding rather than
+    // passing it to the PDF engine. PDF engine margins appear outside the
+    // HTML viewport and cannot be reached by CSS, so they always render as
+    // white frames regardless of the theme background color.
+    pageMargin: margin,
   });
-
-  const parsedMargin = parseMargin(margin);
 
   try {
     const page = await BrowserManager.newPage();
@@ -112,10 +115,10 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
       // Measure the full content height after layout has settled, then produce
       // a PDF whose height matches the content exactly so no page breaks occur.
       //
-      // PDF margins are white space added by the renderer OUTSIDE the HTML
-      // viewport — they cannot be styled via CSS. In continuous mode the CSS
-      // padding on #glyph-root already provides visual breathing room, so we
-      // force PDF margins to zero to let the theme background fill edge-to-edge.
+      // PDF engine margins appear outside the HTML viewport and cannot be
+      // reached by CSS — the theme background cannot fill them. We always
+      // use zero PDF margins in both modes; visual breathing room is provided
+      // by the CSS body padding (pageMargin) set in buildHtmlTemplate.
       //
       // Adobe Acrobat and most PDF viewers cap page dimensions at 14400pt.
       // At 96dpi (Playwright's rendering DPI) that is 14400 × (96/72) ≈ 19200px.
@@ -136,10 +139,13 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
         margin: { top: '0', bottom: '0', left: '0', right: '0' },
       });
     } else {
+      // Always zero PDF engine margins — spacing is handled via CSS body
+      // padding (pageMargin option on buildHtmlTemplate) so the theme
+      // background fills edge-to-edge in all PDF viewers.
       pdfBuffer = await page.pdf({
         format: pageSize,
         printBackground: true,
-        margin: parsedMargin,
+        margin: { top: '0', bottom: '0', left: '0', right: '0' },
         landscape,
       });
     }
