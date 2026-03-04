@@ -19,6 +19,8 @@ export interface ExportCommandOptions {
   pageSize?: string;
   margin?: string;
   landscape?: boolean;
+  continuous?: boolean;
+  padding?: string;
   imagesDir?: string;
   verbose?: boolean;
 }
@@ -97,6 +99,8 @@ export async function exportCommand(input: string, options: ExportCommandOptions
           pageSize: options.pageSize,
           margin: options.margin,
           landscape: options.landscape,
+          continuous: options.continuous,
+          padding: options.padding,
           themeVars,
         });
       } catch (err) {

@@ -6,6 +6,17 @@ export interface PdfExportOptions {
   margin?: string;
   landscape?: boolean;
   themeVars?: Record<string, string>;
+  /**
+   * Render as a single continuous page with no page breaks.
+   * The PDF height is measured from the rendered content rather than a fixed paper size.
+   * Useful for GlyphJS documents where components must not be split across pages.
+   */
+  continuous?: boolean;
+  /**
+   * Inner padding of the document content area, as a CSS shorthand string.
+   * Applied to the root container. Defaults to '2rem 1.5rem'.
+   */
+  padding?: string;
 }
 
 export interface ParsedMargin {

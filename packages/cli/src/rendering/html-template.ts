@@ -17,6 +17,8 @@ export interface HtmlTemplateOptions {
   themeVars?: Record<string, string>;
   /** Max width for the root container. Defaults to '52rem'. */
   maxWidth?: string;
+  /** Inner padding of the root container. Defaults to '2rem 1.5rem'. */
+  padding?: string;
 }
 
 /**
@@ -32,6 +34,7 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
     ir,
     themeVars,
     maxWidth = '52rem',
+    padding = '2rem 1.5rem',
   } = options;
 
   const vars = themeVars ?? (theme === 'dark' ? DARK_THEME_VARS : LIGHT_THEME_VARS);
@@ -75,7 +78,7 @@ export function buildHtmlTemplate(options: HtmlTemplateOptions): string {
     #glyph-root {
       max-width: ${maxWidth};
       margin: 0 auto;
-      padding: 2rem 1.5rem;
+      padding: ${padding};
       line-height: 1.7;
     }
 

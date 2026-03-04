@@ -94,6 +94,11 @@ program
   .option('--page-size <size>', 'PDF page size (e.g. Letter, A4)', 'Letter')
   .option('--margin <margin>', 'PDF margin in CSS shorthand (e.g. "1in", "0.5in 1in")', '1in')
   .option('--landscape', 'use landscape orientation for PDF')
+  .option('--continuous', 'PDF: render as one tall continuous page with no page breaks')
+  .option(
+    '--padding <padding>',
+    'document content padding in CSS shorthand (e.g. "1rem", "2rem 3rem")',
+  )
   .option('--images-dir <dir>', 'directory for rendered block images (md export)', './images/')
   .option('-v, --verbose', 'show diagnostics on stderr')
   .action((input: string, opts: Record<string, string | boolean | undefined>) => {
@@ -107,6 +112,8 @@ program
       pageSize: opts['pageSize'] as string | undefined,
       margin: opts['margin'] as string | undefined,
       landscape: opts['landscape'] === true,
+      continuous: opts['continuous'] === true,
+      padding: opts['padding'] as string | undefined,
       imagesDir: opts['imagesDir'] as string | undefined,
       verbose: opts['verbose'] === true,
     });

@@ -17,6 +17,8 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
     margin,
     landscape = false,
     themeVars,
+    continuous = false,
+    padding,
   } = options;
 
   const available = await checkPlaywrightAvailable();
@@ -39,6 +41,7 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
     ir,
     themeVars,
     maxWidth: '64rem',
+    padding,
   });
 
   const parsedMargin = parseMargin(margin);
@@ -102,12 +105,27 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
       root.innerHTML = frozen;
     });
 
-    const pdfBuffer = await page.pdf({
-      format: pageSize,
-      printBackground: true,
-      margin: parsedMargin,
-      landscape,
-    });
+    let pdfBuffer: Uint8Array;
+
+    if (continuous) {
+      // Continuous mode: render as one tall page with no pagination.
+      // Measure the full content height after layout has settled, then produce
+      // a PDF whose height matches the content exactly so no page breaks occur.
+      const scrollHeight = await page.evaluate(() => document.documentElement.scrollHeight);
+      pdfBuffer = await page.pdf({
+        width: `${width}px`,
+        height: `${scrollHeight}px`,
+        printBackground: true,
+        margin: parsedMargin,
+      });
+    } else {
+      pdfBuffer = await page.pdf({
+        format: pageSize,
+        printBackground: true,
+        margin: parsedMargin,
+        landscape,
+      });
+    }
 
     return Buffer.from(pdfBuffer);
   } finally {
