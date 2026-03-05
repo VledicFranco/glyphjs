@@ -294,6 +294,42 @@ describe('exportCommand', () => {
     );
   });
 
+  it('passes --viewport-height and --max-width through to exportPDF', async () => {
+    vi.mocked(readFile).mockResolvedValue('# Hello');
+    vi.mocked(compile).mockReturnValue(createResult());
+    vi.mocked(writeFile).mockResolvedValue();
+
+    await exportCommand('input.md', {
+      format: 'pdf',
+      output: 'out.pdf',
+      viewportHeight: 900,
+      maxWidth: 'none',
+    });
+
+    expect(exportPDF).toHaveBeenCalledWith(
+      expect.anything(),
+      expect.objectContaining({ viewportHeight: 900, maxWidth: 'none' }),
+    );
+  });
+
+  it('passes --viewport-height and --device-scale-factor through to exportMarkdown', async () => {
+    vi.mocked(readFile).mockResolvedValue('# Hello');
+    vi.mocked(compile).mockReturnValue(createResult());
+
+    await exportCommand('input.md', {
+      format: 'md',
+      viewportHeight: 1200,
+      deviceScaleFactor: 3,
+    });
+
+    expect(exportMarkdown).toHaveBeenCalledWith(
+      expect.any(String),
+      expect.any(Object),
+      expect.any(String),
+      expect.objectContaining({ viewportHeight: 1200, deviceScaleFactor: 3 }),
+    );
+  });
+
   it('sets exitCode=2 when PDF export throws', async () => {
     vi.mocked(readFile).mockResolvedValue('# Hello');
     vi.mocked(compile).mockReturnValue(createResult());

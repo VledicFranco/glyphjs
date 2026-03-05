@@ -66,6 +66,7 @@ program
   .option('--theme-file <path>', 'YAML file with custom theme variables')
   .option('-b, --block-id <id>', 'render only the block with this ID')
   .option('-w, --width <px>', 'viewport width in pixels', '1280')
+  .option('--viewport-height <px>', 'viewport height in pixels', '800')
   .option('--device-scale-factor <factor>', 'device scale factor for HiDPI', '2')
   .option('-v, --verbose', 'show diagnostics and progress on stderr')
   .action((input: string, opts: Record<string, string | boolean | undefined>) => {
@@ -76,6 +77,7 @@ program
       themeFile: opts['themeFile'] as string | undefined,
       blockId: opts['blockId'] as string | undefined,
       width: opts['width'] ? Number(opts['width']) : undefined,
+      viewportHeight: opts['viewportHeight'] ? Number(opts['viewportHeight']) : undefined,
       deviceScaleFactor: opts['deviceScaleFactor'] ? Number(opts['deviceScaleFactor']) : undefined,
       verbose: opts['verbose'] === true,
     });
@@ -99,6 +101,9 @@ program
     '--padding <padding>',
     'document content padding in CSS shorthand (e.g. "1rem", "2rem 3rem")',
   )
+  .option('--viewport-height <px>', 'viewport height in pixels', '1024')
+  .option('--max-width <css>', 'maximum content column width, e.g. "64rem" or "none"', '64rem')
+  .option('--device-scale-factor <factor>', 'device pixel ratio for block images (export md)', '2')
   .option('--images-dir <dir>', 'directory for rendered block images (md export)', './images/')
   .option('-v, --verbose', 'show diagnostics on stderr')
   .action((input: string, opts: Record<string, string | boolean | undefined>) => {
@@ -108,6 +113,9 @@ program
       theme: (opts['theme'] as 'light' | 'dark') ?? 'light',
       themeFile: opts['themeFile'] as string | undefined,
       width: opts['width'] ? Number(opts['width']) : undefined,
+      viewportHeight: opts['viewportHeight'] ? Number(opts['viewportHeight']) : undefined,
+      maxWidth: opts['maxWidth'] as string | undefined,
+      deviceScaleFactor: opts['deviceScaleFactor'] ? Number(opts['deviceScaleFactor']) : undefined,
       title: opts['title'] as string | undefined,
       pageSize: opts['pageSize'] as string | undefined,
       margin: opts['margin'] as string | undefined,

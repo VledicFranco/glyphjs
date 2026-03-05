@@ -15,6 +15,9 @@ export interface ExportCommandOptions {
   theme?: ThemeName;
   themeFile?: string;
   width?: number;
+  viewportHeight?: number;
+  maxWidth?: string;
+  deviceScaleFactor?: number;
   title?: string;
   pageSize?: string;
   margin?: string;
@@ -96,6 +99,8 @@ export async function exportCommand(input: string, options: ExportCommandOptions
           theme: options.theme,
           title: options.title,
           width: options.width,
+          viewportHeight: options.viewportHeight,
+          maxWidth: options.maxWidth,
           pageSize: options.pageSize,
           margin: options.margin,
           landscape: options.landscape,
@@ -118,6 +123,8 @@ export async function exportCommand(input: string, options: ExportCommandOptions
         const mdResult = await exportMarkdown(markdown, result.ir, outputDir, {
           theme: options.theme,
           width: options.width,
+          viewportHeight: options.viewportHeight,
+          deviceScaleFactor: options.deviceScaleFactor,
           imagesDir: options.imagesDir,
           themeVars,
         });

@@ -15,6 +15,7 @@ export interface RenderCommandOptions {
   themeFile?: string;
   blockId?: string;
   width?: number;
+  viewportHeight?: number;
   deviceScaleFactor?: number;
   verbose?: boolean;
 }
@@ -167,6 +168,7 @@ export async function renderCommand(input: string, options: RenderCommandOptions
         const screenshot = await captureBlockScreenshot(page, block, {
           theme: options.theme,
           width: options.width,
+          viewportHeight: options.viewportHeight,
           deviceScaleFactor: options.deviceScaleFactor,
           themeVars,
         });

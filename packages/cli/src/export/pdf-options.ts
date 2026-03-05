@@ -2,6 +2,10 @@ export interface PdfExportOptions {
   theme?: 'light' | 'dark';
   title?: string;
   width?: number;
+  /** Viewport height in pixels for the PDF layout phase. Defaults to 1024. */
+  viewportHeight?: number;
+  /** CSS max-width on the content column. Pass 'none' to fill full viewport width. Defaults to '64rem'. */
+  maxWidth?: string;
   pageSize?: string;
   margin?: string;
   landscape?: boolean;

@@ -34,8 +34,8 @@ const ALL_TYPES = [
 ];
 
 describe('componentSchemas', () => {
-  it('has exactly 29 registered components', () => {
-    expect(componentSchemas.size).toBe(29);
+  it('has exactly 32 registered components', () => {
+    expect(componentSchemas.size).toBe(32);
   });
 
   it('contains every expected component type', () => {

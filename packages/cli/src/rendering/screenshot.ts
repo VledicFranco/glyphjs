@@ -10,6 +10,8 @@ export interface ScreenshotOptions {
   theme?: ThemeName;
   /** Viewport width in pixels. Defaults to 1280. */
   width?: number;
+  /** Viewport height in pixels. Defaults to 800. */
+  viewportHeight?: number;
   /** Device scale factor. Defaults to 2. */
   deviceScaleFactor?: number;
   /** Maximum time in ms to wait for rendering to settle. Defaults to 5000. */
@@ -37,13 +39,14 @@ export async function captureBlockScreenshot(
   const {
     theme = 'light',
     width = 1280,
+    viewportHeight = 800,
     deviceScaleFactor = 2,
     timeout = 5000,
     themeVars,
   } = options;
 
   // Set viewport
-  await page.setViewportSize({ width, height: 800 });
+  await page.setViewportSize({ width, height: viewportHeight });
 
   // CDPSession for device scale factor if needed (only for Chromium)
   if (deviceScaleFactor !== 1) {
@@ -51,7 +54,7 @@ export async function captureBlockScreenshot(
       const cdp = await page.context().newCDPSession(page);
       await cdp.send('Emulation.setDeviceMetricsOverride', {
         width,
-        height: 800,
+        height: viewportHeight,
         deviceScaleFactor,
         mobile: false,
       });

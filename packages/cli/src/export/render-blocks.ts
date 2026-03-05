@@ -8,6 +8,8 @@ import type { ThemeName } from '../rendering/ssr.js';
 export interface RenderBlocksOptions {
   theme?: ThemeName;
   width?: number;
+  viewportHeight?: number;
+  deviceScaleFactor?: number;
   themeVars?: Record<string, string>;
 }
 
@@ -33,7 +35,7 @@ export async function renderAndRewriteBlocks(
   imageRefPrefix: string,
   options: RenderBlocksOptions = {},
 ): Promise<RenderBlocksResult> {
-  const { theme = 'light', width = 1280, themeVars } = options;
+  const { theme = 'light', width = 1280, viewportHeight, deviceScaleFactor, themeVars } = options;
 
   // Filter to only ui: blocks that have position info
   const uiBlocks = ir.blocks.filter(
@@ -61,7 +63,13 @@ export async function renderAndRewriteBlocks(
     const page = await BrowserManager.newPage();
 
     for (const block of uiBlocks) {
-      const buffer = await captureBlockScreenshot(page, block, { theme, width, themeVars });
+      const buffer = await captureBlockScreenshot(page, block, {
+        theme,
+        width,
+        viewportHeight,
+        deviceScaleFactor,
+        themeVars,
+      });
       const filename = `${block.id}.png`;
       const imagePath = join(imagesDir, filename);
       await writeFile(imagePath, buffer);

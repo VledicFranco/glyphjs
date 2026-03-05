@@ -205,11 +205,25 @@ describe('renderCommand', () => {
       outputDir: '/tmp/out',
     });
 
-    expect(captureBlockScreenshot).toHaveBeenCalledWith(mockPage, blocks[0], {
-      theme: 'dark',
-      width: 800,
-      deviceScaleFactor: 3,
-    });
+    expect(captureBlockScreenshot).toHaveBeenCalledWith(
+      mockPage,
+      blocks[0],
+      expect.objectContaining({ theme: 'dark', width: 800, deviceScaleFactor: 3 }),
+    );
+  });
+
+  it('passes --viewport-height through to screenshot', async () => {
+    const blocks = [createBlock('callout-1')];
+    vi.mocked(readFile).mockResolvedValue('# Hello');
+    vi.mocked(compile).mockReturnValue(createResult(blocks));
+
+    await renderCommand('input.md', { viewportHeight: 1200, outputDir: '/tmp/out' });
+
+    expect(captureBlockScreenshot).toHaveBeenCalledWith(
+      mockPage,
+      blocks[0],
+      expect.objectContaining({ viewportHeight: 1200 }),
+    );
   });
 
   it('always shuts down the browser', async () => {
