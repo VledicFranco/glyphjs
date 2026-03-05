@@ -182,6 +182,22 @@ describe('injectLiveReload', () => {
 
     expect(result).toBe(html);
   });
+
+  it('targets the last </body> when bundles contain embedded </body> strings', () => {
+    // Simulate a page whose inline <script> bundle contains a literal </body> string
+    // (as DOMPurify does). The live-reload script must be injected before the real
+    // closing </body>, not inside the script tag.
+    const html = '<html><body>' + '<script>var x="<body></body>";</script>' + '</body></html>';
+    const result = injectLiveReload(html);
+
+    // EventSource injection must appear AFTER the </script> closing tag
+    // (i.e. outside the bundle), not inside the script's string literal.
+    // The bundle's </script> is the first one in the document.
+    // EventSource must appear AFTER it (i.e. outside the bundle's script tag).
+    const bundleScriptCloseIdx = result.indexOf('</script>');
+    const eventSourceIdx = result.indexOf('EventSource');
+    expect(eventSourceIdx).toBeGreaterThan(bundleScriptCloseIdx);
+  });
 });
 
 // ── openBrowser ──────────────────────────────────────────────

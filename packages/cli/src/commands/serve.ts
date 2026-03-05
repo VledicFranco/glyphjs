@@ -50,7 +50,9 @@ export function buildServedHTML(
  * Inject a live-reload SSE client script into HTML before the closing </body> tag.
  */
 export function injectLiveReload(html: string): string {
-  return html.replace('</body>', LIVE_RELOAD_SCRIPT + '</body>');
+  const idx = html.lastIndexOf('</body>');
+  if (idx === -1) return html;
+  return html.slice(0, idx) + LIVE_RELOAD_SCRIPT + html.slice(idx);
 }
 
 /**
