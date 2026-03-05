@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import type { InlineNode } from '@glyphjs/types';
 
 /**
  * Accepts either a plain string or an already-processed InlineNode array.
@@ -10,7 +11,9 @@ import { z } from 'zod';
  * otherwise the runtime logs a spurious schema-validation warning and falls
  * back to raw data even though the component renders correctly.
  *
- * InlineNode items are always plain objects, so `z.array(z.unknown())`
- * covers the array branch without pulling in the recursive InlineNode types.
+ * Uses `z.custom` so the TypeScript output type is exactly `string | InlineNode[]`,
+ * matching the component data interfaces without requiring casts.
  */
-export const inlineContentSchema = z.union([z.string(), z.array(z.unknown())]);
+export const inlineContentSchema = z.custom<string | InlineNode[]>(
+  (val) => typeof val === 'string' || Array.isArray(val),
+);
