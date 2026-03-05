@@ -1,12 +1,13 @@
 import { useState, useRef, useCallback } from 'react';
 import type { KeyboardEvent } from 'react';
-import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
-import { RichText } from '@glyphjs/runtime';
+import type { Block, GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { BlockRenderer, RichText } from '@glyphjs/runtime';
 
 /** Shape of the validated `data` for a `ui:tabs` block. */
 export interface TabsData {
   tabs: { label: string | InlineNode[]; content: string | InlineNode[] }[];
   markdown?: boolean;
+  _slotChildCounts?: number[];
 }
 
 /**
@@ -18,12 +19,20 @@ export interface TabsData {
  * - ARIA roles: tablist, tab, tabpanel with proper aria-selected, aria-controls,
  *   and aria-labelledby attributes.
  */
-export function Tabs({ data, block, onInteraction }: GlyphComponentProps<TabsData>) {
+export function Tabs({
+  data,
+  block,
+  layout,
+  container,
+  onInteraction,
+}: GlyphComponentProps<TabsData>) {
   const [activeIndex, setActiveIndex] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
   const tabs = data.tabs;
   const baseId = `glyph-tabs-${block.id}`;
+  const slotCounts = data._slotChildCounts ?? tabs.map(() => 0);
+  const tabChildren = buildSlots(slotCounts, block.children ?? []);
 
   const selectTab = useCallback(
     (index: number) => {
@@ -160,10 +169,32 @@ export function Tabs({ data, block, onInteraction }: GlyphComponentProps<TabsDat
               lineHeight: 1.6,
             }}
           >
-            <RichText content={tab.content} />
+            {(tabChildren[index] ?? []).length > 0 ? (
+              (tabChildren[index] ?? []).map((child, i) => (
+                <BlockRenderer
+                  key={child.id}
+                  block={child}
+                  layout={layout}
+                  index={i}
+                  container={container}
+                />
+              ))
+            ) : (
+              <RichText content={tab.content} />
+            )}
           </div>
         );
       })}
     </div>
   );
+}
+
+function buildSlots(counts: number[], all: Block[]): Block[][] {
+  const result: Block[][] = [];
+  let offset = 0;
+  for (const n of counts) {
+    result.push(all.slice(offset, offset + n));
+    offset += n;
+  }
+  return result;
 }

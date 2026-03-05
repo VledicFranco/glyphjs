@@ -3,6 +3,7 @@ import { parseGlyphMarkdown } from '@glyphjs/parser';
 import { translateNode } from './ast-to-ir.js';
 import type { TranslationContext } from './ast-to-ir.js';
 import { createDiagnostic } from './diagnostics.js';
+import { expandScalarsInNode } from './variables.js';
 
 // ─── Container Block Compilation ─────────────────────────────
 
@@ -35,17 +36,23 @@ function compileTabsBlock(block: Block, ctx: TranslationContext): void {
   if (!Array.isArray(tabs)) return;
 
   const allChildren: Block[] = [];
+  const slotChildCounts: number[] = [];
 
   for (const tab of tabs as { label?: string; content?: string }[]) {
-    if (typeof tab.content !== 'string') continue;
+    if (typeof tab.content !== 'string') {
+      slotChildCounts.push(0);
+      continue;
+    }
 
     const childBlocks = parseContentToBlocks(tab.content, block, ctx);
+    slotChildCounts.push(childBlocks.length);
     allChildren.push(...childBlocks);
   }
 
   if (allChildren.length > 0) {
     block.children = allChildren;
   }
+  data['_slotChildCounts'] = slotChildCounts;
 }
 
 // ─── Steps Compilation ───────────────────────────────────────
@@ -57,47 +64,42 @@ function compileStepsBlock(block: Block, ctx: TranslationContext): void {
   if (!Array.isArray(steps)) return;
 
   const allChildren: Block[] = [];
+  const slotChildCounts: number[] = [];
 
   for (const step of steps as { title?: string; status?: string; content?: string }[]) {
-    if (typeof step.content !== 'string') continue;
+    if (typeof step.content !== 'string') {
+      slotChildCounts.push(0);
+      continue;
+    }
 
     const childBlocks = parseContentToBlocks(step.content, block, ctx);
+    slotChildCounts.push(childBlocks.length);
     allChildren.push(...childBlocks);
   }
 
   if (allChildren.length > 0) {
     block.children = allChildren;
   }
+  data['_slotChildCounts'] = slotChildCounts;
 }
 
 // ─── Content Parsing Helper ──────────────────────────────────
 
 /**
  * Parse a Markdown content string into Block[] using the compiler pipeline.
- * Emits a warning diagnostic if nested ui: components are found (deferred to v2).
+ * Nested ui: components are fully supported and recursively compiled.
  */
 function parseContentToBlocks(
   content: string,
-  parentBlock: Block,
+  _parentBlock: Block,
   ctx: TranslationContext,
 ): Block[] {
   const ast = parseGlyphMarkdown(content);
   const blocks: Block[] = [];
 
   for (const child of ast.children) {
-    // Check for nested ui: components — warn and skip
     if (child.type === 'glyphUIBlock') {
-      ctx.diagnostics.push(
-        createDiagnostic(
-          'compiler',
-          'warning',
-          'NESTED_UI_COMPONENT',
-          `Nested ui: component found inside container block "${parentBlock.id}". ` +
-            `Nested ui: components inside tabs/steps are not supported in v1 and will be ignored.`,
-          child.position,
-        ),
-      );
-      continue;
+      expandScalarsInNode(child, ctx.varCtx, ctx.diagnostics);
     }
 
     const block = translateNode(child, ctx);
@@ -106,6 +108,7 @@ function parseContentToBlocks(
     }
   }
 
+  compileContainerBlocks(blocks, ctx);
   return blocks;
 }
 

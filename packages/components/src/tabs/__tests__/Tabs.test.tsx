@@ -1,10 +1,21 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import { Tabs } from '../Tabs.js';
 import type { TabsData } from '../Tabs.js';
 import { createMockProps } from '../../__tests__/helpers.js';
-import type { InlineNode } from '@glyphjs/types';
+import type { Block, InlineNode } from '@glyphjs/types';
+
+vi.mock('@glyphjs/runtime', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    BlockRenderer: ({ block }: { block: Block }) => (
+      <div data-testid={`block-renderer-${block.id}`}>{block.type}</div>
+    ),
+  };
+});
 
 const tabsData: TabsData = {
   tabs: [
@@ -88,6 +99,53 @@ describe('Tabs', () => {
       expect(controlsId).toBeTruthy();
       expect(document.getElementById(controlsId!)).toBeInTheDocument();
     }
+  });
+
+  describe('nested block rendering', () => {
+    it('renders BlockRenderer when slot has children', () => {
+      const childBlock: Block = {
+        id: 'child-1',
+        type: 'ui:callout',
+        data: { type: 'info', content: 'hello' },
+        position: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+      };
+      const data: TabsData = {
+        tabs: [
+          { label: 'Tab A', content: 'fallback' },
+          { label: 'Tab B', content: 'shown' },
+        ],
+        _slotChildCounts: [1, 0],
+      };
+      const props = createMockProps<TabsData>(data, 'ui:tabs');
+      props.block.children = [childBlock];
+      render(<Tabs {...props} />);
+
+      // Tab A (slot 0) has 1 child → BlockRenderer
+      expect(screen.getByTestId('block-renderer-child-1')).toBeInTheDocument();
+      // Tab B (slot 1) has 0 children → RichText fallback
+      expect(screen.getByText('shown')).toBeInTheDocument();
+    });
+
+    it('falls back to RichText when slot has no children', () => {
+      const data: TabsData = {
+        tabs: [{ label: 'Tab', content: 'fallback content' }],
+        _slotChildCounts: [0],
+      };
+      const props = createMockProps<TabsData>(data, 'ui:tabs');
+      render(<Tabs {...props} />);
+
+      expect(screen.getByText('fallback content')).toBeInTheDocument();
+    });
+
+    it('uses RichText when _slotChildCounts is absent', () => {
+      const data: TabsData = {
+        tabs: [{ label: 'Tab', content: 'plain content' }],
+      };
+      const props = createMockProps<TabsData>(data, 'ui:tabs');
+      render(<Tabs {...props} />);
+
+      expect(screen.getByText('plain content')).toBeInTheDocument();
+    });
   });
 
   describe('Markdown support', () => {

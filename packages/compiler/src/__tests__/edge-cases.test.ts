@@ -55,18 +55,14 @@ describe('invalid YAML in ui block', () => {
     const result = compile(md);
     expect(result.diagnostics.length).toBeGreaterThan(0);
 
-    const yamlErrors = result.diagnostics.filter(
-      (d) => d.code === 'YAML_PARSE_ERROR',
-    );
+    const yamlErrors = result.diagnostics.filter((d) => d.code === 'YAML_PARSE_ERROR');
     // The parser should have caught the YAML error
     if (yamlErrors.length > 0) {
       expect(yamlErrors[0]!.severity).toBe('error');
       expect(yamlErrors[0]!.message).toContain('YAML');
     } else {
       // If the parser recovers, there should be a schema validation error instead
-      const schemaErrors = result.diagnostics.filter(
-        (d) => d.code === 'SCHEMA_VALIDATION_FAILED',
-      );
+      const schemaErrors = result.diagnostics.filter((d) => d.code === 'SCHEMA_VALIDATION_FAILED');
       expect(schemaErrors.length).toBeGreaterThan(0);
     }
 
@@ -74,13 +70,9 @@ describe('invalid YAML in ui block', () => {
   });
 
   it('produces a diagnostic when YAML has duplicate keys', () => {
-    const md = [
-      '```ui:callout',
-      'type: info',
-      'content: first',
-      'content: second',
-      '```',
-    ].join('\n');
+    const md = ['```ui:callout', 'type: info', 'content: first', 'content: second', '```'].join(
+      '\n',
+    );
 
     const result = compile(md);
     // YAML with duplicate keys may parse (last value wins) or produce a warning.
@@ -90,11 +82,7 @@ describe('invalid YAML in ui block', () => {
   });
 
   it('produces diagnostics for completely invalid YAML (bare colon on line)', () => {
-    const md = [
-      '```ui:graph',
-      ': : : this is not valid yaml at all }{',
-      '```',
-    ].join('\n');
+    const md = ['```ui:graph', ': : : this is not valid yaml at all }{', '```'].join('\n');
 
     const result = compile(md);
     // Should produce either a YAML parse error or a schema validation error
@@ -110,48 +98,29 @@ describe('invalid YAML in ui block', () => {
 
 describe('unknown component type', () => {
   it('produces an UNKNOWN_COMPONENT_TYPE diagnostic for ui:nonexistent', () => {
-    const md = [
-      '# Test',
-      '',
-      '```ui:nonexistent',
-      'foo: bar',
-      '```',
-    ].join('\n');
+    const md = ['# Test', '', '```ui:nonexistent', 'foo: bar', '```'].join('\n');
 
     const result = compile(md);
-    const unknownDiags = result.diagnostics.filter(
-      (d) => d.code === 'UNKNOWN_COMPONENT_TYPE',
-    );
+    const unknownDiags = result.diagnostics.filter((d) => d.code === 'UNKNOWN_COMPONENT_TYPE');
     expect(unknownDiags).toHaveLength(1);
     expect(unknownDiags[0]!.severity).toBe('info');
     expect(unknownDiags[0]!.message).toContain('ui:nonexistent');
   });
 
   it('preserves the block as-is for unknown component types', () => {
-    const md = [
-      '```ui:customwidget',
-      'setting: value',
-      'enabled: true',
-      '```',
-    ].join('\n');
+    const md = ['```ui:customwidget', 'setting: value', 'enabled: true', '```'].join('\n');
 
     const result = compile(md);
     const uiBlock = result.ir.blocks.find((b) => b.type === 'ui:customwidget');
     expect(uiBlock).toBeDefined();
     expect(uiBlock!.data).toEqual({ setting: 'value', enabled: true });
 
-    const unknownDiags = result.diagnostics.filter(
-      (d) => d.code === 'UNKNOWN_COMPONENT_TYPE',
-    );
+    const unknownDiags = result.diagnostics.filter((d) => d.code === 'UNKNOWN_COMPONENT_TYPE');
     expect(unknownDiags).toHaveLength(1);
   });
 
   it('does not mark unknown component types as errors (they are info-level)', () => {
-    const md = [
-      '```ui:foobar',
-      'a: 1',
-      '```',
-    ].join('\n');
+    const md = ['```ui:foobar', 'a: 1', '```'].join('\n');
 
     const result = compile(md);
     expect(result.hasErrors).toBe(false);
@@ -187,11 +156,7 @@ describe('deeply nested content', () => {
   });
 
   it('handles deeply nested blockquotes', () => {
-    const md = [
-      '> Level 1',
-      '> > Level 2',
-      '> > > Level 3',
-    ].join('\n');
+    const md = ['> Level 1', '> > Level 2', '> > > Level 3'].join('\n');
 
     const result = compile(md);
     expect(result.hasErrors).toBe(false);
@@ -223,9 +188,7 @@ describe('special characters in YAML values', () => {
 
     const result = compile(md);
     // Should parse without YAML errors
-    const yamlErrors = result.diagnostics.filter(
-      (d) => d.code === 'YAML_PARSE_ERROR',
-    );
+    const yamlErrors = result.diagnostics.filter((d) => d.code === 'YAML_PARSE_ERROR');
     expect(yamlErrors).toHaveLength(0);
 
     const calloutBlock = result.ir.blocks.find((b) => b.type === 'ui:callout');
@@ -237,14 +200,12 @@ describe('special characters in YAML values', () => {
     const md = [
       '```ui:callout',
       'type: warning',
-      "content: \"Colon: here, and {braces}, and [brackets]\"",
+      'content: "Colon: here, and {braces}, and [brackets]"',
       '```',
     ].join('\n');
 
     const result = compile(md);
-    const yamlErrors = result.diagnostics.filter(
-      (d) => d.code === 'YAML_PARSE_ERROR',
-    );
+    const yamlErrors = result.diagnostics.filter((d) => d.code === 'YAML_PARSE_ERROR');
     expect(yamlErrors).toHaveLength(0);
 
     const calloutBlock = result.ir.blocks.find((b) => b.type === 'ui:callout');
@@ -272,12 +233,7 @@ describe('special characters in YAML values', () => {
   });
 
   it('handles YAML values with empty strings', () => {
-    const md = [
-      '```ui:callout',
-      'type: error',
-      'content: ""',
-      '```',
-    ].join('\n');
+    const md = ['```ui:callout', 'type: error', 'content: ""', '```'].join('\n');
 
     const result = compile(md);
     const calloutBlock = result.ir.blocks.find((b) => b.type === 'ui:callout');
@@ -290,10 +246,7 @@ describe('special characters in YAML values', () => {
 
 describe('empty ui block', () => {
   it('handles a ui block with no YAML content', () => {
-    const md = [
-      '```ui:callout',
-      '```',
-    ].join('\n');
+    const md = ['```ui:callout', '```'].join('\n');
 
     const result = compile(md);
     // An empty ui: block should produce diagnostics since required fields are missing
@@ -305,29 +258,20 @@ describe('empty ui block', () => {
 
     // There should be diagnostics about schema validation or missing data
     const relevantDiags = result.diagnostics.filter(
-      (d) =>
-        d.code === 'SCHEMA_VALIDATION_FAILED' ||
-        d.code === 'YAML_PARSE_ERROR',
+      (d) => d.code === 'SCHEMA_VALIDATION_FAILED' || d.code === 'YAML_PARSE_ERROR',
     );
     expect(relevantDiags.length).toBeGreaterThanOrEqual(1);
   });
 
   it('handles a ui block with only whitespace', () => {
-    const md = [
-      '```ui:graph',
-      '   ',
-      '  ',
-      '```',
-    ].join('\n');
+    const md = ['```ui:graph', '   ', '  ', '```'].join('\n');
 
     const result = compile(md);
     expect(result.ir).toBeDefined();
 
     // Should produce diagnostics about missing required fields
     const relevantDiags = result.diagnostics.filter(
-      (d) =>
-        d.code === 'SCHEMA_VALIDATION_FAILED' ||
-        d.code === 'YAML_PARSE_ERROR',
+      (d) => d.code === 'SCHEMA_VALIDATION_FAILED' || d.code === 'YAML_PARSE_ERROR',
     );
     expect(relevantDiags.length).toBeGreaterThanOrEqual(1);
   });
@@ -337,17 +281,10 @@ describe('empty ui block', () => {
 
 describe('schema validation errors through compiler', () => {
   it('produces SCHEMA_VALIDATION_FAILED for callout with invalid type', () => {
-    const md = [
-      '```ui:callout',
-      'type: invalid-type',
-      'content: Some text',
-      '```',
-    ].join('\n');
+    const md = ['```ui:callout', 'type: invalid-type', 'content: Some text', '```'].join('\n');
 
     const result = compile(md);
-    const schemaErrors = result.diagnostics.filter(
-      (d) => d.code === 'SCHEMA_VALIDATION_FAILED',
-    );
+    const schemaErrors = result.diagnostics.filter((d) => d.code === 'SCHEMA_VALIDATION_FAILED');
     expect(schemaErrors).toHaveLength(1);
     expect(schemaErrors[0]!.severity).toBe('error');
     expect(schemaErrors[0]!.message).toContain('ui:callout');
@@ -355,30 +292,17 @@ describe('schema validation errors through compiler', () => {
   });
 
   it('produces SCHEMA_VALIDATION_FAILED for graph with wrong node types', () => {
-    const md = [
-      '```ui:graph',
-      'type: dag',
-      'nodes: not-an-array',
-      'edges: []',
-      '```',
-    ].join('\n');
+    const md = ['```ui:graph', 'type: dag', 'nodes: not-an-array', 'edges: []', '```'].join('\n');
 
     const result = compile(md);
-    const schemaErrors = result.diagnostics.filter(
-      (d) => d.code === 'SCHEMA_VALIDATION_FAILED',
-    );
+    const schemaErrors = result.diagnostics.filter((d) => d.code === 'SCHEMA_VALIDATION_FAILED');
     expect(schemaErrors).toHaveLength(1);
     expect(schemaErrors[0]!.message).toContain('ui:graph');
     expect(result.hasErrors).toBe(true);
   });
 
   it('preserves raw data in block even when schema validation fails', () => {
-    const md = [
-      '```ui:callout',
-      'type: invalid-type',
-      'content: Some text',
-      '```',
-    ].join('\n');
+    const md = ['```ui:callout', 'type: invalid-type', 'content: Some text', '```'].join('\n');
 
     const result = compile(md);
     const calloutBlock = result.ir.blocks.find((b) => b.type === 'ui:callout');
@@ -389,12 +313,7 @@ describe('schema validation errors through compiler', () => {
   });
 
   it('attaches diagnostics to the block itself', () => {
-    const md = [
-      '```ui:chart',
-      'type: invalid',
-      'series: not-array',
-      '```',
-    ].join('\n');
+    const md = ['```ui:chart', 'type: invalid', 'series: not-array', '```'].join('\n');
 
     const result = compile(md);
     const chartBlock = result.ir.blocks.find((b) => b.type === 'ui:chart');
@@ -409,12 +328,7 @@ describe('schema validation errors through compiler', () => {
 
 describe('diagnostics array structure', () => {
   it('diagnostics have required fields: severity, code, message, source', () => {
-    const md = [
-      '```ui:callout',
-      'type: bad',
-      'content: text',
-      '```',
-    ].join('\n');
+    const md = ['```ui:callout', 'type: bad', 'content: text', '```'].join('\n');
 
     const result = compile(md);
     for (const diag of result.diagnostics) {
@@ -429,11 +343,7 @@ describe('diagnostics array structure', () => {
   });
 
   it('hasErrors is false when only info/warning diagnostics exist', () => {
-    const md = [
-      '```ui:unknowntype',
-      'key: value',
-      '```',
-    ].join('\n');
+    const md = ['```ui:unknowntype', 'key: value', '```'].join('\n');
 
     const result = compile(md);
     // Unknown component type is info-level
@@ -442,12 +352,7 @@ describe('diagnostics array structure', () => {
   });
 
   it('hasErrors is true when at least one error diagnostic exists', () => {
-    const md = [
-      '```ui:callout',
-      'type: bad',
-      'content: text',
-      '```',
-    ].join('\n');
+    const md = ['```ui:callout', 'type: bad', 'content: text', '```'].join('\n');
 
     const result = compile(md);
     expect(result.hasErrors).toBe(true);
@@ -559,5 +464,114 @@ describe('IR structure invariants', () => {
     const md = '# Title\n\nThis is the description paragraph.\n\nMore text.';
     const result = compile(md);
     expect(result.ir.metadata.description).toBe('This is the description paragraph.');
+  });
+});
+
+// ─── Nested UI Components in Tabs / Steps ────────────────────
+
+describe('nested ui: components inside ui:tabs', () => {
+  const nestedTabsMd = [
+    '```ui:tabs',
+    'tabs:',
+    '  - label: Tab A',
+    '    content: |',
+    '      Some text.',
+    '',
+    '      ```ui:callout',
+    '      type: info',
+    '      content: Nested callout.',
+    '      ```',
+    '  - label: Tab B',
+    '    content: |',
+    '      Plain content.',
+    '```',
+  ].join('\n');
+
+  it('produces no NESTED_UI_COMPONENT diagnostic', () => {
+    const result = compile(nestedTabsMd);
+    const nestedDiags = result.diagnostics.filter((d) => d.code === 'NESTED_UI_COMPONENT');
+    expect(nestedDiags).toHaveLength(0);
+  });
+
+  it('populates block.children with nested blocks', () => {
+    const result = compile(nestedTabsMd);
+    const tabsBlock = result.ir.blocks.find((b) => b.type === 'ui:tabs');
+    expect(tabsBlock).toBeDefined();
+    expect(tabsBlock!.children).toBeDefined();
+    // Tab A: 1 paragraph + 1 callout = 2 children; Tab B: 1 paragraph = 1 child
+    expect(tabsBlock!.children!.length).toBe(3);
+    const callout = tabsBlock!.children!.find((c) => c.type === 'ui:callout');
+    expect(callout).toBeDefined();
+  });
+
+  it('injects correct _slotChildCounts', () => {
+    const result = compile(nestedTabsMd);
+    const tabsBlock = result.ir.blocks.find((b) => b.type === 'ui:tabs');
+    expect(tabsBlock).toBeDefined();
+    const counts = (tabsBlock!.data as Record<string, unknown>)['_slotChildCounts'];
+    expect(counts).toEqual([2, 1]);
+  });
+
+  it('runs schema validation on nested blocks', () => {
+    const md = [
+      '```ui:tabs',
+      'tabs:',
+      '  - label: Tab',
+      '    content: |',
+      '      ```ui:callout',
+      '      type: bad-type',
+      '      content: text',
+      '      ```',
+      '```',
+    ].join('\n');
+    const result = compile(md);
+    const schemaErrors = result.diagnostics.filter((d) => d.code === 'SCHEMA_VALIDATION_FAILED');
+    expect(schemaErrors.length).toBeGreaterThan(0);
+  });
+});
+
+describe('nested ui: components inside ui:steps', () => {
+  const nestedStepsMd = [
+    '```ui:steps',
+    'steps:',
+    '  - title: Step One',
+    '    status: completed',
+    '    content: |',
+    '      Do the thing.',
+    '',
+    '      ```ui:callout',
+    '      type: tip',
+    '      content: Helpful tip.',
+    '      ```',
+    '  - title: Step Two',
+    '    status: active',
+    '    content: |',
+    '      More steps.',
+    '```',
+  ].join('\n');
+
+  it('produces no NESTED_UI_COMPONENT diagnostic', () => {
+    const result = compile(nestedStepsMd);
+    const nestedDiags = result.diagnostics.filter((d) => d.code === 'NESTED_UI_COMPONENT');
+    expect(nestedDiags).toHaveLength(0);
+  });
+
+  it('populates block.children with nested blocks', () => {
+    const result = compile(nestedStepsMd);
+    const stepsBlock = result.ir.blocks.find((b) => b.type === 'ui:steps');
+    expect(stepsBlock).toBeDefined();
+    expect(stepsBlock!.children).toBeDefined();
+    // Step 1: paragraph + callout = 2; Step 2: paragraph = 1
+    expect(stepsBlock!.children!.length).toBe(3);
+    const callout = stepsBlock!.children!.find((c) => c.type === 'ui:callout');
+    expect(callout).toBeDefined();
+  });
+
+  it('injects correct _slotChildCounts', () => {
+    const result = compile(nestedStepsMd);
+    const stepsBlock = result.ir.blocks.find((b) => b.type === 'ui:steps');
+    expect(stepsBlock).toBeDefined();
+    const counts = (stepsBlock!.data as Record<string, unknown>)['_slotChildCounts'];
+    expect(counts).toEqual([2, 1]);
   });
 });

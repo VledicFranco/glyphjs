@@ -1,8 +1,20 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { vi } from 'vitest';
 import { Steps } from '../Steps.js';
 import type { StepsData } from '../Steps.js';
 import { createMockProps } from '../../__tests__/helpers.js';
+import type { Block } from '@glyphjs/types';
+
+vi.mock('@glyphjs/runtime', async (importOriginal) => {
+  const actual = (await importOriginal()) as Record<string, unknown>;
+  return {
+    ...actual,
+    BlockRenderer: ({ block }: { block: Block }) => (
+      <div data-testid={`block-renderer-${block.id}`}>{block.type}</div>
+    ),
+  };
+});
 
 const stepsData: StepsData = {
   steps: [
@@ -76,6 +88,42 @@ describe('Steps', () => {
 
     const step = screen.getByLabelText(/No Status — Pending/);
     expect(step).toBeInTheDocument();
+  });
+
+  // Nested block rendering tests
+  it('renders BlockRenderer when step slot has children', () => {
+    const childBlock: Block = {
+      id: 'nested-1',
+      type: 'ui:callout',
+      data: { type: 'tip', content: 'tip text' },
+      position: { start: { line: 1, column: 1 }, end: { line: 1, column: 1 } },
+    };
+    const data: StepsData = {
+      steps: [
+        { title: 'Step 1', content: 'fallback' },
+        { title: 'Step 2', content: 'shown' },
+      ],
+      _slotChildCounts: [1, 0],
+    };
+    const props = createMockProps<StepsData>(data, 'ui:steps');
+    props.block.children = [childBlock];
+    render(<Steps {...props} />);
+
+    // Step 1 slot has 1 child → BlockRenderer
+    expect(screen.getByTestId('block-renderer-nested-1')).toBeInTheDocument();
+    // Step 2 slot has 0 children → RichText fallback
+    expect(screen.getByText('shown')).toBeInTheDocument();
+  });
+
+  it('falls back to RichText for steps without children', () => {
+    const data: StepsData = {
+      steps: [{ title: 'Step', content: 'plain fallback' }],
+      _slotChildCounts: [0],
+    };
+    const props = createMockProps<StepsData>(data, 'ui:steps');
+    render(<Steps {...props} />);
+
+    expect(screen.getByText('plain fallback')).toBeInTheDocument();
   });
 
   // Markdown rendering tests

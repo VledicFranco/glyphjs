@@ -11,4 +11,5 @@ export const tabsSchema = z.object({
     }),
   ),
   markdown: z.boolean().default(false),
+  _slotChildCounts: z.array(z.number()).optional(),
 });

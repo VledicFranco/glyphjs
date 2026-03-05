@@ -1,0 +1,84 @@
+{
+  "ir": {
+    "version": "1.0.0",
+    "id": "doc-657f5b146d00513d",
+    "metadata": {
+      "title": "Tabs with Nested UI Components"
+    },
+    "blocks": [
+      {
+        "id": "b-7b8db9982770",
+        "type": "heading",
+        "data": {
+          "depth": 1,
+          "children": [
+            {
+              "type": "text",
+              "value": "Tabs with Nested UI Components"
+            }
+          ]
+        }
+      },
+      {
+        "id": "b-446acafd91aa",
+        "type": "ui:tabs",
+        "data": {
+          "tabs": [
+            {
+              "label": "With Callout",
+              "content": "Some intro text.\n\n```ui:callout\ntype: info\ncontent: This callout is nested inside a tab.\n```\n"
+            },
+            {
+              "label": "Plain Text",
+              "content": "Just a paragraph here.\n"
+            }
+          ],
+          "markdown": false,
+          "_slotChildCounts": [2, 1]
+        },
+        "children": [
+          {
+            "id": "b-85f69d7e97f5",
+            "type": "paragraph",
+            "data": {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Some intro text."
+                }
+              ]
+            }
+          },
+          {
+            "id": "b-e952e5f45ca4",
+            "type": "ui:callout",
+            "data": {
+              "type": "info",
+              "content": "This callout is nested inside a tab.",
+              "markdown": false
+            }
+          },
+          {
+            "id": "b-576074fb8d49",
+            "type": "paragraph",
+            "data": {
+              "children": [
+                {
+                  "type": "text",
+                  "value": "Just a paragraph here."
+                }
+              ]
+            }
+          }
+        ]
+      }
+    ],
+    "references": [],
+    "layout": {
+      "mode": "document",
+      "spacing": "normal"
+    }
+  },
+  "diagnostics": [],
+  "hasErrors": false
+}

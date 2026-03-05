@@ -1,94 +1,90 @@
 {
   "ir": {
     "version": "1.0.0",
-    "id": "doc-de276be2f775e7e9",
+    "id": "doc-c6e8a9e44767ff01",
     "metadata": {
-      "title": "Steps Example"
+      "title": "Steps with Nested UI Components"
     },
     "blocks": [
       {
-        "id": "b-3811bf8b8321",
+        "id": "b-6f4de6f0c11c",
         "type": "heading",
         "data": {
           "depth": 1,
           "children": [
             {
               "type": "text",
-              "value": "Steps Example"
+              "value": "Steps with Nested UI Components"
             }
           ]
         }
       },
       {
-        "id": "b-59e541ce1b89",
+        "id": "b-f22b2668a46b",
         "type": "ui:steps",
         "data": {
           "steps": [
             {
-              "title": "Step One",
+              "title": "Install",
               "status": "completed",
-              "content": "First, do this thing.\n"
+              "content": "Run the following command.\n\n```ui:callout\ntype: tip\ncontent: Use `pnpm` for best results.\n```\n"
             },
             {
-              "title": "Step Two",
+              "title": "Configure",
               "status": "active",
-              "content": "Then do this other thing with **emphasis**.\n"
+              "content": "Edit your config file.\n"
             },
             {
-              "title": "Step Three",
+              "title": "Deploy",
               "status": "pending",
-              "content": "Finally, wrap up.\n"
+              "content": "Push to production.\n"
             }
           ],
           "markdown": false,
-          "_slotChildCounts": [1, 1, 1]
+          "_slotChildCounts": [2, 1, 1]
         },
         "children": [
           {
-            "id": "b-ec1d681351b1",
+            "id": "b-73dbd0c58a88",
             "type": "paragraph",
             "data": {
               "children": [
                 {
                   "type": "text",
-                  "value": "First, do this thing."
+                  "value": "Run the following command."
                 }
               ]
             }
           },
           {
-            "id": "b-65844c453e22",
+            "id": "b-59c6a67a41e0",
+            "type": "ui:callout",
+            "data": {
+              "type": "tip",
+              "content": "Use `pnpm` for best results.",
+              "markdown": false
+            }
+          },
+          {
+            "id": "b-df7785b32129",
             "type": "paragraph",
             "data": {
               "children": [
                 {
                   "type": "text",
-                  "value": "Then do this other thing with "
-                },
-                {
-                  "type": "strong",
-                  "children": [
-                    {
-                      "type": "text",
-                      "value": "emphasis"
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "value": "."
+                  "value": "Edit your config file."
                 }
               ]
             }
           },
           {
-            "id": "b-df78b21801dc",
+            "id": "b-4e05b31a385c",
             "type": "paragraph",
             "data": {
               "children": [
                 {
                   "type": "text",
-                  "value": "Finally, wrap up."
+                  "value": "Push to production."
                 }
               ]
             }

@@ -33,7 +33,8 @@
               "content": "## Details Tab\n\nHere are the details with **bold** text.\n"
             }
           ],
-          "markdown": false
+          "markdown": false,
+          "_slotChildCounts": [2, 2]
         },
         "children": [
           {

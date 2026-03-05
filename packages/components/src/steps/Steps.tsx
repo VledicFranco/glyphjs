@@ -1,6 +1,6 @@
 import type { ReactElement } from 'react';
-import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
-import { RichText } from '@glyphjs/runtime';
+import type { Block, GlyphComponentProps, InlineNode } from '@glyphjs/types';
+import { BlockRenderer, RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
@@ -13,6 +13,7 @@ export interface StepItem {
 export interface StepsData {
   steps: StepItem[];
   markdown?: boolean;
+  _slotChildCounts?: number[];
 }
 
 type StepStatus = NonNullable<StepItem['status']>;
@@ -38,8 +39,15 @@ const STATUS_LABELS: Record<StepStatus, string> = {
  *  - `--glyph-steps-completed-color`
  *  - `--glyph-steps-connector-color`
  */
-export function Steps({ data }: GlyphComponentProps<StepsData>): ReactElement {
+export function Steps({
+  data,
+  block,
+  layout,
+  container,
+}: GlyphComponentProps<StepsData>): ReactElement {
   const { steps } = data;
+  const slotCounts = data._slotChildCounts ?? steps.map(() => 0);
+  const stepChildren = buildSlots(slotCounts, block.children ?? []);
 
   const listStyle: React.CSSProperties = {
     listStyle: 'none',
@@ -74,7 +82,19 @@ export function Steps({ data }: GlyphComponentProps<StepsData>): ReactElement {
             <div style={bodyStyle}>
               <div style={titleStyle(status)}>{step.title}</div>
               <div style={contentStyle(status)}>
-                <RichText content={step.content} />
+                {(stepChildren[index] ?? []).length > 0 ? (
+                  (stepChildren[index] ?? []).map((child, i) => (
+                    <BlockRenderer
+                      key={child.id}
+                      block={child}
+                      layout={layout}
+                      index={i}
+                      container={container}
+                    />
+                  ))
+                ) : (
+                  <RichText content={step.content} />
+                )}
               </div>
             </div>
           </li>
@@ -170,4 +190,14 @@ function contentStyle(status: StepStatus): React.CSSProperties {
         ? 'var(--glyph-steps-pending-color, var(--glyph-text-muted, #6b7a94))'
         : 'var(--glyph-text-muted, #7a8599)',
   };
+}
+
+function buildSlots(counts: number[], all: Block[]): Block[][] {
+  const result: Block[][] = [];
+  let offset = 0;
+  for (const n of counts) {
+    result.push(all.slice(offset, offset + n));
+    offset += n;
+  }
+  return result;
 }

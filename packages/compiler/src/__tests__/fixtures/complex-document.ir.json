@@ -152,7 +152,8 @@
               "content": "Content for tab B.\n"
             }
           ],
-          "markdown": false
+          "markdown": false,
+          "_slotChildCounts": [1, 1]
         },
         "children": [
           {
@@ -211,7 +212,8 @@
               "content": "Run the process.\n"
             }
           ],
-          "markdown": false
+          "markdown": false,
+          "_slotChildCounts": [1, 1]
         },
         "children": [
           {
