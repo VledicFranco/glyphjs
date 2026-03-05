@@ -14,7 +14,7 @@ GlyphJS turns Markdown into interactive visual documents. Authors write regular 
 
 **Pipeline:** Markdown → Parser (remark) → AST → Compiler → IR (JSON) → Runtime (React) → UI
 
-**Version:** 0.8.0 | **Packages:** 9 public (`@glyphjs/*`) | **Components:** 29
+**Version:** 0.9.0 | **Packages:** 9 public (`@glyphjs/*`) | **Components:** 32
 
 ---
 
@@ -39,7 +39,17 @@ GlyphJS turns Markdown into interactive visual documents. Authors write regular 
 
 ---
 
-## Component Menu (29 total)
+## Component Menu (32 total)
+
+### Layout
+
+| Type         | Use for                                                                         |
+| ------------ | ------------------------------------------------------------------------------- |
+| `ui:columns` | Horizontal grid; `ratio: [2,1]` distributes widths as CSS `fr` units            |
+| `ui:rows`    | Vertical counterpart; nestable inside column cells for recursive 2D layouts     |
+| `ui:panel`   | Styled wrapper (`card`, `bordered`, `elevated`, `ghost`) around one child block |
+
+Children are **suppressed block variables** (`=_name`) resolved at compile time. See Variables & Layouts section.
 
 ### Data Visualization
 
@@ -117,12 +127,91 @@ series:
 ```
 ````
 
-````
+`````
 
 **Key rules:**
 - YAML is strict — 2-space indent, no tabs
 - String values with special characters need quotes
 - `markdown: true` enables inline markdown in text fields
+
+---
+
+## Variables & Layouts (v0.9.0)
+
+### Scalar variables
+
+```markdown
+---
+vars:
+  product: Acme Pro
+---
+Released **{{product}}** today.
+```
+
+Or use a `ui:vars` block anywhere in the document for the same effect.
+
+### Block variables & suppressed blocks
+
+```markdown
+```ui:callout=status        ← renders AND binds to "status"
+type: info
+content: All systems nominal.
+```
+
+```ui:kpi=_metrics          ← suppressed: compiled but NOT rendered
+metrics:
+  - label: Uptime
+    value: "99.97%"
+    trend: up
+```
+
+{{status}}                  ← expands a clone of "status" here
+```
+
+### Layout components
+
+Suppressed blocks → layout children:
+
+```markdown
+```ui:callout=_left
+type: tip
+content: Left panel.
+```
+
+```ui:kpi=_right
+metrics:
+  - label: MRR
+    value: $48k
+    trend: up
+```
+
+```ui:columns
+ratio: [2, 1]
+gap: 1.5rem
+children: [left, right]
+```
+```
+
+Nest `ui:rows=_name` inside a column for 2D layouts. `ui:panel` wraps one child:
+
+```markdown
+```ui:panel
+child: metrics
+style: elevated
+padding: 1.5rem
+```
+```
+
+### Parameterized templates
+
+```markdown
+```ui:callout=_alert(level,msg)
+type: {{level}}
+content: "{{msg}}"
+```
+
+{{alert("warning", "Deploy window in 1 hour.")}}
+```
 
 ---
 
@@ -136,19 +225,32 @@ glyphjs lint doc.md --strict        # warnings → errors
 
 # Schema introspection
 glyphjs schemas chart               # JSON Schema for one type
-glyphjs schemas --list              # all 29 type names
+glyphjs schemas --list              # all 32 type names
 glyphjs schemas --all               # dump all schemas
 
 # Compile to IR
 glyphjs compile doc.md
 
-# Export
+# Export — PDF
 glyphjs export doc.md --format pdf -o out.pdf
+glyphjs export doc.md --format pdf --page-size A4 --landscape -o out.pdf
+glyphjs export doc.md --format pdf --continuous -o out.pdf        # single tall page
+glyphjs export doc.md --format pdf --margin "0.75in 1in" --padding "2rem" -o out.pdf
+glyphjs export doc.md --format pdf --theme dark --theme-file themes/catppuccin-mocha.yml -o out.pdf
+
+# Export — other formats
 glyphjs export doc.md --format html -o out.html
+glyphjs export doc.md --format md --images-dir ./imgs -o out.md   # PNG per block
+
+# Render individual blocks as PNG
+glyphjs render doc.md -o ./screenshots/ --device-scale-factor 2
 
 # Live dev server
 glyphjs serve doc.md
-````
+```
+
+**Themes** (pass via `--theme-file themes/<name>.yml`):
+`default` · `dark` · `minimal` · `high-contrast` · `warm` · `catppuccin-mocha` · `tokyo-night` · `solarized-dark` · `gruvbox-dark` · `nord` · `dracula` · `one-dark`
 
 Exit codes: 0 = clean, 1 = errors, 2 = I/O failure. Always lint before exporting.
 
@@ -167,7 +269,7 @@ metrics:
   - label: Churn Rate
     value: "2.1%"
     trend: down
-````
+`````
 
 ````
 
@@ -202,21 +304,37 @@ markdown: true
 ### Key commands
 
 ```bash
-pnpm test             # 1726 tests, 7 expected skips
+pnpm test             # unit tests (Vitest)
 pnpm typecheck        # strict TS, no any
 pnpm lint             # ESLint + Prettier
 pnpm build            # Turborepo full build
-pnpm release:minor    # bump + tag + GitHub release + CI publishes to npm
 ```
 
-### Theme system (v0.8.0)
+### Theme system
 
-- **53 required tokens** in `GlyphThemeVars` (down from ~155)
+- **53 required tokens** in `GlyphThemeVars`
 - Tier 1: semantic tokens (`--glyph-*`) — required, TypeScript-enforced
-- Tier 2: component-specific overrides (`--glyph-callout-*` etc.) — optional CSS-only
+- Tier 2: component-specific overrides — optional CSS-only
 - Semantic state vars: `--glyph-color-success/warning/error/info`
 - Shared palette: `--glyph-palette-color-1..10`
 - Do NOT use `theme.isDark` or `theme.resolveVar()` — legacy
+
+### Variables system (v0.9.0)
+
+- `packages/compiler/src/variables.ts` — `VarContext`, `createVarContext`, `expandScalarsInText`, `expandBlockVars`
+- `vars:` frontmatter key or `ui:vars` block → scalar vars
+- `ui:type=varName` → renders + binds; `ui:type=_varName` → suppressed
+- `{{varName}}` as sole paragraph → block clone expansion
+- `ui:type=_name(p1,p2)` + `{{name("a","b")}}` → parameterized templates
+- Diagnostic codes: `UNDEFINED_VARIABLE`, `CIRCULAR_VARIABLE_REF`, `VARS_BLOCK_INVALID_VALUE`, `UNDEFINED_BLOCK_VAR`, `TEMPLATE_ARITY_MISMATCH`
+
+### Layout components (v0.9.0)
+
+- `compileLayoutBlocks()` in `packages/compiler/src/containers.ts`
+- Two-pass resolution: suppressed vars first (enables nesting), then top-level blocks
+- Children stored in `block.children`; rendered via `<BlockRenderer>` in each component
+- `ui:rows` uses `height: 100%` so `fr` units work when nested in a column cell
+- Diagnostic code: `LAYOUT_CHILD_UNDEFINED`
 
 ### Adding a new component
 
