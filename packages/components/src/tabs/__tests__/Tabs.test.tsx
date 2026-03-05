@@ -1,21 +1,10 @@
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
 import { Tabs } from '../Tabs.js';
 import type { TabsData } from '../Tabs.js';
 import { createMockProps } from '../../__tests__/helpers.js';
 import type { Block, InlineNode } from '@glyphjs/types';
-
-vi.mock('@glyphjs/runtime', async (importOriginal) => {
-  const actual = (await importOriginal()) as Record<string, unknown>;
-  return {
-    ...actual,
-    BlockRenderer: ({ block }: { block: Block }) => (
-      <div data-testid={`block-renderer-${block.id}`}>{block.type}</div>
-    ),
-  };
-});
 
 const tabsData: TabsData = {
   tabs: [
@@ -102,7 +91,7 @@ describe('Tabs', () => {
   });
 
   describe('nested block rendering', () => {
-    it('renders BlockRenderer when slot has children', () => {
+    it('renders via renderBlock when slot has children', () => {
       const childBlock: Block = {
         id: 'child-1',
         type: 'ui:callout',
@@ -118,9 +107,10 @@ describe('Tabs', () => {
       };
       const props = createMockProps<TabsData>(data, 'ui:tabs');
       props.block.children = [childBlock];
+      props.renderBlock = (b: Block) => <div data-testid={`block-renderer-${b.id}`}>{b.type}</div>;
       render(<Tabs {...props} />);
 
-      // Tab A (slot 0) has 1 child → BlockRenderer
+      // Tab A (slot 0) has 1 child → renderBlock called
       expect(screen.getByTestId('block-renderer-child-1')).toBeInTheDocument();
       // Tab B (slot 1) has 0 children → RichText fallback
       expect(screen.getByText('shown')).toBeInTheDocument();

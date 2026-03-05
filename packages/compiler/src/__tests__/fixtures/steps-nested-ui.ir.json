@@ -1,13 +1,13 @@
 {
   "ir": {
     "version": "1.0.0",
-    "id": "doc-c6e8a9e44767ff01",
+    "id": "doc-16dae7603a92e424",
     "metadata": {
       "title": "Steps with Nested UI Components"
     },
     "blocks": [
       {
-        "id": "b-6f4de6f0c11c",
+        "id": "b-3b2a483bbd04",
         "type": "heading",
         "data": {
           "depth": 1,
@@ -20,7 +20,7 @@
         }
       },
       {
-        "id": "b-f22b2668a46b",
+        "id": "b-a4cfe6c6a74e",
         "type": "ui:steps",
         "data": {
           "steps": [
@@ -45,7 +45,7 @@
         },
         "children": [
           {
-            "id": "b-73dbd0c58a88",
+            "id": "b-f93f95437d23",
             "type": "paragraph",
             "data": {
               "children": [
@@ -57,7 +57,7 @@
             }
           },
           {
-            "id": "b-59c6a67a41e0",
+            "id": "b-888d24b3254d",
             "type": "ui:callout",
             "data": {
               "type": "tip",
@@ -66,7 +66,7 @@
             }
           },
           {
-            "id": "b-df7785b32129",
+            "id": "b-339b621152c2",
             "type": "paragraph",
             "data": {
               "children": [
@@ -78,7 +78,7 @@
             }
           },
           {
-            "id": "b-4e05b31a385c",
+            "id": "b-440a67c14399",
             "type": "paragraph",
             "data": {
               "children": [

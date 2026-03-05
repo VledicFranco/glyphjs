@@ -39,6 +39,7 @@ export function resolveComponentProps<T = unknown>(
   layoutHints: LayoutHints,
   containerContext: ContainerContext,
   onInteraction?: (event: Omit<InteractionEvent, 'documentId'>) => void,
+  renderBlock?: (block: Block, index?: number) => unknown,
 ): GlyphComponentProps<T> {
   // Parse block data through the component's schema
   const parseResult = definition.schema.safeParse(block.data);
@@ -103,6 +104,10 @@ export function resolveComponentProps<T = unknown>(
 
   if (onInteraction) {
     props.onInteraction = onInteraction;
+  }
+
+  if (renderBlock) {
+    props.renderBlock = renderBlock;
   }
 
   return props;

@@ -1,36 +1,36 @@
 {
   "ir": {
     "version": "1.0.0",
-    "id": "doc-4373c50b57365959",
+    "id": "doc-543fdedc812a0a60",
     "metadata": {
-      "title": "Tabs with Nested UI Components"
+      "title": "Tabs with Variables"
     },
     "blocks": [
       {
-        "id": "b-749422ba3975",
+        "id": "b-f4e39a790521",
         "type": "heading",
         "data": {
           "depth": 1,
           "children": [
             {
               "type": "text",
-              "value": "Tabs with Nested UI Components"
+              "value": "Tabs with Variables"
             }
           ]
         }
       },
       {
-        "id": "b-59dd18662da3",
+        "id": "b-914b66e69b77",
         "type": "ui:tabs",
         "data": {
           "tabs": [
             {
-              "label": "With Callout",
-              "content": "Some intro text.\n\n```ui:callout\ntype: info\ncontent: This callout is nested inside a tab.\n```\n"
+              "label": "Hello Tab",
+              "content": "Welcome to GlyphJS.\n\n```ui:callout\ntype: info\ncontent: \"Built with GlyphJS.\"\n```\n"
             },
             {
-              "label": "Plain Text",
-              "content": "Just a paragraph here.\n"
+              "label": "Plain",
+              "content": "No variables here.\n"
             }
           ],
           "markdown": false,
@@ -38,34 +38,34 @@
         },
         "children": [
           {
-            "id": "b-d55373b4a901",
+            "id": "b-10efdf57b327",
             "type": "paragraph",
             "data": {
               "children": [
                 {
                   "type": "text",
-                  "value": "Some intro text."
+                  "value": "Welcome to GlyphJS."
                 }
               ]
             }
           },
           {
-            "id": "b-9e01862d418d",
+            "id": "b-707591a1cdc0",
             "type": "ui:callout",
             "data": {
               "type": "info",
-              "content": "This callout is nested inside a tab.",
+              "content": "Built with GlyphJS.",
               "markdown": false
             }
           },
           {
-            "id": "b-a3116285709d",
+            "id": "b-fa5ed5ad0714",
             "type": "paragraph",
             "data": {
               "children": [
                 {
                   "type": "text",
-                  "value": "Just a paragraph here."
+                  "value": "No variables here."
                 }
               ]
             }

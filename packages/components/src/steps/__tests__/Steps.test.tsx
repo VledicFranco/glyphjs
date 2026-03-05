@@ -1,20 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import { vi } from 'vitest';
 import { Steps } from '../Steps.js';
 import type { StepsData } from '../Steps.js';
 import { createMockProps } from '../../__tests__/helpers.js';
 import type { Block } from '@glyphjs/types';
-
-vi.mock('@glyphjs/runtime', async (importOriginal) => {
-  const actual = (await importOriginal()) as Record<string, unknown>;
-  return {
-    ...actual,
-    BlockRenderer: ({ block }: { block: Block }) => (
-      <div data-testid={`block-renderer-${block.id}`}>{block.type}</div>
-    ),
-  };
-});
 
 const stepsData: StepsData = {
   steps: [
@@ -91,7 +80,7 @@ describe('Steps', () => {
   });
 
   // Nested block rendering tests
-  it('renders BlockRenderer when step slot has children', () => {
+  it('renders via renderBlock when step slot has children', () => {
     const childBlock: Block = {
       id: 'nested-1',
       type: 'ui:callout',
@@ -107,9 +96,10 @@ describe('Steps', () => {
     };
     const props = createMockProps<StepsData>(data, 'ui:steps');
     props.block.children = [childBlock];
+    props.renderBlock = (b: Block) => <div data-testid={`block-renderer-${b.id}`}>{b.type}</div>;
     render(<Steps {...props} />);
 
-    // Step 1 slot has 1 child → BlockRenderer
+    // Step 1 slot has 1 child → renderBlock called
     expect(screen.getByTestId('block-renderer-nested-1')).toBeInTheDocument();
     // Step 2 slot has 0 children → RichText fallback
     expect(screen.getByText('shown')).toBeInTheDocument();

@@ -3,7 +3,7 @@ import { parseGlyphMarkdown } from '@glyphjs/parser';
 import { translateNode } from './ast-to-ir.js';
 import type { TranslationContext } from './ast-to-ir.js';
 import { createDiagnostic } from './diagnostics.js';
-import { expandScalarsInNode } from './variables.js';
+import { expandScalarsInNode, expandBlockVars } from './variables.js';
 
 // ─── Container Block Compilation ─────────────────────────────
 
@@ -98,16 +98,16 @@ function parseContentToBlocks(
   const blocks: Block[] = [];
 
   for (const child of ast.children) {
-    if (child.type === 'glyphUIBlock') {
-      expandScalarsInNode(child, ctx.varCtx, ctx.diagnostics);
-    }
-
+    expandScalarsInNode(child, ctx.varCtx, ctx.diagnostics);
     const block = translateNode(child, ctx);
     if (block) {
       blocks.push(block);
     }
   }
 
+  // Expand block-var paragraphs ({{varName}}) before recursing into containers,
+  // so that a block var that resolves to ui:tabs/steps also gets compiled.
+  expandBlockVars(blocks, ctx.varCtx, ctx.documentId, ctx.diagnostics);
   compileContainerBlocks(blocks, ctx);
   return blocks;
 }

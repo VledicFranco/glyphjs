@@ -1,6 +1,7 @@
-import type { ReactElement } from 'react';
+import { Fragment } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import type { Block, GlyphComponentProps, InlineNode } from '@glyphjs/types';
-import { BlockRenderer, RichText } from '@glyphjs/runtime';
+import { RichText } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
@@ -39,12 +40,7 @@ const STATUS_LABELS: Record<StepStatus, string> = {
  *  - `--glyph-steps-completed-color`
  *  - `--glyph-steps-connector-color`
  */
-export function Steps({
-  data,
-  block,
-  layout,
-  container,
-}: GlyphComponentProps<StepsData>): ReactElement {
+export function Steps({ data, block, renderBlock }: GlyphComponentProps<StepsData>): ReactElement {
   const { steps } = data;
   const slotCounts = data._slotChildCounts ?? steps.map(() => 0);
   const stepChildren = buildSlots(slotCounts, block.children ?? []);
@@ -82,15 +78,9 @@ export function Steps({
             <div style={bodyStyle}>
               <div style={titleStyle(status)}>{step.title}</div>
               <div style={contentStyle(status)}>
-                {(stepChildren[index] ?? []).length > 0 ? (
+                {(stepChildren[index] ?? []).length > 0 && renderBlock ? (
                   (stepChildren[index] ?? []).map((child, i) => (
-                    <BlockRenderer
-                      key={child.id}
-                      block={child}
-                      layout={layout}
-                      index={i}
-                      container={container}
-                    />
+                    <Fragment key={child.id}>{renderBlock(child, i) as ReactNode}</Fragment>
                   ))
                 ) : (
                   <RichText content={step.content} />

@@ -1,7 +1,7 @@
-import { useState, useRef, useCallback } from 'react';
-import type { KeyboardEvent } from 'react';
+import { Fragment, useState, useRef, useCallback } from 'react';
+import type { KeyboardEvent, ReactNode } from 'react';
 import type { Block, GlyphComponentProps, InlineNode } from '@glyphjs/types';
-import { BlockRenderer, RichText } from '@glyphjs/runtime';
+import { RichText } from '@glyphjs/runtime';
 
 /** Shape of the validated `data` for a `ui:tabs` block. */
 export interface TabsData {
@@ -19,13 +19,7 @@ export interface TabsData {
  * - ARIA roles: tablist, tab, tabpanel with proper aria-selected, aria-controls,
  *   and aria-labelledby attributes.
  */
-export function Tabs({
-  data,
-  block,
-  layout,
-  container,
-  onInteraction,
-}: GlyphComponentProps<TabsData>) {
+export function Tabs({ data, block, onInteraction, renderBlock }: GlyphComponentProps<TabsData>) {
   const [activeIndex, setActiveIndex] = useState(0);
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
 
@@ -169,15 +163,9 @@ export function Tabs({
               lineHeight: 1.6,
             }}
           >
-            {(tabChildren[index] ?? []).length > 0 ? (
+            {(tabChildren[index] ?? []).length > 0 && renderBlock ? (
               (tabChildren[index] ?? []).map((child, i) => (
-                <BlockRenderer
-                  key={child.id}
-                  block={child}
-                  layout={layout}
-                  index={i}
-                  container={container}
-                />
+                <Fragment key={child.id}>{renderBlock(child, i) as ReactNode}</Fragment>
               ))
             ) : (
               <RichText content={tab.content} />

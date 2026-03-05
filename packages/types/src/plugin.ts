@@ -31,6 +31,8 @@ export interface GlyphComponentProps<T = unknown> {
   theme: GlyphThemeContext;
   layout: LayoutHints;
   container: ContainerContext;
+  /** Render a child Block using the runtime's BlockRenderer. Injected by the runtime; absent when components are used outside the runtime (tests, Storybook). */
+  renderBlock?: (block: Block, index?: number) => unknown;
 }
 
 /**

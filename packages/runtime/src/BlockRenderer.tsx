@@ -80,6 +80,15 @@ function BlockDispatch({ block, layout, container }: BlockRendererProps): ReactN
         onNavigate(ref, block);
       };
 
+      // Provide a renderBlock callback so components (e.g. Tabs, Steps) can
+      // render child Blocks without importing BlockRenderer directly.
+      // Using a closure over the local BlockRenderer avoids the dual-module
+      // React context issue that arises when @glyphjs/components imports
+      // @glyphjs/runtime (dist) while tests use the source module.
+      const renderBlockFn = (child: Block, idx = 0) => (
+        <BlockRenderer block={child} layout={layout} index={idx} container={container} />
+      );
+
       // Use resolveComponentProps to assemble the full typed props
       const props = resolveComponentProps(
         block,
@@ -90,6 +99,7 @@ function BlockDispatch({ block, layout, container }: BlockRendererProps): ReactN
         layout,
         container,
         handleInteraction,
+        renderBlockFn,
       );
 
       // Cast from the generic ComponentType (returns unknown) to React's ComponentType

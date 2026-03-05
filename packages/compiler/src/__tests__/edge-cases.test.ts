@@ -575,3 +575,132 @@ describe('nested ui: components inside ui:steps', () => {
     expect(counts).toEqual([2, 1]);
   });
 });
+
+// ─── Scalar Variable Expansion Inside Container Content ──────
+
+describe('scalar variable expansion inside tab/step content', () => {
+  it('expands {{scalar}} in prose text inside tab content', () => {
+    const md = [
+      '```ui:vars',
+      'name: World',
+      '```',
+      '',
+      '```ui:tabs',
+      'tabs:',
+      '  - label: Tab',
+      '    content: |',
+      '      Hello {{name}}.',
+      '```',
+    ].join('\n');
+
+    const result = compile(md);
+    expect(result.hasErrors).toBe(false);
+
+    const tabsBlock = result.ir.blocks.find((b) => b.type === 'ui:tabs');
+    expect(tabsBlock).toBeDefined();
+
+    const para = tabsBlock!.children?.find((c) => c.type === 'paragraph');
+    expect(para).toBeDefined();
+    const text = (para!.data as Record<string, unknown>)['children'];
+    expect(JSON.stringify(text)).toContain('Hello World');
+  });
+
+  it('expands {{scalar}} in ui: YAML inside tab content', () => {
+    const md = [
+      '```ui:vars',
+      'kind: warning',
+      '```',
+      '',
+      '```ui:tabs',
+      'tabs:',
+      '  - label: Tab',
+      '    content: |',
+      '      ```ui:callout',
+      '      type: "{{kind}}"',
+      '      content: text',
+      '      ```',
+      '```',
+    ].join('\n');
+
+    const result = compile(md);
+    const tabsBlock = result.ir.blocks.find((b) => b.type === 'ui:tabs');
+    const callout = tabsBlock?.children?.find((c) => c.type === 'ui:callout');
+    expect(callout).toBeDefined();
+    // Schema validation will fail on 'warning' for callout type, but the
+    // substitution must have happened (the type field must be the expanded value).
+    const calloutType = (callout!.data as Record<string, unknown>)['type'];
+    expect(calloutType).toBe('warning');
+  });
+
+  it('expands {{scalar}} in prose text inside step content', () => {
+    const md = [
+      '```ui:vars',
+      'tool: pnpm',
+      '```',
+      '',
+      '```ui:steps',
+      'steps:',
+      '  - title: Install',
+      '    content: |',
+      '      Run {{tool}} install.',
+      '```',
+    ].join('\n');
+
+    const result = compile(md);
+    expect(result.hasErrors).toBe(false);
+
+    const stepsBlock = result.ir.blocks.find((b) => b.type === 'ui:steps');
+    const para = stepsBlock!.children?.find((c) => c.type === 'paragraph');
+    expect(para).toBeDefined();
+    const text = (para!.data as Record<string, unknown>)['children'];
+    expect(JSON.stringify(text)).toContain('Run pnpm install');
+  });
+});
+
+// ─── Block Variable Expansion Inside Container Content ───────
+
+describe('block variable expansion inside tab/step content', () => {
+  it('expands a suppressed block var paragraph inside tab content', () => {
+    const md = [
+      '```ui:callout=_note',
+      'type: info',
+      'content: I am a note.',
+      '```',
+      '',
+      '```ui:tabs',
+      'tabs:',
+      '  - label: Tab',
+      '    content: |',
+      '      {{note}}',
+      '```',
+    ].join('\n');
+
+    const result = compile(md);
+    expect(result.hasErrors).toBe(false);
+
+    const tabsBlock = result.ir.blocks.find((b) => b.type === 'ui:tabs');
+    expect(tabsBlock).toBeDefined();
+    // The tab slot should have a callout child (cloned from the suppressed var)
+    const callout = tabsBlock!.children?.find((c) => c.type === 'ui:callout');
+    expect(callout).toBeDefined();
+    expect((callout!.data as Record<string, unknown>)['content']).toBe('I am a note.');
+    // _slotChildCounts should reflect the expanded block
+    const counts = (tabsBlock!.data as Record<string, unknown>)['_slotChildCounts'];
+    expect(counts).toEqual([1]);
+  });
+
+  it('emits UNDEFINED_BLOCK_VAR for unknown {{varName}} in tab content', () => {
+    const md = [
+      '```ui:tabs',
+      'tabs:',
+      '  - label: Tab',
+      '    content: |',
+      '      {{doesNotExist}}',
+      '```',
+    ].join('\n');
+
+    const result = compile(md);
+    const warnings = result.diagnostics.filter((d) => d.code === 'UNDEFINED_BLOCK_VAR');
+    expect(warnings.length).toBeGreaterThan(0);
+  });
+});
