@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 const textField = z.object({
   type: z.literal('text'),
@@ -56,7 +57,7 @@ const formField = z.discriminatedUnion('type', [
 
 export const formSchema = z.object({
   title: z.string().optional(),
-  description: z.string().optional(),
+  description: inlineContentSchema.optional(),
   submitLabel: z.string().default('Submit'),
   fields: z.array(formField).min(1),
   markdown: z.boolean().default(false),

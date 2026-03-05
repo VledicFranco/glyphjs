@@ -1,10 +1,11 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 export const codediffSchema = z.object({
   language: z.string().optional(),
   before: z.string(),
   after: z.string(),
-  beforeLabel: z.string().optional(),
-  afterLabel: z.string().optional(),
+  beforeLabel: inlineContentSchema.optional(),
+  afterLabel: inlineContentSchema.optional(),
   markdown: z.boolean().default(false),
 });

@@ -1,14 +1,15 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 export const equationSchema = z
   .object({
     expression: z.string().optional(),
-    label: z.string().optional(),
+    label: inlineContentSchema.optional(),
     steps: z
       .array(
         z.object({
           expression: z.string(),
-          annotation: z.string().optional(),
+          annotation: inlineContentSchema.optional(),
         }),
       )
       .optional(),

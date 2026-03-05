@@ -1,8 +1,9 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 const rankerItem = z.object({
   id: z.string(),
-  label: z.string(),
+  label: inlineContentSchema,
   description: z.string().optional(),
 });
 

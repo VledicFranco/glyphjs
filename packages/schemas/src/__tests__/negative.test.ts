@@ -69,8 +69,10 @@ describe('calloutSchema negative tests', () => {
     expectFailure(calloutSchema, { type: true, content: 'text' });
   });
 
-  it('rejects when "content" is an array', () => {
-    expectFailure(calloutSchema, { type: 'info', content: ['a', 'b'] });
+  it('accepts when "content" is an InlineNode array (markdown: true processed output)', () => {
+    // Arrays are valid — the compiler converts string content to InlineNode[]
+    // when markdown: true is set. The schema must accept both.
+    expectSuccess(calloutSchema, { type: 'info', content: [{ type: 'text', value: 'hello' }] });
   });
 
   it('rejects an invalid type value (not warning/info/tip/error)', () => {

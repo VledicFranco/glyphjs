@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 export const accordionSchema = z.object({
   title: z.string().optional(),
@@ -6,7 +7,7 @@ export const accordionSchema = z.object({
     .array(
       z.object({
         title: z.string(),
-        content: z.string(),
+        content: inlineContentSchema,
       }),
     )
     .min(1),

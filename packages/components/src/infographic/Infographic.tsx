@@ -54,7 +54,7 @@ export interface RatingItem {
   label: string;
   value: number;
   max?: number;
-  description?: string;
+  description?: string | InlineNode[];
 }
 
 export type InfographicItem =
@@ -568,7 +568,7 @@ function renderRatingGroup(items: RatingItem[], keyPrefix: string): ReactElement
                     fontStyle: 'italic',
                   }}
                 >
-                  {item.description}
+                  <RichText content={item.description} />
                 </div>
               )}
             </div>

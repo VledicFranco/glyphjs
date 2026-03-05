@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 // ─── Timeline ────────────────────────────────────────────────
 
@@ -6,8 +7,8 @@ export const timelineSchema = z.object({
   events: z.array(
     z.object({
       date: z.string(),
-      title: z.string(),
-      description: z.string().optional(),
+      title: inlineContentSchema,
+      description: inlineContentSchema.optional(),
       type: z.string().optional(),
     }),
   ),

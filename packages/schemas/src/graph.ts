@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 // ─── Graph ───────────────────────────────────────────────────
 
@@ -7,7 +8,7 @@ export const graphSchema = z.object({
   nodes: z.array(
     z.object({
       id: z.string(),
-      label: z.string(),
+      label: inlineContentSchema,
       type: z.string().optional(),
       style: z.record(z.string()).optional(),
       group: z.string().optional(),
@@ -17,7 +18,7 @@ export const graphSchema = z.object({
     z.object({
       from: z.string(),
       to: z.string(),
-      label: z.string().optional(),
+      label: inlineContentSchema.optional(),
       type: z.string().optional(),
       style: z.record(z.string()).optional(),
     }),
