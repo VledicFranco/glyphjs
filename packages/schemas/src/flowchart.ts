@@ -1,13 +1,14 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 export const flowchartSchema = z.object({
-  title: z.string().optional(),
+  title: inlineContentSchema.optional(),
   nodes: z
     .array(
       z.object({
         id: z.string(),
         type: z.enum(['start', 'end', 'process', 'decision']).default('process'),
-        label: z.string(),
+        label: inlineContentSchema,
       }),
     )
     .min(2),
@@ -16,7 +17,7 @@ export const flowchartSchema = z.object({
       z.object({
         from: z.string(),
         to: z.string(),
-        label: z.string().optional(),
+        label: inlineContentSchema.optional(),
       }),
     )
     .min(1),

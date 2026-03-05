@@ -36,3 +36,6 @@ export { panelSchema } from './panel.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';
+
+// ─── Shared Primitives ──────────────────────────────────────
+export { inlineContentSchema } from './inline-content.js';

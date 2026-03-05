@@ -1,9 +1,10 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 const kanbanCard = z.object({
   id: z.string(),
-  title: z.string(),
-  description: z.string().optional(),
+  title: inlineContentSchema,
+  description: inlineContentSchema.optional(),
   priority: z.enum(['high', 'medium', 'low']).optional(),
   tags: z.array(z.string()).optional(),
 });

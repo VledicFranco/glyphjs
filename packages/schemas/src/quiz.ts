@@ -1,26 +1,27 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 const multipleChoiceQuestion = z.object({
   type: z.literal('multiple-choice'),
-  question: z.string(),
-  options: z.array(z.string()).min(2).max(6),
+  question: inlineContentSchema,
+  options: z.array(inlineContentSchema).min(2).max(6),
   answer: z.number(),
-  explanation: z.string().optional(),
+  explanation: inlineContentSchema.optional(),
 });
 
 const trueFalseQuestion = z.object({
   type: z.literal('true-false'),
-  question: z.string(),
+  question: inlineContentSchema,
   answer: z.boolean(),
-  explanation: z.string().optional(),
+  explanation: inlineContentSchema.optional(),
 });
 
 const multiSelectQuestion = z.object({
   type: z.literal('multi-select'),
-  question: z.string(),
-  options: z.array(z.string()).min(2).max(8),
+  question: inlineContentSchema,
+  options: z.array(inlineContentSchema).min(2).max(8),
   answer: z.array(z.number()),
-  explanation: z.string().optional(),
+  explanation: inlineContentSchema.optional(),
 });
 
 const quizQuestion = z.discriminatedUnion('type', [

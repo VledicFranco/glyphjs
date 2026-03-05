@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 // ─── Infographic Item Types ─────────────────────────────────
 
@@ -6,13 +7,13 @@ const statItemSchema = z.object({
   type: z.literal('stat'),
   label: z.string(),
   value: z.string(),
-  description: z.string().optional(),
+  description: inlineContentSchema.optional(),
 });
 
 const factItemSchema = z.object({
   type: z.literal('fact'),
   icon: z.string().optional(),
-  text: z.string(),
+  text: inlineContentSchema,
 });
 
 const progressItemSchema = z.object({
@@ -51,7 +52,7 @@ const ratingItemSchema = z.object({
   label: z.string(),
   value: z.number().min(0).max(5),
   max: z.number().min(1).max(5).optional(),
-  description: z.string().optional(),
+  description: inlineContentSchema.optional(),
 });
 
 const infographicItemSchema = z.discriminatedUnion('type', [

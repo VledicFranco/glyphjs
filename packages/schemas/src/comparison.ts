@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 export const comparisonSchema = z
   .object({
@@ -7,7 +8,7 @@ export const comparisonSchema = z
       .array(
         z.object({
           name: z.string(),
-          description: z.string().optional(),
+          description: inlineContentSchema.optional(),
         }),
       )
       .min(2)
@@ -16,7 +17,7 @@ export const comparisonSchema = z
       .array(
         z.object({
           name: z.string(),
-          values: z.array(z.string()),
+          values: z.array(inlineContentSchema),
         }),
       )
       .min(1),

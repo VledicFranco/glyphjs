@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 // ─── Relation (ER Diagram) ───────────────────────────────────
 
@@ -6,11 +7,11 @@ export const relationSchema = z.object({
   entities: z.array(
     z.object({
       id: z.string(),
-      label: z.string(),
+      label: inlineContentSchema,
       attributes: z
         .array(
           z.object({
-            name: z.string(),
+            name: inlineContentSchema,
             type: z.string(),
             primaryKey: z.boolean().optional(),
           }),
@@ -22,7 +23,7 @@ export const relationSchema = z.object({
     z.object({
       from: z.string(),
       to: z.string(),
-      label: z.string().optional(),
+      label: inlineContentSchema.optional(),
       cardinality: z.enum(['1:1', '1:N', 'N:1', 'N:M']),
     }),
   ),

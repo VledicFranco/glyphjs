@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 const cardActionSchema = z.object({
   label: z.string(),
@@ -7,10 +8,10 @@ const cardActionSchema = z.object({
 
 const cardItemSchema = z.object({
   title: z.string(),
-  subtitle: z.string().optional(),
+  subtitle: inlineContentSchema.optional(),
   image: z.string().optional(),
   icon: z.string().optional(),
-  body: z.string().optional(),
+  body: inlineContentSchema.optional(),
   actions: z.array(cardActionSchema).max(3).optional(),
 });
 

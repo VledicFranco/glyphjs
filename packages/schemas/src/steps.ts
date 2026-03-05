@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 // ─── Steps ───────────────────────────────────────────────────
 
@@ -7,7 +8,7 @@ export const stepsSchema = z.object({
     z.object({
       title: z.string(),
       status: z.enum(['pending', 'active', 'completed']).optional(),
-      content: z.string(),
+      content: inlineContentSchema,
     }),
   ),
   markdown: z.boolean().default(false),

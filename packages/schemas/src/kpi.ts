@@ -1,4 +1,5 @@
 import { z } from 'zod';
+import { inlineContentSchema } from './inline-content.js';
 
 // ─── KPI ──────────────────────────────────────────────────────
 
@@ -7,7 +8,7 @@ export const kpiSchema = z.object({
   metrics: z
     .array(
       z.object({
-        label: z.string(),
+        label: inlineContentSchema,
         value: z.string(),
         delta: z.string().optional(),
         trend: z.enum(['up', 'down', 'flat']).optional(),
