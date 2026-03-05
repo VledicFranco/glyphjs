@@ -10,6 +10,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.2] - 2026-03-05
+
+### Added
+
+- **Syntax highlighting in code blocks**: All fenced code blocks now render with full token colors via `lowlight` + `hast-util-to-jsx-runtime`. Supports 42 common languages (TypeScript, Python, Rust, Go, SQL, shell, JSON, etc.) plus 28 functional and scientific extras: Scala, Haskell, Clojure, Elixir, Erlang, F#, OCaml, Elm, Scheme, SML, Julia, MATLAB, LaTeX, Coq, Prolog, and more. Token colors are driven by 13 new `--glyph-code-token-*` CSS custom properties, overridable in any custom theme.
+- **Nested `ui:` components in `ui:tabs` and `ui:steps`**: Tab and step `content` fields now compile recursively — any `ui:` component, code fence, list, or blockquote can be embedded directly inside a `content:` field using standard Markdown fenced block syntax. Nested blocks are stored in `block.children` and rendered via the `renderBlock` prop.
+- **GFM strikethrough**: `~~text~~` now renders as `<del>` in prose and in all inline markdown-enabled component fields.
+
+### Changed
+
+- **Inline markdown always-on**: The `markdown: true` YAML flag and `parseComponentMarkdown` compiler option have been removed. Inline markdown parsing is now unconditionally active for all 26 text-heavy components. Existing documents with or without the flag continue to render identically.
+- **`screenshot` viewport-matched `max-width`**: The CLI `render` command now sets the document `max-width` to match the `--width` option (default 1280px) instead of the former hardcoded `64rem`. This ensures multi-column layouts render at the requested width.
+- **Theme system expanded**: `GlyphThemeVarKey` grows from 53 to 66 required tokens to include the 13 code-token color keys. Custom themes and the Obsidian plugin theme-sync must add these keys (all have sensible built-in fallbacks).
+
 ## [0.9.1] - 2026-03-05
 
 ### Added
