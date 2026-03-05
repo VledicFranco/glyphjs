@@ -67,6 +67,18 @@ variables:
   --glyph-gradient-accent: 'linear-gradient(135deg, #F56400, #D5641C)'
   --glyph-focus-ring: '0 0 0 2px #F56400'
 
+  # ── Palette (charts, graphs, data viz) ─────────────────────
+  --glyph-palette-color-1: '#F56400'
+  --glyph-palette-color-2: '#1D8348'
+  --glyph-palette-color-3: '#D5641C'
+  --glyph-palette-color-4: '#2D72D2'
+  --glyph-palette-color-5: '#D13B3B'
+  --glyph-palette-color-6: '#BE8F28'
+  --glyph-palette-color-7: '#0891B2'
+  --glyph-palette-color-8: '#7C3AED'
+  --glyph-palette-color-9: '#059669'
+  --glyph-palette-color-10: '#B45309'
+
   # ── SVG / Data Visualization ───────────────────────────────
   --glyph-edge-color: '#C4B5A5'
   --glyph-node-label-color: '#fff'

@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Named bundled themes for CLI**: `--theme <name>` on `render`, `export`, and `serve` now resolves to a bundled YAML theme shipped with the CLI. Pass `--theme one-dark`, `--theme github-light`, `--theme nord`, etc. directly — no file path needed. `--theme-file` still takes precedence if both flags are supplied.
+- **`glyphjs themes` command**: Lists all bundled themes available for the `--theme` flag and prints usage examples.
+
+### Fixed
+
+- **DOMPurify SSR crash**: `GlyphRawHtml` now checks for `DOMPurify.sanitize` availability before calling it. HTML comments in a document no longer crash `glyphjs serve` under Node.js SSR.
+- **Relation accessibility table**: Attribute `name` and relationship `label` fields (`string | InlineNode[]`) were rendered as `[object Object]` in the hidden screen-reader table. They are now converted via `inlineToText()`.
+- **warmcraft theme**: Added `--glyph-palette-color-1..10` overrides with warm earthy tones so charts and graph nodes render in warmcraft colours instead of the default teal/purple palette.
+
 ## [0.8.0] - 2026-03-03
 
 ### Added
