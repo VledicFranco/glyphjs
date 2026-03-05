@@ -587,7 +587,45 @@
               "value": " do you prefer?"
             }
           ],
-          "options": ["*Feature* A", "Feature `B`", "[Feature C](https://example.com)"],
+          "options": [
+            [
+              {
+                "type": "emphasis",
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Feature"
+                  }
+                ]
+              },
+              {
+                "type": "text",
+                "value": " A"
+              }
+            ],
+            [
+              {
+                "type": "text",
+                "value": "Feature "
+              },
+              {
+                "type": "inlineCode",
+                "value": "B"
+              }
+            ],
+            [
+              {
+                "type": "link",
+                "url": "https://example.com",
+                "children": [
+                  {
+                    "type": "text",
+                    "value": "Feature C"
+                  }
+                ]
+              }
+            ]
+          ],
           "multiple": false,
           "showResults": true
         }
@@ -711,7 +749,20 @@
             },
             {
               "type": "text",
-              "value": ", ~~strikethrough~~, and "
+              "value": ", "
+            },
+            {
+              "type": "delete",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "strikethrough"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": ", and "
             },
             {
               "type": "link",

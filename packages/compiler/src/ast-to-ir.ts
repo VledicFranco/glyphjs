@@ -57,7 +57,7 @@ const MARKDOWN_FIELD_MAP: Record<string, string[]> = {
   quiz: ['questions[].question', 'questions[].explanation', 'questions[].options[]'],
   infographic: ['sections[].items[].text', 'sections[].items[].description'],
   timeline: ['events[].title', 'events[].description'],
-  poll: ['question', 'options[].label'],
+  poll: ['question', 'options[]'],
   rating: ['label', 'description'],
   ranker: ['items[].label'],
   slider: ['label'],

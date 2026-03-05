@@ -43,10 +43,12 @@ describe('parseInlineMarkdown', () => {
   });
 
   it('parses strikethrough text with ~~syntax~~', () => {
-    // Note: remark-parse doesn't support strikethrough without GFM plugin
-    // So ~~ syntax will be treated as plain text
     const result = parseInlineMarkdown('This is ~~deleted~~ text');
-    expect(result).toEqual([{ type: 'text', value: 'This is ~~deleted~~ text' }]);
+    expect(result).toEqual([
+      { type: 'text', value: 'This is ' },
+      { type: 'delete', children: [{ type: 'text', value: 'deleted' }] },
+      { type: 'text', value: ' text' },
+    ]);
   });
 
   it('parses inline code with `syntax`', () => {

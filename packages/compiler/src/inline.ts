@@ -2,6 +2,7 @@ import type { InlineNode } from '@glyphjs/types';
 import type { Diagnostic } from '@glyphjs/types';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
+import remarkGfm from 'remark-gfm';
 
 // ─── MDAST Phrasing Content Types ───────────────────────────
 // These are structural types matching the shapes from mdast,
@@ -177,7 +178,7 @@ export function parseInlineMarkdown(text: string, diagnostics?: Diagnostic[]): I
   }
 
   // Parse markdown using unified + remark-parse
-  const processor = unified().use(remarkParse);
+  const processor = unified().use(remarkParse).use(remarkGfm);
   const tree = processor.parse(text);
 
   // Type guard for MDAST root node

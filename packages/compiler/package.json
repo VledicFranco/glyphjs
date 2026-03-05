@@ -31,12 +31,13 @@
     "clean": "rm -rf dist .turbo"
   },
   "dependencies": {
-    "@glyphjs/types": "workspace:*",
-    "@glyphjs/schemas": "workspace:*",
-    "@glyphjs/parser": "workspace:*",
     "@glyphjs/ir": "workspace:*",
-    "unified": "^11.0.5",
+    "@glyphjs/parser": "workspace:*",
+    "@glyphjs/schemas": "workspace:*",
+    "@glyphjs/types": "workspace:*",
+    "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
+    "unified": "^11.0.5",
     "yaml": "^2.7.0"
   },
   "sideEffects": false,
