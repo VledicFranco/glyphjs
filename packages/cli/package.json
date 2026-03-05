@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/cli",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "CLI tool for compiling, rendering, and exporting GlyphJS documents",
   "type": "module",
   "bin": {

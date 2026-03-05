@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.3] - 2026-03-05
+
 ### Added
 
 - **Named bundled themes for CLI**: `--theme <name>` on `render`, `export`, and `serve` now resolves to a bundled YAML theme shipped with the CLI. Pass `--theme one-dark`, `--theme github-light`, `--theme nord`, etc. directly — no file path needed. `--theme-file` still takes precedence if both flags are supplied.

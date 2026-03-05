@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/brand",
-  "version": "0.9.2",
+  "version": "0.9.3",
   "description": "Brand assets for Glyph JS — SVG logos and palette constants",
   "type": "module",
   "main": "./dist/index.cjs",
