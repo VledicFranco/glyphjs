@@ -532,7 +532,7 @@ describe('Infographic', () => {
       'ui:infographic',
     );
     render(<Infographic {...props} />);
-    expect(screen.getByText('Very good')).toHaveStyle({ fontStyle: 'italic' });
+    expect(screen.getByText('Very good').closest('div')).toHaveStyle({ fontStyle: 'italic' });
   });
 
   it('applies bold weight to progress labels', () => {
