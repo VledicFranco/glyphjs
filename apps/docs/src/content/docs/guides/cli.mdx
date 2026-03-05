@@ -107,7 +107,7 @@ glyphjs schemas chart
 
 | Flag | Description |
 |------|-------------|
-| `--all` | Output all 29 component schemas as a single JSON object |
+| `--all` | Output all 32 component schemas as a single JSON object |
 | `--list` | List available component type names, one per line |
 | `-o, --output <path>` | Write output to file instead of stdout |
 
@@ -125,7 +125,7 @@ glyphjs schemas chart
 glyphjs schemas chart
 glyphjs schemas ui:chart    # same output
 
-# List all 28 available types
+# List all 32 available types
 glyphjs schemas --list
 
 # Dump all schemas to a file for offline use
@@ -205,6 +205,7 @@ Each `ui:` block in the document is rendered in a headless Chromium browser and 
 | `--theme-file <path>` | YAML file with custom theme variables | |
 | `-b, --block-id <id>` | Render only this block | all blocks |
 | `-w, --width <px>` | Viewport width in pixels | `1280` |
+| `--viewport-height <px>` | Viewport height in pixels | `800` |
 | `--device-scale-factor <n>` | Device scale factor for HiDPI | `2` |
 | `-v, --verbose` | Show progress on stderr | |
 
@@ -243,10 +244,15 @@ glyphjs export document.md --format html -o output.html
 | `-t, --theme <theme>` | Base theme: `light` or `dark` | `light` |
 | `--theme-file <path>` | YAML file with custom theme variables | |
 | `-w, --width <px>` | Document width in pixels | `800` |
+| `--viewport-height <px>` | Viewport height in pixels | `1024` |
+| `--max-width <css>` | Maximum content column width, e.g. `64rem` or `none` | `64rem` |
 | `--title <title>` | Override document title | |
 | `--page-size <size>` | PDF page size (e.g. `Letter`, `A4`) | `Letter` |
 | `--margin <margin>` | PDF margin in CSS shorthand | `1in` |
+| `--padding <padding>` | Document content padding in CSS shorthand | |
 | `--landscape` | Use landscape orientation for PDF | |
+| `--continuous` | PDF: render as one tall page with no page breaks | |
+| `--device-scale-factor <n>` | Device pixel ratio for block images (md export) | `2` |
 | `--images-dir <dir>` | Directory for rendered block images (md export) | `./images/` |
 | `-v, --verbose` | Show diagnostics on stderr | |
 
@@ -329,17 +335,28 @@ glyphjs render document.md --theme-file my-theme.yaml -d ./screenshots/
 
 ## Bundled Themes
 
-The CLI ships with example themes you can use directly or as starting points for your own:
+The CLI ships with 12 community themes you can use directly or as starting points:
 
-| Theme | Description |
-|-------|-------------|
-| **warmcraft** | Warm tones with earthy oranges, soft creams, and natural accents |
+| File | Description |
+|------|-------------|
+| `catppuccin-mocha.yml` | Catppuccin Mocha — muted pastels on deep dark background |
+| `dracula.yml` | Dracula — vivid purple & pink on dark gray |
+| `github-dark.yml` | GitHub Dark — GitHub's dark mode palette |
+| `github-light.yml` | GitHub Light — GitHub's light mode palette |
+| `gruvbox.yml` | Gruvbox — retro warm browns, yellows, and greens |
+| `monokai.yml` | Monokai — vivid greens and oranges on near-black |
+| `night-owl.yml` | Night Owl — deep blues with warm accent tones |
+| `nord.yml` | Nord — Arctic blues and cool grays |
+| `one-dark.yml` | One Dark — Atom's One Dark Pro palette |
+| `solarized-dark.yml` | Solarized Dark — precision colors, dark variant |
+| `solarized-light.yml` | Solarized Light — precision colors, light variant |
+| `tokyo-night.yml` | Tokyo Night — deep navy with vibrant neons |
 
 Use a bundled theme after a global install:
 
 ```bash
 glyphjs export document.md --format html \
-  --theme-file node_modules/@glyphjs/cli/themes/warmcraft.yaml \
+  --theme-file node_modules/@glyphjs/cli/themes/one-dark.yml \
   -o output.html
 ```
 
