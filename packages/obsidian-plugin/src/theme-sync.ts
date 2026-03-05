@@ -58,6 +58,20 @@ export function buildObsidianTheme(isDark: boolean): GlyphTheme {
     // ── Code ───────────────────────────────────────────────────────
     '--glyph-code-bg': obs('--code-background', '--glyph-code-bg'),
     '--glyph-code-text': obs('--code-normal', '--glyph-code-text'),
+    // Obsidian doesn't expose per-token CSS vars; keep GlyphJS defaults
+    '--glyph-code-token-keyword': d('--glyph-code-token-keyword'),
+    '--glyph-code-token-string': d('--glyph-code-token-string'),
+    '--glyph-code-token-comment': d('--glyph-code-token-comment'),
+    '--glyph-code-token-number': d('--glyph-code-token-number'),
+    '--glyph-code-token-function': d('--glyph-code-token-function'),
+    '--glyph-code-token-type': d('--glyph-code-token-type'),
+    '--glyph-code-token-builtin': d('--glyph-code-token-builtin'),
+    '--glyph-code-token-attr': d('--glyph-code-token-attr'),
+    '--glyph-code-token-literal': d('--glyph-code-token-literal'),
+    '--glyph-code-token-operator': d('--glyph-code-token-operator'),
+    '--glyph-code-token-variable': d('--glyph-code-token-variable'),
+    '--glyph-code-token-regexp': d('--glyph-code-token-regexp'),
+    '--glyph-code-token-meta': d('--glyph-code-token-meta'),
 
     // ── Typography ─────────────────────────────────────────────────
     '--glyph-font-body': obs('--font-text', '--glyph-font-body'),

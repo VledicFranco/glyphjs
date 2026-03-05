@@ -641,9 +641,21 @@ tabs:
 ```
 ````
 
-:::note
-In v1, nested `ui:` components inside tab content are not supported. Tabs can
-contain standard Markdown only. Nested components are planned for v2.
+:::tip
+Tab content is compiled recursively — you can embed any `ui:` component directly
+inside a `content` field using standard fenced code block syntax:
+
+````markdown
+```ui:tabs
+tabs:
+  - label: Example
+    content: |
+      ```ui:callout
+      type: info
+      content: This callout is nested inside a tab.
+      ```
+```
+````
 :::
 
 ---

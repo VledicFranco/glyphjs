@@ -132,7 +132,7 @@ series:
 **Key rules:**
 - YAML is strict — 2-space indent, no tabs
 - String values with special characters need quotes
-- `markdown: true` enables inline markdown in text fields
+- Inline markdown in text fields is always-on — no flag needed
 
 ---
 
@@ -277,10 +277,9 @@ metrics:
 
 ### Chart types: `line | bar | area | ohlc`
 
-### Inline markdown in text fields
+### Inline markdown in text fields (always-on)
 ```yaml
-content: "Theme tokens reduced from **~155** to **53**. See [changelog](/changelog)."
-markdown: true
+content: "Theme tokens expanded from **53** to **66** with syntax highlighting. See [changelog](/changelog)."
 ````
 
 ---
@@ -312,11 +311,12 @@ pnpm build            # Turborepo full build
 
 ### Theme system
 
-- **53 required tokens** in `GlyphThemeVars`
+- **66 required tokens** in `GlyphThemeVars`
 - Tier 1: semantic tokens (`--glyph-*`) — required, TypeScript-enforced
 - Tier 2: component-specific overrides — optional CSS-only
 - Semantic state vars: `--glyph-color-success/warning/error/info`
 - Shared palette: `--glyph-palette-color-1..10`
+- Code token colors: `--glyph-code-token-keyword/string/comment/number/function/type/builtin/attr/literal/operator/variable/regexp/meta`
 - Do NOT use `theme.isDark` or `theme.resolveVar()` — legacy
 
 ### Variables system (v0.9.0)
@@ -335,6 +335,20 @@ pnpm build            # Turborepo full build
 - Children stored in `block.children`; rendered via `<BlockRenderer>` in each component
 - `ui:rows` uses `height: 100%` so `fr` units work when nested in a column cell
 - Diagnostic code: `LAYOUT_CHILD_UNDEFINED`
+
+### Nested ui: components in Tabs/Steps (v0.9.0)
+
+- Tab and step `content` fields are recursively compiled — any `ui:` fenced block works inside them
+- Suppressed block vars (`=_name`) defined before the container are expanded inside `content` via `{{name}}`
+- Children stored flat in `block.children`; split into per-slot arrays via `_slotChildCounts`
+- Rendered with `props.renderBlock(child, i)` injected by `BlockDispatch`
+
+### Syntax highlighting in code blocks (v0.9.1)
+
+- All fenced code blocks (` ```lang ` syntax) auto-highlight using `lowlight` + `hast-util-to-jsx-runtime`
+- **42 common languages** via `createLowlight(common)` + **28 functional/math** extras (Scala, Haskell, Clojure, Elixir, F#, OCaml, Julia, LaTeX, Coq, Prolog, etc.)
+- Token colors driven by `--glyph-code-token-*` CSS vars (13 total); override them in a custom theme
+- Singleton highlighter at `packages/runtime/src/highlight/languages.ts`
 
 ### Adding a new component
 
