@@ -1,5 +1,10 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
-import { loadThemeFile, resolveThemeVars } from '../theme-loader.js';
+import {
+  loadThemeFile,
+  resolveThemeVars,
+  listBundledThemes,
+  resolveBundledThemePath,
+} from '../theme-loader.js';
 
 // ── Mock fs and yaml ────────────────────────────────────────
 
@@ -8,15 +13,23 @@ vi.mock('node:fs/promises', () => {
   return { ...mod, default: mod };
 });
 
+vi.mock('node:fs', () => {
+  const mod = { readdirSync: vi.fn(), existsSync: vi.fn() };
+  return { ...mod, default: mod };
+});
+
 vi.mock('yaml', () => ({
   parse: vi.fn(),
 }));
 
 import { readFile } from 'node:fs/promises';
+import { readdirSync, existsSync } from 'node:fs';
 import { parse as parseYaml } from 'yaml';
 
 const mockReadFile = readFile as ReturnType<typeof vi.fn>;
 const mockParseYaml = parseYaml as ReturnType<typeof vi.fn>;
+const mockReaddirSync = readdirSync as ReturnType<typeof vi.fn>;
+const mockExistsSync = existsSync as ReturnType<typeof vi.fn>;
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -152,5 +165,69 @@ describe('resolveThemeVars', () => {
     const result = resolveThemeVars('light', { '--glyph-custom': '#abc' });
 
     expect(result['--glyph-custom']).toBe('#abc');
+  });
+});
+
+// ── listBundledThemes ───────────────────────────────────────
+
+describe('listBundledThemes', () => {
+  it('returns a sorted array of theme names without extensions', () => {
+    mockReaddirSync.mockReturnValue(['one-dark.yml', 'warmcraft.yaml', 'nord.yml']);
+
+    const result = listBundledThemes();
+
+    expect(result).toEqual(['nord', 'one-dark', 'warmcraft']);
+  });
+
+  it('returns an array of strings', () => {
+    mockReaddirSync.mockReturnValue(['warmcraft.yaml']);
+
+    const result = listBundledThemes();
+
+    expect(result).toHaveLength(1);
+    expect(typeof result[0]).toBe('string');
+  });
+
+  it('excludes non-YAML files', () => {
+    mockReaddirSync.mockReturnValue(['warmcraft.yaml', 'README.md', 'warmcraft.yml']);
+
+    const result = listBundledThemes();
+
+    expect(result).not.toContain('README');
+    expect(result).toContain('warmcraft');
+  });
+});
+
+// ── resolveBundledThemePath ─────────────────────────────────
+
+describe('resolveBundledThemePath', () => {
+  it('resolves a .yml theme by name', () => {
+    mockExistsSync.mockImplementation((p: string) => String(p).includes('one-dark.yml'));
+
+    const result = resolveBundledThemePath('one-dark');
+
+    expect(result).toContain('one-dark');
+  });
+
+  it('resolves a .yaml theme by name', () => {
+    mockExistsSync.mockImplementation(
+      (p: string) => !String(p).endsWith('.yml') && String(p).includes('warmcraft.yaml'),
+    );
+
+    const result = resolveBundledThemePath('warmcraft');
+
+    expect(result).toContain('warmcraft');
+  });
+
+  it('throws with the theme name in the message when not found', () => {
+    mockExistsSync.mockReturnValue(false);
+
+    expect(() => resolveBundledThemePath('not-a-theme')).toThrow('not-a-theme');
+  });
+
+  it('error message mentions glyphjs themes command', () => {
+    mockExistsSync.mockReturnValue(false);
+
+    expect(() => resolveBundledThemePath('fake')).toThrow('glyphjs themes');
   });
 });

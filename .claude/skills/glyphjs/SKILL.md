@@ -228,6 +228,9 @@ glyphjs schemas chart               # JSON Schema for one type
 glyphjs schemas --list              # all 32 type names
 glyphjs schemas --all               # dump all schemas
 
+# Bundled theme discovery
+glyphjs themes                      # list available theme names
+
 # Compile to IR
 glyphjs compile doc.md
 
@@ -236,21 +239,23 @@ glyphjs export doc.md --format pdf -o out.pdf
 glyphjs export doc.md --format pdf --page-size A4 --landscape -o out.pdf
 glyphjs export doc.md --format pdf --continuous -o out.pdf        # single tall page
 glyphjs export doc.md --format pdf --margin "0.75in 1in" --padding "2rem" -o out.pdf
-glyphjs export doc.md --format pdf --theme dark --theme-file themes/catppuccin-mocha.yml -o out.pdf
+glyphjs export doc.md --format pdf --theme warmcraft -o out.pdf   # bundled theme by name
 
 # Export — other formats
-glyphjs export doc.md --format html -o out.html
+glyphjs export doc.md --format html --theme warmcraft -o out.html
 glyphjs export doc.md --format md --images-dir ./imgs -o out.md   # PNG per block
 
 # Render individual blocks as PNG
-glyphjs render doc.md -o ./screenshots/ --device-scale-factor 2
+glyphjs render doc.md --theme warmcraft -o ./screenshots/ --device-scale-factor 2
 
 # Live dev server
-glyphjs serve doc.md
+glyphjs serve doc.md --theme warmcraft
 ```
 
-**Themes** (pass via `--theme-file themes/<name>.yml`):
-`default` · `dark` · `minimal` · `high-contrast` · `warm` · `catppuccin-mocha` · `tokyo-night` · `solarized-dark` · `gruvbox-dark` · `nord` · `dracula` · `one-dark`
+**Themes:**
+- `--theme light` / `--theme dark` — built-in base themes (default: `light`)
+- `--theme <name>` — bundled theme by name; run `glyphjs themes` to list
+- `--theme-file <path>` — custom YAML theme file; always takes precedence over `--theme`
 
 Exit codes: 0 = clean, 1 = errors, 2 = I/O failure. Always lint before exporting.
 

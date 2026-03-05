@@ -6,13 +6,19 @@ import { exportHTML } from '../export/html.js';
 import { exportPDF } from '../export/pdf.js';
 import { exportMarkdown } from '../export/markdown.js';
 import { exportDocx } from '../export/docx.js';
-import { loadThemeFile, resolveThemeVars } from '../rendering/theme-loader.js';
+import {
+  loadThemeFile,
+  resolveThemeVars,
+  resolveBundledThemePath,
+} from '../rendering/theme-loader.js';
 import type { ThemeName } from '../rendering/ssr.js';
+
+const BASE_THEMES = ['light', 'dark'];
 
 export interface ExportCommandOptions {
   format: string;
   output?: string;
-  theme?: ThemeName;
+  theme?: string;
   themeFile?: string;
   width?: number;
   viewportHeight?: number;
@@ -68,15 +74,31 @@ export async function exportCommand(input: string, options: ExportCommandOptions
     return;
   }
 
-  // Load custom theme file if provided
-  let themeVars: Record<string, string> | undefined;
-  if (options.themeFile) {
+  // Resolve theme: --theme-file wins; otherwise try bundled name; else base theme
+  let resolvedThemeFile = options.themeFile;
+  let baseTheme: ThemeName = (
+    options.theme && BASE_THEMES.includes(options.theme) ? options.theme : 'light'
+  ) as ThemeName;
+
+  if (!resolvedThemeFile && options.theme && !BASE_THEMES.includes(options.theme)) {
     try {
-      const themeData = await loadThemeFile(resolve(process.cwd(), options.themeFile));
+      resolvedThemeFile = resolveBundledThemePath(options.theme);
+    } catch (err) {
+      process.stderr.write(`error — ${(err as Error).message}\n`);
+      process.exitCode = 2;
+      return;
+    }
+  }
+
+  let themeVars: Record<string, string> | undefined;
+  if (resolvedThemeFile) {
+    try {
+      const themeData = await loadThemeFile(resolve(process.cwd(), resolvedThemeFile));
+      baseTheme = themeData.base;
       themeVars = resolveThemeVars(themeData.base, themeData.overrides);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      process.stderr.write(`error — Failed to load theme file: ${message}\n`);
+      process.stderr.write(`error — Could not load theme: ${message}\n`);
       process.exitCode = 2;
       return;
     }
@@ -88,7 +110,7 @@ export async function exportCommand(input: string, options: ExportCommandOptions
   switch (options.format) {
     case 'html':
       output = exportHTML(result.ir, {
-        theme: options.theme,
+        theme: baseTheme,
         title: options.title,
         themeVars,
       });
@@ -96,7 +118,7 @@ export async function exportCommand(input: string, options: ExportCommandOptions
     case 'pdf':
       try {
         output = await exportPDF(result.ir, {
-          theme: options.theme,
+          theme: baseTheme,
           title: options.title,
           width: options.width,
           viewportHeight: options.viewportHeight,
@@ -121,7 +143,7 @@ export async function exportCommand(input: string, options: ExportCommandOptions
           ? dirname(resolve(process.cwd(), options.output))
           : process.cwd();
         const mdResult = await exportMarkdown(markdown, result.ir, outputDir, {
-          theme: options.theme,
+          theme: baseTheme,
           width: options.width,
           viewportHeight: options.viewportHeight,
           deviceScaleFactor: options.deviceScaleFactor,
@@ -140,7 +162,7 @@ export async function exportCommand(input: string, options: ExportCommandOptions
     case 'docx': {
       try {
         output = await exportDocx(markdown, result.ir, {
-          theme: options.theme,
+          theme: baseTheme,
           width: options.width,
           themeVars,
         });

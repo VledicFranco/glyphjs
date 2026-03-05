@@ -10,11 +10,17 @@ import { logDiagnostics } from '../utils/logger.js';
 import { renderDocumentToHTML, type ThemeName } from '../rendering/ssr.js';
 import { buildHtmlTemplate } from '../rendering/html-template.js';
 import { getClientBundle } from '../rendering/client-bundle.js';
-import { loadThemeFile, resolveThemeVars } from '../rendering/theme-loader.js';
+import {
+  loadThemeFile,
+  resolveThemeVars,
+  resolveBundledThemePath,
+} from '../rendering/theme-loader.js';
+
+const BASE_THEMES = ['light', 'dark'];
 
 export interface ServeCommandOptions {
   port?: number;
-  theme?: ThemeName;
+  theme?: string;
   themeFile?: string;
   open?: boolean;
   verbose?: boolean;
@@ -78,18 +84,33 @@ export function openBrowser(url: string): void {
  */
 export async function serveCommand(input: string, options: ServeCommandOptions): Promise<void> {
   const port = options.port ?? 3000;
-  const theme = options.theme ?? 'light';
   const filePath = resolve(process.cwd(), input);
 
-  // Load custom theme file if provided
-  let themeVars: Record<string, string> | undefined;
-  if (options.themeFile) {
+  // Resolve theme: --theme-file wins; otherwise try bundled name; else base theme
+  let resolvedThemeFile = options.themeFile;
+  let baseTheme: ThemeName = (
+    options.theme && BASE_THEMES.includes(options.theme) ? options.theme : 'light'
+  ) as ThemeName;
+
+  if (!resolvedThemeFile && options.theme && !BASE_THEMES.includes(options.theme)) {
     try {
-      const themeData = await loadThemeFile(resolve(process.cwd(), options.themeFile));
+      resolvedThemeFile = resolveBundledThemePath(options.theme);
+    } catch (err) {
+      process.stderr.write(`error — ${(err as Error).message}\n`);
+      process.exitCode = 2;
+      return;
+    }
+  }
+
+  let themeVars: Record<string, string> | undefined;
+  if (resolvedThemeFile) {
+    try {
+      const themeData = await loadThemeFile(resolve(process.cwd(), resolvedThemeFile));
+      baseTheme = themeData.base;
       themeVars = resolveThemeVars(themeData.base, themeData.overrides);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      process.stderr.write(`error — Failed to load theme file: ${message}\n`);
+      process.stderr.write(`error — Could not load theme: ${message}\n`);
       process.exitCode = 2;
       return;
     }
@@ -103,7 +124,7 @@ export async function serveCommand(input: string, options: ServeCommandOptions):
     if (options.verbose) {
       logDiagnostics(result.diagnostics, filePath);
     }
-    currentHTML = injectLiveReload(buildServedHTML(result.ir, theme, themeVars));
+    currentHTML = injectLiveReload(buildServedHTML(result.ir, baseTheme, themeVars));
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     process.stderr.write(`error — Could not read input: ${message}\n`);
@@ -144,7 +165,7 @@ export async function serveCommand(input: string, options: ServeCommandOptions):
         if (options.verbose) {
           logDiagnostics(result.diagnostics, filePath);
         }
-        currentHTML = injectLiveReload(buildServedHTML(result.ir, theme, themeVars));
+        currentHTML = injectLiveReload(buildServedHTML(result.ir, baseTheme, themeVars));
         for (const client of clients) {
           client.write('event: reload\ndata: {}\n\n');
         }

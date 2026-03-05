@@ -5,13 +5,19 @@ import type { Block, GlyphIR } from '@glyphjs/types';
 import { logDiagnostics } from '../utils/logger.js';
 import { checkPlaywrightAvailable, BrowserManager } from '../rendering/browser.js';
 import { captureBlockScreenshot } from '../rendering/screenshot.js';
-import { loadThemeFile, resolveThemeVars } from '../rendering/theme-loader.js';
+import {
+  loadThemeFile,
+  resolveThemeVars,
+  resolveBundledThemePath,
+} from '../rendering/theme-loader.js';
 import type { ThemeName } from '../rendering/ssr.js';
+
+const BASE_THEMES = ['light', 'dark'];
 
 export interface RenderCommandOptions {
   output?: string;
   outputDir?: string;
-  theme?: ThemeName;
+  theme?: string;
   themeFile?: string;
   blockId?: string;
   width?: number;
@@ -140,15 +146,31 @@ export async function renderCommand(input: string, options: RenderCommandOptions
     return;
   }
 
-  // Load custom theme file if provided
-  let themeVars: Record<string, string> | undefined;
-  if (options.themeFile) {
+  // Resolve theme: --theme-file wins; otherwise try bundled name; else base theme
+  let resolvedThemeFile = options.themeFile;
+  let baseTheme: ThemeName = (
+    options.theme && BASE_THEMES.includes(options.theme) ? options.theme : 'light'
+  ) as ThemeName;
+
+  if (!resolvedThemeFile && options.theme && !BASE_THEMES.includes(options.theme)) {
     try {
-      const themeData = await loadThemeFile(resolve(process.cwd(), options.themeFile));
+      resolvedThemeFile = resolveBundledThemePath(options.theme);
+    } catch (err) {
+      process.stderr.write(`error — ${(err as Error).message}\n`);
+      process.exitCode = 2;
+      return;
+    }
+  }
+
+  let themeVars: Record<string, string> | undefined;
+  if (resolvedThemeFile) {
+    try {
+      const themeData = await loadThemeFile(resolve(process.cwd(), resolvedThemeFile));
+      baseTheme = themeData.base;
       themeVars = resolveThemeVars(themeData.base, themeData.overrides);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
-      process.stderr.write(`error — Failed to load theme file: ${message}\n`);
+      process.stderr.write(`error — Could not load theme: ${message}\n`);
       process.exitCode = 2;
       return;
     }
@@ -166,7 +188,7 @@ export async function renderCommand(input: string, options: RenderCommandOptions
 
       try {
         const screenshot = await captureBlockScreenshot(page, block, {
-          theme: options.theme,
+          theme: baseTheme,
           width: options.width,
           viewportHeight: options.viewportHeight,
           deviceScaleFactor: options.deviceScaleFactor,

@@ -105,7 +105,7 @@ describe('exportCommand', () => {
       filePath: expect.stringContaining('input.md'),
     });
     expect(exportHTML).toHaveBeenCalledWith(expect.objectContaining({ version: '1.0.0' }), {
-      theme: undefined,
+      theme: 'light',
       title: undefined,
     });
     expect(stdoutSpy).toHaveBeenCalledTimes(1);
@@ -264,7 +264,7 @@ describe('exportCommand', () => {
 
     expect(exportPDF).toHaveBeenCalledWith(
       expect.objectContaining({ version: '1.0.0' }),
-      expect.objectContaining({ theme: undefined }),
+      expect.objectContaining({ theme: 'light' }),
     );
     // Buffer output should NOT use utf-8 encoding
     expect(writeFile).toHaveBeenCalledWith(expect.stringContaining('out.pdf'), expect.any(Buffer));
@@ -365,7 +365,7 @@ describe('exportCommand', () => {
       '# Hello',
       expect.objectContaining({ version: '1.0.0' }),
       expect.any(String),
-      expect.objectContaining({ theme: undefined }),
+      expect.objectContaining({ theme: 'light' }),
     );
     expect(stdoutSpy).toHaveBeenCalledTimes(1);
     expect(stdoutSpy.mock.calls[0]![0]).toContain('# rewritten md');
@@ -424,7 +424,7 @@ describe('exportCommand', () => {
     expect(exportDocx).toHaveBeenCalledWith(
       '# Hello',
       expect.objectContaining({ version: '1.0.0' }),
-      expect.objectContaining({ theme: undefined }),
+      expect.objectContaining({ theme: 'light' }),
     );
     expect(writeFile).toHaveBeenCalledWith(expect.stringContaining('out.docx'), expect.any(Buffer));
   });

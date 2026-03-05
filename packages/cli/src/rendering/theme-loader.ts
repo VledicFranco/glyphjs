@@ -1,4 +1,7 @@
 import { readFile } from 'node:fs/promises';
+import { readdirSync, existsSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { parse as parseYaml } from 'yaml';
 import { LIGHT_THEME_VARS, DARK_THEME_VARS } from '@glyphjs/runtime';
 import type { ThemeName } from './ssr.js';
@@ -52,6 +55,35 @@ export async function loadThemeFile(filePath: string): Promise<ThemeFileData> {
   }
 
   return { base: base as ThemeName, overrides };
+}
+
+/**
+ * List the names of all bundled themes (themes/*.yml shipped with the CLI).
+ */
+export function listBundledThemes(): string[] {
+  const here = dirname(fileURLToPath(import.meta.url));
+  // From dist/index.js, '../themes' resolves to packages/cli/themes/
+  const themesDir = resolve(here, '../themes');
+  return readdirSync(themesDir)
+    .filter((f) => f.endsWith('.yml') || f.endsWith('.yaml'))
+    .map((f) => f.replace(/\.(yml|yaml)$/, ''))
+    .sort();
+}
+
+/**
+ * Resolve the absolute path of a bundled theme by name.
+ * Throws if no matching .yml / .yaml file is found.
+ */
+export function resolveBundledThemePath(name: string): string {
+  const here = dirname(fileURLToPath(import.meta.url));
+  const themesDir = resolve(here, '../themes');
+  for (const ext of ['.yml', '.yaml']) {
+    const p = resolve(themesDir, `${name}${ext}`);
+    if (existsSync(p)) return p;
+  }
+  throw new Error(
+    `Bundled theme not found: "${name}". Run \`glyphjs themes\` to list available themes.`,
+  );
 }
 
 /**

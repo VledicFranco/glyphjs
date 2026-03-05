@@ -158,6 +158,28 @@ glyphjs schemas table | jq '.properties | keys'
 }
 ```
 
+### themes
+
+List all bundled themes shipped with the CLI.
+
+```bash
+glyphjs themes
+```
+
+Prints the available theme names and usage instructions. Pass any listed name to `--theme` on `render`, `export`, or `serve`.
+
+**Example output:**
+
+```
+Available bundled themes:
+
+  warmcraft
+
+Usage:  glyphjs export doc.md --format html --theme <name>
+        glyphjs serve doc.md --theme <name>
+        glyphjs render doc.md --theme <name>
+```
+
 ### compile
 
 Compile a Markdown file to GlyphJS IR (JSON).
@@ -201,7 +223,7 @@ Each `ui:` block in the document is rendered in a headless Chromium browser and 
 |------|-------------|---------|
 | `-o, --output <path>` | Output file or directory | `<stem>-<blockId>.png` |
 | `-d, --output-dir <dir>` | Output directory for screenshots | |
-| `-t, --theme <theme>` | Base theme: `light` or `dark` | `light` |
+| `-t, --theme <theme>` | Base theme `light`/`dark`, or a bundled theme name (run `glyphjs themes` to list) | `light` |
 | `--theme-file <path>` | YAML file with custom theme variables | |
 | `-b, --block-id <id>` | Render only this block | all blocks |
 | `-w, --width <px>` | Viewport width in pixels | `1280` |
@@ -218,8 +240,8 @@ glyphjs render document.md -d ./screenshots/
 # Render a single block
 glyphjs render document.md -b chart-1 -o hero-chart.png
 
-# Render with custom theme
-glyphjs render document.md -d ./out/ --theme-file warmcraft.yaml
+# Render with a bundled theme
+glyphjs render document.md -d ./out/ --theme warmcraft
 ```
 
 :::caution[Prerequisite]
@@ -241,7 +263,7 @@ glyphjs export document.md --format html -o output.html
 |------|-------------|---------|
 | `--format <fmt>` | Output format: `html`, `pdf`, `md`, `docx` | **(required)** |
 | `-o, --output <path>` | Write to file instead of stdout | stdout |
-| `-t, --theme <theme>` | Base theme: `light` or `dark` | `light` |
+| `-t, --theme <theme>` | Base theme `light`/`dark`, or a bundled theme name (run `glyphjs themes` to list) | `light` |
 | `--theme-file <path>` | YAML file with custom theme variables | |
 | `-w, --width <px>` | Document width in pixels | `800` |
 | `--viewport-height <px>` | Viewport height in pixels | `1024` |
@@ -266,8 +288,8 @@ glyphjs export document.md --format html -o output.html
 **Examples:**
 
 ```bash
-# Export to a styled HTML file
-glyphjs export document.md --format html -o report.html --theme-file warmcraft.yaml
+# Export to a styled HTML file using a bundled theme
+glyphjs export document.md --format html -o report.html --theme warmcraft
 
 # Export to PDF with A4 pages
 glyphjs export document.md --format pdf -o report.pdf --page-size A4
@@ -292,7 +314,7 @@ The server compiles your Markdown to HTML and serves it on `localhost`. When you
 | Flag | Description | Default |
 |------|-------------|---------|
 | `-p, --port <port>` | Port to listen on | `3000` |
-| `-t, --theme <theme>` | Base theme: `light` or `dark` | `light` |
+| `-t, --theme <theme>` | Base theme `light`/`dark`, or a bundled theme name (run `glyphjs themes` to list) | `light` |
 | `--theme-file <path>` | YAML file with custom theme variables | |
 | `--open` | Open browser on start | |
 | `-v, --verbose` | Show diagnostics on stderr | |
@@ -306,8 +328,8 @@ glyphjs serve document.md
 # Custom port and auto-open browser
 glyphjs serve document.md --port 8080 --open
 
-# Serve with a custom theme
-glyphjs serve document.md --theme-file warmcraft.yaml -v
+# Serve with a bundled theme
+glyphjs serve document.md --theme warmcraft -v
 ```
 
 ## Custom Themes
@@ -352,11 +374,24 @@ The CLI ships with 12 community themes you can use directly or as starting point
 | `solarized-light.yml` | Solarized Light — precision colors, light variant |
 | `tokyo-night.yml` | Tokyo Night — deep navy with vibrant neons |
 
-Use a bundled theme after a global install:
+Use a bundled theme by name with the `--theme` flag:
+
+```bash
+# List available themes
+glyphjs themes
+
+# Use a bundled theme directly — no path needed
+glyphjs export document.md --format html --theme warmcraft -o output.html
+glyphjs serve document.md --theme warmcraft
+glyphjs render document.md --theme warmcraft -d ./screenshots/
+```
+
+`--theme-file` always takes precedence if both flags are provided, allowing you to use a bundled theme as a starting point and override it:
 
 ```bash
 glyphjs export document.md --format html \
-  --theme-file node_modules/@glyphjs/cli/themes/one-dark.yml \
+  --theme warmcraft \
+  --theme-file my-overrides.yaml \
   -o output.html
 ```
 
@@ -370,4 +405,4 @@ Different commands have different external dependencies:
 | `export --format pdf` | Playwright | `npm install playwright` |
 | `export --format md` | Playwright | `npm install playwright` |
 | `export --format docx` | Playwright + Pandoc | `npm install playwright` + [pandoc.org](https://pandoc.org/) |
-| `lint`, `compile`, `schemas`, `serve`, `export --format html` | None | Built-in |
+| `lint`, `compile`, `schemas`, `themes`, `serve`, `export --format html` | None | Built-in |
