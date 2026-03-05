@@ -518,14 +518,14 @@ export function Relation({ data, block }: GlyphComponentProps<RelationData>): Re
         <tbody>
           {data.entities.map((entity) => {
             const attrs = (entity.attributes ?? [])
-              .map((a) => `${a.name}: ${a.type}${a.primaryKey ? ' (PK)' : ''}`)
+              .map((a) => `${inlineToText(a.name)}: ${a.type}${a.primaryKey ? ' (PK)' : ''}`)
               .join(', ');
             const rels = data.relationships
               .filter((r) => r.from === entity.id || r.to === entity.id)
               .map((r) => {
                 const target = r.from === entity.id ? r.to : r.from;
                 const dir = r.from === entity.id ? '->' : '<-';
-                return `${dir} ${target} [${r.cardinality}]${r.label ? ` (${r.label})` : ''}`;
+                return `${dir} ${target} [${r.cardinality}]${r.label ? ` (${inlineToText(r.label)})` : ''}`;
               })
               .join(', ');
             return (
