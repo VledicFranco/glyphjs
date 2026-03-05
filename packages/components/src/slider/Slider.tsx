@@ -28,7 +28,6 @@ export interface SliderData {
   title?: string;
   layout?: 'vertical' | 'horizontal';
   parameters: SliderParameter[];
-  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────

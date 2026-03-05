@@ -12,7 +12,6 @@ export interface CodeDiffData {
   after: string;
   beforeLabel?: string | InlineNode[];
   afterLabel?: string | InlineNode[];
-  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────

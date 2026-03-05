@@ -7,5 +7,4 @@ export const codediffSchema = z.object({
   after: z.string(),
   beforeLabel: inlineContentSchema.optional(),
   afterLabel: inlineContentSchema.optional(),
-  markdown: z.boolean().default(false),
 });

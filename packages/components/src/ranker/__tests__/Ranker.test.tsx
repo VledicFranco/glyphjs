@@ -89,7 +89,6 @@ describe('Ranker', () => {
     const props = createMockProps<RankerData>(
       {
         items: [{ id: 'a', label: 'Plain text **not bold**' }],
-        markdown: false,
       },
       'ui:ranker',
     );
@@ -111,7 +110,6 @@ describe('Ranker', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:ranker',
     );
@@ -128,7 +126,6 @@ describe('Ranker', () => {
     const props = createMockProps<RankerData>(
       {
         items: [{ id: 'a', label: 'Plain string' }],
-        markdown: true,
       },
       'ui:ranker',
     );
@@ -152,7 +149,6 @@ describe('Ranker', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:ranker',
     );

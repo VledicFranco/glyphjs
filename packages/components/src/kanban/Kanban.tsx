@@ -36,7 +36,6 @@ export interface KanbanColumn {
 export interface KanbanData {
   title?: string;
   columns: KanbanColumn[];
-  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────

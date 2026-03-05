@@ -114,7 +114,6 @@ describe('Form', () => {
       {
         fields: [{ type: 'text', id: 'name', label: 'Name' }],
         description: 'Plain text **not bold**',
-        markdown: false,
       },
       'ui:form',
     );
@@ -132,7 +131,6 @@ describe('Form', () => {
           { type: 'text', value: ' and ' },
           { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
         ],
-        markdown: true,
       },
       'ui:form',
     );
@@ -150,7 +148,6 @@ describe('Form', () => {
       {
         fields: [{ type: 'text', id: 'name', label: 'Name' }],
         description: 'Plain string',
-        markdown: true,
       },
       'ui:form',
     );
@@ -170,7 +167,6 @@ describe('Form', () => {
             children: [{ type: 'text', value: 'our site' }],
           },
         ],
-        markdown: true,
       },
       'ui:form',
     );

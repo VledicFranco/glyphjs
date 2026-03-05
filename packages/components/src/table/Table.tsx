@@ -23,7 +23,6 @@ export interface TableData {
   columns: TableColumn[];
   rows: Record<string, unknown>[];
   aggregation?: TableAggregation[];
-  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────

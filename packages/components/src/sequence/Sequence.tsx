@@ -36,7 +36,6 @@ export interface SequenceData {
   title?: string | InlineNode[];
   actors: Actor[];
   messages: Message[];
-  markdown?: boolean;
 }
 
 // ─── Component ──────────────────────────────────────────────

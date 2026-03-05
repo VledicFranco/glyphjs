@@ -148,7 +148,6 @@ describe('Card', () => {
             body: 'Plain text **not bold**',
           },
         ],
-        markdown: false,
       },
       'ui:card',
     );
@@ -170,7 +169,6 @@ describe('Card', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:card',
     );
@@ -192,7 +190,6 @@ describe('Card', () => {
             body: 'Plain string',
           },
         ],
-        markdown: true,
       },
       'ui:card',
     );
@@ -216,7 +213,6 @@ describe('Card', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:card',
     );
@@ -235,7 +231,6 @@ describe('Card', () => {
             subtitle: 'Subtitle **not bold**',
           },
         ],
-        markdown: false,
       },
       'ui:card',
     );
@@ -255,7 +250,6 @@ describe('Card', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:card',
     );

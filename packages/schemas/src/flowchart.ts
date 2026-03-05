@@ -23,5 +23,4 @@ export const flowchartSchema = z.object({
     .min(1),
   direction: z.enum(['top-down', 'left-right']).default('top-down'),
   interactionMode: z.enum(['modifier-key', 'click-to-activate', 'always']).default('modifier-key'),
-  markdown: z.boolean().default(false),
 });

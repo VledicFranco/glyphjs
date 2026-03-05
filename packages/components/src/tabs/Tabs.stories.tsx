@@ -45,7 +45,6 @@ export const ThreeTabs: Story = {
 export const WithMarkdown: Story = {
   args: mockProps<TabsData>(
     {
-      markdown: true,
       tabs: [
         {
           label: [

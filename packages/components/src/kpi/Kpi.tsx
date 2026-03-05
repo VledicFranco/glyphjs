@@ -17,7 +17,6 @@ export interface KpiData {
   title?: string;
   metrics: KpiMetric[];
   columns?: number;
-  markdown?: boolean;
 }
 
 // ─── Sentiment color map ───────────────────────────────────────

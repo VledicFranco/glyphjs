@@ -34,5 +34,4 @@ export const quizSchema = z.object({
   questions: z.array(quizQuestion).min(1),
   showScore: z.boolean().default(true),
   title: z.string().optional(),
-  markdown: z.boolean().default(false),
 });

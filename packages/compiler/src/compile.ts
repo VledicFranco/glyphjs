@@ -40,8 +40,6 @@ export interface CompileOptions {
   filePath?: string;
   /** Explicit document ID override. */
   documentId?: string;
-  /** Enable markdown parsing in component text fields by default. */
-  parseComponentMarkdown?: boolean;
 }
 
 // ─── Main Compile Function ───────────────────────────────────

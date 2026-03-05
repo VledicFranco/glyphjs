@@ -193,7 +193,9 @@ describe('special characters in YAML values', () => {
 
     const calloutBlock = result.ir.blocks.find((b) => b.type === 'ui:callout');
     expect(calloutBlock).toBeDefined();
-    expect((calloutBlock!.data as Record<string, unknown>)['content']).toContain('\u4e16\u754c');
+    expect(JSON.stringify((calloutBlock!.data as Record<string, unknown>)['content'])).toContain(
+      '\u4e16\u754c',
+    );
   });
 
   it('handles YAML values with quotes and special YAML characters', () => {
@@ -227,7 +229,7 @@ describe('special characters in YAML values', () => {
     const calloutBlock = result.ir.blocks.find((b) => b.type === 'ui:callout');
     expect(calloutBlock).toBeDefined();
 
-    const content = (calloutBlock!.data as Record<string, unknown>)['content'] as string;
+    const content = JSON.stringify((calloutBlock!.data as Record<string, unknown>)['content']);
     expect(content).toContain('Line one');
     expect(content).toContain('Line two');
   });
@@ -238,7 +240,7 @@ describe('special characters in YAML values', () => {
     const result = compile(md);
     const calloutBlock = result.ir.blocks.find((b) => b.type === 'ui:callout');
     expect(calloutBlock).toBeDefined();
-    expect((calloutBlock!.data as Record<string, unknown>)['content']).toBe('');
+    expect((calloutBlock!.data as Record<string, unknown>)['content']).toEqual([]);
   });
 });
 
@@ -309,7 +311,9 @@ describe('schema validation errors through compiler', () => {
     expect(calloutBlock).toBeDefined();
     // The raw parsed data should still be present
     expect((calloutBlock!.data as Record<string, unknown>)['type']).toBe('invalid-type');
-    expect((calloutBlock!.data as Record<string, unknown>)['content']).toBe('Some text');
+    expect(JSON.stringify((calloutBlock!.data as Record<string, unknown>)['content'])).toContain(
+      'Some text',
+    );
   });
 
   it('attaches diagnostics to the block itself', () => {
@@ -683,7 +687,9 @@ describe('block variable expansion inside tab/step content', () => {
     // The tab slot should have a callout child (cloned from the suppressed var)
     const callout = tabsBlock!.children?.find((c) => c.type === 'ui:callout');
     expect(callout).toBeDefined();
-    expect((callout!.data as Record<string, unknown>)['content']).toBe('I am a note.');
+    expect(JSON.stringify((callout!.data as Record<string, unknown>)['content'])).toContain(
+      'I am a note.',
+    );
     // _slotChildCounts should reflect the expanded block
     const counts = (tabsBlock!.data as Record<string, unknown>)['_slotChildCounts'];
     expect(counts).toEqual([1]);

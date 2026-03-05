@@ -89,15 +89,30 @@
           "nodes": [
             {
               "id": "input",
-              "label": "Input Data"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Input Data"
+                }
+              ]
             },
             {
               "id": "process",
-              "label": "Processing"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Processing"
+                }
+              ]
             },
             {
               "id": "output",
-              "label": "Output"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Output"
+                }
+              ]
             }
           ],
           "edges": [
@@ -111,8 +126,7 @@
             }
           ],
           "layout": "left-right",
-          "interactionMode": "modifier-key",
-          "markdown": false
+          "interactionMode": "modifier-key"
         }
       },
       {
@@ -120,9 +134,18 @@
         "type": "ui:callout",
         "data": {
           "type": "info",
-          "title": "Summary",
-          "content": "This summarizes the graph above.",
-          "markdown": false
+          "title": [
+            {
+              "type": "text",
+              "value": "Summary"
+            }
+          ],
+          "content": [
+            {
+              "type": "text",
+              "value": "This summarizes the graph above."
+            }
+          ]
         }
       },
       {
@@ -144,15 +167,24 @@
         "data": {
           "tabs": [
             {
-              "label": "Tab A",
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Tab A"
+                }
+              ],
               "content": "Content for tab A with a [link](https://example.com).\n"
             },
             {
-              "label": "Tab B",
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Tab B"
+                }
+              ],
               "content": "Content for tab B.\n"
             }
           ],
-          "markdown": false,
           "_slotChildCounts": [1, 1]
         },
         "children": [
@@ -212,7 +244,6 @@
               "content": "Run the process.\n"
             }
           ],
-          "markdown": false,
           "_slotChildCounts": [1, 1]
         },
         "children": [

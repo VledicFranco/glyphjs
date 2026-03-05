@@ -290,7 +290,6 @@ describe('Quiz', () => {
             answer: 0,
           },
         ],
-        markdown: false,
       },
       'ui:quiz',
     );
@@ -314,7 +313,6 @@ describe('Quiz', () => {
             answer: 0,
           },
         ],
-        markdown: true,
       },
       'ui:quiz',
     );
@@ -338,7 +336,6 @@ describe('Quiz', () => {
             answer: 0,
           },
         ],
-        markdown: true,
       },
       'ui:quiz',
     );
@@ -364,7 +361,6 @@ describe('Quiz', () => {
             answer: 0,
           },
         ],
-        markdown: true,
       },
       'ui:quiz',
     );
@@ -389,7 +385,6 @@ describe('Quiz', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:quiz',
     );
@@ -419,7 +414,6 @@ describe('Quiz', () => {
             answer: 0,
           },
         ],
-        markdown: true,
       },
       'ui:quiz',
     );

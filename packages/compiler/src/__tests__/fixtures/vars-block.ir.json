@@ -25,8 +25,12 @@
         "type": "ui:callout",
         "data": {
           "type": "warning",
-          "content": "These figures are preliminary and subject to revision.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "These figures are preliminary and subject to revision."
+            }
+          ]
         }
       },
       {
@@ -58,8 +62,12 @@
         "type": "ui:callout",
         "data": {
           "type": "warning",
-          "content": "These figures are preliminary and subject to revision.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "These figures are preliminary and subject to revision."
+            }
+          ]
         }
       },
       {
@@ -79,8 +87,12 @@
         "type": "ui:callout",
         "data": {
           "type": "warning",
-          "content": "These figures are preliminary and subject to revision.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "These figures are preliminary and subject to revision."
+            }
+          ]
         }
       }
     ],

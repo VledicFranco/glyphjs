@@ -104,7 +104,6 @@ describe('Matrix', () => {
       {
         columns: [{ id: 'c', label: 'Column' }],
         rows: [{ id: 'r', label: 'Plain text **not bold**' }],
-        markdown: false,
       },
       'ui:matrix',
     );
@@ -127,7 +126,6 @@ describe('Matrix', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:matrix',
     );
@@ -145,7 +143,6 @@ describe('Matrix', () => {
       {
         columns: [{ id: 'c', label: 'Column' }],
         rows: [{ id: 'r', label: 'Plain string' }],
-        markdown: true,
       },
       'ui:matrix',
     );
@@ -170,7 +167,6 @@ describe('Matrix', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:matrix',
     );
@@ -193,7 +189,6 @@ describe('Matrix', () => {
           },
         ],
         rows: [{ id: 'r', label: 'Row' }],
-        markdown: true,
       },
       'ui:matrix',
     );

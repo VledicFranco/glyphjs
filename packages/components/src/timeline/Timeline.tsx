@@ -16,7 +16,6 @@ interface TimelineEvent {
 export interface TimelineData {
   events: TimelineEvent[];
   orientation?: 'vertical' | 'horizontal';
-  markdown?: boolean;
 }
 
 interface PositionedEvent {

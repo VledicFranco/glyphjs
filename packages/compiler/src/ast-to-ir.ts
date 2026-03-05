@@ -52,7 +52,6 @@ const MARKDOWN_FIELD_MAP: Record<string, string[]> = {
   callout: ['content', 'title'],
   card: ['cards[].body', 'cards[].subtitle'],
   accordion: ['sections[].content'],
-  steps: ['steps[].content'],
   kpi: ['metrics[].label'],
   comparison: ['options[].description', 'features[].values[]'],
   quiz: ['questions[].question', 'questions[].explanation', 'questions[].options[]'],
@@ -65,7 +64,7 @@ const MARKDOWN_FIELD_MAP: Record<string, string[]> = {
   matrix: ['rowLabels[]', 'columnLabels[]'],
   annotate: ['annotations[].text'],
   form: ['description'],
-  tabs: ['tabs[].label', 'tabs[].content'],
+  tabs: ['tabs[].label'],
   kanban: ['cards[].title', 'cards[].description'],
   table: ['columns[].label'],
   chart: ['xAxis.label', 'yAxis.label', 'series[].name'],
@@ -79,7 +78,6 @@ const MARKDOWN_FIELD_MAP: Record<string, string[]> = {
 
 /**
  * Process component data to parse markdown text fields into InlineNode[].
- * Checks if markdown is enabled (component-level flag OR global option).
  * Recursively processes nested objects and arrays based on field mapping.
  *
  * @param componentType - Component type (without "ui:" prefix)
@@ -92,14 +90,6 @@ function processMarkdownFields(
   data: Record<string, unknown>,
   ctx: TranslationContext,
 ): Record<string, unknown> {
-  // Check if markdown is enabled (component-level flag OR global option)
-  const markdownEnabled =
-    (data.markdown as boolean) === true || ctx.compileOptions.parseComponentMarkdown === true;
-
-  if (!markdownEnabled) {
-    return data;
-  }
-
   // Get field paths for this component type
   const fieldPaths = MARKDOWN_FIELD_MAP[componentType];
   if (!fieldPaths || fieldPaths.length === 0) {

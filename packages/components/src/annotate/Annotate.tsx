@@ -35,7 +35,6 @@ export interface AnnotateData {
   labels: AnnotateLabel[];
   text: string | InlineNode[];
   annotations?: Annotation[];
-  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────

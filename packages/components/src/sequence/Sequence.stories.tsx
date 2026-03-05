@@ -136,7 +136,6 @@ export const WithMarkdown: Story = {
       { type: 'inlineCode', value: 'API' },
       { type: 'text', value: ' Call Sequence' },
     ],
-    markdown: true,
     actors: [
       {
         id: 'client',

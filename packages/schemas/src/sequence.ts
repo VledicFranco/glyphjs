@@ -21,5 +21,4 @@ export const sequenceSchema = z.object({
       }),
     )
     .min(1),
-  markdown: z.boolean().default(false),
 });

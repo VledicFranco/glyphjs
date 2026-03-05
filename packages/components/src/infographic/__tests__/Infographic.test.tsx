@@ -705,7 +705,6 @@ describe('Infographic', () => {
     const props = createMockProps<InfographicData>(
       {
         sections: [{ items: [{ type: 'fact', text: 'Plain text **not bold**' }] }],
-        markdown: false,
       },
       'ui:infographic',
     );
@@ -731,7 +730,6 @@ describe('Infographic', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:infographic',
     );
@@ -748,7 +746,6 @@ describe('Infographic', () => {
     const props = createMockProps<InfographicData>(
       {
         sections: [{ items: [{ type: 'fact', text: 'Plain string' }] }],
-        markdown: true,
       },
       'ui:infographic',
     );
@@ -776,7 +773,6 @@ describe('Infographic', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:infographic',
     );
@@ -804,7 +800,6 @@ describe('Infographic', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:infographic',
     );

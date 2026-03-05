@@ -77,5 +77,4 @@ const infographicSectionSchema = z.object({
 export const infographicSchema = z.object({
   title: z.string().optional(),
   sections: z.array(infographicSectionSchema).min(1).max(8),
-  markdown: z.boolean().default(false),
 });

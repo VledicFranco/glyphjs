@@ -19,5 +19,4 @@ const kanbanColumn = z.object({
 export const kanbanSchema = z.object({
   title: z.string().optional(),
   columns: z.array(kanbanColumn).min(1),
-  markdown: z.boolean().default(false),
 });

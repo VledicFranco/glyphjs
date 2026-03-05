@@ -29,5 +29,4 @@ export const relationSchema = z.object({
   ),
   layout: z.enum(['top-down', 'left-right']).optional(),
   interactionMode: z.enum(['modifier-key', 'click-to-activate', 'always']).default('modifier-key'),
-  markdown: z.boolean().default(false),
 });

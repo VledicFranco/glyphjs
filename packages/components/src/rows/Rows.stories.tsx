@@ -14,17 +14,17 @@ type Story = StoryObj<typeof Rows>;
 const topBlock = mockBlock({
   id: 'row-top',
   type: 'ui:callout',
-  data: { type: 'info', title: 'Top', content: 'Top row content.', markdown: false },
+  data: { type: 'info', title: 'Top', content: 'Top row content.' },
 });
 const bottomBlock = mockBlock({
   id: 'row-bottom',
   type: 'ui:callout',
-  data: { type: 'tip', title: 'Bottom', content: 'Bottom row content.', markdown: false },
+  data: { type: 'tip', title: 'Bottom', content: 'Bottom row content.' },
 });
 const thirdBlock = mockBlock({
   id: 'row-third',
   type: 'ui:callout',
-  data: { type: 'warning', title: 'Third', content: 'Third row content.', markdown: false },
+  data: { type: 'warning', title: 'Third', content: 'Third row content.' },
 });
 
 // ─── Equal Rows ────────────────────────────────────────────────

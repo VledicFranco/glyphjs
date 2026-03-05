@@ -117,7 +117,6 @@ describe('Comparison', () => {
       {
         options: [{ name: 'Option', description: 'Plain text **not bold**' }],
         features: [{ name: 'Feature', values: ['yes'] }],
-        markdown: false,
       },
       'ui:comparison',
     );
@@ -140,7 +139,6 @@ describe('Comparison', () => {
           },
         ],
         features: [{ name: 'Feature', values: ['yes'] }],
-        markdown: true,
       },
       'ui:comparison',
     );
@@ -158,7 +156,6 @@ describe('Comparison', () => {
       {
         options: [{ name: 'Option', description: 'Plain string' }],
         features: [{ name: 'Feature', values: ['yes'] }],
-        markdown: true,
       },
       'ui:comparison',
     );
@@ -183,7 +180,6 @@ describe('Comparison', () => {
           },
         ],
         features: [{ name: 'Feature', values: ['yes'] }],
-        markdown: true,
       },
       'ui:comparison',
     );
@@ -198,7 +194,6 @@ describe('Comparison', () => {
       {
         options: [{ name: 'A' }, { name: 'B' }],
         features: [{ name: 'Feature', values: ['**not bold**', 'plain'] }],
-        markdown: false,
       },
       'ui:comparison',
     );
@@ -221,7 +216,6 @@ describe('Comparison', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:comparison',
     );

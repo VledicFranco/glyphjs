@@ -149,7 +149,9 @@ describe('compile() — scalar variables', () => {
     const callout = result.ir.blocks.find((b) => b.type === 'ui:callout');
     expect(callout).toBeDefined();
     expect((callout!.data as Record<string, unknown>)['type']).toBe('warning');
-    expect((callout!.data as Record<string, unknown>)['content']).toBe('Pay attention to this');
+    expect(JSON.stringify((callout!.data as Record<string, unknown>)['content'])).toContain(
+      'Pay attention to this',
+    );
   });
 
   it('T1.12: multiple ui:vars in sequence, later can use earlier', () => {

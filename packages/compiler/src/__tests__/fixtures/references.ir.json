@@ -27,12 +27,16 @@
           "nodes": [
             {
               "id": "x",
-              "label": "X"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "X"
+                }
+              ]
             }
           ],
           "edges": [],
-          "interactionMode": "modifier-key",
-          "markdown": false
+          "interactionMode": "modifier-key"
         }
       },
       {
@@ -40,8 +44,12 @@
         "type": "ui:callout",
         "data": {
           "type": "tip",
-          "content": "This is the data table callout.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "This is the data table callout."
+            }
+          ]
         }
       }
     ],

@@ -72,7 +72,6 @@ export interface FormData {
   description?: string | InlineNode[];
   submitLabel?: string;
   fields: FormField[];
-  markdown?: boolean;
 }
 
 // ─── Field Renderer ───────────────────────────────────────────

@@ -74,7 +74,6 @@ export interface InfographicSection {
 export interface InfographicData {
   title?: string;
   sections: InfographicSection[];
-  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────

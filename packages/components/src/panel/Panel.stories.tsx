@@ -14,7 +14,7 @@ type Story = StoryObj<typeof Panel>;
 const innerBlock = mockBlock({
   id: 'panel-inner',
   type: 'ui:callout',
-  data: { type: 'info', title: 'Inside Panel', content: 'Panel wraps any block.', markdown: false },
+  data: { type: 'info', title: 'Inside Panel', content: 'Panel wraps any block.' },
 });
 
 // ─── Card ──────────────────────────────────────────────────────

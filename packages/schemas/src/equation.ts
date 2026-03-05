@@ -13,7 +13,6 @@ export const equationSchema = z
         }),
       )
       .optional(),
-    markdown: z.boolean().default(false),
   })
   .refine(
     (data) => data.expression !== undefined || (data.steps !== undefined && data.steps.length > 0),

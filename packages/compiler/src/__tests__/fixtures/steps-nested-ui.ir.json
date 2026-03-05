@@ -40,7 +40,6 @@
               "content": "Push to production.\n"
             }
           ],
-          "markdown": false,
           "_slotChildCounts": [2, 1, 1]
         },
         "children": [
@@ -61,8 +60,20 @@
             "type": "ui:callout",
             "data": {
               "type": "tip",
-              "content": "Use `pnpm` for best results.",
-              "markdown": false
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Use "
+                },
+                {
+                  "type": "inlineCode",
+                  "value": "pnpm"
+                },
+                {
+                  "type": "text",
+                  "value": " for best results."
+                }
+              ]
             }
           },
           {

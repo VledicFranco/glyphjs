@@ -62,8 +62,12 @@
         "type": "ui:callout",
         "data": {
           "type": "info",
-          "content": "Acme Corp ships v2.4.1 today.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "Acme Corp ships v2.4.1 today."
+            }
+          ]
         }
       }
     ],

@@ -23,7 +23,6 @@ export interface PollData {
   multiple?: boolean;
   showResults?: boolean;
   title?: string;
-  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────

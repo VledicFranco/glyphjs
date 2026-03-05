@@ -25,15 +25,24 @@
         "data": {
           "tabs": [
             {
-              "label": "Hello Tab",
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Hello Tab"
+                }
+              ],
               "content": "Welcome to GlyphJS.\n\n```ui:callout\ntype: info\ncontent: \"Built with GlyphJS.\"\n```\n"
             },
             {
-              "label": "Plain",
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Plain"
+                }
+              ],
               "content": "No variables here.\n"
             }
           ],
-          "markdown": false,
           "_slotChildCounts": [2, 1]
         },
         "children": [
@@ -54,8 +63,12 @@
             "type": "ui:callout",
             "data": {
               "type": "info",
-              "content": "Built with GlyphJS.",
-              "markdown": false
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Built with GlyphJS."
+                }
+              ]
             }
           },
           {

@@ -35,7 +35,6 @@ export interface RelationData {
   relationships: Relationship[];
   layout?: 'top-down' | 'left-right';
   interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
-  markdown?: boolean;
 }
 
 // ─── Layout Constants ────────────────────────────────────────

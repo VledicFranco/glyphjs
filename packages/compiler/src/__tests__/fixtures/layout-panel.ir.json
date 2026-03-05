@@ -33,9 +33,18 @@
             "type": "ui:callout",
             "data": {
               "type": "tip",
-              "title": "Wrapped Content",
-              "content": "This block is wrapped in a styled panel.",
-              "markdown": false
+              "title": [
+                {
+                  "type": "text",
+                  "value": "Wrapped Content"
+                }
+              ],
+              "content": [
+                {
+                  "type": "text",
+                  "value": "This block is wrapped in a styled panel."
+                }
+              ]
             }
           }
         ]

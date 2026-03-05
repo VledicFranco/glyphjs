@@ -14,7 +14,6 @@ export interface AccordionData {
   sections: AccordionSection[];
   defaultOpen?: number[];
   multiple?: boolean;
-  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────

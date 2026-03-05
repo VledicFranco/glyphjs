@@ -37,8 +37,12 @@
         "type": "ui:callout",
         "data": {
           "type": "info",
-          "content": "Internal use only. Do not distribute.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "Internal use only. Do not distribute."
+            }
+          ]
         }
       },
       {
@@ -58,8 +62,12 @@
         "type": "ui:callout",
         "data": {
           "type": "info",
-          "content": "Internal use only. Do not distribute.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "Internal use only. Do not distribute."
+            }
+          ]
         }
       }
     ],

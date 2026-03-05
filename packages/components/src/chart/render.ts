@@ -11,7 +11,6 @@ export interface ChartData {
   xAxis?: { key: string; label?: string | InlineNode[] };
   yAxis?: { key: string; label?: string | InlineNode[] };
   legend?: boolean;
-  markdown?: boolean;
 }
 
 export type DataRecord = Record<string, number | string>;

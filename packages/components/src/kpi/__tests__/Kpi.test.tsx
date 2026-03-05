@@ -124,7 +124,6 @@ describe('Kpi', () => {
     const props = createMockProps<KpiData>(
       {
         metrics: [{ label: 'Plain text **not bold**', value: '100' }],
-        markdown: false,
       },
       'ui:kpi',
     );
@@ -146,7 +145,6 @@ describe('Kpi', () => {
             value: '100',
           },
         ],
-        markdown: true,
       },
       'ui:kpi',
     );
@@ -163,7 +161,6 @@ describe('Kpi', () => {
     const props = createMockProps<KpiData>(
       {
         metrics: [{ label: 'Plain string', value: '100' }],
-        markdown: true,
       },
       'ui:kpi',
     );
@@ -187,7 +184,6 @@ describe('Kpi', () => {
             value: '100',
           },
         ],
-        markdown: true,
       },
       'ui:kpi',
     );

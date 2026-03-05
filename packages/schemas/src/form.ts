@@ -60,5 +60,4 @@ export const formSchema = z.object({
   description: inlineContentSchema.optional(),
   submitLabel: z.string().default('Submit'),
   fields: z.array(formField).min(1),
-  markdown: z.boolean().default(false),
 });

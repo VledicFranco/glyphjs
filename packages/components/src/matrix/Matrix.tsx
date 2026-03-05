@@ -33,7 +33,6 @@ export interface MatrixData {
   showTotals?: boolean;
   columns: MatrixColumn[];
   rows: MatrixRow[];
-  markdown?: boolean;
 }
 
 // ─── Helpers ───────────────────────────────────────────────────

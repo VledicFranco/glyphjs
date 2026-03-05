@@ -58,8 +58,12 @@
         "type": "ui:callout",
         "data": {
           "type": "info",
-          "content": "This document is maintained by Jane Smith.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "This document is maintained by Jane Smith."
+            }
+          ]
         }
       }
     ],

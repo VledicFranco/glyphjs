@@ -14,12 +14,12 @@ type Story = StoryObj<typeof Columns>;
 const leftBlock = mockBlock({
   id: 'col-left',
   type: 'ui:callout',
-  data: { type: 'info', content: 'Left column content.', markdown: false },
+  data: { type: 'info', content: 'Left column content.' },
 });
 const rightBlock = mockBlock({
   id: 'col-right',
   type: 'ui:callout',
-  data: { type: 'tip', content: 'Right column content.', markdown: false },
+  data: { type: 'tip', content: 'Right column content.' },
 });
 
 // ─── Equal Columns ─────────────────────────────────────────────
@@ -57,7 +57,7 @@ export const WeightedColumns: Story = {
 const thirdBlock = mockBlock({
   id: 'col-third',
   type: 'ui:callout',
-  data: { type: 'warning', content: 'Third column.', markdown: false },
+  data: { type: 'warning', content: 'Third column.' },
 });
 
 export const ThreeColumns: Story = {

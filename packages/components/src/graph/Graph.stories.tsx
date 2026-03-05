@@ -216,7 +216,6 @@ export const WithMarkdown: Story = {
   args: mockProps<GraphData>(
     {
       type: 'dag',
-      markdown: true,
       nodes: [
         {
           id: 'input',

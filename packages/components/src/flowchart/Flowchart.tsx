@@ -31,7 +31,6 @@ export interface FlowchartData {
   edges: FlowchartEdgeData[];
   direction: 'top-down' | 'left-right';
   interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
-  markdown?: boolean;
 }
 
 interface PositionedNode extends FlowchartNodeData {

@@ -62,7 +62,7 @@ describe('Callout', () => {
 
   it('renders plain text when markdown=false', () => {
     const props = createMockProps<CalloutData>(
-      { type: 'info', content: 'Plain text **not bold**', markdown: false },
+      { type: 'info', content: 'Plain text **not bold**' },
       'ui:callout',
     );
     render(<Callout {...props} />);
@@ -79,7 +79,6 @@ describe('Callout', () => {
           { type: 'text', value: ' and ' },
           { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
         ],
-        markdown: true,
       },
       'ui:callout',
     );
@@ -94,7 +93,7 @@ describe('Callout', () => {
 
   it('handles plain string even when markdown=true (backward compat)', () => {
     const props = createMockProps<CalloutData>(
-      { type: 'info', content: 'Plain string', markdown: true },
+      { type: 'info', content: 'Plain string' },
       'ui:callout',
     );
     render(<Callout {...props} />);
@@ -113,7 +112,6 @@ describe('Callout', () => {
             children: [{ type: 'text', value: 'our site' }],
           },
         ],
-        markdown: true,
       },
       'ui:callout',
     );

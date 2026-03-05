@@ -7,5 +7,4 @@ export const calloutSchema = z.object({
   type: z.enum(['info', 'warning', 'error', 'tip']),
   title: inlineContentSchema.optional(),
   content: inlineContentSchema,
-  markdown: z.boolean().default(false),
 });

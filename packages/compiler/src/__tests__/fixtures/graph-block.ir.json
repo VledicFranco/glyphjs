@@ -27,22 +27,42 @@
           "nodes": [
             {
               "id": "a",
-              "label": "Node A"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Node A"
+                }
+              ]
             },
             {
               "id": "b",
-              "label": "Node B"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Node B"
+                }
+              ]
             },
             {
               "id": "c",
-              "label": "Node C"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Node C"
+                }
+              ]
             }
           ],
           "edges": [
             {
               "from": "a",
               "to": "b",
-              "label": "connects"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "connects"
+                }
+              ]
             },
             {
               "from": "b",
@@ -50,8 +70,7 @@
             }
           ],
           "layout": "top-down",
-          "interactionMode": "modifier-key",
-          "markdown": false
+          "interactionMode": "modifier-key"
         }
       }
     ],

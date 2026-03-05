@@ -23,7 +23,6 @@ export interface CardData {
   cards: CardItem[];
   variant?: 'default' | 'outlined' | 'elevated';
   columns?: number;
-  markdown?: boolean;
 }
 
 // ─── Variant styles ─────────────────────────────────────────────

@@ -10,5 +10,4 @@ const rankerItem = z.object({
 export const rankerSchema = z.object({
   title: z.string().optional(),
   items: z.array(rankerItem).min(2),
-  markdown: z.boolean().default(false),
 });

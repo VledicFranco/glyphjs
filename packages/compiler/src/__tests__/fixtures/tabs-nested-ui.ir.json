@@ -25,15 +25,24 @@
         "data": {
           "tabs": [
             {
-              "label": "With Callout",
+              "label": [
+                {
+                  "type": "text",
+                  "value": "With Callout"
+                }
+              ],
               "content": "Some intro text.\n\n```ui:callout\ntype: info\ncontent: This callout is nested inside a tab.\n```\n"
             },
             {
-              "label": "Plain Text",
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Plain Text"
+                }
+              ],
               "content": "Just a paragraph here.\n"
             }
           ],
-          "markdown": false,
           "_slotChildCounts": [2, 1]
         },
         "children": [
@@ -54,8 +63,12 @@
             "type": "ui:callout",
             "data": {
               "type": "info",
-              "content": "This callout is nested inside a tab.",
-              "markdown": false
+              "content": [
+                {
+                  "type": "text",
+                  "value": "This callout is nested inside a tab."
+                }
+              ]
             }
           },
           {

@@ -249,7 +249,6 @@ export const WithMarkdown: Story = {
       { type: 'text', value: ' Request Flow' },
     ],
     direction: 'top-down',
-    markdown: true,
     nodes: [
       {
         id: 'start',

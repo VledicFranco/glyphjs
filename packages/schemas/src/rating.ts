@@ -16,5 +16,4 @@ export const ratingSchema = z.object({
     })
     .optional(),
   items: z.array(ratingItem).min(1),
-  markdown: z.boolean().default(false),
 });

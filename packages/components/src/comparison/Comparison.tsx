@@ -18,7 +18,6 @@ export interface ComparisonData {
   title?: string;
   options: ComparisonOption[];
   features: ComparisonFeature[];
-  markdown?: boolean;
 }
 
 // ─── Value rendering ───────────────────────────────────────────

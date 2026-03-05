@@ -94,7 +94,6 @@ describe('Timeline', () => {
     const props = createMockProps<TimelineData>(
       {
         events: [{ date: '2024-01-01', title: 'Plain text **not bold**' }],
-        markdown: false,
       },
       'ui:timeline',
     );
@@ -116,7 +115,6 @@ describe('Timeline', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:timeline',
     );
@@ -133,7 +131,6 @@ describe('Timeline', () => {
     const props = createMockProps<TimelineData>(
       {
         events: [{ date: '2024-01-01', title: 'Plain string' }],
-        markdown: true,
       },
       'ui:timeline',
     );
@@ -157,7 +154,6 @@ describe('Timeline', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:timeline',
     );
@@ -182,7 +178,6 @@ describe('Timeline', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:timeline',
     );

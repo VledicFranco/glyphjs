@@ -32,9 +32,18 @@
             "type": "ui:callout",
             "data": {
               "type": "info",
-              "title": "Top Section",
-              "content": "Top row content.",
-              "markdown": false
+              "title": [
+                {
+                  "type": "text",
+                  "value": "Top Section"
+                }
+              ],
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Top row content."
+                }
+              ]
             }
           },
           {
@@ -42,9 +51,18 @@
             "type": "ui:callout",
             "data": {
               "type": "tip",
-              "title": "Bottom Section",
-              "content": "Bottom row content.",
-              "markdown": false
+              "title": [
+                {
+                  "type": "text",
+                  "value": "Bottom Section"
+                }
+              ],
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Bottom row content."
+                }
+              ]
             }
           }
         ]

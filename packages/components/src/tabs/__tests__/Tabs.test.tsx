@@ -153,7 +153,6 @@ describe('Tabs', () => {
             content: 'Content',
           },
         ],
-        markdown: true,
       };
       const props = createMockProps<TabsData>(data, 'ui:tabs');
       render(<Tabs {...props} />);
@@ -178,7 +177,6 @@ describe('Tabs', () => {
             ] as InlineNode[],
           },
         ],
-        markdown: true,
       };
       const props = createMockProps<TabsData>(data, 'ui:tabs');
       render(<Tabs {...props} />);
@@ -204,7 +202,6 @@ describe('Tabs', () => {
             ] as InlineNode[],
           },
         ],
-        markdown: true,
       };
       const props = createMockProps<TabsData>(data, 'ui:tabs');
       render(<Tabs {...props} />);

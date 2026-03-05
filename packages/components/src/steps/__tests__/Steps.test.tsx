@@ -121,7 +121,6 @@ describe('Steps', () => {
     const props = createMockProps<StepsData>(
       {
         steps: [{ title: 'Step', content: 'Plain text **not bold**' }],
-        markdown: false,
       },
       'ui:steps',
     );
@@ -143,7 +142,6 @@ describe('Steps', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:steps',
     );
@@ -160,7 +158,6 @@ describe('Steps', () => {
     const props = createMockProps<StepsData>(
       {
         steps: [{ title: 'Step', content: 'Plain string' }],
-        markdown: true,
       },
       'ui:steps',
     );
@@ -184,7 +181,6 @@ describe('Steps', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:steps',
     );

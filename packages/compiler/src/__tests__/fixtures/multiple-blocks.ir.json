@@ -25,8 +25,12 @@
         "type": "ui:callout",
         "data": {
           "type": "info",
-          "content": "This is an informational callout.",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "This is an informational callout."
+            }
+          ]
         }
       },
       {
@@ -49,11 +53,21 @@
           "nodes": [
             {
               "id": "start",
-              "label": "Start"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Start"
+                }
+              ]
             },
             {
               "id": "end",
-              "label": "End"
+              "label": [
+                {
+                  "type": "text",
+                  "value": "End"
+                }
+              ]
             }
           ],
           "edges": [
@@ -62,8 +76,7 @@
               "to": "end"
             }
           ],
-          "interactionMode": "modifier-key",
-          "markdown": false
+          "interactionMode": "modifier-key"
         }
       },
       {
@@ -71,9 +84,18 @@
         "type": "ui:callout",
         "data": {
           "type": "warning",
-          "title": "Watch Out",
-          "content": "This is a warning callout.",
-          "markdown": false
+          "title": [
+            {
+              "type": "text",
+              "value": "Watch Out"
+            }
+          ],
+          "content": [
+            {
+              "type": "text",
+              "value": "This is a warning callout."
+            }
+          ]
         }
       }
     ],

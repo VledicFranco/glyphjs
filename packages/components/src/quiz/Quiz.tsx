@@ -44,7 +44,6 @@ export interface QuizData {
   questions: QuizQuestion[];
   showScore?: boolean;
   title?: string;
-  markdown?: boolean;
 }
 
 // ─── Per-question state ────────────────────────────────────────

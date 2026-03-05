@@ -13,7 +13,6 @@ export interface StepItem {
 
 export interface StepsData {
   steps: StepItem[];
-  markdown?: boolean;
   _slotChildCounts?: number[];
 }
 

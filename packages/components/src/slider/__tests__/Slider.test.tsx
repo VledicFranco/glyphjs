@@ -94,7 +94,6 @@ describe('Slider', () => {
     const props = createMockProps<SliderData>(
       {
         parameters: [{ id: 'p', label: 'Plain text **not bold**', min: 0, max: 100 }],
-        markdown: false,
       },
       'ui:slider',
     );
@@ -118,7 +117,6 @@ describe('Slider', () => {
             max: 100,
           },
         ],
-        markdown: true,
       },
       'ui:slider',
     );
@@ -135,7 +133,6 @@ describe('Slider', () => {
     const props = createMockProps<SliderData>(
       {
         parameters: [{ id: 'p', label: 'Plain string', min: 0, max: 100 }],
-        markdown: true,
       },
       'ui:slider',
     );
@@ -161,7 +158,6 @@ describe('Slider', () => {
             max: 100,
           },
         ],
-        markdown: true,
       },
       'ui:slider',
     );

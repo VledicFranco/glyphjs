@@ -14,7 +14,6 @@ export interface EquationData {
   expression?: string;
   label?: string | InlineNode[];
   steps?: EquationStep[];
-  markdown?: boolean;
 }
 
 // ─── LaTeX Rendering ─────────────────────────────────────────

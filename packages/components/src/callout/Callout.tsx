@@ -8,7 +8,6 @@ export interface CalloutData {
   type: 'info' | 'warning' | 'error' | 'tip';
   title?: string | InlineNode[];
   content: string | InlineNode[];
-  markdown?: boolean;
 }
 
 type CalloutType = CalloutData['type'];

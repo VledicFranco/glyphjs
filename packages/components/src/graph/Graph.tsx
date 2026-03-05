@@ -33,7 +33,6 @@ export interface GraphData {
   edges: GraphEdgeData[];
   layout?: 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'force';
   interactionMode?: 'modifier-key' | 'click-to-activate' | 'always';
-  markdown?: boolean;
 }
 
 type LayoutDirection = 'top-down' | 'left-right' | 'bottom-up' | 'radial' | 'force';

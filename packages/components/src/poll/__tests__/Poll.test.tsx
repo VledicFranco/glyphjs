@@ -123,7 +123,6 @@ describe('Poll', () => {
       {
         question: 'Plain text **not bold**',
         options: ['A', 'B'],
-        markdown: false,
       },
       'ui:poll',
     );
@@ -141,7 +140,6 @@ describe('Poll', () => {
           { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
         ],
         options: ['A', 'B'],
-        markdown: true,
       },
       'ui:poll',
     );
@@ -159,7 +157,6 @@ describe('Poll', () => {
       {
         question: 'Plain string',
         options: ['A', 'B'],
-        markdown: true,
       },
       'ui:poll',
     );
@@ -179,7 +176,6 @@ describe('Poll', () => {
           },
         ],
         options: ['A', 'B'],
-        markdown: true,
       },
       'ui:poll',
     );
@@ -200,7 +196,6 @@ describe('Poll', () => {
           ],
           'Plain option',
         ],
-        markdown: true,
       },
       'ui:poll',
     );

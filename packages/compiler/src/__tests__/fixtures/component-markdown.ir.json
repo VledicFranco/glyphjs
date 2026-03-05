@@ -1,14 +1,14 @@
 {
   "ir": {
     "version": "1.0.0",
-    "id": "doc-a345fc1094138bb3",
+    "id": "doc-d8af3317a392ed59",
     "metadata": {
       "title": "Component Markdown Test",
       "description": "Test inline markdown formatting in component text fields."
     },
     "blocks": [
       {
-        "id": "b-bebeaeabbe5b",
+        "id": "b-a58c9a35b7e7",
         "type": "heading",
         "data": {
           "depth": 1,
@@ -21,7 +21,7 @@
         }
       },
       {
-        "id": "b-2f2c880434d6",
+        "id": "b-74a137552017",
         "type": "paragraph",
         "data": {
           "children": [
@@ -33,7 +33,7 @@
         }
       },
       {
-        "id": "b-f0bc024c80e2",
+        "id": "b-42b8b43961a4",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -46,7 +46,7 @@
         }
       },
       {
-        "id": "b-eeb3a5784615",
+        "id": "b-ab3ff722f55d",
         "type": "ui:callout",
         "data": {
           "type": "info",
@@ -99,12 +99,11 @@
               "type": "inlineCode",
               "value": "code"
             }
-          ],
-          "markdown": true
+          ]
         }
       },
       {
-        "id": "b-bab5d6dd5457",
+        "id": "b-b9e0113c0b18",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -117,7 +116,7 @@
         }
       },
       {
-        "id": "b-f83b298baf29",
+        "id": "b-9edb47fdbb29",
         "type": "ui:card",
         "data": {
           "cards": [
@@ -173,12 +172,11 @@
               ]
             }
           ],
-          "variant": "default",
-          "markdown": true
+          "variant": "default"
         }
       },
       {
-        "id": "b-bb9820704456",
+        "id": "b-f3b86faaa494",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -191,7 +189,7 @@
         }
       },
       {
-        "id": "b-8563ddef2e2b",
+        "id": "b-e3be3f27fc54",
         "type": "ui:accordion",
         "data": {
           "sections": [
@@ -258,12 +256,11 @@
               ]
             }
           ],
-          "multiple": true,
-          "markdown": true
+          "multiple": true
         }
       },
       {
-        "id": "b-d586b6630ffc",
+        "id": "b-3d6c3f88884e",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -276,13 +273,27 @@
         }
       },
       {
-        "id": "b-cee14c1c7537",
+        "id": "b-459298dfe744",
         "type": "ui:steps",
         "data": {
           "steps": [
             {
               "title": "Step 1",
-              "content": [
+              "content": "First step with **bold** text"
+            },
+            {
+              "title": "Step 2",
+              "content": "Second step with *italic* and `code`"
+            }
+          ],
+          "_slotChildCounts": [1, 1]
+        },
+        "children": [
+          {
+            "id": "b-c2628fe368c9",
+            "type": "paragraph",
+            "data": {
+              "children": [
                 {
                   "type": "text",
                   "value": "First step with "
@@ -301,10 +312,13 @@
                   "value": " text"
                 }
               ]
-            },
-            {
-              "title": "Step 2",
-              "content": [
+            }
+          },
+          {
+            "id": "b-f3ed5648e39b",
+            "type": "paragraph",
+            "data": {
+              "children": [
                 {
                   "type": "text",
                   "value": "Second step with "
@@ -328,13 +342,11 @@
                 }
               ]
             }
-          ],
-          "markdown": true,
-          "_slotChildCounts": [0, 0]
-        }
+          }
+        ]
       },
       {
-        "id": "b-1109e73735f7",
+        "id": "b-c3c510dea914",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -347,7 +359,7 @@
         }
       },
       {
-        "id": "b-3765b5c42d91",
+        "id": "b-22da27bb5767",
         "type": "ui:timeline",
         "data": {
           "events": [
@@ -430,12 +442,11 @@
                 }
               ]
             }
-          ],
-          "markdown": true
+          ]
         }
       },
       {
-        "id": "b-7a5a47260dd3",
+        "id": "b-16811e479777",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -448,7 +459,7 @@
         }
       },
       {
-        "id": "b-73e1b5caa6c5",
+        "id": "b-3006d2c7ac49",
         "type": "ui:quiz",
         "data": {
           "questions": [
@@ -537,12 +548,11 @@
               ]
             }
           ],
-          "showScore": true,
-          "markdown": true
+          "showScore": true
         }
       },
       {
-        "id": "b-93bd9fd868f8",
+        "id": "b-903eb7eef730",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -555,7 +565,7 @@
         }
       },
       {
-        "id": "b-9d121b025002",
+        "id": "b-12f927fc302d",
         "type": "ui:poll",
         "data": {
           "question": [
@@ -579,55 +589,75 @@
           ],
           "options": ["*Feature* A", "Feature `B`", "[Feature C](https://example.com)"],
           "multiple": false,
-          "showResults": true,
-          "markdown": true
+          "showResults": true
         }
       },
       {
-        "id": "b-837ed39422ec",
+        "id": "b-726a16810bbf",
         "type": "heading",
         "data": {
           "depth": 2,
           "children": [
             {
               "type": "text",
-              "value": "Backward Compatibility"
+              "value": "Always-On (No Flag Required)"
             }
           ]
         }
       },
       {
-        "id": "b-abdf461fe359",
+        "id": "b-e9564b521e47",
         "type": "paragraph",
         "data": {
           "children": [
             {
               "type": "text",
-              "value": "Components without markdown flag should render text literally:"
+              "value": "Plain callout with bold text and no flag — markdown is always parsed now:"
             }
           ]
         }
       },
       {
-        "id": "b-3165004ce1e4",
-        "type": "ui:callout",
-        "data": {
-          "type": "warning",
-          "content": "This stays plain: **not bold** and *not italic*",
-          "markdown": false
-        }
-      },
-      {
-        "id": "b-9861750015d4",
+        "id": "b-e5c193741e12",
         "type": "ui:callout",
         "data": {
           "type": "tip",
-          "content": "No markdown flag defaults to plain text: **not bold**",
-          "markdown": false
+          "content": [
+            {
+              "type": "text",
+              "value": "Always works: "
+            },
+            {
+              "type": "strong",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "bold"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " and "
+            },
+            {
+              "type": "emphasis",
+              "children": [
+                {
+                  "type": "text",
+                  "value": "italic"
+                }
+              ]
+            },
+            {
+              "type": "text",
+              "value": " without any flag"
+            }
+          ]
         }
       },
       {
-        "id": "b-f228414ee1ca",
+        "id": "b-a81598a7e283",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -640,7 +670,7 @@
         }
       },
       {
-        "id": "b-bd289f6046ad",
+        "id": "b-daa059efabef",
         "type": "ui:callout",
         "data": {
           "type": "info",
@@ -693,12 +723,11 @@
                 }
               ]
             }
-          ],
-          "markdown": true
+          ]
         }
       },
       {
-        "id": "b-f5e7b3a12cf9",
+        "id": "b-219cbeb47848",
         "type": "heading",
         "data": {
           "depth": 2,
@@ -711,7 +740,7 @@
         }
       },
       {
-        "id": "b-3f6211bfe0da",
+        "id": "b-fcd62353903d",
         "type": "ui:callout",
         "data": {
           "type": "tip",
@@ -746,8 +775,7 @@
               "type": "text",
               "value": " and more"
             }
-          ],
-          "markdown": true
+          ]
         }
       }
     ],

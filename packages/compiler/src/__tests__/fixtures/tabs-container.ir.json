@@ -25,15 +25,24 @@
         "data": {
           "tabs": [
             {
-              "label": "Overview",
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Overview"
+                }
+              ],
               "content": "## Overview Tab\n\nThis is the overview content.\n"
             },
             {
-              "label": "Details",
+              "label": [
+                {
+                  "type": "text",
+                  "value": "Details"
+                }
+              ],
               "content": "## Details Tab\n\nHere are the details with **bold** text.\n"
             }
           ],
-          "markdown": false,
           "_slotChildCounts": [2, 2]
         },
         "children": [

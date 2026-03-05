@@ -117,7 +117,6 @@ describe('Rating', () => {
     const props = createMockProps<RatingData>(
       {
         items: [{ label: 'Plain text **not bold**' }],
-        markdown: false,
       },
       'ui:rating',
     );
@@ -138,7 +137,6 @@ describe('Rating', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:rating',
     );
@@ -155,7 +153,6 @@ describe('Rating', () => {
     const props = createMockProps<RatingData>(
       {
         items: [{ label: 'Plain string' }],
-        markdown: true,
       },
       'ui:rating',
     );
@@ -178,7 +175,6 @@ describe('Rating', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:rating',
     );
@@ -200,7 +196,6 @@ describe('Rating', () => {
             ],
           },
         ],
-        markdown: true,
       },
       'ui:rating',
     );

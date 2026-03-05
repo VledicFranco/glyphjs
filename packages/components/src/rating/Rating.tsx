@@ -26,7 +26,6 @@ export interface RatingData {
   mode?: 'star' | 'number';
   labels?: { low: string; high: string };
   items: RatingItem[];
-  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────

@@ -11,7 +11,6 @@ Test inline markdown formatting in component text fields.
 ```ui:callout
 type: info
 content: "This is **bold** and *italic* with a [link](https://example.com) and `code`"
-markdown: true
 ```
 
 ## Card with Markdown
@@ -21,7 +20,6 @@ cards:
   - title: First Card
     subtitle: "A **bold** subtitle"
     body: "Body with *italic* text and [links](https://example.com)"
-markdown: true
 ```
 
 ## Accordion with Markdown
@@ -32,7 +30,6 @@ sections:
     content: "Content with **bold** and *italic* formatting"
   - title: Section 2
     content: "More content with `inline code` and [links](https://example.com)"
-markdown: true
 ```
 
 ## Steps with Markdown
@@ -43,7 +40,6 @@ steps:
     content: "First step with **bold** text"
   - title: Step 2
     content: "Second step with *italic* and `code`"
-markdown: true
 ```
 
 ## Timeline with Markdown
@@ -56,7 +52,6 @@ events:
   - date: "2024-01-02"
     title: "Another event"
     description: "More **formatted** text"
-markdown: true
 ```
 
 ## Quiz with Markdown
@@ -71,7 +66,6 @@ questions:
       - "Plain option"
     answer: 0
     explanation: "Explanation with **bold** and *italic*"
-markdown: true
 ```
 
 ## Poll with Markdown
@@ -82,22 +76,15 @@ options:
   - "*Feature* A"
   - "Feature `B`"
   - "[Feature C](https://example.com)"
-markdown: true
 ```
 
-## Backward Compatibility
+## Always-On (No Flag Required)
 
-Components without markdown flag should render text literally:
-
-```ui:callout
-type: warning
-content: "This stays plain: **not bold** and *not italic*"
-markdown: false
-```
+Plain callout with bold text and no flag — markdown is always parsed now:
 
 ```ui:callout
 type: tip
-content: "No markdown flag defaults to plain text: **not bold**"
+content: "Always works: **bold** and *italic* without any flag"
 ```
 
 ## Multiple Formatting Types
@@ -105,7 +92,6 @@ content: "No markdown flag defaults to plain text: **not bold**"
 ```ui:callout
 type: info
 content: "Combined: **bold**, *italic*, `code`, ~~strikethrough~~, and [link](https://example.com)"
-markdown: true
 ```
 
 ## Nested Formatting
@@ -113,5 +99,4 @@ markdown: true
 ```ui:callout
 type: tip
 content: "Nested: **bold with *italic inside* text** and more"
-markdown: true
 ```

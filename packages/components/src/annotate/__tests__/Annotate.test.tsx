@@ -86,7 +86,6 @@ describe('Annotate', () => {
       {
         labels: [{ name: 'Label', color: '#ff0000' }],
         text: 'Plain text **not bold**',
-        markdown: false,
       },
       'ui:annotate',
     );
@@ -104,7 +103,6 @@ describe('Annotate', () => {
           { type: 'text', value: ' and ' },
           { type: 'emphasis', children: [{ type: 'text', value: 'italic' }] },
         ],
-        markdown: true,
       },
       'ui:annotate',
     );
@@ -122,7 +120,6 @@ describe('Annotate', () => {
       {
         labels: [{ name: 'Label', color: '#ff0000' }],
         text: 'Plain string',
-        markdown: true,
       },
       'ui:annotate',
     );
@@ -142,7 +139,6 @@ describe('Annotate', () => {
             children: [{ type: 'text', value: 'our site' }],
           },
         ],
-        markdown: true,
       },
       'ui:annotate',
     );

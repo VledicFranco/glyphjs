@@ -7,5 +7,4 @@ export const pollSchema = z.object({
   multiple: z.boolean().default(false),
   showResults: z.boolean().default(true),
   title: z.string().optional(),
-  markdown: z.boolean().default(false),
 });

@@ -14,5 +14,4 @@ export const chartSchema = z.object({
   xAxis: z.object({ key: z.string(), label: inlineContentSchema.optional() }).optional(),
   yAxis: z.object({ key: z.string(), label: inlineContentSchema.optional() }).optional(),
   legend: z.boolean().optional(),
-  markdown: z.boolean().default(false),
 });

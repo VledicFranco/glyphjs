@@ -24,7 +24,12 @@
         "type": "ui:callout",
         "data": {
           "type": "invalid-type",
-          "content": "This callout has an invalid type value."
+          "content": [
+            {
+              "type": "text",
+              "value": "This callout has an invalid type value."
+            }
+          ]
         },
         "diagnostics": [
           {
@@ -36,15 +41,8 @@
               {
                 "received": "invalid-type",
                 "code": "invalid_enum_value",
-                "options": [
-                  "info",
-                  "warning",
-                  "error",
-                  "tip"
-                ],
-                "path": [
-                  "type"
-                ],
+                "options": ["info", "warning", "error", "tip"],
+                "path": ["type"],
                 "message": "Invalid enum value. Expected 'info' | 'warning' | 'error' | 'tip', received 'invalid-type'"
               }
             ]
@@ -70,9 +68,7 @@
                 "code": "invalid_type",
                 "expected": "array",
                 "received": "string",
-                "path": [
-                  "nodes"
-                ],
+                "path": ["nodes"],
                 "message": "Expected array, received string"
               }
             ]
@@ -96,15 +92,8 @@
         {
           "received": "invalid-type",
           "code": "invalid_enum_value",
-          "options": [
-            "info",
-            "warning",
-            "error",
-            "tip"
-          ],
-          "path": [
-            "type"
-          ],
+          "options": ["info", "warning", "error", "tip"],
+          "path": ["type"],
           "message": "Invalid enum value. Expected 'info' | 'warning' | 'error' | 'tip', received 'invalid-type'"
         }
       ]
@@ -119,9 +108,7 @@
           "code": "invalid_type",
           "expected": "array",
           "received": "string",
-          "path": [
-            "nodes"
-          ],
+          "path": ["nodes"],
           "message": "Expected array, received string"
         }
       ]

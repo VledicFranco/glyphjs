@@ -22,5 +22,4 @@ export const tableSchema = z.object({
       }),
     )
     .optional(),
-  markdown: z.boolean().default(false),
 });

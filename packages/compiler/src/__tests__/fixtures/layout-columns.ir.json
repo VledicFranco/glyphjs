@@ -33,9 +33,18 @@
             "type": "ui:callout",
             "data": {
               "type": "info",
-              "title": "Left Panel",
-              "content": "Left content here.",
-              "markdown": false
+              "title": [
+                {
+                  "type": "text",
+                  "value": "Left Panel"
+                }
+              ],
+              "content": [
+                {
+                  "type": "text",
+                  "value": "Left content here."
+                }
+              ]
             }
           },
           {
@@ -44,12 +53,16 @@
             "data": {
               "metrics": [
                 {
-                  "label": "Revenue",
+                  "label": [
+                    {
+                      "type": "text",
+                      "value": "Revenue"
+                    }
+                  ],
                   "value": "$13.1M",
                   "trend": "up"
                 }
-              ],
-              "markdown": false
+              ]
             }
           }
         ]

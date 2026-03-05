@@ -132,7 +132,6 @@ describe('Accordion', () => {
     const props = createMockProps<AccordionData>(
       {
         sections: [{ title: 'Section', content: 'Plain text **not bold**' }],
-        markdown: false,
         defaultOpen: [0],
       },
       'ui:accordion',
@@ -155,7 +154,6 @@ describe('Accordion', () => {
             ],
           },
         ],
-        markdown: true,
         defaultOpen: [0],
       },
       'ui:accordion',
@@ -173,7 +171,6 @@ describe('Accordion', () => {
     const props = createMockProps<AccordionData>(
       {
         sections: [{ title: 'Section', content: 'Plain string' }],
-        markdown: true,
         defaultOpen: [0],
       },
       'ui:accordion',
@@ -198,7 +195,6 @@ describe('Accordion', () => {
             ],
           },
         ],
-        markdown: true,
         defaultOpen: [0],
       },
       'ui:accordion',

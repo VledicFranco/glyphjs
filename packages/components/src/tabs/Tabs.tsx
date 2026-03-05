@@ -6,7 +6,6 @@ import { RichText } from '@glyphjs/runtime';
 /** Shape of the validated `data` for a `ui:tabs` block. */
 export interface TabsData {
   tabs: { label: string | InlineNode[]; content: string | InlineNode[] }[];
-  markdown?: boolean;
   _slotChildCounts?: number[];
 }
 

@@ -24,7 +24,6 @@ export interface RankerItemData {
 export interface RankerData {
   title?: string;
   items: RankerItemData[];
-  markdown?: boolean;
 }
 
 // ─── Component ─────────────────────────────────────────────────
