@@ -1,13 +1,13 @@
 {
   "ir": {
     "version": "1.0.0",
-    "id": "doc-543fdedc812a0a60",
+    "id": "doc-6e1a0d550eef0e99",
     "metadata": {
       "title": "Tabs with Variables"
     },
     "blocks": [
       {
-        "id": "b-f4e39a790521",
+        "id": "b-d438004a4500",
         "type": "heading",
         "data": {
           "depth": 1,
@@ -20,7 +20,7 @@
         }
       },
       {
-        "id": "b-914b66e69b77",
+        "id": "b-be2bcda8ec91",
         "type": "ui:tabs",
         "data": {
           "tabs": [
@@ -38,7 +38,7 @@
         },
         "children": [
           {
-            "id": "b-10efdf57b327",
+            "id": "b-f4afbc26e5f3",
             "type": "paragraph",
             "data": {
               "children": [
@@ -50,7 +50,7 @@
             }
           },
           {
-            "id": "b-707591a1cdc0",
+            "id": "b-6ba78c1a0faa",
             "type": "ui:callout",
             "data": {
               "type": "info",
@@ -59,7 +59,7 @@
             }
           },
           {
-            "id": "b-fa5ed5ad0714",
+            "id": "b-bb6d244899d5",
             "type": "paragraph",
             "data": {
               "children": [

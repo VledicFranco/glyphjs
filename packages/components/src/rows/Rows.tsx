@@ -1,6 +1,6 @@
-import type { ReactElement } from 'react';
+import { Fragment } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import type { GlyphComponentProps } from '@glyphjs/types';
-import { BlockRenderer } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
@@ -20,12 +20,7 @@ export interface RowsData {
  * between children. Without an explicit height constraint (e.g. standalone
  * usage), children are auto-sized and ratio has no visual effect.
  */
-export function Rows({
-  data,
-  block,
-  layout,
-  container,
-}: GlyphComponentProps<RowsData>): ReactElement {
+export function Rows({ data, block, renderBlock }: GlyphComponentProps<RowsData>): ReactElement {
   const childBlocks = block.children ?? [];
   const ratio = data.ratio ?? childBlocks.map(() => 1);
   const rows = ratio.map((r) => `${String(r)}fr`).join(' ');
@@ -41,13 +36,7 @@ export function Rows({
       }}
     >
       {childBlocks.map((child, i) => (
-        <BlockRenderer
-          key={child.id}
-          block={child}
-          layout={layout}
-          index={i}
-          container={container}
-        />
+        <Fragment key={child.id}>{renderBlock?.(child, i) as ReactNode}</Fragment>
       ))}
     </div>
   );

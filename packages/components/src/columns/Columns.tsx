@@ -1,6 +1,6 @@
-import type { ReactElement } from 'react';
+import { Fragment } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import type { GlyphComponentProps } from '@glyphjs/types';
-import { BlockRenderer } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
@@ -15,8 +15,7 @@ export interface ColumnsData {
 export function Columns({
   data,
   block,
-  layout,
-  container,
+  renderBlock,
 }: GlyphComponentProps<ColumnsData>): ReactElement {
   const childBlocks = block.children ?? [];
   const ratio = data.ratio ?? childBlocks.map(() => 1);
@@ -32,13 +31,7 @@ export function Columns({
       }}
     >
       {childBlocks.map((child, i) => (
-        <BlockRenderer
-          key={child.id}
-          block={child}
-          layout={layout}
-          index={i}
-          container={container}
-        />
+        <Fragment key={child.id}>{renderBlock?.(child, i) as ReactNode}</Fragment>
       ))}
     </div>
   );

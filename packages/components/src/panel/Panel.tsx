@@ -1,6 +1,5 @@
-import type { ReactElement } from 'react';
+import type { ReactElement, ReactNode } from 'react';
 import type { GlyphComponentProps } from '@glyphjs/types';
-import { BlockRenderer } from '@glyphjs/runtime';
 
 // ─── Types ─────────────────────────────────────────────────────
 
@@ -35,12 +34,7 @@ const PANEL_STYLES: Record<PanelStyle, React.CSSProperties> = {
 
 // ─── Component ─────────────────────────────────────────────────
 
-export function Panel({
-  data,
-  block,
-  layout,
-  container,
-}: GlyphComponentProps<PanelData>): ReactElement {
+export function Panel({ data, block, renderBlock }: GlyphComponentProps<PanelData>): ReactElement {
   const childBlock = block.children?.[0];
   const panelStyle = data.style ?? 'card';
   const padding = data.padding ?? '1rem';
@@ -53,9 +47,7 @@ export function Panel({
         overflow: 'hidden',
       }}
     >
-      {childBlock && (
-        <BlockRenderer block={childBlock} layout={layout} index={0} container={container} />
-      )}
+      {childBlock && (renderBlock?.(childBlock, 0) as ReactNode)}
     </div>
   );
 }
