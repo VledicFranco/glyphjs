@@ -54,8 +54,16 @@ vi.mock('@glyphjs/compiler', () => ({
   })),
 }));
 
-vi.mock('../../export/html.js', () => ({
-  exportHTML: vi.fn(() => '<!DOCTYPE html><html><body>content</body></html>'),
+vi.mock('../../rendering/ssr.js', () => ({
+  renderDocumentToHTML: vi.fn(() => '<div>content</div>'),
+}));
+
+vi.mock('../../rendering/html-template.js', () => ({
+  buildHtmlTemplate: vi.fn(() => '<!DOCTYPE html><html><body>content</body></html>'),
+}));
+
+vi.mock('../../rendering/client-bundle.js', () => ({
+  getClientBundle: vi.fn(() => '/* hydrate */'),
 }));
 
 vi.mock('../../utils/logger.js', () => ({
@@ -76,11 +84,13 @@ import { readFile } from 'node:fs/promises';
 import { watch } from 'node:fs';
 import { createServer } from 'node:http';
 import { compile } from '@glyphjs/compiler';
-import { exportHTML } from '../../export/html.js';
+import { renderDocumentToHTML } from '../../rendering/ssr.js';
+import { buildHtmlTemplate } from '../../rendering/html-template.js';
+import { getClientBundle } from '../../rendering/client-bundle.js';
 import { logDiagnostics } from '../../utils/logger.js';
 import { exec } from 'node:child_process';
 import { platform } from 'node:os';
-import { serveCommand, injectLiveReload, openBrowser } from '../serve.js';
+import { serveCommand, injectLiveReload, openBrowser, buildServedHTML } from '../serve.js';
 
 // ── Setup / Teardown ─────────────────────────────────────────
 
@@ -101,6 +111,49 @@ afterEach(() => {
   vi.useRealTimers();
   stderrSpy.mockRestore();
   process.exitCode = savedExitCode;
+});
+
+// ── buildServedHTML ───────────────────────────────────────────
+
+describe('buildServedHTML', () => {
+  it('calls renderDocumentToHTML, getClientBundle, and buildHtmlTemplate', () => {
+    const ir = {
+      version: '1.0.0' as const,
+      id: 'test',
+      metadata: { title: 'My Doc' },
+      blocks: [],
+      references: [],
+      layout: { mode: 'document' as const, spacing: 'normal' as const },
+    };
+
+    buildServedHTML(ir, 'light');
+
+    expect(renderDocumentToHTML).toHaveBeenCalledWith(ir, 'light', undefined);
+    expect(getClientBundle).toHaveBeenCalled();
+    expect(buildHtmlTemplate).toHaveBeenCalledWith(
+      expect.objectContaining({
+        clientBundle: '/* hydrate */',
+        ir,
+        theme: 'light',
+        title: 'My Doc',
+      }),
+    );
+  });
+
+  it('falls back to "GlyphJS" title when metadata has none', () => {
+    const ir = {
+      version: '1.0.0' as const,
+      id: 'test',
+      metadata: {},
+      blocks: [],
+      references: [],
+      layout: { mode: 'document' as const, spacing: 'normal' as const },
+    };
+
+    buildServedHTML(ir, 'dark');
+
+    expect(buildHtmlTemplate).toHaveBeenCalledWith(expect.objectContaining({ title: 'GlyphJS' }));
+  });
 });
 
 // ── injectLiveReload ─────────────────────────────────────────
@@ -311,13 +364,19 @@ describe('serveCommand', () => {
     expect(exec).not.toHaveBeenCalled();
   });
 
-  it('passes theme to exportHTML', async () => {
+  it('includes client hydration bundle in served HTML', async () => {
+    await serveCommand('doc.md', {});
+
+    expect(getClientBundle).toHaveBeenCalled();
+    expect(buildHtmlTemplate).toHaveBeenCalledWith(
+      expect.objectContaining({ clientBundle: '/* hydrate */', ir: expect.any(Object) }),
+    );
+  });
+
+  it('passes theme to buildHtmlTemplate', async () => {
     await serveCommand('doc.md', { theme: 'dark' });
 
-    expect(exportHTML).toHaveBeenCalledWith(
-      expect.any(Object),
-      expect.objectContaining({ theme: 'dark' }),
-    );
+    expect(buildHtmlTemplate).toHaveBeenCalledWith(expect.objectContaining({ theme: 'dark' }));
   });
 
   it('logs diagnostics when --verbose is set', async () => {

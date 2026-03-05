@@ -5,10 +5,12 @@ import { resolve } from 'node:path';
 import { exec } from 'node:child_process';
 import { platform } from 'node:os';
 import { compile } from '@glyphjs/compiler';
+import type { GlyphIR } from '@glyphjs/types';
 import { logDiagnostics } from '../utils/logger.js';
-import { exportHTML } from '../export/html.js';
+import { renderDocumentToHTML, type ThemeName } from '../rendering/ssr.js';
+import { buildHtmlTemplate } from '../rendering/html-template.js';
+import { getClientBundle } from '../rendering/client-bundle.js';
 import { loadThemeFile, resolveThemeVars } from '../rendering/theme-loader.js';
-import type { ThemeName } from '../rendering/ssr.js';
 
 export interface ServeCommandOptions {
   port?: number;
@@ -27,6 +29,22 @@ const LIVE_RELOAD_SCRIPT = [
   '})();',
   '</script>',
 ].join('');
+
+/**
+ * Compile an IR document to a fully-hydrated HTML page for the dev server.
+ * Includes the client bundle so React-dependent components (charts, D3, etc.)
+ * render correctly in the browser.
+ */
+export function buildServedHTML(
+  ir: GlyphIR,
+  theme: ThemeName,
+  themeVars?: Record<string, string>,
+): string {
+  const body = renderDocumentToHTML(ir, theme, themeVars);
+  const clientBundle = getClientBundle();
+  const title = (ir.metadata?.title as string | undefined) ?? 'GlyphJS';
+  return buildHtmlTemplate({ body, theme, title, clientBundle, ir, themeVars });
+}
 
 /**
  * Inject a live-reload SSE client script into HTML before the closing </body> tag.
@@ -83,7 +101,7 @@ export async function serveCommand(input: string, options: ServeCommandOptions):
     if (options.verbose) {
       logDiagnostics(result.diagnostics, filePath);
     }
-    currentHTML = injectLiveReload(exportHTML(result.ir, { theme, themeVars }));
+    currentHTML = injectLiveReload(buildServedHTML(result.ir, theme, themeVars));
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     process.stderr.write(`error — Could not read input: ${message}\n`);
@@ -124,7 +142,7 @@ export async function serveCommand(input: string, options: ServeCommandOptions):
         if (options.verbose) {
           logDiagnostics(result.diagnostics, filePath);
         }
-        currentHTML = injectLiveReload(exportHTML(result.ir, { theme, themeVars }));
+        currentHTML = injectLiveReload(buildServedHTML(result.ir, theme, themeVars));
         for (const client of clients) {
           client.write('event: reload\ndata: {}\n\n');
         }
