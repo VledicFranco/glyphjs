@@ -55,8 +55,9 @@ Inline `code` uses backticks. [Links](https://example.com) and
 
 ### Code blocks
 
-Standard fenced code blocks with optional language highlighting are fully
-supported:
+Standard fenced code blocks are fully supported with **automatic syntax highlighting**.
+GlyphJS uses [highlight.js](https://highlightjs.org/) grammars to tokenize code and
+applies `--glyph-code-token-*` CSS custom properties for theming.
 
 ````markdown
 ```typescript
@@ -64,6 +65,37 @@ const greeting: string = "Hello, Glyph!";
 console.log(greeting);
 ```
 ````
+
+**Supported languages** include the 42 common languages from highlight.js (JavaScript,
+TypeScript, Python, Rust, Go, Java, C/C++, SQL, YAML, JSON, etc.) plus an extended set
+of functional and math/scientific languages:
+
+- **Functional:** Scala, Haskell, Clojure, Elixir, Erlang, F#, OCaml, Elm, Scheme, SML,
+  Lisp, ReasonML, Hy, Flix, Clean
+- **Math / scientific:** Julia, MATLAB, Mathematica, LaTeX, Scilab, Maxima, Gauss, Stan,
+  Stata, Fortran, Mizar, Coq, Prolog
+
+Unknown or missing languages fall back to plain unstyled text.
+
+**Customizing token colors** — override the CSS custom properties on any ancestor element:
+
+```css
+.my-document {
+  --glyph-code-token-keyword:  #d73a49;
+  --glyph-code-token-string:   #032f62;
+  --glyph-code-token-comment:  #6a737d;
+  --glyph-code-token-number:   #005cc5;
+  --glyph-code-token-function: #6f42c1;
+  --glyph-code-token-type:     #e36209;
+  --glyph-code-token-builtin:  #6f42c1;
+  --glyph-code-token-attr:     #005cc5;
+  --glyph-code-token-literal:  #005cc5;
+  --glyph-code-token-operator: #d73a49;
+  --glyph-code-token-variable: #e36209;
+  --glyph-code-token-regexp:   #032f62;
+  --glyph-code-token-meta:     #6a737d;
+}
+```
 
 ### Images
 

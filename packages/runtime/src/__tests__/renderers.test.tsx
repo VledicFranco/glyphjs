@@ -2,9 +2,10 @@
 import { describe, it, expect } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom/vitest';
+import { z } from 'zod';
 import { createGlyphRuntime } from '../create-runtime.js';
 import { createTestIR } from './helpers.js';
-import type { Block, SourcePosition } from '@glyphjs/types';
+import type { Block, GlyphComponentDefinition, SourcePosition } from '@glyphjs/types';
 
 // ─── Shared helpers ────────────────────────────────────────────
 
@@ -313,6 +314,104 @@ describe('GlyphCodeBlock', () => {
 
     const pre = container.querySelector('pre');
     expect(pre!.getAttribute('aria-label')).toBe('Code block');
+  });
+
+  it('applies syntax highlighting spans for a known language', () => {
+    const block: Block = {
+      id: 'code-highlight',
+      type: 'code',
+      data: { value: 'const x = 1;', language: 'javascript' },
+      position: pos,
+    };
+
+    const { container } = renderBlock(block);
+
+    const code = container.querySelector('code');
+    expect(code).not.toBeNull();
+    const spans = code!.querySelectorAll('span');
+    expect(spans.length).toBeGreaterThan(0);
+  });
+
+  it('applies a color style to hljs-keyword spans', () => {
+    const block: Block = {
+      id: 'code-keyword-color',
+      type: 'code',
+      data: { value: 'const x = 1;', language: 'javascript' },
+      position: pos,
+    };
+
+    const { container } = renderBlock(block);
+
+    const code = container.querySelector('code');
+    const spans = Array.from(code!.querySelectorAll('span'));
+    const keywordSpan = spans.find((s) => s.className.includes('hljs-keyword'));
+    expect(keywordSpan).toBeDefined();
+    expect(keywordSpan!.style.color).toBeTruthy();
+  });
+
+  it('renders plain text for an unknown language without spans', () => {
+    const block: Block = {
+      id: 'code-unknown-lang',
+      type: 'code',
+      data: { value: 'foo bar baz', language: 'notareallanguage' },
+      position: pos,
+    };
+
+    const { container } = renderBlock(block);
+
+    const code = container.querySelector('code');
+    expect(code).not.toBeNull();
+    expect(code!.textContent).toBe('foo bar baz');
+    expect(code!.querySelectorAll('span').length).toBe(0);
+  });
+
+  it('renders plain text with no spans when no language is given', () => {
+    const block: Block = {
+      id: 'code-no-lang-spans',
+      type: 'code',
+      data: { value: 'plain text code' },
+      position: pos,
+    };
+
+    const { container } = renderBlock(block);
+
+    const code = container.querySelector('code');
+    expect(code).not.toBeNull();
+    expect(code!.querySelectorAll('span').length).toBe(0);
+  });
+
+  it('highlights code nested inside a container block that uses renderBlock', () => {
+    const mockContainerDef: GlyphComponentDefinition = {
+      type: 'ui:test-container',
+      schema: z.object({}),
+      render: (props) => (
+        <div data-testid="test-container">
+          {props.block.children?.map((child, i) => props.renderBlock?.(child, i))}
+        </div>
+      ),
+    };
+
+    const codeChild: Block = {
+      id: 'code-in-container',
+      type: 'code',
+      data: { value: 'const x = 1;', language: 'javascript' },
+      position: pos,
+    };
+    const containerBlock: Block = {
+      id: 'container-with-code',
+      type: 'ui:test-container',
+      data: {},
+      children: [codeChild],
+      position: pos,
+    };
+
+    const runtime = createGlyphRuntime({ components: [mockContainerDef] });
+    const ir = createTestIR([containerBlock]);
+    const { container } = render(<runtime.GlyphDocument ir={ir} />);
+
+    const code = container.querySelector('code');
+    expect(code).not.toBeNull();
+    expect(code!.querySelectorAll('span').length).toBeGreaterThan(0);
   });
 });
 

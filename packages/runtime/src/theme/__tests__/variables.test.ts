@@ -53,12 +53,12 @@ describe('theme variable maps', () => {
 });
 
 describe('v0.8.0 two-tier theme system', () => {
-  it('LIGHT_THEME_VARS has exactly 53 keys', () => {
-    expect(Object.keys(LIGHT_THEME_VARS).length).toBe(53);
+  it('LIGHT_THEME_VARS has exactly 66 keys', () => {
+    expect(Object.keys(LIGHT_THEME_VARS).length).toBe(66);
   });
 
-  it('DARK_THEME_VARS has exactly 53 keys', () => {
-    expect(Object.keys(DARK_THEME_VARS).length).toBe(53);
+  it('DARK_THEME_VARS has exactly 66 keys', () => {
+    expect(Object.keys(DARK_THEME_VARS).length).toBe(66);
   });
 
   it('all 4 semantic state vars present in LIGHT_THEME_VARS', () => {

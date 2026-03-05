@@ -6,7 +6,7 @@ import type { ComponentType, GlyphComponentDefinition } from './plugin.js';
 // ─── Theme ────────────────────────────────────────────────────
 
 /**
- * Tier 1 semantic tokens — the 53 CSS custom properties that every GlyphJS
+ * Tier 1 semantic tokens — the 66 CSS custom properties that every GlyphJS
  * theme must supply. Component-specific aliases (Tier 2) are no longer
  * TypeScript-required; they live in component styles as CSS fallback chains
  * so advanced users can still override them via plain CSS.
@@ -29,9 +29,22 @@ export type GlyphThemeVarKey =
   | '--glyph-accent-subtle'
   | '--glyph-accent-muted'
   | '--glyph-text-on-accent'
-  // ── Code (2) ─────────────────────────────────────────────────
+  // ── Code (15) ────────────────────────────────────────────────
   | '--glyph-code-bg'
   | '--glyph-code-text'
+  | '--glyph-code-token-keyword'
+  | '--glyph-code-token-string'
+  | '--glyph-code-token-comment'
+  | '--glyph-code-token-number'
+  | '--glyph-code-token-function'
+  | '--glyph-code-token-type'
+  | '--glyph-code-token-builtin'
+  | '--glyph-code-token-attr'
+  | '--glyph-code-token-literal'
+  | '--glyph-code-token-operator'
+  | '--glyph-code-token-variable'
+  | '--glyph-code-token-regexp'
+  | '--glyph-code-token-meta'
   // ── Typography (3) ───────────────────────────────────────────
   | '--glyph-font-body'
   | '--glyph-font-heading'

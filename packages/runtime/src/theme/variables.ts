@@ -34,6 +34,19 @@ export const LIGHT_THEME_VARS: GlyphThemeVars = {
   // ── Code ───────────────────────────────────────────────────
   '--glyph-code-bg': '#e8ecf3',
   '--glyph-code-text': '#1a2035',
+  '--glyph-code-token-keyword': '#d73a49',
+  '--glyph-code-token-string': '#032f62',
+  '--glyph-code-token-comment': '#6a737d',
+  '--glyph-code-token-number': '#005cc5',
+  '--glyph-code-token-function': '#6f42c1',
+  '--glyph-code-token-type': '#e36209',
+  '--glyph-code-token-builtin': '#6f42c1',
+  '--glyph-code-token-attr': '#005cc5',
+  '--glyph-code-token-literal': '#005cc5',
+  '--glyph-code-token-operator': '#d73a49',
+  '--glyph-code-token-variable': '#e36209',
+  '--glyph-code-token-regexp': '#032f62',
+  '--glyph-code-token-meta': '#6a737d',
 
   // ── Typography ─────────────────────────────────────────────
   '--glyph-font-body': '"Inter", "Helvetica Neue", system-ui, sans-serif',
@@ -109,6 +122,19 @@ export const DARK_THEME_VARS: GlyphThemeVars = {
   // ── Code ───────────────────────────────────────────────────
   '--glyph-code-bg': '#0f1526',
   '--glyph-code-text': '#d4dae3',
+  '--glyph-code-token-keyword': '#c678dd',
+  '--glyph-code-token-string': '#98c379',
+  '--glyph-code-token-comment': '#5c6370',
+  '--glyph-code-token-number': '#d19a66',
+  '--glyph-code-token-function': '#61afef',
+  '--glyph-code-token-type': '#e5c07b',
+  '--glyph-code-token-builtin': '#56b6c2',
+  '--glyph-code-token-attr': '#e06c75',
+  '--glyph-code-token-literal': '#d19a66',
+  '--glyph-code-token-operator': '#c678dd',
+  '--glyph-code-token-variable': '#e06c75',
+  '--glyph-code-token-regexp': '#98c379',
+  '--glyph-code-token-meta': '#abb2bf',
 
   // ── Typography ─────────────────────────────────────────────
   '--glyph-font-body': '"Inter", "Helvetica Neue", system-ui, sans-serif',

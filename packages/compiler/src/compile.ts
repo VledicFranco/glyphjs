@@ -282,6 +282,10 @@ export function compile(markdown: string, options?: CompileOptions): Compilation
 
   // 7. Compile container blocks (ui:tabs, ui:steps) — recursively parse content fields
   compileContainerBlocks(blocks, ctx);
+  // Also compile suppressed tabs/steps stored as block vars (used inside layout components)
+  for (const block of ctx.varCtx.suppressedBlockVars.values()) {
+    compileContainerBlocks([block], ctx);
+  }
 
   // 7b. Compile layout blocks (ui:columns, ui:polymer, ui:panel) — resolve child var refs
   compileLayoutBlocks(blocks, ctx);

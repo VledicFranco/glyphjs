@@ -82,7 +82,7 @@ export async function captureBlockScreenshot(
     clientBundle,
     ir: singleBlockIR,
     themeVars,
-    maxWidth: '64rem',
+    maxWidth: `${width}px`,
   });
 
   // Stage 2: Load the HTML and wait for network idle
