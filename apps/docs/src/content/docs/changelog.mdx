@@ -10,6 +10,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.1] - 2026-03-05
+
+### Added
+
+- **CLI `--viewport-height` flag** (export & render): Controls Playwright viewport height in pixels. Default `1024` for PDF export, `800` for `render`. Prevents tall blocks from being clipped.
+- **CLI `--max-width` flag** (export): Sets the CSS `max-width` of the content column. Default `64rem`; pass `none` to fill the full viewport width.
+- **CLI `--device-scale-factor` flag** (export md): Sets the HiDPI device pixel ratio for block screenshots. Default `2`.
+
+### Fixed
+
+- **`markdown: true` runtime validation error**: Schema fields that the compiler converts from `string` to `InlineNode[]` now accept both types. Previously, the runtime re-validated already-processed IR and logged spurious "Expected string, received array" warnings, falling back to raw (unrendered) data. Affects all 22 markdown-eligible fields across `callout`, `steps`, `tabs`, `accordion`, `card`, `kpi`, `comparison`, `quiz`, `infographic`, `timeline`, `poll`, `ranker`, `form`, `kanban`, `table`, `chart`, `equation`, `codediff`, `graph`, `relation`, `flowchart`, and `sequence`.
+- **`serve` blank render**: React components now hydrate correctly in the browser. Previously the client bundle was not injected into served HTML.
+- **`serve` live-reload injection**: Live-reload script is now injected before the last `</body>` tag rather than the first match. The previous approach matched a literal `</body>` string inside the DOMPurify bundle, breaking JavaScript parsing.
+- **`infographic` rating description**: `RatingItem.description` now accepts `string | InlineNode[]` and renders via `<RichText>`, consistent with `markdown: true` behaviour on other item types.
+
 ## [0.9.0] - 2026-03-04
 
 ### Added
