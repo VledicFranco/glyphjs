@@ -103,6 +103,12 @@ describe('exportPDF', () => {
     );
   });
 
+  it('passes custom maxWidth to buildHtmlTemplate', async () => {
+    await exportPDF(createTestIR(), { maxWidth: 'none' });
+
+    expect(buildHtmlTemplate).toHaveBeenCalledWith(expect.objectContaining({ maxWidth: 'none' }));
+  });
+
   it('sets viewport width', async () => {
     await exportPDF(createTestIR(), { width: 1024 });
 
@@ -112,12 +118,21 @@ describe('exportPDF', () => {
     });
   });
 
-  it('defaults viewport width to 1024', async () => {
+  it('defaults viewport width and height to 1024', async () => {
     await exportPDF(createTestIR());
 
     expect(mockPage.setViewportSize).toHaveBeenCalledWith({
       width: 1024,
       height: 1024,
+    });
+  });
+
+  it('uses custom viewportHeight', async () => {
+    await exportPDF(createTestIR(), { viewportHeight: 900 });
+
+    expect(mockPage.setViewportSize).toHaveBeenCalledWith({
+      width: 1024,
+      height: 900,
     });
   });
 

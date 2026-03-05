@@ -250,9 +250,25 @@ describe('renderAndRewriteBlocks', () => {
       width: 800,
     });
 
-    expect(captureBlockScreenshot).toHaveBeenCalledWith(mockPage, expect.any(Object), {
-      theme: 'dark',
-      width: 800,
+    expect(captureBlockScreenshot).toHaveBeenCalledWith(
+      mockPage,
+      expect.any(Object),
+      expect.objectContaining({ theme: 'dark', width: 800 }),
+    );
+  });
+
+  it('passes viewportHeight and deviceScaleFactor to captureBlockScreenshot', async () => {
+    const ir = createIR([createBlock()]);
+
+    await renderAndRewriteBlocks(sampleMarkdown, ir, '/tmp/img', './images', {
+      viewportHeight: 1200,
+      deviceScaleFactor: 3,
     });
+
+    expect(captureBlockScreenshot).toHaveBeenCalledWith(
+      mockPage,
+      expect.any(Object),
+      expect.objectContaining({ viewportHeight: 1200, deviceScaleFactor: 3 }),
+    );
   });
 });

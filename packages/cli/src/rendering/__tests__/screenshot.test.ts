@@ -88,12 +88,31 @@ describe('captureBlockScreenshot', () => {
     });
   });
 
-  it('sets viewport size', async () => {
+  it('sets viewport size with default height', async () => {
     const { page } = createMockPage();
 
     await captureBlockScreenshot(page as never, createBlock(), { width: 800 });
 
     expect(page.setViewportSize).toHaveBeenCalledWith({ width: 800, height: 800 });
+  });
+
+  it('uses custom viewportHeight', async () => {
+    const { page } = createMockPage();
+
+    await captureBlockScreenshot(page as never, createBlock(), { viewportHeight: 1200 });
+
+    expect(page.setViewportSize).toHaveBeenCalledWith({ width: 1280, height: 1200 });
+  });
+
+  it('passes viewportHeight to CDP override', async () => {
+    const { page, mockCdp } = createMockPage();
+
+    await captureBlockScreenshot(page as never, createBlock(), { viewportHeight: 1200 });
+
+    expect(mockCdp.send).toHaveBeenCalledWith(
+      'Emulation.setDeviceMetricsOverride',
+      expect.objectContaining({ height: 1200 }),
+    );
   });
 
   it('loads content with waitUntil networkidle', async () => {

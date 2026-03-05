@@ -13,6 +13,8 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
     theme = 'light',
     title,
     width = 1024,
+    viewportHeight = 1024,
+    maxWidth = '64rem',
     pageSize = 'Letter',
     margin,
     landscape = false,
@@ -40,7 +42,7 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
     clientBundle,
     ir,
     themeVars,
-    maxWidth: '64rem',
+    maxWidth,
     padding,
     // Translate the CLI --margin option into CSS body padding rather than
     // passing it to the PDF engine. PDF engine margins appear outside the
@@ -51,7 +53,7 @@ export async function exportPDF(ir: GlyphIR, options: PdfExportOptions = {}): Pr
 
   try {
     const page = await BrowserManager.newPage();
-    await page.setViewportSize({ width, height: 1024 });
+    await page.setViewportSize({ width, height: viewportHeight });
     await page.setContent(html, { waitUntil: 'networkidle' });
 
     // Wait for React-rendered content if the document has blocks
