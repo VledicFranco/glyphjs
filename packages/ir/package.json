@@ -34,8 +34,8 @@
     "@glyphjs/types": "workspace:*"
   },
   "devDependencies": {
-    "@types/node": ">=18.0.0",
-    "fast-check": "^4.5.3"
+    "@types/node": ">=25.3.5",
+    "fast-check": "^4.6.0"
   },
   "sideEffects": false,
   "license": "MIT",
