@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.5] - 2026-04-19
+
 ### Fixed
 
 - **Release pipeline**: removed a flaky wall-clock perf assertion in `parseInlineMarkdown` test (`< 100ms` for parsing 1000 words) that consistently failed on GitHub Actions runners (~180-207ms), blocking npm publish for v0.9.2, v0.9.3, and v0.9.4. The test now verifies correctness on long input without timing assertions; perf-by-stopwatch belongs in benchmarks, not unit tests. This release also brings the npm registry up to date with the v0.9.2–v0.9.4 changes that never reached it.
