@@ -141,6 +141,211 @@ describe('Gauge', () => {
     expect(meter.getAttribute('aria-valuetext')).toContain('60 points');
   });
 
+  // ─── Arc geometry: regression tests for the angle-mirroring bug ─────────
+  // The Gauge once wrapped every angle in `toSvgAngle = -θ`, which reflected the
+  // arc below cy and clipped it out of the viewBox. These tests pin the visual
+  // contract: zone arcs sweep OVER the top, the needle tip sits in the upper
+  // half, and full-dial midpoint lands at 12 o'clock.
+
+  /** Parse an `M sx sy A rx ry rot largeArc sweep ex ey` path string. */
+  function parseArc(d: string): {
+    sx: number;
+    sy: number;
+    rx: number;
+    ry: number;
+    largeArc: number;
+    sweep: number;
+    ex: number;
+    ey: number;
+  } {
+    const re =
+      /^M\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s+A\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)\s+\d+\s+(\d)\s+(\d)\s+(-?\d+(?:\.\d+)?)\s+(-?\d+(?:\.\d+)?)/;
+    const m = re.exec(d);
+    if (!m) throw new Error(`Path did not match arc shape: ${d}`);
+    return {
+      sx: Number(m[1]),
+      sy: Number(m[2]),
+      rx: Number(m[3]),
+      ry: Number(m[4]),
+      largeArc: Number(m[5]),
+      sweep: Number(m[6]),
+      ex: Number(m[7]),
+      ey: Number(m[8]),
+    };
+  }
+
+  describe('arc geometry', () => {
+    it('semicircle zone arc sweeps over the top (start at left, end at right, equal y at cy)', () => {
+      const props = createMockProps<GaugeData>(
+        {
+          label: 'x',
+          value: 50,
+          min: 0,
+          max: 100,
+          zones: [{ max: 100, sentiment: 'positive' }],
+        },
+        'ui:gauge',
+      );
+      const { container } = render(<Gauge {...props} />);
+      const zone = container.querySelector('[data-testid="gauge-zone-0"]');
+      expect(zone).not.toBeNull();
+      const d = zone!.getAttribute('d')!;
+      expect(d).toMatch(/^M\s+\S+\s+\S+\s+A/);
+
+      const arc = parseArc(d);
+      // VIEWBOX_SIZE=200, CENTER_X=100, semicircle: cy = 124, radius = 84
+      const cx = 100;
+      const cy = 200 * 0.62;
+      const r = 200 * 0.42;
+      // Start at left (cx - r, cy), end at right (cx + r, cy)
+      expect(arc.sx).toBeCloseTo(cx - r, 5);
+      expect(arc.sy).toBeCloseTo(cy, 5);
+      expect(arc.ex).toBeCloseTo(cx + r, 5);
+      expect(arc.ey).toBeCloseTo(cy, 5);
+      // Half-circle is exactly 180° → largeArc may be 0 by convention here.
+      expect(arc.largeArc).toBe(0);
+      // Sweep flag must produce the OVER-the-top arc. With our angle parameterization
+      // (cx + r·cos θ, cy + r·sin θ) going from θ=π to θ=2π (the upper half in SVG
+      // y-down coords), the screen direction is clockwise → sweep=1.
+      expect(arc.sweep).toBe(1);
+    });
+
+    it('semicircle zone arcs do NOT sit below cy (regression for toSvgAngle bug)', () => {
+      const props = createMockProps<GaugeData>(
+        {
+          label: 'x',
+          value: 50,
+          min: 0,
+          max: 100,
+          zones: [
+            { max: 50, sentiment: 'negative' },
+            { max: 100, sentiment: 'positive' },
+          ],
+        },
+        'ui:gauge',
+      );
+      const { container } = render(<Gauge {...props} />);
+      const cy = 200 * 0.62;
+      // Zone 1 (max=50) goes from value 0 (left, on cy) to value 50 (top, well above cy).
+      // Its endpoint y must be ABOVE cy (smaller numerically since SVG y grows down).
+      const zone0 = container.querySelector('[data-testid="gauge-zone-0"]')!;
+      const arc0 = parseArc(zone0.getAttribute('d')!);
+      expect(arc0.sy).toBeCloseTo(cy, 5); // starts at left edge on cy
+      expect(arc0.ey).toBeLessThan(cy); // ends at the top half
+      // Zone 2 (max=100) starts at top, ends at right edge on cy.
+      const zone1 = container.querySelector('[data-testid="gauge-zone-1"]')!;
+      const arc1 = parseArc(zone1.getAttribute('d')!);
+      expect(arc1.sy).toBeLessThan(cy); // starts above cy
+      expect(arc1.ey).toBeCloseTo(cy, 5); // ends on cy (right edge)
+    });
+
+    it('semicircle needle tip for value=78 sits in the upper-right quadrant', () => {
+      const props = createMockProps<GaugeData>(
+        { label: 'x', value: 78, min: 0, max: 100 },
+        'ui:gauge',
+      );
+      const { container } = render(<Gauge {...props} />);
+      const needle = container.querySelector('[data-testid="gauge-needle"]')!;
+      const cx = 100;
+      const cy = 200 * 0.62;
+      const x2 = Number(needle.getAttribute('x2'));
+      const y2 = Number(needle.getAttribute('y2'));
+      expect(x2).toBeGreaterThan(cx); // right of center
+      expect(y2).toBeLessThan(cy); // above center (smaller y in SVG)
+    });
+
+    it('semicircle needle tip for value=min sits at the left edge on cy', () => {
+      const props = createMockProps<GaugeData>(
+        { label: 'x', value: 0, min: 0, max: 100 },
+        'ui:gauge',
+      );
+      const { container } = render(<Gauge {...props} />);
+      const needle = container.querySelector('[data-testid="gauge-needle"]')!;
+      const cx = 100;
+      const cy = 200 * 0.62;
+      const r = 200 * 0.42;
+      const tipLen = r * 0.9;
+      const x2 = Number(needle.getAttribute('x2'));
+      const y2 = Number(needle.getAttribute('y2'));
+      expect(x2).toBeCloseTo(cx - tipLen, 5);
+      expect(y2).toBeCloseTo(cy, 5);
+    });
+
+    it('semicircle needle tip for value=max sits at the right edge on cy', () => {
+      const props = createMockProps<GaugeData>(
+        { label: 'x', value: 100, min: 0, max: 100 },
+        'ui:gauge',
+      );
+      const { container } = render(<Gauge {...props} />);
+      const needle = container.querySelector('[data-testid="gauge-needle"]')!;
+      const cx = 100;
+      const cy = 200 * 0.62;
+      const r = 200 * 0.42;
+      const tipLen = r * 0.9;
+      const x2 = Number(needle.getAttribute('x2'));
+      const y2 = Number(needle.getAttribute('y2'));
+      expect(x2).toBeCloseTo(cx + tipLen, 5);
+      expect(y2).toBeCloseTo(cy, 5);
+    });
+
+    it('semicircle needle tip for value=midpoint sits straight up at the top', () => {
+      const props = createMockProps<GaugeData>(
+        { label: 'x', value: 50, min: 0, max: 100 },
+        'ui:gauge',
+      );
+      const { container } = render(<Gauge {...props} />);
+      const needle = container.querySelector('[data-testid="gauge-needle"]')!;
+      const cx = 100;
+      const cy = 200 * 0.62;
+      const r = 200 * 0.42;
+      const tipLen = r * 0.9;
+      const x2 = Number(needle.getAttribute('x2'));
+      const y2 = Number(needle.getAttribute('y2'));
+      expect(x2).toBeCloseTo(cx, 5);
+      expect(y2).toBeCloseTo(cy - tipLen, 5);
+    });
+
+    it("full dial uses 270° sweep with largeArc=1 and needle midpoint at 12 o'clock", () => {
+      const props = createMockProps<GaugeData>(
+        { label: 'x', value: 50, min: 0, max: 100, shape: 'full' },
+        'ui:gauge',
+      );
+      const { container } = render(<Gauge {...props} />);
+      const track = container.querySelector('[data-testid="gauge-track"]')!;
+      const arc = parseArc(track.getAttribute('d')!);
+      // Full dial → 270° → largeArc=1
+      expect(arc.largeArc).toBe(1);
+      expect(arc.sweep).toBe(1);
+
+      // Needle at midpoint should point straight up (12 o'clock)
+      const needle = container.querySelector('[data-testid="gauge-needle"]')!;
+      const cx = 100;
+      const cy = 200 / 2;
+      const r = 200 * 0.38;
+      const tipLen = r * 0.9;
+      const x2 = Number(needle.getAttribute('x2'));
+      const y2 = Number(needle.getAttribute('y2'));
+      expect(x2).toBeCloseTo(cx, 5);
+      expect(y2).toBeCloseTo(cy - tipLen, 5);
+    });
+
+    it('target marker for value > midpoint sits on the upper-right side of the arc', () => {
+      const props = createMockProps<GaugeData>(
+        { label: 'x', value: 50, min: 0, max: 100, target: 80 },
+        'ui:gauge',
+      );
+      const { container } = render(<Gauge {...props} />);
+      const target = container.querySelector('[data-testid="gauge-target"]')!;
+      const cx = 100;
+      const cy = 200 * 0.62;
+      const x1 = Number(target.getAttribute('x1'));
+      const y1 = Number(target.getAttribute('y1'));
+      // Target at 80% should be in the upper-right (positive cos, negative sin in SVG).
+      expect(x1).toBeGreaterThan(cx);
+      expect(y1).toBeLessThan(cy);
+    });
+  });
+
   // Schema-level validation tests
   describe('schema validation', () => {
     it('rejects value outside [min, max]', () => {

@@ -28,14 +28,16 @@ export interface GaugeData {
 const VIEWBOX_SIZE = 200;
 const CENTER_X = VIEWBOX_SIZE / 2;
 
-// Semicircle: 180° from left (π) to right (0) — top half of the circle
+// Semicircle: 180° from left (π) to right (2π) — sweeps over the top half of the circle.
+// In SVG's y-down coordinate system, sin(θ) ≤ 0 for θ ∈ [π, 2π], placing arc points
+// above cy (since cy + r·sin(θ) is above cy when sin is negative).
 const SEMI_START_ANGLE = Math.PI;
-const SEMI_END_ANGLE = 2 * Math.PI; // i.e. 0 after unwrapping; sweeps through top
+const SEMI_END_ANGLE = 2 * Math.PI;
 
-// Full dial: 270° from 7-o'clock (7π/6 ≈ 210°) clockwise to 5-o'clock (-π/6 ≈ 330° mirrored)
-// Use monotonically increasing angles so the needle interpolation is smooth.
-const FULL_START_ANGLE = (3 * Math.PI) / 4 + Math.PI / 2; // 210° = 7π/6
-const FULL_END_ANGLE = FULL_START_ANGLE + (3 * Math.PI) / 2; // +270°
+// Full dial: 270° arc from 7:30 (SVG angle 3π/4) clockwise to 4:30 (SVG angle 9π/4).
+// Midpoint is 3π/2 (cos=0, sin=-1) → 12 o'clock top of the dial.
+const FULL_START_ANGLE = (3 * Math.PI) / 4;
+const FULL_END_ANGLE = FULL_START_ANGLE + (3 * Math.PI) / 2; // 9π/4
 
 // ─── Sentiment color map ───────────────────────────────────────
 
@@ -51,9 +53,16 @@ const SENTIMENT_COLOR: Record<GaugeSentiment, string> = {
  * Build an SVG elliptical-arc path from (startAngle) to (endAngle) around (cx, cy)
  * on a circle of the given radius.
  *
- * Angles are in radians. 0 rad points right (+x), π/2 points up (−y in SVG).
- * Our convention: we pass `startAngle` < `endAngle` and sweep "the short way"
- * which for our use cases (semicircle over the top, full 270° sweep) matches.
+ * Angles are in radians, parameterized as (cx + r·cos θ, cy + r·sin θ). Because SVG's
+ * y-axis grows downward, this means:
+ *   θ = 0   → right (3 o'clock)
+ *   θ = π/2 → BELOW cy (6 o'clock; +sin moves down)
+ *   θ = π   → left (9 o'clock)
+ *   θ = 3π/2→ ABOVE cy (12 o'clock; −sin moves up)
+ *
+ * For "over the top" arcs use angles in [π, 2π] where sin ≤ 0 throughout, placing the
+ * arc above cy. The function picks the SVG sweep flag from the sign of (end − start),
+ * matching the screen-clockwise direction implied by increasing θ.
  */
 function arcPath(
   cx: number,
@@ -69,21 +78,13 @@ function arcPath(
 
   const delta = endAngle - startAngle;
   const largeArc = Math.abs(delta) > Math.PI ? 1 : 0;
-  // Positive delta + SVG's y-down system → sweepFlag=1 is correct for our chosen conventions
-  // where we mirror angles to go over the top of the gauge.
+  // In SVG y-down, increasing θ in our parameterization (cx + r·cos θ, cy + r·sin θ)
+  // traces the circle clockwise on screen (since +sin moves down). So a positive delta
+  // — i.e. start angle < end angle — corresponds to clockwise sweep on screen, which
+  // matches SVG's sweep-flag = 1.
   const sweep = delta >= 0 ? 1 : 0;
 
   return `M ${String(startX)} ${String(startY)} A ${String(radius)} ${String(radius)} 0 ${String(largeArc)} ${String(sweep)} ${String(endX)} ${String(endY)}`;
-}
-
-/**
- * In SVG, the y-axis is flipped (positive y goes down). To render a gauge that
- * arcs over the *top* of the center, we reflect our mathematical angle across
- * the x-axis: angle → -angle. This keeps the math clean in the rest of the
- * component while producing the expected visual.
- */
-function toSvgAngle(angle: number): number {
-  return -angle;
 }
 
 function clamp(value: number, lo: number, hi: number): number {
@@ -147,7 +148,7 @@ export function Gauge({ data, block }: GlyphComponentProps<GaugeData>): ReactEle
     const prevMax = prevZone ? prevZone.max : min;
     const zStart = angleFor(prevMax);
     const zEnd = angleFor(zone.max);
-    const path = arcPath(CENTER_X, cy, radius, toSvgAngle(zEnd), toSvgAngle(zStart));
+    const path = arcPath(CENTER_X, cy, radius, zStart, zEnd);
     return {
       path,
       color: resolveZoneColor(zone, i),
@@ -156,11 +157,10 @@ export function Gauge({ data, block }: GlyphComponentProps<GaugeData>): ReactEle
   });
 
   // Fallback: no zones → single neutral track arc
-  const trackPath = arcPath(CENTER_X, cy, radius, toSvgAngle(endAngle), toSvgAngle(startAngle));
+  const trackPath = arcPath(CENTER_X, cy, radius, startAngle, endAngle);
 
   // ─── Needle ──────────────────────────────────────────────────
-  const needleAngleMath = angleFor(value);
-  const needleAngle = toSvgAngle(needleAngleMath);
+  const needleAngle = angleFor(value);
   const tipLen = radius * 0.9;
   const tailLen = radius * 0.15;
   const tipX = CENTER_X + tipLen * Math.cos(needleAngle);
@@ -171,7 +171,7 @@ export function Gauge({ data, block }: GlyphComponentProps<GaugeData>): ReactEle
   // ─── Target marker ───────────────────────────────────────────
   let targetMarker: { x1: number; y1: number; x2: number; y2: number } | null = null;
   if (typeof target === 'number' && target >= min && target <= max) {
-    const tAngle = toSvgAngle(angleFor(target));
+    const tAngle = angleFor(target);
     const inner = radius - strokeWidth / 2 - 4;
     const outer = radius + strokeWidth / 2 + 4;
     targetMarker = {
