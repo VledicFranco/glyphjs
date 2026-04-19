@@ -84,6 +84,8 @@ export { panelDefinition, Panel } from './panel/index.js';
 export type { PanelData } from './panel/index.js';
 export { heatmapDefinition, Heatmap } from './heatmap/index.js';
 export type { HeatmapData, HeatmapScale } from './heatmap/index.js';
+export { funnelDefinition, Funnel } from './funnel/index.js';
+export type { FunnelData, FunnelStage } from './funnel/index.js';
 
 // All component definitions (for CLI / batch registration)
 import { calloutDefinition as _callout } from './callout/index.js';
@@ -119,6 +121,7 @@ import { columnsDefinition as _columns } from './columns/index.js';
 import { rowsDefinition as _rows } from './rows/index.js';
 import { panelDefinition as _panel } from './panel/index.js';
 import { heatmapDefinition as _heatmap } from './heatmap/index.js';
+import { funnelDefinition as _funnel } from './funnel/index.js';
 
 export const allComponentDefinitions = [
   _callout,
@@ -154,4 +157,5 @@ export const allComponentDefinitions = [
   _rows,
   _panel,
   _heatmap,
+  _funnel,
 ] as const;

@@ -39,6 +39,7 @@ import {
   rowsDefinition,
   panelDefinition,
   heatmapDefinition,
+  funnelDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -75,6 +76,7 @@ const allComponents = [
   rowsDefinition,
   panelDefinition,
   heatmapDefinition,
+  funnelDefinition,
 ];
 
 interface GlyphPreviewProps {

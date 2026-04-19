@@ -51,6 +51,7 @@ export default defineConfig({
           { label: 'CodeDiff', slug: 'components/codediff' },
           { label: 'Flowchart', slug: 'components/flowchart' },
           { label: 'FileTree', slug: 'components/filetree' },
+          { label: 'Funnel', slug: 'components/funnel' },
           { label: 'Sequence', slug: 'components/sequence' },
           { label: 'MindMap', slug: 'components/mindmap' },
           { label: 'Equation', slug: 'components/equation' },

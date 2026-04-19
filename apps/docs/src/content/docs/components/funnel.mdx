@@ -1,0 +1,141 @@
+---
+title: Funnel
+description: A tapering stage sequence that visualizes dropoff and conversion rates between steps.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Funnel** component (`ui:funnel`) renders an ordered series of stages as a tapering shape, showing conversion and dropoff between each step. Use it for signup/sales funnels, acceptance rates, form completion, or any monotonically-decreasing sequence where visualizing the shrink is the point.
+
+## Examples
+
+### Action acceptance (vertical)
+
+export const acceptanceExample = `\`\`\`ui:funnel
+title: Action acceptance (last 30 days)
+stages:
+  - { label: Recommended, value: 420 }
+  - { label: Reviewed,    value: 310 }
+  - { label: Accepted,    value: 180 }
+  - { label: Executed,    value: 155 }
+showConversion: true
+orientation: vertical
+unit: actions
+\`\`\``;
+
+<GlyphPreview client:only="react" source={acceptanceExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:funnel
+title: Action acceptance (last 30 days)
+stages:
+  - { label: Recommended, value: 420 }
+  - { label: Reviewed,    value: 310 }
+  - { label: Accepted,    value: 180 }
+  - { label: Executed,    value: 155 }
+showConversion: true
+orientation: vertical
+unit: actions
+```
+````
+
+</details>
+
+### Signup funnel (horizontal)
+
+export const signupExample = `\`\`\`ui:funnel
+title: Signup funnel
+orientation: horizontal
+unit: users
+stages:
+  - { label: Visited,    value: 10000 }
+  - { label: Started,    value: 4800 }
+  - { label: Completed,  value: 2100 }
+  - { label: Verified,   value: 1820 }
+\`\`\``;
+
+<GlyphPreview client:only="react" source={signupExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:funnel
+title: Signup funnel
+orientation: horizontal
+unit: users
+stages:
+  - { label: Visited,    value: 10000 }
+  - { label: Started,    value: 4800 }
+  - { label: Completed,  value: 2100 }
+  - { label: Verified,   value: 1820 }
+```
+````
+
+</details>
+
+### Sales pipeline without conversion annotations
+
+Hide the per-step conversion numbers when the shape alone tells the story.
+
+export const pipelineExample = `\`\`\`ui:funnel
+title: Q4 Sales pipeline
+showConversion: false
+stages:
+  - { label: Leads,      value: 820 }
+  - { label: Qualified,  value: 410 }
+  - { label: Proposal,   value: 180 }
+  - { label: Won,        value: 92 }
+\`\`\``;
+
+<GlyphPreview client:only="react" source={pipelineExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:funnel
+title: Q4 Sales pipeline
+showConversion: false
+stages:
+  - { label: Leads,      value: 820 }
+  - { label: Qualified,  value: 410 }
+  - { label: Proposal,   value: 180 }
+  - { label: Won,        value: 92 }
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `title` | `string` | No | -- | Optional heading shown above the funnel. |
+| `stages` | `FunnelStage[]` | Yes | -- | 2 to 12 stages in order. Values must be monotonically non-increasing. |
+| `showConversion` | `boolean` | No | `true` | Show per-stage conversion percentage and drop count between stages. |
+| `orientation` | `"vertical" \| "horizontal"` | No | `"vertical"` | Tapering direction. |
+| `unit` | `string` | No | -- | Unit suffix appended after each stage value (e.g., `actions`, `users`). |
+
+### FunnelStage
+
+| Property | Type | Required | Default | Description |
+| --- | --- | --- | --- | --- |
+| `label` | `string` | Yes | -- | Display name for the stage. |
+| `value` | `number` | Yes | -- | Non-negative magnitude. Each stage's value must be ≤ the previous stage's value. |
+| `description` | `string` | No | -- | Optional short description used in the accessible description. |
+
+## Monotonic constraint
+
+A funnel only makes sense when successive stages are smaller or equal to the previous one. The schema enforces this at validation time -- data like `[100, 150]` is rejected with a clear error. If a caller bypasses validation, the renderer defensively clamps each stage to the value of its predecessor to avoid inverted trapezoids.
+
+## Accessibility
+
+- The funnel renders as a `<ol>` where each `<li>` corresponds to a stage.
+- Each stage has an `aria-label` of the form `Stage N: {label}, {value} {unit}, {pct}% of previous`, so screen readers convey both the absolute and relative magnitudes.
+- The first stage reports `100% of total` instead of a previous-stage ratio.
+- Conversion annotations (percentage + drop count) are visual-only (`aria-hidden="true"`) because the information is already encoded in the per-stage aria-labels.
+- Colors cycle through `--glyph-palette-color-1..10`; readability does not depend on color alone.

@@ -32,11 +32,12 @@ const ALL_TYPES = [
   'kanban',
   'annotate',
   'heatmap',
+  'funnel',
 ];
 
 describe('componentSchemas', () => {
-  it('has exactly 33 registered components', () => {
-    expect(componentSchemas.size).toBe(33);
+  it('has exactly 34 registered components', () => {
+    expect(componentSchemas.size).toBe(34);
   });
 
   it('contains every expected component type', () => {

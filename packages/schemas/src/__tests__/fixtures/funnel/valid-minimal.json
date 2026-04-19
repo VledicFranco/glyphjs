@@ -1,0 +1,6 @@
+{
+  "stages": [
+    { "label": "Visited", "value": 1000 },
+    { "label": "Signed up", "value": 240 }
+  ]
+}

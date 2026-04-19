@@ -36,6 +36,7 @@ import {
   kanbanDefinition,
   annotateDefinition,
   heatmapDefinition,
+  funnelDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -102,6 +103,7 @@ const allComponents = [
   kanbanDefinition,
   annotateDefinition,
   heatmapDefinition,
+  funnelDefinition,
 ];
 
 export default function Playground() {

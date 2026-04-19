@@ -50,6 +50,7 @@ export type BlockType =
   | 'ui:kanban'
   | 'ui:annotate'
   | 'ui:heatmap'
+  | 'ui:funnel'
   // Layout components
   | 'ui:columns'
   | 'ui:rows'

@@ -1,0 +1,12 @@
+{
+  "title": "Action acceptance (last 30 days)",
+  "stages": [
+    { "label": "Recommended", "value": 420 },
+    { "label": "Reviewed", "value": 310 },
+    { "label": "Accepted", "value": 180 },
+    { "label": "Executed", "value": 155 }
+  ],
+  "showConversion": true,
+  "orientation": "vertical",
+  "unit": "actions"
+}

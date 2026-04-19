@@ -35,6 +35,7 @@ import {
   kanbanSchema,
   annotateSchema,
   heatmapSchema,
+  funnelSchema,
   getJsonSchema,
 } from '../index.js';
 
@@ -78,6 +79,7 @@ const zodSchemas: Record<string, typeof calloutSchema> = {
   kanban: kanbanSchema,
   annotate: annotateSchema,
   heatmap: heatmapSchema,
+  funnel: funnelSchema,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -126,6 +128,7 @@ const components = [
   'kanban',
   'annotate',
   'heatmap',
+  'funnel',
 ] as const;
 
 describe('Schema dual validation conformance', () => {

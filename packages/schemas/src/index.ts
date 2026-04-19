@@ -34,6 +34,7 @@ export { columnsSchema } from './columns.js';
 export { rowsSchema } from './rows.js';
 export { panelSchema } from './panel.js';
 export { heatmapSchema } from './heatmap.js';
+export { funnelSchema } from './funnel.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';
