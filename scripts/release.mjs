@@ -116,7 +116,36 @@ run("git push --tags");
 console.log("  Pushed commit and tag");
 
 // --- Create GitHub release ---
-run(`gh release create ${tag} --title "${tag}" --generate-notes`);
-console.log(`  Created GitHub release: ${tag}`);
+// `gh` may have multiple authenticated accounts (e.g. a T1 org account and
+// VledicFranco for personal repos). Switch to VledicFranco for the duration
+// of the release creation, then restore whichever account was active before.
+// This avoids the "workflow scope may be required" false-positive that the
+// T1 account's token triggers when creating releases on a repo it can access
+// via `repo` scope but didn't originally authorize for.
+let previousActiveAccount = null;
+try {
+  previousActiveAccount = run("gh auth status --active").match(/account (\S+)/)?.[1] ?? null;
+} catch {
+  /* gh may not be configured with multiple accounts — that's fine */
+}
+
+if (previousActiveAccount && previousActiveAccount !== "VledicFranco") {
+  run("gh auth switch --hostname github.com --user VledicFranco");
+  console.log(`  Switched gh active account: ${previousActiveAccount} → VledicFranco`);
+}
+
+try {
+  run(`gh release create ${tag} --title "${tag}" --generate-notes`);
+  console.log(`  Created GitHub release: ${tag}`);
+} finally {
+  if (previousActiveAccount && previousActiveAccount !== "VledicFranco") {
+    try {
+      run(`gh auth switch --hostname github.com --user ${previousActiveAccount}`);
+      console.log(`  Restored gh active account: ${previousActiveAccount}`);
+    } catch {
+      console.warn(`  Warning: could not restore gh active account to ${previousActiveAccount}`);
+    }
+  }
+}
 
 console.log(`\nRelease ${tag} complete!`);
