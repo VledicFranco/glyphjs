@@ -533,6 +533,18 @@ New components are prioritized by **Frequency x Visual Uplift x Feasibility** an
 | P11      | RFC-013 | Card        | `ui:card`        | S          | Content showcase cards with responsive grid layout (1-4 columns). Optional image, icon, title, subtitle, body, and action links. Three variants: default, outlined, elevated. |
 | P12      | RFC-014 | Infographic | `ui:infographic` | M          | Multi-section visual summary mixing stats, facts, progress bars, and narrative text. Auto-groups consecutive items of the same type. Discriminated union schema.              |
 
+### Batch 5 — Reporting (volumetric, threshold, and explainability visuals)
+
+Driven by LLM-generated executive/operational briefings (daily digests, weekly retros, strategic reports). These components fill gaps around volumetric flow, threshold-based status, and explainability — cases where the existing chart/diagram primitives tell you _what_ but not _where-on-a-scale_, _how-much-flows-through_, or _why-this-recommendation_.
+
+| Priority | RFC     | Component    | Block type        | Complexity | Summary                                                                                                                                                                                              |
+| -------- | ------- | ------------ | ----------------- | ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P13      | RFC-027 | Heatmap      | `ui:heatmap`      | M          | 2D grid of color-coded cells for dense tabular data: status matrices, contribution calendars, correlation grids, risk heatmaps. Sequential or diverging color scales, optional value labels.         |
+| P14      | RFC-028 | Sankey       | `ui:sankey`       | L          | Directed flow diagram where ribbon widths are proportional to flow magnitude. Used for user journeys, budget allocation, funnels with branching. Pure SVG — in-house layout algorithm, no d3-sankey. |
+| P15      | RFC-029 | Funnel       | `ui:funnel`       | S          | Monotonically-decreasing stage sequence rendered as a tapering shape, with optional per-stage conversion percentages. Vertical or horizontal.                                                        |
+| P16      | RFC-030 | Gauge        | `ui:gauge`        | S          | Single-value dial (semicircle or full) with colored threshold zones and an optional target marker. Uses `role="meter"` for a11y.                                                                     |
+| P17      | RFC-031 | DecisionTree | `ui:decisiontree` | M          | Strict hierarchical tree with question nodes and sentiment-colored outcome leaves. Edge labels carry conditions. For routing logic, policy diagrams, and LLM reasoning traces.                       |
+
 ### Implementation notes
 
 - **No cross-dependencies** — each component can be implemented independently by following the lifecycle phases above.
