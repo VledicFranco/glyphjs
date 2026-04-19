@@ -1,0 +1,145 @@
+---
+title: Gauge
+description: Single-value dial with colored threshold zones and optional target marker for health metrics and score displays.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Gauge** component (`ui:gauge`) renders a single value on a dial with colored threshold zones. Use it for health metrics, quota usage, confidence scores, SLA adherence, and any "X out of Y with red/yellow/green bands" visual. Where a KPI answers _"what changed"_, a gauge answers _"where on the scale are we?"_
+
+## Examples
+
+### Customer satisfaction (semicircle with zones + target)
+
+export const csatExample = `\`\`\`ui:gauge
+label: Customer satisfaction
+value: 78
+min: 0
+max: 100
+unit: "%"
+zones:
+  - { max: 40,  label: Critical, sentiment: negative }
+  - { max: 70,  label: Warning,  sentiment: neutral }
+  - { max: 100, label: Healthy,  sentiment: positive }
+target: 80
+\`\`\``;
+
+<GlyphPreview client:only="react" source={csatExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:gauge
+label: Customer satisfaction
+value: 78
+min: 0
+max: 100
+unit: "%"
+zones:
+  - { max: 40,  label: Critical, sentiment: negative }
+  - { max: 70,  label: Warning,  sentiment: neutral }
+  - { max: 100, label: Healthy,  sentiment: positive }
+target: 80
+```
+````
+
+</details>
+
+### Full dial (engine RPM)
+
+export const rpmExample = `\`\`\`ui:gauge
+label: Engine RPM
+value: 4200
+min: 0
+max: 8000
+unit: rpm
+shape: full
+zones:
+  - { max: 3000, label: Eco,     sentiment: positive }
+  - { max: 6000, label: Normal,  sentiment: neutral }
+  - { max: 8000, label: Redline, sentiment: negative }
+\`\`\``;
+
+<GlyphPreview client:only="react" source={rpmExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:gauge
+label: Engine RPM
+value: 4200
+min: 0
+max: 8000
+unit: rpm
+shape: full
+zones:
+  - { max: 3000, label: Eco,     sentiment: positive }
+  - { max: 6000, label: Normal,  sentiment: neutral }
+  - { max: 8000, label: Redline, sentiment: negative }
+```
+````
+
+</details>
+
+### Confidence score (0 - 1 scale)
+
+export const confidenceExample = `\`\`\`ui:gauge
+label: Model confidence
+value: 0.82
+min: 0
+max: 1
+zones:
+  - { max: 0.4, label: Low,      sentiment: negative }
+  - { max: 0.7, label: Moderate, sentiment: neutral }
+  - { max: 1,   label: High,     sentiment: positive }
+\`\`\``;
+
+<GlyphPreview client:only="react" source={confidenceExample} />
+
+<details>
+<summary>View Glyph Markdown source</summary>
+
+````markdown
+```ui:gauge
+label: Model confidence
+value: 0.82
+min: 0
+max: 1
+zones:
+  - { max: 0.4, label: Low,      sentiment: negative }
+  - { max: 0.7, label: Moderate, sentiment: neutral }
+  - { max: 1,   label: High,     sentiment: positive }
+```
+````
+
+</details>
+
+## Properties
+
+| Property | Type                          | Required | Default       | Description                                                                  |
+| -------- | ----------------------------- | -------- | ------------- | ---------------------------------------------------------------------------- |
+| `label`  | `string`                      | Yes      | --            | Descriptive label displayed below the value and used as the ARIA label.      |
+| `value`  | `number`                      | Yes      | --            | Current value. Must fall within `[min, max]`.                                |
+| `min`    | `number`                      | No       | `0`           | Lower bound of the scale.                                                    |
+| `max`    | `number`                      | Yes      | --            | Upper bound of the scale. Must be greater than `min`.                        |
+| `unit`   | `string`                      | No       | --            | Optional unit displayed next to the value (e.g. `%`, `rpm`, `ms`).           |
+| `zones`  | `GaugeZone[]`                 | No       | --            | 1-6 threshold zones rendered as colored arcs. Sorted ascending by `max`.     |
+| `target` | `number`                      | No       | --            | Optional target value rendered as an accent-colored tick mark on the arc.   |
+| `shape`  | `"semicircle" \| "full"`      | No       | `"semicircle"` | Dial shape. Semicircle sweeps 180° over the top; full sweeps 270° around.   |
+
+### GaugeZone
+
+| Property    | Type                                      | Required | Default | Description                                                                                                    |
+| ----------- | ----------------------------------------- | -------- | ------- | -------------------------------------------------------------------------------------------------------------- |
+| `max`       | `number`                                  | Yes      | --      | Upper bound of the zone. Previous zone's `max` (or global `min`) is the zone's lower bound.                    |
+| `label`     | `string`                                  | No       | --      | Zone name. Shown below the gauge when the value lands in this zone and included in the `aria-valuetext`.       |
+| `sentiment` | `"positive" \| "neutral" \| "negative"`   | No       | --      | Colors the zone arc. Unset sentiments cycle through `--glyph-palette-color-N` based on zone index.             |
+
+## Accessibility
+
+- The wrapper uses `role="meter"` (preferred over `progressbar` for gauges) with `aria-valuemin`, `aria-valuemax`, and `aria-valuenow` set from the schema values.
+- `aria-valuetext` combines the current value, unit, zone label, and target into a sentence: _"78 %, in Healthy zone. Target: 80 %."_ — so screen-reader users get the semantic zone membership without relying on color.
+- The SVG arc and needle carry `aria-hidden="true"` — all semantic data lives on the wrapper so AT doesn't receive duplicate noise.
+- Sentiment colors map to `--glyph-color-success`, `--glyph-color-warning`, and `--glyph-color-error`, all of which the built-in light and dark themes define with sufficient contrast.

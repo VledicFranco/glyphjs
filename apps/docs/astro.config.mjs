@@ -53,6 +53,7 @@ export default defineConfig({
           { label: 'Flowchart', slug: 'components/flowchart' },
           { label: 'FileTree', slug: 'components/filetree' },
           { label: 'Funnel', slug: 'components/funnel' },
+          { label: 'Gauge', slug: 'components/gauge' },
           { label: 'Sequence', slug: 'components/sequence' },
           { label: 'MindMap', slug: 'components/mindmap' },
           { label: 'Equation', slug: 'components/equation' },

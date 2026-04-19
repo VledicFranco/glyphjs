@@ -42,6 +42,7 @@ import {
   heatmapDefinition,
   funnelDefinition,
   decisionTreeDefinition,
+  gaugeDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -81,6 +82,7 @@ const allComponents = [
   heatmapDefinition,
   funnelDefinition,
   decisionTreeDefinition,
+  gaugeDefinition,
 ];
 
 interface GlyphPreviewProps {

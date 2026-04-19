@@ -37,6 +37,7 @@ export { panelSchema } from './panel.js';
 export { heatmapSchema } from './heatmap.js';
 export { funnelSchema } from './funnel.js';
 export { decisiontreeSchema } from './decisiontree.js';
+export { gaugeSchema } from './gauge.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';

@@ -35,11 +35,12 @@ const ALL_TYPES = [
   'funnel',
   'sankey',
   'decisiontree',
+  'gauge',
 ];
 
 describe('componentSchemas', () => {
-  it('has exactly 36 registered components', () => {
-    expect(componentSchemas.size).toBe(36);
+  it('has exactly 37 registered components', () => {
+    expect(componentSchemas.size).toBe(37);
   });
 
   it('contains every expected component type', () => {

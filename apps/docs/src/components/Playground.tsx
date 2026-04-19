@@ -39,6 +39,7 @@ import {
   funnelDefinition,
   sankeyDefinition,
   decisionTreeDefinition,
+  gaugeDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -108,6 +109,7 @@ const allComponents = [
   funnelDefinition,
   sankeyDefinition,
   decisionTreeDefinition,
+  gaugeDefinition,
 ];
 
 export default function Playground() {

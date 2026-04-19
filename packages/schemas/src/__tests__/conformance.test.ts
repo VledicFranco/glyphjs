@@ -38,6 +38,7 @@ import {
   funnelSchema,
   sankeySchema,
   decisiontreeSchema,
+  gaugeSchema,
   getJsonSchema,
 } from '../index.js';
 
@@ -84,6 +85,7 @@ const zodSchemas: Record<string, typeof calloutSchema> = {
   funnel: funnelSchema,
   sankey: sankeySchema,
   decisiontree: decisiontreeSchema,
+  gauge: gaugeSchema,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -135,6 +137,7 @@ const components = [
   'funnel',
   'sankey',
   'decisiontree',
+  'gauge',
 ] as const;
 
 describe('Schema dual validation conformance', () => {

@@ -53,6 +53,7 @@ export type BlockType =
   | 'ui:funnel'
   | 'ui:sankey'
   | 'ui:decisiontree'
+  | 'ui:gauge'
   // Layout components
   | 'ui:columns'
   | 'ui:rows'

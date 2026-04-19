@@ -37,6 +37,7 @@ import { panelSchema } from './panel.js';
 import { heatmapSchema } from './heatmap.js';
 import { funnelSchema } from './funnel.js';
 import { decisiontreeSchema } from './decisiontree.js';
+import { gaugeSchema } from './gauge.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -77,6 +78,7 @@ const entries: [string, z.ZodType][] = [
   ['heatmap', heatmapSchema],
   ['funnel', funnelSchema],
   ['decisiontree', decisiontreeSchema],
+  ['gauge', gaugeSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);
