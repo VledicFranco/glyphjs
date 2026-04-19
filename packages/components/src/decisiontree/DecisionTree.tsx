@@ -115,76 +115,97 @@ function buildTree(data: DecisionTreeData): TreeRef | null {
 // ─── Layout Algorithm ────────────────────────────────────────
 
 /**
- * Bottom-up naive tree layout:
- *   - For each subtree, compute its width as the sum of child widths
- *     (or NODE_WIDTH for leaves).
- *   - Place each node centred over its children.
+ * Bottom-up naive tree layout, orientation-aware.
+ *
+ * Two axes:
+ *   - main axis  = depth direction (y for top-down, x for left-right)
+ *   - cross axis = sibling distribution (x for top-down, y for left-right)
+ *
+ * Per orientation:
+ *   - top-down:   cross slot = NODE_WIDTH,  cross gap = HGAP, main stride = NODE_HEIGHT + VGAP
+ *   - left-right: cross slot = NODE_HEIGHT, cross gap = VGAP, main stride = NODE_WIDTH  + HGAP
+ *
+ * Bottom-up:
+ *   - For each subtree, compute its cross-axis extent as max(self slot,
+ *     sum of child extents + gaps).
+ *   - Place each node centred (cross axis) over its children, advancing
+ *     along the main axis once per depth.
  *
  * This is a simple "distribute children evenly under parent" algorithm
  * adequate for trees up to ~50 nodes, as specified in RFC-031 §6.
  */
 
-interface SubtreeInfo {
-  width: number;
+interface AxisMetrics {
+  crossSlot: number; // node size along the cross axis (sibling distribution)
+  crossGap: number; // gap between sibling subtrees
+  mainStride: number; // distance between consecutive depth levels (centre-to-centre)
 }
 
-function measureSubtree(tree: TreeRef): SubtreeInfo {
-  if (tree.children.length === 0) {
-    return { width: NODE_WIDTH };
+function axisMetrics(orientation: DecisionTreeOrientation): AxisMetrics {
+  if (orientation === 'left-right') {
+    // Cross axis is vertical, main axis is horizontal.
+    return { crossSlot: NODE_HEIGHT, crossGap: VGAP, mainStride: NODE_WIDTH + HGAP };
   }
-  let totalChildWidth = 0;
+  // top-down: cross axis is horizontal, main axis is vertical.
+  return { crossSlot: NODE_WIDTH, crossGap: HGAP, mainStride: NODE_HEIGHT + VGAP };
+}
+
+interface SubtreeInfo {
+  crossExtent: number; // size along the cross axis required by this subtree
+}
+
+function measureSubtree(tree: TreeRef, m: AxisMetrics): SubtreeInfo {
+  if (tree.children.length === 0) {
+    return { crossExtent: m.crossSlot };
+  }
+  let total = 0;
   for (let i = 0; i < tree.children.length; i++) {
     const child = tree.children[i];
     if (!child) continue;
-    const childInfo = measureSubtree(child);
-    totalChildWidth += childInfo.width;
-    if (i < tree.children.length - 1) totalChildWidth += HGAP;
+    const childInfo = measureSubtree(child, m);
+    total += childInfo.crossExtent;
+    if (i < tree.children.length - 1) total += m.crossGap;
   }
-  return { width: Math.max(NODE_WIDTH, totalChildWidth) };
+  return { crossExtent: Math.max(m.crossSlot, total) };
 }
 
+/**
+ * Recursively assign positions. `crossStart` is the leading edge of this
+ * subtree on the cross axis; `mainPos` is the centre of this node on the
+ * main axis.
+ */
 function placeTree(
   tree: TreeRef,
-  leftEdge: number,
-  yPos: number,
+  crossStart: number,
+  mainPos: number,
   orientation: DecisionTreeOrientation,
+  m: AxisMetrics,
   out: Map<string, PositionedNode>,
 ): void {
-  const info = measureSubtree(tree);
-  const cx = leftEdge + info.width / 2;
+  const info = measureSubtree(tree, m);
+  const crossCentre = crossStart + info.crossExtent / 2;
 
-  if (orientation === 'top-down') {
-    out.set(tree.node.id, {
-      id: tree.node.id,
-      label: tree.node.label,
-      type: tree.node.type ?? (tree.children.length === 0 ? 'outcome' : 'question'),
-      sentiment: tree.node.sentiment,
-      confidence: tree.node.confidence,
-      depth: tree.depth,
-      x: cx,
-      y: yPos,
-      parentId: tree.parentId,
-    });
-  } else {
-    // left-right: use the swap by layout below
-    out.set(tree.node.id, {
-      id: tree.node.id,
-      label: tree.node.label,
-      type: tree.node.type ?? (tree.children.length === 0 ? 'outcome' : 'question'),
-      sentiment: tree.node.sentiment,
-      confidence: tree.node.confidence,
-      depth: tree.depth,
-      x: cx,
-      y: yPos,
-      parentId: tree.parentId,
-    });
-  }
+  // Map (main, cross) → (x, y) per orientation.
+  const x = orientation === 'left-right' ? mainPos : crossCentre;
+  const y = orientation === 'left-right' ? crossCentre : mainPos;
 
-  let cursor = leftEdge;
+  out.set(tree.node.id, {
+    id: tree.node.id,
+    label: tree.node.label,
+    type: tree.node.type ?? (tree.children.length === 0 ? 'outcome' : 'question'),
+    sentiment: tree.node.sentiment,
+    confidence: tree.node.confidence,
+    depth: tree.depth,
+    x,
+    y,
+    parentId: tree.parentId,
+  });
+
+  let cursor = crossStart;
   for (const child of tree.children) {
-    const childInfo = measureSubtree(child);
-    placeTree(child, cursor, yPos + VGAP, orientation, out);
-    cursor += childInfo.width + HGAP;
+    const childInfo = measureSubtree(child, m);
+    placeTree(child, cursor, mainPos + m.mainStride, orientation, m, out);
+    cursor += childInfo.crossExtent + m.crossGap;
   }
 }
 
@@ -193,37 +214,33 @@ function layout(data: DecisionTreeData): LayoutResult | null {
   const tree = buildTree(data);
   if (!tree) return null;
 
-  const rootInfo = measureSubtree(tree);
+  const m = axisMetrics(orientation);
+  const rootInfo = measureSubtree(tree, m);
+
+  // Main-axis start: half a node from the padded edge so the box fits.
+  const mainStart =
+    orientation === 'left-right' ? SVG_PADDING + NODE_WIDTH / 2 : SVG_PADDING + NODE_HEIGHT / 2;
+
   const positioned = new Map<string, PositionedNode>();
-  placeTree(tree, SVG_PADDING, SVG_PADDING + NODE_HEIGHT / 2, orientation, positioned);
+  placeTree(tree, SVG_PADDING, mainStart, orientation, m, positioned);
 
-  let totalWidth = rootInfo.width + SVG_PADDING * 2;
-  let totalHeight = SVG_PADDING * 2;
+  // Compute SVG dimensions from actual node positions.
+  let maxX = 0;
+  let maxY = 0;
   for (const node of positioned.values()) {
-    totalHeight = Math.max(totalHeight, node.y + NODE_HEIGHT / 2 + SVG_PADDING);
+    maxX = Math.max(maxX, node.x + NODE_WIDTH / 2 + SVG_PADDING);
+    maxY = Math.max(maxY, node.y + NODE_HEIGHT / 2 + SVG_PADDING);
   }
 
-  // For left-right, swap x/y axes
+  // Ensure cross-axis dimension reflects the measured subtree even when the
+  // tree is a single chain (root extents on both sides).
   if (orientation === 'left-right') {
-    const swapped = new Map<string, PositionedNode>();
-    let maxX = 0;
-    let maxY = 0;
-    for (const [id, node] of positioned) {
-      const newNode: PositionedNode = {
-        ...node,
-        x: node.y, // y becomes x (horizontal level)
-        y: node.x, // x becomes y (vertical distribution)
-      };
-      swapped.set(id, newNode);
-      maxX = Math.max(maxX, newNode.x + NODE_WIDTH / 2 + SVG_PADDING);
-      maxY = Math.max(maxY, newNode.y + NODE_HEIGHT / 2 + SVG_PADDING);
-    }
-    totalWidth = maxX;
-    totalHeight = maxY;
-    return { nodes: swapped, width: totalWidth, height: totalHeight, rootId: tree.node.id };
+    maxY = Math.max(maxY, rootInfo.crossExtent + SVG_PADDING * 2);
+  } else {
+    maxX = Math.max(maxX, rootInfo.crossExtent + SVG_PADDING * 2);
   }
 
-  return { nodes: positioned, width: totalWidth, height: totalHeight, rootId: tree.node.id };
+  return { nodes: positioned, width: maxX, height: maxY, rootId: tree.node.id };
 }
 
 // ─── Sentiment Colors ────────────────────────────────────────

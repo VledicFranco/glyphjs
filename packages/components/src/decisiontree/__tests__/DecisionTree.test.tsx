@@ -50,6 +50,41 @@ const trivialData: DecisionTreeData = {
   edges: [{ from: 'root', to: 'yes', condition: 'yes' }],
 };
 
+// 3-level tree: root → 2 children → 4 grandchildren (2 each)
+const threeLevelData: DecisionTreeData = {
+  nodes: [
+    { id: 'root', type: 'question', label: 'Root' },
+    { id: 'c1', type: 'question', label: 'Child 1' },
+    { id: 'c2', type: 'question', label: 'Child 2' },
+    { id: 'g1', type: 'outcome', label: 'Grand 1', sentiment: 'positive' },
+    { id: 'g2', type: 'outcome', label: 'Grand 2', sentiment: 'positive' },
+    { id: 'g3', type: 'outcome', label: 'Grand 3', sentiment: 'positive' },
+    { id: 'g4', type: 'outcome', label: 'Grand 4', sentiment: 'positive' },
+  ],
+  edges: [
+    { from: 'root', to: 'c1' },
+    { from: 'root', to: 'c2' },
+    { from: 'c1', to: 'g1' },
+    { from: 'c1', to: 'g2' },
+    { from: 'c2', to: 'g3' },
+    { from: 'c2', to: 'g4' },
+  ],
+};
+
+// Helper: parse the centre coordinates of a rendered node from its <rect> attrs.
+function nodeCentre(container: HTMLElement, id: string): { x: number; y: number } | null {
+  const group = container.querySelector(`[data-testid="decisiontree-node-${id}"]`);
+  if (!group) return null;
+  const rect = group.querySelector('rect');
+  if (!rect) return null;
+  const x = parseFloat(rect.getAttribute('x') ?? 'NaN');
+  const y = parseFloat(rect.getAttribute('y') ?? 'NaN');
+  const w = parseFloat(rect.getAttribute('width') ?? 'NaN');
+  const h = parseFloat(rect.getAttribute('height') ?? 'NaN');
+  if ([x, y, w, h].some(Number.isNaN)) return null;
+  return { x: x + w / 2, y: y + h / 2 };
+}
+
 // ─── Tests ───────────────────────────────────────────────────
 
 describe('DecisionTree', () => {
@@ -155,8 +190,22 @@ describe('DecisionTree', () => {
     const tdBox = tdContainer.querySelector('svg[role="tree"]')?.getAttribute('viewBox') ?? '';
     expect(lrBox).not.toBe('');
     expect(tdBox).not.toBe('');
-    // The two orientations should produce different viewBox dimensions
-    expect(lrBox).not.toBe(tdBox);
+
+    // Orientation must materially change node placement.
+    // In top-down the root sits topmost; in left-right it sits leftmost.
+    const lrRoot = nodeCentre(lrContainer, 'root');
+    const lrLeaf = nodeCentre(lrContainer, 'paid');
+    const tdRoot = nodeCentre(tdContainer, 'root');
+    const tdLeaf = nodeCentre(tdContainer, 'paid');
+    expect(lrRoot).not.toBeNull();
+    expect(lrLeaf).not.toBeNull();
+    expect(tdRoot).not.toBeNull();
+    expect(tdLeaf).not.toBeNull();
+
+    // left-right: leaf is to the right of root (greater x).
+    expect(lrLeaf!.x).toBeGreaterThan(lrRoot!.x);
+    // top-down: leaf is below root (greater y).
+    expect(tdLeaf!.y).toBeGreaterThan(tdRoot!.y);
   });
 
   it('renders in top-down orientation with valid viewBox', () => {
@@ -181,6 +230,73 @@ describe('DecisionTree', () => {
     expect(svg).toBeInTheDocument();
     expect(screen.getAllByText('Proceed?').length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText('Ship it').length).toBeGreaterThanOrEqual(1);
+  });
+
+  it('left-right layout: root sits leftmost and children flow right', () => {
+    const data: DecisionTreeData = { ...threeLevelData, orientation: 'left-right' };
+    const props = createMockProps<DecisionTreeData>(data, 'ui:decisiontree');
+    const { container } = render(<DecisionTree {...props} />);
+
+    const ids = ['root', 'c1', 'c2', 'g1', 'g2', 'g3', 'g4'] as const;
+    const positions = Object.fromEntries(
+      ids.map((id) => [id, nodeCentre(container, id)] as const),
+    ) as Record<(typeof ids)[number], { x: number; y: number }>;
+
+    for (const id of ids) {
+      expect(positions[id], `node ${id} should render`).not.toBeNull();
+    }
+
+    // Root x is strictly less than every other node's x.
+    const rootX = positions.root.x;
+    for (const id of ids) {
+      if (id === 'root') continue;
+      expect(positions[id].x, `node ${id} should be right of root`).toBeGreaterThan(rootX);
+    }
+
+    // Each leaf (g1..g4) sits to the right of its parent.
+    expect(positions.g1.x).toBeGreaterThan(positions.c1.x);
+    expect(positions.g2.x).toBeGreaterThan(positions.c1.x);
+    expect(positions.g3.x).toBeGreaterThan(positions.c2.x);
+    expect(positions.g4.x).toBeGreaterThan(positions.c2.x);
+
+    // Both intermediate children sit to the right of root and to the left of any leaf.
+    expect(positions.c1.x).toBeGreaterThan(rootX);
+    expect(positions.c2.x).toBeGreaterThan(rootX);
+    const minLeafX = Math.min(positions.g1.x, positions.g2.x, positions.g3.x, positions.g4.x);
+    expect(positions.c1.x).toBeLessThan(minLeafX);
+    expect(positions.c2.x).toBeLessThan(minLeafX);
+  });
+
+  it('top-down layout: root sits topmost and children flow down', () => {
+    const data: DecisionTreeData = { ...threeLevelData, orientation: 'top-down' };
+    const props = createMockProps<DecisionTreeData>(data, 'ui:decisiontree');
+    const { container } = render(<DecisionTree {...props} />);
+
+    const ids = ['root', 'c1', 'c2', 'g1', 'g2', 'g3', 'g4'] as const;
+    const positions = Object.fromEntries(
+      ids.map((id) => [id, nodeCentre(container, id)] as const),
+    ) as Record<(typeof ids)[number], { x: number; y: number }>;
+
+    for (const id of ids) {
+      expect(positions[id], `node ${id} should render`).not.toBeNull();
+    }
+
+    // Root y is strictly less than every other node's y.
+    const rootY = positions.root.y;
+    for (const id of ids) {
+      if (id === 'root') continue;
+      expect(positions[id].y, `node ${id} should be below root`).toBeGreaterThan(rootY);
+    }
+
+    // Each leaf sits below its parent.
+    expect(positions.g1.y).toBeGreaterThan(positions.c1.y);
+    expect(positions.g2.y).toBeGreaterThan(positions.c1.y);
+    expect(positions.g3.y).toBeGreaterThan(positions.c2.y);
+    expect(positions.g4.y).toBeGreaterThan(positions.c2.y);
+
+    const minLeafY = Math.min(positions.g1.y, positions.g2.y, positions.g3.y, positions.g4.y);
+    expect(positions.c1.y).toBeLessThan(minLeafY);
+    expect(positions.c2.y).toBeLessThan(minLeafY);
   });
 
   it('computes aria-level from tree depth', () => {
