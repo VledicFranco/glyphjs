@@ -33,15 +33,15 @@ test.describe('Timeline', () => {
     await expect(items).toHaveCount(4);
   });
 
-  test('each event in the fallback list has a time element', async ({ page }) => {
+  test('each event in the fallback list renders marker and title', async ({ page }) => {
     await page.goto(storyUrl('components-timeline--vertical'));
-    const timeElements = page.locator('[role="img"] ol time');
-    await expect(timeElements).toHaveCount(4);
-
-    // Verify the first time element has a dateTime attribute
-    const firstTime = timeElements.first();
-    const dateTime = await firstTime.getAttribute('dateTime');
-    expect(dateTime).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    // Since v0.9.4, markers are free-form strings (not guaranteed calendar
+    // dates), so the sr-only list no longer wraps them in <time> elements.
+    const items = page.locator('[role="img"] ol li');
+    await expect(items).toHaveCount(4);
+    // Each item contains marker text + event title as plain text
+    await expect(items.first()).toContainText('2024-01-15');
+    await expect(items.first()).toContainText('Project Kickoff');
   });
 
   test('horizontal timeline renders all events', async ({ page }) => {

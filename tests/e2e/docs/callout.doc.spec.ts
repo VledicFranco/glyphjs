@@ -9,7 +9,7 @@ import {
 test.describe('Callout doc page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('callout'));
-    await waitForAllPreviews(page, 4);
+    await waitForAllPreviews(page, 5);
   });
 
   test('each preview renders without error and has valid dimensions', async ({ page }) => {

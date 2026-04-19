@@ -9,7 +9,7 @@ import {
 test.describe('Slider docs page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('slider'));
-    await waitForAllPreviews(page, 2);
+    await waitForAllPreviews(page, 3);
   });
 
   test('loads slider documentation', async ({ page }) => {

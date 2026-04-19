@@ -32,13 +32,13 @@ test.describe('Card docs — responsive behavior', () => {
 test.describe('KPI docs — responsive behavior', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('kpi'));
-    // 3 existing previews + 1 narrow responsive preview = 4
-    await waitForAllPreviews(page, 4);
+    // 7 regular previews + 1 narrow responsive preview (at index 6) = 8 total
+    await waitForAllPreviews(page, 8);
   });
 
   test('narrow-wrapped KPI preview renders successfully', async ({ page }) => {
     const previews = getPreviewContainers(page);
-    const narrowPreview = previews.nth(3);
+    const narrowPreview = previews.nth(6);
     await assertPreviewRendered(narrowPreview);
   });
 

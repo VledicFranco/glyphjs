@@ -9,7 +9,7 @@ import {
 test.describe('Poll docs page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('poll'));
-    await waitForAllPreviews(page, 3);
+    await waitForAllPreviews(page, 4);
   });
 
   test('loads poll documentation', async ({ page }) => {

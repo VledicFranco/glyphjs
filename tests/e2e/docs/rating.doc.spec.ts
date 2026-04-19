@@ -9,7 +9,7 @@ import {
 test.describe('Rating docs page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('rating'));
-    await waitForAllPreviews(page, 3);
+    await waitForAllPreviews(page, 4);
   });
 
   test('loads rating documentation', async ({ page }) => {

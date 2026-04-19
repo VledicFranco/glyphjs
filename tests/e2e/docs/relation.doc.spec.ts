@@ -9,7 +9,7 @@ import {
 test.describe('Relation doc page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('relation'));
-    await waitForAllPreviews(page, 1);
+    await waitForAllPreviews(page, 4);
   });
 
   test('preview renders without error and has valid dimensions', async ({ page }) => {

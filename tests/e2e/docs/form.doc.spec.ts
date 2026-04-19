@@ -9,7 +9,7 @@ import {
 test.describe('Form docs page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('form'));
-    await waitForAllPreviews(page, 4);
+    await waitForAllPreviews(page, 3);
   });
 
   test('loads form documentation', async ({ page }) => {

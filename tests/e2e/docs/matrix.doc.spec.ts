@@ -9,7 +9,7 @@ import {
 test.describe('Matrix docs page', () => {
   test.beforeEach(async ({ page }) => {
     await page.goto(docsComponentUrl('matrix'));
-    await waitForAllPreviews(page, 2);
+    await waitForAllPreviews(page, 3);
   });
 
   test('loads matrix documentation', async ({ page }) => {
