@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.6] - 2026-04-19
+
 ### Fixed
 
 - **Timeline a11y tests**: updated two tests in `tests/a11y/audit.test.tsx` that asserted the Timeline sr-only list contained `<time dateTime>` elements. Since v0.9.4 removed date parsing in favor of free-form markers, the sr-only list now renders the marker text verbatim (without `<time>` wrapping) — markers are no longer guaranteed to be calendar dates, so the `<time>` semantic element is no longer appropriate. Tests now verify marker text and event title appear in each `<li>`. This was the only thing blocking v0.9.5's CI publish.

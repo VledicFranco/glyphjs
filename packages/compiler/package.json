@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/compiler",
-  "version": "0.9.5",
+  "version": "0.9.6",
   "description": "Compiles Glyph AST into IR with schema validation and diagnostics",
   "type": "module",
   "main": "./dist/index.cjs",
