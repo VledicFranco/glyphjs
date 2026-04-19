@@ -49,6 +49,7 @@ export default defineConfig({
           { label: 'Accordion', slug: 'components/accordion' },
           { label: 'Comparison', slug: 'components/comparison' },
           { label: 'CodeDiff', slug: 'components/codediff' },
+          { label: 'DecisionTree', slug: 'components/decisiontree' },
           { label: 'Flowchart', slug: 'components/flowchart' },
           { label: 'FileTree', slug: 'components/filetree' },
           { label: 'Funnel', slug: 'components/funnel' },

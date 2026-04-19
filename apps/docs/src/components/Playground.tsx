@@ -38,6 +38,7 @@ import {
   heatmapDefinition,
   funnelDefinition,
   sankeyDefinition,
+  decisionTreeDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -106,6 +107,7 @@ const allComponents = [
   heatmapDefinition,
   funnelDefinition,
   sankeyDefinition,
+  decisionTreeDefinition,
 ];
 
 export default function Playground() {

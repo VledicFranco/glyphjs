@@ -88,6 +88,15 @@ export { heatmapDefinition, Heatmap } from './heatmap/index.js';
 export type { HeatmapData, HeatmapScale } from './heatmap/index.js';
 export { funnelDefinition, Funnel } from './funnel/index.js';
 export type { FunnelData, FunnelStage } from './funnel/index.js';
+export { decisionTreeDefinition, DecisionTree } from './decisiontree/index.js';
+export type {
+  DecisionTreeData,
+  DecisionTreeNode,
+  DecisionTreeEdge,
+  DecisionTreeNodeType,
+  DecisionTreeSentiment,
+  DecisionTreeOrientation,
+} from './decisiontree/index.js';
 
 // All component definitions (for CLI / batch registration)
 import { calloutDefinition as _callout } from './callout/index.js';
@@ -125,6 +134,7 @@ import { rowsDefinition as _rows } from './rows/index.js';
 import { panelDefinition as _panel } from './panel/index.js';
 import { heatmapDefinition as _heatmap } from './heatmap/index.js';
 import { funnelDefinition as _funnel } from './funnel/index.js';
+import { decisionTreeDefinition as _decisionTree } from './decisiontree/index.js';
 
 export const allComponentDefinitions = [
   _callout,
@@ -162,4 +172,5 @@ export const allComponentDefinitions = [
   _panel,
   _heatmap,
   _funnel,
+  _decisionTree,
 ] as const;

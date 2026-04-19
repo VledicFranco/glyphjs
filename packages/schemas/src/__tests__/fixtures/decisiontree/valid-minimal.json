@@ -1,0 +1,7 @@
+{
+  "nodes": [
+    { "id": "root", "type": "question", "label": "Proceed?" },
+    { "id": "yes", "type": "outcome", "label": "Ship it", "sentiment": "positive" }
+  ],
+  "edges": [{ "from": "root", "to": "yes", "condition": "yes" }]
+}

@@ -52,6 +52,7 @@ export type BlockType =
   | 'ui:heatmap'
   | 'ui:funnel'
   | 'ui:sankey'
+  | 'ui:decisiontree'
   // Layout components
   | 'ui:columns'
   | 'ui:rows'

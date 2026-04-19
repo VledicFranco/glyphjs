@@ -1,0 +1,128 @@
+---
+title: DecisionTree
+description: Strict hierarchical tree with question nodes and sentiment-coloured outcome leaves for routing logic, policy diagrams, and LLM reasoning traces.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **DecisionTree** component (`ui:decisiontree`) renders a strictly hierarchical tree of decision questions with sentiment-coloured outcome leaves. Internal nodes represent questions, branches carry the condition that leads down each path, and leaves represent outcomes colour-coded by sentiment (positive / neutral / negative).
+
+Use it for routing logic explanations, policy documentation, and reasoning traces where you want to show _why_ a decision was made — not just how a process flows. For general flow diagrams prefer [`Flowchart`](./flowchart).
+
+## Routing logic
+
+export const routingExample = `
+\`\`\`ui:decisiontree
+title: Action routing
+orientation: left-right
+nodes:
+  - { id: root,    type: question, label: User tier? }
+  - { id: free,    type: question, label: Over free limit? }
+  - { id: paid,    type: outcome,  label: Allow unlimited,     sentiment: positive }
+  - { id: upgrade, type: outcome,  label: Show upgrade prompt, sentiment: neutral }
+  - { id: allow,   type: outcome,  label: Allow request,       sentiment: positive }
+edges:
+  - { from: root, to: free, condition: free }
+  - { from: root, to: paid, condition: paid }
+  - { from: free, to: upgrade, condition: "yes" }
+  - { from: free, to: allow,   condition: "no" }
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={routingExample} />
+
+## Reasoning trace with confidence
+
+Each node can carry a `confidence` score between 0 and 1; a small percentage badge appears at the bottom-right of the node. Useful for annotating LLM reasoning traces.
+
+export const reasoningExample = `
+\`\`\`ui:decisiontree
+title: LLM routing reasoning
+orientation: left-right
+nodes:
+  - { id: intent, type: question, label: Detect intent,   confidence: 0.92 }
+  - { id: lookup, type: question, label: Known entity?,   confidence: 0.84 }
+  - { id: search, type: outcome,  label: Run vector search,     sentiment: positive, confidence: 0.78 }
+  - { id: clarify, type: outcome, label: Ask for clarification, sentiment: neutral,  confidence: 0.65 }
+  - { id: reject,  type: outcome, label: Refuse (out of scope), sentiment: negative, confidence: 0.55 }
+edges:
+  - { from: intent, to: lookup,  condition: query }
+  - { from: intent, to: reject,  condition: unsupported }
+  - { from: lookup, to: search,  condition: "yes" }
+  - { from: lookup, to: clarify, condition: "no" }
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={reasoningExample} />
+
+## Top-down orientation
+
+Set `orientation: top-down` to flow from top to bottom instead of the default `left-right`.
+
+export const topDownExample = `
+\`\`\`ui:decisiontree
+title: Deploy gate
+orientation: top-down
+nodes:
+  - { id: start,  type: question, label: PR merged? }
+  - { id: tests,  type: question, label: Tests green? }
+  - { id: size,   type: question, label: Bundle under budget? }
+  - { id: deploy, type: outcome,  label: Auto-deploy,     sentiment: positive }
+  - { id: review, type: outcome,  label: Request review,  sentiment: neutral }
+  - { id: block,  type: outcome,  label: Block deploy,    sentiment: negative }
+edges:
+  - { from: start, to: tests,  condition: "yes" }
+  - { from: start, to: review, condition: "no" }
+  - { from: tests, to: size,   condition: pass }
+  - { from: tests, to: block,  condition: fail }
+  - { from: size,  to: deploy, condition: ok }
+  - { from: size,  to: review, condition: over }
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={topDownExample} />
+
+## Properties
+
+| Property      | Type                            | Default        | Description                                                         |
+| ------------- | ------------------------------- | -------------- | ------------------------------------------------------------------- |
+| `title`       | `string`                        | —              | Optional title rendered above the tree and used in the aria-label.  |
+| `nodes`       | `DecisionTreeNode[]`            | *(required)*   | All nodes in the tree. Must contain exactly one root (no parents).  |
+| `edges`       | `DecisionTreeEdge[]`            | `[]`           | Parent-to-child edges. Every non-root node must have exactly one.   |
+| `orientation` | `'left-right' \| 'top-down'`    | `'left-right'` | Tree flow direction.                                                |
+
+### DecisionTreeNode
+
+| Property     | Type                                            | Default      | Description                                                        |
+| ------------ | ----------------------------------------------- | ------------ | ------------------------------------------------------------------ |
+| `id`         | `string`                                        | *(required)* | Unique node identifier (referenced by edges).                      |
+| `type`       | `'question' \| 'outcome'`                       | `'question'` | Node role. Outcome nodes are rendered as pills.                    |
+| `label`      | `string`                                        | *(required)* | Display text.                                                      |
+| `sentiment`  | `'positive' \| 'neutral' \| 'negative'`         | —            | Used to colour outcome nodes. Ignored on question nodes.           |
+| `confidence` | `number` (0 – 1)                                | —            | Optional confidence score; rendered as a % badge on the node.      |
+
+### DecisionTreeEdge
+
+| Property    | Type     | Default      | Description                                                         |
+| ----------- | -------- | ------------ | ------------------------------------------------------------------- |
+| `from`      | `string` | *(required)* | Parent node id.                                                     |
+| `to`        | `string` | *(required)* | Child node id.                                                      |
+| `condition` | `string` | —            | Condition label rendered mid-edge on a small rounded pill.          |
+
+## Schema validity
+
+The Zod schema rejects structurally invalid trees at compile time:
+
+- **Multiple roots** — exactly one node must have no incoming edges.
+- **Orphans** — every node must be reachable from the root.
+- **Cycles** — edges must form a DAG (no back-edges).
+- **Multi-parent nodes** — a node may not be the `to` of more than one edge.
+
+Invalid trees produce a compile error rather than a rendered SVG.
+
+## Accessibility
+
+- The SVG has `role="tree"` with an `aria-label` summarising the title, decision count, and outcome count.
+- Each node is a `<g role="treeitem">` with `aria-level` computed from tree depth and an `aria-label` that includes the label and, for outcomes, the sentiment.
+- Edge condition labels are mirrored into a hidden `<desc>` so screen readers can announce "branch: `{condition}`" when traversing the tree.
+- A hidden nested ordered-list fallback mirrors the full tree structure for assistive technology that cannot walk the SVG.

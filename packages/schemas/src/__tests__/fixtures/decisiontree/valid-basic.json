@@ -1,0 +1,17 @@
+{
+  "title": "Action routing",
+  "nodes": [
+    { "id": "root", "type": "question", "label": "User tier?" },
+    { "id": "free", "type": "question", "label": "Over free limit?" },
+    { "id": "paid", "type": "outcome", "label": "Allow unlimited", "sentiment": "positive" },
+    { "id": "upgrade", "type": "outcome", "label": "Show upgrade prompt", "sentiment": "neutral" },
+    { "id": "allow", "type": "outcome", "label": "Allow request", "sentiment": "positive" }
+  ],
+  "edges": [
+    { "from": "root", "to": "free", "condition": "free" },
+    { "from": "root", "to": "paid", "condition": "paid" },
+    { "from": "free", "to": "upgrade", "condition": "yes" },
+    { "from": "free", "to": "allow", "condition": "no" }
+  ],
+  "orientation": "left-right"
+}

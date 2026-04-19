@@ -33,6 +33,7 @@ import {
   heatmapDefinition,
   funnelDefinition,
   sankeyDefinition,
+  decisionTreeDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -181,6 +182,7 @@ export function App() {
         heatmapDefinition,
         funnelDefinition,
         sankeyDefinition,
+        decisionTreeDefinition,
       ],
     });
     return rt;

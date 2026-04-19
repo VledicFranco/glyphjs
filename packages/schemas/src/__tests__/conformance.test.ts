@@ -37,6 +37,7 @@ import {
   heatmapSchema,
   funnelSchema,
   sankeySchema,
+  decisiontreeSchema,
   getJsonSchema,
 } from '../index.js';
 
@@ -82,6 +83,7 @@ const zodSchemas: Record<string, typeof calloutSchema> = {
   heatmap: heatmapSchema,
   funnel: funnelSchema,
   sankey: sankeySchema,
+  decisiontree: decisiontreeSchema,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -132,6 +134,7 @@ const components = [
   'heatmap',
   'funnel',
   'sankey',
+  'decisiontree',
 ] as const;
 
 describe('Schema dual validation conformance', () => {
