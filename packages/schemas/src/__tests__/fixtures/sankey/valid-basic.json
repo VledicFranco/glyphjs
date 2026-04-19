@@ -1,0 +1,20 @@
+{
+  "title": "Signup funnel",
+  "nodes": [
+    { "id": "visitors", "label": "Visitors" },
+    { "id": "signup", "label": "Signed up" },
+    { "id": "trial", "label": "Started trial" },
+    { "id": "paid", "label": "Paid" },
+    { "id": "drop", "label": "Dropped off" }
+  ],
+  "flows": [
+    { "from": "visitors", "to": "signup", "value": 3000 },
+    { "from": "visitors", "to": "drop", "value": 7000 },
+    { "from": "signup", "to": "trial", "value": 1800 },
+    { "from": "signup", "to": "drop", "value": 1200 },
+    { "from": "trial", "to": "paid", "value": 600 },
+    { "from": "trial", "to": "drop", "value": 1200 }
+  ],
+  "orientation": "left-right",
+  "unit": "users"
+}

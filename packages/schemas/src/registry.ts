@@ -30,6 +30,7 @@ import { matrixSchema } from './matrix.js';
 import { formSchema } from './form.js';
 import { kanbanSchema } from './kanban.js';
 import { annotateSchema } from './annotate.js';
+import { sankeySchema } from './sankey.js';
 import { columnsSchema } from './columns.js';
 import { rowsSchema } from './rows.js';
 import { panelSchema } from './panel.js';
@@ -68,6 +69,7 @@ const entries: [string, z.ZodType][] = [
   ['form', formSchema],
   ['kanban', kanbanSchema],
   ['annotate', annotateSchema],
+  ['sankey', sankeySchema],
   ['columns', columnsSchema],
   ['rows', rowsSchema],
   ['panel', panelSchema],

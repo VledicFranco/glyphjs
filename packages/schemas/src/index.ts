@@ -30,6 +30,7 @@ export { matrixSchema } from './matrix.js';
 export { formSchema } from './form.js';
 export { kanbanSchema } from './kanban.js';
 export { annotateSchema } from './annotate.js';
+export { sankeySchema } from './sankey.js';
 export { columnsSchema } from './columns.js';
 export { rowsSchema } from './rows.js';
 export { panelSchema } from './panel.js';

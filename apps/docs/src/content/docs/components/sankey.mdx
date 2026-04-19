@@ -1,0 +1,209 @@
+---
+title: Sankey
+description: Directed flow diagram with ribbon widths proportional to magnitude — for funnels, budget allocation, energy flow, and any "where does X go" question.
+---
+
+import GlyphPreview from '../../../components/GlyphPreview.tsx';
+
+The **Sankey** component (`ui:sankey`) renders a flow diagram where directed ribbons between nodes have widths proportional to a flow value. Use it for user funnels with branching, budget allocation, energy flow, traffic attribution, or any scenario where both topology and magnitude matter.
+
+Unlike a flowchart, every edge is sized; unlike a stacked bar chart, the branching topology is visible.
+
+## Basic example — signup funnel
+
+export const funnelExample = `
+\`\`\`ui:sankey
+title: Signup funnel
+orientation: left-right
+unit: users
+nodes:
+  - id: visitors
+    label: Visitors
+  - id: signup
+    label: Signed up
+  - id: trial
+    label: Started trial
+  - id: paid
+    label: Paid
+  - id: drop
+    label: Dropped off
+flows:
+  - from: visitors
+    to: signup
+    value: 3000
+  - from: visitors
+    to: drop
+    value: 7000
+  - from: signup
+    to: trial
+    value: 1800
+  - from: signup
+    to: drop
+    value: 1200
+  - from: trial
+    to: paid
+    value: 600
+  - from: trial
+    to: drop
+    value: 1200
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={funnelExample} />
+
+## Budget allocation across multiple tiers
+
+Sankey diagrams shine when you have more than two layers of flow — budgets, org charts by headcount, or multi-stage supply chains.
+
+export const budgetExample = `
+\`\`\`ui:sankey
+title: Q3 engineering budget flow
+orientation: left-right
+unit: k USD
+nodes:
+  - id: budget
+    label: Total budget
+  - id: product
+    label: Product
+  - id: platform
+    label: Platform
+  - id: security
+    label: Security
+  - id: salaries
+    label: Salaries
+  - id: infra
+    label: Infrastructure
+  - id: tooling
+    label: Tooling
+  - id: training
+    label: Training
+flows:
+  - from: budget
+    to: product
+    value: 500
+  - from: budget
+    to: platform
+    value: 300
+  - from: budget
+    to: security
+    value: 200
+  - from: product
+    to: salaries
+    value: 380
+  - from: product
+    to: tooling
+    value: 120
+  - from: platform
+    to: salaries
+    value: 180
+  - from: platform
+    to: infra
+    value: 90
+  - from: platform
+    to: tooling
+    value: 30
+  - from: security
+    to: salaries
+    value: 140
+  - from: security
+    to: training
+    value: 60
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={budgetExample} />
+
+## Top-down orientation
+
+Swap to vertical flow for layouts where the stages read top-to-bottom — useful when the diagram sits inside a narrow column or a dashboard cell.
+
+export const topDownExample = `
+\`\`\`ui:sankey
+title: Traffic attribution
+orientation: top-down
+unit: sessions
+nodes:
+  - id: organic
+    label: Organic
+  - id: social
+    label: Social
+  - id: paid
+    label: Paid ads
+  - id: home
+    label: Homepage
+  - id: product
+    label: Product page
+  - id: convert
+    label: Converted
+  - id: bounce
+    label: Bounced
+flows:
+  - from: organic
+    to: home
+    value: 1200
+  - from: social
+    to: home
+    value: 600
+  - from: paid
+    to: product
+    value: 900
+  - from: home
+    to: product
+    value: 1200
+  - from: home
+    to: bounce
+    value: 600
+  - from: product
+    to: convert
+    value: 900
+  - from: product
+    to: bounce
+    value: 1200
+\`\`\`
+`;
+
+<GlyphPreview client:only="react" source={topDownExample} />
+
+## Properties
+
+| Property      | Type                              | Default        | Description                                                                  |
+| ------------- | --------------------------------- | -------------- | ---------------------------------------------------------------------------- |
+| `title`       | `string`                          | —              | Optional heading displayed above the diagram.                                |
+| `nodes`       | `SankeyNode[]`                    | *(required, min 2)* | Array of nodes — each must have a unique `id`.                          |
+| `flows`       | `SankeyFlow[]`                    | *(required, min 1)* | Directed flows between nodes; width is proportional to `value`.         |
+| `orientation` | `'left-right' \| 'top-down'`      | `'left-right'` | Axis along which the flow runs.                                              |
+| `unit`        | `string`                          | —              | Optional unit label shown next to node values (e.g. `users`, `k USD`).       |
+
+### SankeyNode
+
+| Property | Type     | Default      | Description                                                                                   |
+| -------- | -------- | ------------ | --------------------------------------------------------------------------------------------- |
+| `id`     | `string` | *(required)* | Stable identifier referenced by flows.                                                        |
+| `label`  | `string` | *(required)* | Display label for the node.                                                                   |
+| `color`  | `string` | —            | Optional explicit CSS color. Overrides the default palette cycle (see "Colors" below).         |
+
+### SankeyFlow
+
+| Property | Type     | Default      | Description                                                    |
+| -------- | -------- | ------------ | -------------------------------------------------------------- |
+| `from`   | `string` | *(required)* | Source node ID — must refer to a declared node.                |
+| `to`     | `string` | *(required)* | Target node ID — must refer to a declared node.                |
+| `value`  | `number` | *(required, > 0)* | Magnitude of the flow; controls ribbon thickness.         |
+| `label`  | `string` | —            | Optional description surfaced in the accessible flows table.   |
+
+## Constraints
+
+- **DAG only.** Cycles (including self-loops) are rejected at schema-validation time. Sankey is not meant for feedback loops — reach for a graph component for those.
+- **Unique node IDs.** Every `flow.from` / `flow.to` must match a declared node; references to unknown IDs fail validation.
+- **Flow conservation is not enforced.** You can have unbalanced totals, for example to show drop-off without explicitly routing it. This is intentional — authors often know the aggregate drop but not the itemized reasons.
+
+## Colors
+
+Each node gets a color from the shared palette (`--glyph-palette-color-1` through `--glyph-palette-color-10`), cycled by declaration order. Ribbons inherit the color of their source node at 55% opacity, so overlaps blend visually. Provide `node.color` to override.
+
+## Accessibility
+
+- The SVG has `role="img"` and an `aria-label` summarising the title and node/flow counts.
+- A hidden data table (`role="table"` with `aria-label="Sankey flows"`) lists every flow with its source, target, value, and label — screen readers get the full data without the visual.
+- Node labels and values render as SVG `<text>`, so they remain selectable and discoverable through the accessibility tree.
+- Ribbons expose per-flow `<title>` tooltips with the flow summary.

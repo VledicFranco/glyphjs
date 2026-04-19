@@ -51,6 +51,7 @@ export type BlockType =
   | 'ui:annotate'
   | 'ui:heatmap'
   | 'ui:funnel'
+  | 'ui:sankey'
   // Layout components
   | 'ui:columns'
   | 'ui:rows'

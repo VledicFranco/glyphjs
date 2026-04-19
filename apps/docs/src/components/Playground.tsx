@@ -37,6 +37,7 @@ import {
   annotateDefinition,
   heatmapDefinition,
   funnelDefinition,
+  sankeyDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -104,6 +105,7 @@ const allComponents = [
   annotateDefinition,
   heatmapDefinition,
   funnelDefinition,
+  sankeyDefinition,
 ];
 
 export default function Playground() {

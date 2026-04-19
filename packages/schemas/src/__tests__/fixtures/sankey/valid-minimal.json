@@ -1,0 +1,7 @@
+{
+  "nodes": [
+    { "id": "a", "label": "Source" },
+    { "id": "b", "label": "Sink" }
+  ],
+  "flows": [{ "from": "a", "to": "b", "value": 1 }]
+}

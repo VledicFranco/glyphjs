@@ -61,6 +61,7 @@ export default defineConfig({
           { label: 'Poll', slug: 'components/poll' },
           { label: 'Rating', slug: 'components/rating' },
           { label: 'Ranker', slug: 'components/ranker' },
+          { label: 'Sankey', slug: 'components/sankey' },
           { label: 'Slider', slug: 'components/slider' },
           { label: 'Matrix', slug: 'components/matrix' },
           { label: 'Form', slug: 'components/form' },

@@ -1,0 +1,7 @@
+{
+  "title": "Missing flows",
+  "nodes": [
+    { "id": "a", "label": "Source" },
+    { "id": "b", "label": "Sink" }
+  ]
+}

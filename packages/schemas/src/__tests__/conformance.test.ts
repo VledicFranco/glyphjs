@@ -36,6 +36,7 @@ import {
   annotateSchema,
   heatmapSchema,
   funnelSchema,
+  sankeySchema,
   getJsonSchema,
 } from '../index.js';
 
@@ -80,6 +81,7 @@ const zodSchemas: Record<string, typeof calloutSchema> = {
   annotate: annotateSchema,
   heatmap: heatmapSchema,
   funnel: funnelSchema,
+  sankey: sankeySchema,
 };
 
 // ─── Helpers ─────────────────────────────────────────────────
@@ -129,6 +131,7 @@ const components = [
   'annotate',
   'heatmap',
   'funnel',
+  'sankey',
 ] as const;
 
 describe('Schema dual validation conformance', () => {
