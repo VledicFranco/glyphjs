@@ -6,12 +6,6 @@ import { createMockProps } from '../../__tests__/helpers.js';
 
 // Mock D3 scale functions
 vi.mock('d3', () => ({
-  scaleTime: () => {
-    const fn = (d: Date) => d.getTime() % 400;
-    fn.domain = () => fn;
-    fn.range = () => fn;
-    return fn;
-  },
   scaleOrdinal: () => {
     const fn = () => '#4e79a7';
     fn.domain = () => fn;
@@ -71,13 +65,33 @@ describe('Timeline', () => {
     expect(items).toHaveLength(3);
   });
 
-  it('renders time elements with dateTime attribute', () => {
-    const props = createMockProps<TimelineData>(timelineData, 'ui:timeline');
-    const { container } = render(<Timeline {...props} />);
+  it('renders the date string verbatim (no parsing or reformatting)', () => {
+    const props = createMockProps<TimelineData>(
+      { events: [{ date: 'Q1 2026', title: 'Alpha' }] },
+      'ui:timeline',
+    );
+    render(<Timeline {...props} />);
+    expect(screen.getAllByText('Q1 2026').length).toBeGreaterThanOrEqual(1);
+  });
 
-    const timeElements = container.querySelectorAll('time');
-    expect(timeElements).toHaveLength(3);
-    expect(timeElements[0]).toHaveAttribute('dateTime', '2024-01-15');
+  it('renders label when provided, ignoring date', () => {
+    const props = createMockProps<TimelineData>(
+      { events: [{ date: '2024-01-15', label: 'Phase 1', title: 'Kickoff' }] },
+      'ui:timeline',
+    );
+    render(<Timeline {...props} />);
+    expect(screen.getAllByText('Phase 1').length).toBeGreaterThanOrEqual(1);
+    expect(screen.queryByText('2024-01-15')).toBeNull();
+  });
+
+  it('renders without a marker when neither date nor label is provided', () => {
+    // Schema would reject this, but the component should not crash on it.
+    const props = createMockProps<TimelineData>(
+      { events: [{ title: 'Untitled phase' } as never] },
+      'ui:timeline',
+    );
+    render(<Timeline {...props} />);
+    expect(screen.getAllByText('Untitled phase').length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders event descriptions when provided', () => {

@@ -692,9 +692,27 @@ describe('timelineSchema negative tests', () => {
     expectFailure(timelineSchema, { events: null });
   });
 
-  it('rejects events missing "date"', () => {
+  it('rejects events missing both "date" and "label"', () => {
     expectFailure(timelineSchema, {
       events: [{ title: 'Event 1' }],
+    });
+  });
+
+  it('accepts events with only "date" (backwards compatible)', () => {
+    expectSuccess(timelineSchema, {
+      events: [{ date: '2024-01-01', title: 'Event 1' }],
+    });
+  });
+
+  it('accepts events with only "label"', () => {
+    expectSuccess(timelineSchema, {
+      events: [{ label: 'Phase 1', title: 'Event 1' }],
+    });
+  });
+
+  it('accepts events with both "date" and "label"', () => {
+    expectSuccess(timelineSchema, {
+      events: [{ date: '2024-01-01', label: 'Q1', title: 'Event 1' }],
     });
   });
 
@@ -707,6 +725,12 @@ describe('timelineSchema negative tests', () => {
   it('rejects events with numeric date', () => {
     expectFailure(timelineSchema, {
       events: [{ date: 20240101, title: 'Event 1' }],
+    });
+  });
+
+  it('rejects events with numeric label', () => {
+    expectFailure(timelineSchema, {
+      events: [{ label: 42, title: 'Event 1' }],
     });
   });
 

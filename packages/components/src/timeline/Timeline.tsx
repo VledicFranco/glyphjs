@@ -2,12 +2,13 @@ import { useRef } from 'react';
 import type { ReactElement } from 'react';
 import type { GlyphComponentProps, InlineNode } from '@glyphjs/types';
 import { RichText } from '@glyphjs/runtime';
-import { scaleTime, scaleOrdinal } from 'd3';
+import { scaleOrdinal } from 'd3';
 
 // ─── Types ─────────────────────────────────────────────────────
 
 interface TimelineEvent {
-  date: string;
+  date?: string;
+  label?: string;
   title: string | InlineNode[];
   description?: string | InlineNode[];
   type?: string;
@@ -20,7 +21,6 @@ export interface TimelineData {
 
 interface PositionedEvent {
   event: TimelineEvent;
-  parsed: Date;
   position: number;
   side: 'left' | 'right' | 'top' | 'bottom';
 }
@@ -29,12 +29,9 @@ interface PositionedEvent {
 
 const MARKER_RADIUS = 8;
 const LINE_THICKNESS = 2;
-const EVENT_SPACING_MIN = 80;
+const EVENT_SPACING = 80;
+const EDGE_PADDING = MARKER_RADIUS + 20;
 
-/**
- * Default color palette for event types.  The D3 ordinal scale will cycle
- * through these when assigning colors based on the event `type` field.
- */
 const TYPE_PALETTE = [
   'var(--glyph-timeline-color-1, var(--glyph-palette-color-1, #00d4aa))',
   'var(--glyph-timeline-color-2, var(--glyph-palette-color-2, #b44dff))',
@@ -48,49 +45,19 @@ const TYPE_PALETTE = [
 
 // ─── Helpers ───────────────────────────────────────────────────
 
-function parseDate(raw: string): Date {
-  // Try native ISO / common formats first
-  const d = new Date(raw);
-  if (!isNaN(d.getTime())) return d;
-
-  // YYYY-MM  (e.g. "2026-01")
-  const ym = raw.match(/^(\d{4})-(\d{1,2})$/);
-  if (ym && ym[1] && ym[2]) return new Date(+ym[1], +ym[2] - 1, 1);
-
-  // Q1 YYYY  or  YYYY-Q1  (quarter formats)
-  const q1 = raw.match(/^Q([1-4])\s+(\d{4})$/i);
-  if (q1 && q1[1] && q1[2]) return new Date(+q1[2], (+q1[1] - 1) * 3, 1);
-
-  const q2 = raw.match(/^(\d{4})-Q([1-4])$/i);
-  if (q2 && q2[1] && q2[2]) return new Date(+q2[1], (+q2[2] - 1) * 3, 1);
-
-  // Return epoch as fallback for truly unparseable dates
-  return new Date(0);
-}
-
-function formatDate(raw: string): string {
-  const d = parseDate(raw);
-  // If the date resolved to epoch, the input was unparseable — show original
-  if (d.getTime() === 0) return raw;
-  return d.toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
-}
-
-function isoDate(raw: string): string {
-  return parseDate(raw).toISOString().slice(0, 10);
+function eventMarker(e: TimelineEvent): string {
+  return e.label ?? e.date ?? '';
 }
 
 // ─── Component ─────────────────────────────────────────────────
 
 /**
- * Renders an interactive timeline visualization using D3 for positioning.
+ * Renders an interactive timeline as an evenly-spaced sequence of events.
  *
- * Events are placed along a central axis using a D3 time scale derived
- * from parsed event dates.  In vertical orientation events alternate
- * left / right; in horizontal orientation they flow left to right.
+ * Events are laid out in array order with uniform spacing — the `date` /
+ * `label` field is treated as a free-form marker, not parsed as a calendar
+ * date. This keeps the layout readable regardless of the unit (seconds,
+ * quarters, centuries, narrative phases). Authors order events themselves.
  *
  * Theming is controlled via CSS custom properties prefixed with
  * `--glyph-timeline-*`.
@@ -100,31 +67,15 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
   const containerRef = useRef<HTMLDivElement>(null);
   const isVertical = orientation === 'vertical';
 
-  // --- D3 scales (computed once per render) ---
-
-  const sorted = [...events]
-    .map((e) => ({ ...e, _parsed: parseDate(e.date) }))
-    .sort((a, b) => a._parsed.getTime() - b._parsed.getTime());
-
-  const dates = sorted.map((e) => e._parsed);
-  const minDate = dates[0] ?? new Date();
-  const maxDate = dates[dates.length - 1] ?? new Date();
-
-  const totalLength = Math.max(sorted.length * EVENT_SPACING_MIN, 400);
-
-  const timeScale = scaleTime()
-    .domain([minDate, maxDate])
-    .range([MARKER_RADIUS + 20, totalLength - MARKER_RADIUS - 20]);
+  const totalLength = Math.max(events.length * EVENT_SPACING + EDGE_PADDING, 400);
 
   const typeValues = [...new Set(events.map((e) => e.type ?? '_default'))];
   const colorScale = scaleOrdinal<string, string>().domain(typeValues).range(TYPE_PALETTE);
 
-  // --- Positioned events ---
-
-  const positioned: PositionedEvent[] = sorted.map((e, i) => ({
-    event: e,
-    parsed: e._parsed,
-    position: dates.length === 1 ? totalLength / 2 : (timeScale(e._parsed) as number),
+  const positioned: PositionedEvent[] = events.map((event, i) => ({
+    event,
+    position:
+      events.length === 1 ? totalLength / 2 : EDGE_PADDING + EVENT_SPACING / 2 + i * EVENT_SPACING,
     side: isVertical ? (i % 2 === 0 ? 'left' : 'right') : i % 2 === 0 ? 'top' : 'bottom',
   }));
 
@@ -174,10 +125,11 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
       {/* Event markers and labels */}
       {positioned.map((pe, idx) => {
         const color = colorScale(pe.event.type ?? '_default');
+        const marker = eventMarker(pe.event);
         return (
           <div key={idx} style={eventContainerStyle(pe, isVertical)} aria-hidden="true">
             {/* Connector arm from axis to marker */}
-            <div style={connectorStyle(pe, isVertical)} aria-hidden="true" />
+            <div style={connectorStyle(isVertical)} aria-hidden="true" />
 
             {/* Marker dot */}
             <div
@@ -195,15 +147,17 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
 
             {/* Label */}
             <div style={labelStyle(pe, isVertical)}>
-              <div
-                style={{
-                  fontSize: 'var(--glyph-timeline-date-size, 0.75rem)',
-                  color: 'var(--glyph-timeline-date-color, var(--glyph-text-muted, #6b7a94))',
-                  fontWeight: 600,
-                }}
-              >
-                {formatDate(pe.event.date)}
-              </div>
+              {marker && (
+                <div
+                  style={{
+                    fontSize: 'var(--glyph-timeline-date-size, 0.75rem)',
+                    color: 'var(--glyph-timeline-date-color, var(--glyph-text-muted, #6b7a94))',
+                    fontWeight: 600,
+                  }}
+                >
+                  {marker}
+                </div>
+              )}
               <div
                 style={{
                   fontSize: 'var(--glyph-timeline-title-size, 0.9rem)',
@@ -241,13 +195,13 @@ export function Timeline({ data }: GlyphComponentProps<TimelineData>): ReactElem
           whiteSpace: 'nowrap',
         }}
       >
-        {sorted.map((e, idx) => {
+        {events.map((e, idx) => {
           const titleText = typeof e.title === 'string' ? e.title : 'Event';
           const descText = typeof e.description === 'string' ? e.description : '';
+          const marker = eventMarker(e);
           return (
             <li key={idx}>
-              <time dateTime={isoDate(e.date)}>{formatDate(e.date)}</time>
-              {' \u2014 '}
+              {marker ? `${marker} \u2014 ` : ''}
               <strong>{titleText}</strong>
               {descText ? `: ${descText}` : ''}
             </li>
@@ -299,7 +253,7 @@ function eventContainerStyle(pe: PositionedEvent, isVertical: boolean): React.CS
   };
 }
 
-function connectorStyle(_pe: PositionedEvent, isVertical: boolean): React.CSSProperties {
+function connectorStyle(isVertical: boolean): React.CSSProperties {
   if (isVertical) {
     return {
       flex: '0 0 20px',

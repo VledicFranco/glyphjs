@@ -1,5 +1,3 @@
 {
-  "events": [
-    { "title": "Event without a date" }
-  ]
+  "events": [{ "title": "Event without a date or label" }]
 }

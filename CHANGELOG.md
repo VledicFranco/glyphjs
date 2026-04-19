@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Timeline rendering**: dropped calendar-date parsing and time-proportional layout. Events now render with uniform spacing in the order written, regardless of the marker text. This fixes the squashing bug where unparseable or clustered dates collapsed events on top of each other. The `date` field is rendered verbatim — no parsing, no reformatting, no epoch fallback. Authors can now use any unit (seconds, dates, quarters, narrative phases, geological eras) in any format.
+- **Timeline schema**: events now require at least one of `date` or `label` (was: `date` mandatory). `label` is the new free-form marker and takes priority when both are set; `date` remains for backwards compatibility. Existing timelines using `date` continue to work unchanged.
+- **React 18 compatibility**: `RuntimeProvider`, `ThemeProvider`, `LayoutProvider`, and `AnimationProvider` were using React 19's bare `<Context value={x}>` syntax, which crashes on React 18 (the declared peer-dep range is `^18.0.0 || ^19.0.0`). Restored explicit `<Context.Provider value={x}>` so the runtime works on both.
+
 ## [0.9.3] - 2026-03-05
 
 ### Added

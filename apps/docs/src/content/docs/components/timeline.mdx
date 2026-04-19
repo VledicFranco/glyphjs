@@ -5,7 +5,7 @@ description: Present chronological events on a visual timeline.
 
 import GlyphPreview from '../../../components/GlyphPreview.tsx';
 
-The **Timeline** component (`ui:timeline`) renders a sequence of chronological events on a visual timeline. Each event has a date, title, and optional description and type. The timeline can be oriented vertically or horizontally.
+The **Timeline** component (`ui:timeline`) renders a sequence of events as evenly-spaced markers along an axis. Each event has a free-form marker (`label` or `date`), a title, and an optional description and type. Events are laid out in the order you write them — the marker text is **not** parsed, so you can use any unit you want (seconds, dates, quarters, narrative phases, geological eras). The timeline can be oriented vertically or horizontally.
 
 ## Example
 
@@ -364,10 +364,13 @@ orientation: vertical
 
 | Property | Type | Required | Default | Description |
 |---|---|---|---|---|
-| `date` | `string` | Yes | -- | The date or datetime string for the event (e.g. "2026-01-15", "Q1 2026"). |
+| `label` | `string` | At least one of `label` or `date` | -- | Free-form marker shown above the title. Use whatever unit fits (e.g. "Phase 1", "10:35am", "3rd century BC"). Takes priority over `date` when both are set. |
+| `date` | `string` | At least one of `label` or `date` | -- | Backwards-compatible alias for `label`. The string is rendered verbatim — no parsing or reformatting. |
 | `title` | `string` | Yes | -- | The heading text for the event. |
 | `description` | `string` | No | -- | Additional detail text shown beneath the title. |
 | `type` | `string` | No | -- | A semantic type used for color-coding and grouping (e.g. "release", "milestone", "breaking-change"). |
+
+Events render with **uniform spacing** in the order they appear in the array. Order events yourself — the renderer does not sort or compute positions from the marker text.
 
 ## Markdown Support
 
@@ -414,6 +417,5 @@ Custom type strings receive a default neutral style.
 ## Accessibility
 
 - The timeline renders as a semantic ordered list (`<ol>`) with each event as a list item.
-- Dates are wrapped in `<time>` elements with machine-readable `datetime` attributes when the date string is ISO 8601 compatible.
-- Event markers are decorative and hidden from screen readers with `aria-hidden="true"`.
-- The timeline orientation does not affect the reading order -- events are always announced in chronological order.
+- Event markers (the dots and connector lines) are decorative and hidden from screen readers with `aria-hidden="true"`.
+- The timeline orientation does not affect the reading order -- events are always announced in array order.
