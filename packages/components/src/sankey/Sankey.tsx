@@ -421,6 +421,7 @@ export function Sankey({ data, block }: GlyphComponentProps<SankeyData>): ReactE
       style={{
         fontFamily: 'var(--glyph-font-body, Inter, system-ui, sans-serif)',
         color: 'var(--glyph-text, #1a2035)',
+        padding: 'var(--glyph-spacing-md, 1rem)',
       }}
     >
       {data.title && (
@@ -518,6 +519,10 @@ export function Sankey({ data, block }: GlyphComponentProps<SankeyData>): ReactE
                   fontFamily="Inter, system-ui, sans-serif"
                   fill="var(--glyph-text, #1a2035)"
                   dominantBaseline={baseline}
+                  stroke="var(--glyph-bg, #f4f6fa)"
+                  strokeWidth={3}
+                  strokeLinejoin="round"
+                  style={{ paintOrder: 'stroke' }}
                 >
                   {node.label}
                 </text>
@@ -530,6 +535,10 @@ export function Sankey({ data, block }: GlyphComponentProps<SankeyData>): ReactE
                     fontFamily="Inter, system-ui, sans-serif"
                     fill="var(--glyph-text-muted, #6b7a94)"
                     dominantBaseline={baseline}
+                    stroke="var(--glyph-bg, #f4f6fa)"
+                    strokeWidth={3}
+                    strokeLinejoin="round"
+                    style={{ paintOrder: 'stroke' }}
                   >
                     {valueStr}
                   </text>
