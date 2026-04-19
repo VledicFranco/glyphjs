@@ -1,6 +1,6 @@
 {
   "name": "@glyphjs/schemas",
-  "version": "0.9.3",
+  "version": "0.9.4",
   "description": "Zod schemas for Glyph JS components with JSON Schema generation",
   "type": "module",
   "main": "./dist/index.cjs",

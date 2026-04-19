@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.9.4] - 2026-04-19
+
 ### Fixed
 
 - **Timeline rendering**: dropped calendar-date parsing and time-proportional layout. Events now render with uniform spacing in the order written, regardless of the marker text. This fixes the squashing bug where unparseable or clustered dates collapsed events on top of each other. The `date` field is rendered verbatim — no parsing, no reformatting, no epoch fallback. Authors can now use any unit (seconds, dates, quarters, narrative phases, geological eras) in any format.
