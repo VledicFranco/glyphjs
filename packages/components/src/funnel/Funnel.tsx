@@ -28,8 +28,10 @@ const VERTICAL_ANNOTATION_COL = 120;
 const HORIZONTAL_HEIGHT = 320;
 const HORIZONTAL_STAGE_WIDTH = 120;
 const HORIZONTAL_GAP = 12;
-const HORIZONTAL_TOP_PADDING = 16;
-const HORIZONTAL_ANNOTATION_ROW = 52;
+const HORIZONTAL_TOP_PADDING = 12;
+const HORIZONTAL_ANNOTATION_ROW = 36; // conv % + drop count above each gap
+const HORIZONTAL_LABEL_ROW = 40; // stage name + value below each trapezoid
+const HORIZONTAL_BOTTOM_PADDING = 12;
 
 // ─── Helpers ───────────────────────────────────────────────────
 
@@ -62,6 +64,21 @@ function formatValue(value: number): string {
   return value.toLocaleString('en-US');
 }
 
+/**
+ * Stage fill is a single hue (`--glyph-palette-color-1`) at decreasing
+ * opacity per index: 1.0, 0.85, 0.70, 0.55, then floors at 0.45. This makes
+ * the funnel read as ONE tapering shape rather than a stack of unrelated
+ * coloured blocks. Floor of 0.45 keeps the deepest stages legible against
+ * light backgrounds.
+ */
+const STAGE_FILL_HUE = 'var(--glyph-palette-color-1, #00d4aa)';
+const STAGE_OPACITY_FLOOR = 0.45;
+const STAGE_OPACITY_STEP = 0.15;
+
+function stageOpacity(index: number): number {
+  return Math.max(STAGE_OPACITY_FLOOR, 1 - index * STAGE_OPACITY_STEP);
+}
+
 function stageAriaLabel(
   stage: FunnelStage,
   index: number,
@@ -85,10 +102,13 @@ function stageAriaLabel(
  * stages when `showConversion` is enabled.
  *
  * Theming is driven by CSS custom properties; no component-specific vars:
- *  - `--glyph-palette-color-1..10` (stage fill)
+ *  - `--glyph-palette-color-1` (single hue used for every stage; opacity is
+ *    stepped per stage so the funnel reads as ONE shape narrowing rather
+ *    than a series of unrelated blocks)
  *  - `--glyph-color-error` (drop count color)
  *  - `--glyph-text` (body text)
  *  - `--glyph-text-muted` (percentage + description)
+ *  - `--glyph-heading` (title color)
  */
 export function Funnel({ data, block }: GlyphComponentProps<FunnelData>): ReactElement {
   const { title, stages: rawStages, showConversion = true, orientation = 'vertical', unit } = data;
@@ -107,6 +127,7 @@ export function Funnel({ data, block }: GlyphComponentProps<FunnelData>): ReactE
       style={{
         fontFamily: 'var(--glyph-font-body, system-ui, sans-serif)',
         color: 'var(--glyph-text, #1a2035)',
+        padding: 'var(--glyph-spacing-md, 1rem)',
         margin: 'var(--glyph-spacing-sm, 0.5rem) 0',
       }}
     >
@@ -114,9 +135,9 @@ export function Funnel({ data, block }: GlyphComponentProps<FunnelData>): ReactE
         <div
           style={{
             fontWeight: 600,
-            fontSize: '1rem',
+            fontSize: '1.125rem',
             marginBottom: 'var(--glyph-spacing-sm, 0.5rem)',
-            color: 'var(--glyph-text, #1a2035)',
+            color: 'var(--glyph-heading, #0a0e1a)',
           }}
         >
           {title}
@@ -186,8 +207,7 @@ function VerticalFunnel({
           const topWidth = widthForValue(prev.value);
           const bottomWidth = widthForValue(stage.value);
           const y = i * (VERTICAL_STAGE_HEIGHT + VERTICAL_GAP);
-          const paletteIndex = (i % 10) + 1;
-          const fill = `var(--glyph-palette-color-${String(paletteIndex)}, ${fallbackPalette(i)})`;
+          const fillOpacity = stageOpacity(i);
 
           const topLeft = centerX - topWidth / 2;
           const topRight = centerX + topWidth / 2;
@@ -202,7 +222,7 @@ function VerticalFunnel({
 
           return (
             <g key={i}>
-              <path d={d} fill={fill} />
+              <path d={d} fill={STAGE_FILL_HUE} fillOpacity={fillOpacity} />
               <text
                 x={centerX}
                 y={labelY}
@@ -304,9 +324,27 @@ function HorizontalFunnel({
   showConversion,
   unit,
 }: OrientationProps): ReactElement {
+  // Vertical layout (top → bottom):
+  //   1. HORIZONTAL_TOP_PADDING        — outer padding
+  //   2. HORIZONTAL_ANNOTATION_ROW     — conv % + drop count between stages
+  //   3. trapezoid area                — stages, vertically centered on midline
+  //   4. HORIZONTAL_LABEL_ROW          — stage name + value below each trapezoid
+  //   5. HORIZONTAL_BOTTOM_PADDING     — outer padding
+  // Trapezoids taper symmetrically from BOTH top and bottom around `centerY`
+  // so a smaller stage shrinks toward the midline rather than hanging from
+  // the top edge.
   const trapezoidAreaHeight =
-    HORIZONTAL_HEIGHT - HORIZONTAL_ANNOTATION_ROW - HORIZONTAL_TOP_PADDING * 2;
-  const centerY = HORIZONTAL_TOP_PADDING + trapezoidAreaHeight / 2;
+    HORIZONTAL_HEIGHT -
+    HORIZONTAL_TOP_PADDING -
+    HORIZONTAL_ANNOTATION_ROW -
+    HORIZONTAL_LABEL_ROW -
+    HORIZONTAL_BOTTOM_PADDING;
+  const trapezoidAreaTop = HORIZONTAL_TOP_PADDING + HORIZONTAL_ANNOTATION_ROW;
+  const centerY = trapezoidAreaTop + trapezoidAreaHeight / 2;
+  const labelBaselineY = trapezoidAreaTop + trapezoidAreaHeight + 18;
+  const valueBaselineY = labelBaselineY + 16;
+  const annotationPctY = HORIZONTAL_TOP_PADDING + 12;
+  const annotationDropY = HORIZONTAL_TOP_PADDING + 28;
   const totalWidth =
     stages.length * HORIZONTAL_STAGE_WIDTH + Math.max(0, stages.length - 1) * HORIZONTAL_GAP;
 
@@ -334,9 +372,10 @@ function HorizontalFunnel({
           const leftHeight = heightForValue(prev.value);
           const rightHeight = heightForValue(stage.value);
           const x = i * (HORIZONTAL_STAGE_WIDTH + HORIZONTAL_GAP);
-          const paletteIndex = (i % 10) + 1;
-          const fill = `var(--glyph-palette-color-${String(paletteIndex)}, ${fallbackPalette(i)})`;
+          const fillOpacity = stageOpacity(i);
 
+          // Symmetric vertical taper around centerY: smaller stages shrink
+          // from BOTH top and bottom toward the midline.
           const leftTop = centerY - leftHeight / 2;
           const leftBottom = centerY + leftHeight / 2;
           const rightTop = centerY - rightHeight / 2;
@@ -346,15 +385,13 @@ function HorizontalFunnel({
           const d = `M ${String(x)} ${String(leftTop)} L ${String(rightX)} ${String(rightTop)} L ${String(rightX)} ${String(rightBottom)} L ${String(x)} ${String(leftBottom)} Z`;
 
           const labelX = x + HORIZONTAL_STAGE_WIDTH / 2;
-          const labelY = HORIZONTAL_TOP_PADDING + trapezoidAreaHeight + 18;
-          const valueY = labelY + 16;
 
           return (
             <g key={i}>
-              <path d={d} fill={fill} />
+              <path d={d} fill={STAGE_FILL_HUE} fillOpacity={fillOpacity} />
               <text
                 x={labelX}
-                y={labelY}
+                y={labelBaselineY}
                 textAnchor="middle"
                 fontSize="13"
                 fontWeight={600}
@@ -364,7 +401,7 @@ function HorizontalFunnel({
               </text>
               <text
                 x={labelX}
-                y={valueY}
+                y={valueBaselineY}
                 textAnchor="middle"
                 fontSize="12"
                 fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
@@ -389,7 +426,7 @@ function HorizontalFunnel({
               <g key={`conv-${String(i)}`} aria-hidden="true">
                 <text
                   x={gapCenterX}
-                  y={HORIZONTAL_TOP_PADDING / 2 + 6}
+                  y={annotationPctY}
                   textAnchor="middle"
                   fontSize="12"
                   fill="var(--glyph-text-muted, #6b7a94)"
@@ -398,7 +435,7 @@ function HorizontalFunnel({
                 </text>
                 <text
                   x={gapCenterX}
-                  y={HORIZONTAL_TOP_PADDING / 2 + 22}
+                  y={annotationDropY}
                   textAnchor="middle"
                   fontSize="11"
                   fontFamily="ui-monospace, SFMono-Regular, Menlo, monospace"
@@ -440,23 +477,4 @@ function HorizontalFunnel({
       })}
     </ol>
   );
-}
-
-// ─── Fallback palette ──────────────────────────────────────────
-
-const FALLBACK_PALETTE = [
-  '#4f7dd1',
-  '#6a9fb8',
-  '#8fb3a0',
-  '#b5b17a',
-  '#c59966',
-  '#c77c5f',
-  '#a37a9c',
-  '#7a6ea3',
-  '#6b7a94',
-  '#4a6078',
-];
-
-function fallbackPalette(index: number): string {
-  return FALLBACK_PALETTE[index % FALLBACK_PALETTE.length] ?? FALLBACK_PALETTE[0] ?? '#4f7dd1';
 }
