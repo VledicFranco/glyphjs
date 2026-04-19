@@ -94,13 +94,13 @@ export function RuntimeProvider({
   );
 
   return (
-    <RuntimeContext value={value}>
-      <ThemeContext value={resolvedTheme}>
+    <RuntimeContext.Provider value={value}>
+      <ThemeContext.Provider value={resolvedTheme}>
         <div data-glyph-theme={resolvedThemeObject.name} className={className} style={style}>
           {children}
         </div>
-      </ThemeContext>
-    </RuntimeContext>
+      </ThemeContext.Provider>
+    </RuntimeContext.Provider>
   );
 }
 

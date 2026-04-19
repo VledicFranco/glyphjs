@@ -33,10 +33,7 @@ interface AnimationProviderProps {
  * Provides animation configuration to the component tree.
  * Merges partial user config with sensible defaults.
  */
-export function AnimationProvider({
-  config,
-  children,
-}: AnimationProviderProps): ReactNode {
+export function AnimationProvider({ config, children }: AnimationProviderProps): ReactNode {
   const state = useMemo<AnimationState>(
     () => ({
       ...defaultConfig,
@@ -45,7 +42,7 @@ export function AnimationProvider({
     [config],
   );
 
-  return <AnimationContext value={state}>{children}</AnimationContext>;
+  return <AnimationContext.Provider value={state}>{children}</AnimationContext.Provider>;
 }
 
 // ─── Hook ────────────────────────────────────────────────────

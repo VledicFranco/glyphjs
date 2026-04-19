@@ -25,11 +25,8 @@ interface LayoutProviderProps {
  * Wraps children in a `LayoutContext` so any descendant
  * can call `useLayout()` to access the active layout.
  */
-export function LayoutProvider({
-  layout,
-  children,
-}: LayoutProviderProps): ReactNode {
-  return <LayoutContext value={layout}>{children}</LayoutContext>;
+export function LayoutProvider({ layout, children }: LayoutProviderProps): ReactNode {
+  return <LayoutContext.Provider value={layout}>{children}</LayoutContext.Provider>;
 }
 
 // ─── Hook ────────────────────────────────────────────────────

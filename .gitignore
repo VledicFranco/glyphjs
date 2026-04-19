@@ -48,3 +48,7 @@ tmp/
 # Misc
 nul
 _gen.js
+
+# Stray lockfiles from non-pnpm tooling (this repo is pnpm-only)
+package-lock.json
+yarn.lock

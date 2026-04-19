@@ -51,11 +51,11 @@ export function ThemeProvider({
   );
 
   return (
-    <ThemeContext value={themeContext}>
+    <ThemeContext.Provider value={themeContext}>
       <div data-glyph-theme={resolved.name} className={className} style={style}>
         {children}
       </div>
-    </ThemeContext>
+    </ThemeContext.Provider>
   );
 }
 
