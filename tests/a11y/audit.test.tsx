@@ -783,9 +783,10 @@ describe('Accessibility: ARIA roles and attributes', () => {
     // The sr-only list is visually hidden but present in the DOM
     const srList = container.querySelector('ol');
     expect(srList).toBeInTheDocument();
-    const timeElements = container.querySelectorAll('time');
-    expect(timeElements).toHaveLength(1);
-    expect(timeElements[0]).toHaveAttribute('dateTime');
+    const items = srList!.querySelectorAll('li');
+    expect(items).toHaveLength(1);
+    expect(items[0]!.textContent).toContain('2024-01-01');
+    expect(items[0]!.textContent).toContain('New Year');
   });
 
   it('Graph SVG has role="img" and descriptive aria-label', () => {
@@ -1592,7 +1593,7 @@ describe('Accessibility: Screen reader fallbacks for D3/SVG components', () => {
     expect(srList!.textContent).toContain('Branch B');
   });
 
-  it('Timeline sr-only list contains semantic time elements', () => {
+  it('Timeline sr-only list announces each event with its marker and title', () => {
     const { container } = render(
       <Timeline
         {...mockComponentProps<TimelineData>(
@@ -1613,12 +1614,11 @@ describe('Accessibility: Screen reader fallbacks for D3/SVG components', () => {
     const items = srList?.querySelectorAll('li');
     expect(items).toHaveLength(2);
 
-    const times = srList?.querySelectorAll('time[dateTime]');
-    expect(times).toHaveLength(2);
-    expect(times![0]).toHaveAttribute('dateTime', '2024-03-15');
-
-    // Content contains event titles
+    // Markers are rendered verbatim (no <time> wrapping — markers are free-form
+    // and not guaranteed to be calendar dates).
+    expect(items![0]!.textContent).toContain('2024-03-15');
     expect(items![0]!.textContent).toContain('Launch');
+    expect(items![1]!.textContent).toContain('2024-07-01');
     expect(items![1]!.textContent).toContain('Update');
   });
 });
