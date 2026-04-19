@@ -40,6 +40,7 @@ export default defineConfig({
           { label: 'Steps', slug: 'components/steps' },
           { label: 'Table', slug: 'components/table' },
           { label: 'Graph', slug: 'components/graph' },
+          { label: 'Heatmap', slug: 'components/heatmap' },
           { label: 'Relation', slug: 'components/relation' },
           { label: 'Chart', slug: 'components/chart' },
           { label: 'Timeline', slug: 'components/timeline' },

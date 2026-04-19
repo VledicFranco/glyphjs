@@ -35,6 +35,7 @@ import {
   formDefinition,
   kanbanDefinition,
   annotateDefinition,
+  heatmapDefinition,
 } from '@glyphjs/components';
 import type { GlyphIR } from '@glyphjs/types';
 
@@ -100,6 +101,7 @@ const allComponents = [
   formDefinition,
   kanbanDefinition,
   annotateDefinition,
+  heatmapDefinition,
 ];
 
 export default function Playground() {

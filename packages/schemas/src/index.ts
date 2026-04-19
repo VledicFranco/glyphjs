@@ -33,6 +33,7 @@ export { annotateSchema } from './annotate.js';
 export { columnsSchema } from './columns.js';
 export { rowsSchema } from './rows.js';
 export { panelSchema } from './panel.js';
+export { heatmapSchema } from './heatmap.js';
 
 // ─── Registry & Helpers ─────────────────────────────────────
 export { componentSchemas, getJsonSchema } from './registry.js';

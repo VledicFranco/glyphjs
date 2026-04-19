@@ -82,6 +82,8 @@ export { rowsDefinition, Rows } from './rows/index.js';
 export type { RowsData } from './rows/index.js';
 export { panelDefinition, Panel } from './panel/index.js';
 export type { PanelData } from './panel/index.js';
+export { heatmapDefinition, Heatmap } from './heatmap/index.js';
+export type { HeatmapData, HeatmapScale } from './heatmap/index.js';
 
 // All component definitions (for CLI / batch registration)
 import { calloutDefinition as _callout } from './callout/index.js';
@@ -116,6 +118,7 @@ import { annotateDefinition as _annotate } from './annotate/index.js';
 import { columnsDefinition as _columns } from './columns/index.js';
 import { rowsDefinition as _rows } from './rows/index.js';
 import { panelDefinition as _panel } from './panel/index.js';
+import { heatmapDefinition as _heatmap } from './heatmap/index.js';
 
 export const allComponentDefinitions = [
   _callout,
@@ -150,4 +153,5 @@ export const allComponentDefinitions = [
   _columns,
   _rows,
   _panel,
+  _heatmap,
 ] as const;

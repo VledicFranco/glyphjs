@@ -33,6 +33,7 @@ import { annotateSchema } from './annotate.js';
 import { columnsSchema } from './columns.js';
 import { rowsSchema } from './rows.js';
 import { panelSchema } from './panel.js';
+import { heatmapSchema } from './heatmap.js';
 
 // ─── Schema Registry ─────────────────────────────────────────
 
@@ -69,6 +70,7 @@ const entries: [string, z.ZodType][] = [
   ['columns', columnsSchema],
   ['rows', rowsSchema],
   ['panel', panelSchema],
+  ['heatmap', heatmapSchema],
 ];
 
 export const componentSchemas: ReadonlyMap<string, z.ZodType> = new Map(entries);

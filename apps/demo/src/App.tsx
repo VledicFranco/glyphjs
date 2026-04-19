@@ -30,6 +30,7 @@ import {
   formDefinition,
   kanbanDefinition,
   annotateDefinition,
+  heatmapDefinition,
 } from '@glyphjs/components';
 import type { CompilationResult } from '@glyphjs/compiler';
 import { presets } from './presets/index.js';
@@ -175,6 +176,7 @@ export function App() {
         formDefinition,
         kanbanDefinition,
         annotateDefinition,
+        heatmapDefinition,
       ],
     });
     return rt;

@@ -38,6 +38,7 @@ import {
   columnsDefinition,
   rowsDefinition,
   panelDefinition,
+  heatmapDefinition,
 } from '@glyphjs/components';
 
 const allComponents = [
@@ -73,6 +74,7 @@ const allComponents = [
   columnsDefinition,
   rowsDefinition,
   panelDefinition,
+  heatmapDefinition,
 ];
 
 interface GlyphPreviewProps {

@@ -31,11 +31,12 @@ const ALL_TYPES = [
   'form',
   'kanban',
   'annotate',
+  'heatmap',
 ];
 
 describe('componentSchemas', () => {
-  it('has exactly 32 registered components', () => {
-    expect(componentSchemas.size).toBe(32);
+  it('has exactly 33 registered components', () => {
+    expect(componentSchemas.size).toBe(33);
   });
 
   it('contains every expected component type', () => {

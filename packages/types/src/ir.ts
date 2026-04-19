@@ -49,6 +49,7 @@ export type BlockType =
   | 'ui:form'
   | 'ui:kanban'
   | 'ui:annotate'
+  | 'ui:heatmap'
   // Layout components
   | 'ui:columns'
   | 'ui:rows'
