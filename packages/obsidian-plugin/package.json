@@ -11,13 +11,13 @@
     "@glyphjs/components": "workspace:*",
     "@glyphjs/runtime": "workspace:*",
     "@glyphjs/types": "workspace:*",
-    "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
   },
   "devDependencies": {
-    "@types/react": "^19.0.0",
+    "@types/react": "^19.2.14",
     "@types/react-dom": "^19.0.0",
-    "esbuild": "^0.24.0",
+    "esbuild": "^0.28.0",
     "obsidian": "latest",
     "typescript": "^5.7.0"
   }
